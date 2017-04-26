@@ -28,6 +28,7 @@
 #include <iostream>
 
 // GRINS
+#include "grins/simulation_initializer.h"
 #include "grins/simulation_builder.h"
 #include "grins/simulation.h"
 
@@ -98,6 +99,7 @@ int main(int argc, char* argv[])
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
 
+  GRINS::SimulationInitializer initializer;
   GRINS::SimulationBuilder sim_builder;
   GRINS::SharedPtr<GRINS::SolverFactory> solver_factory( new GRINS::DisplacementContinuationSolverFactory );
   sim_builder.attach_solver_factory(solver_factory);

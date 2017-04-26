@@ -22,16 +22,29 @@
 //
 //-----------------------------------------------------------------------el-
 
-// These classes
-#include "grins/gas_catalytic_wall_neumann_bc_factories.h"
+// This class
+#include "grins/simulation_initializer.h"
+
+// GRINS
+#include "grins/error_estimator_factory_initializer.h"
+#include "grins/physics_factory_initializer.h"
+#include "grins/boundary_condition_factory_initializer.h"
+#include "grins/variable_factory_initializer.h"
 
 namespace GRINS
 {
-  // Instantiate and register Factory
-  GasRecombinationCatalyticWallNeumannBCFactory
-  grins_factory_gas_recomb_catalytic_wall_neumann_bc("gas_recombination_catalytic_wall");
+  bool SimulationInitializer::_is_initialized = false;
 
-  GasSolidCatalyticWallNeumannBCFactory
-  grins_factory_gas_solid_catalytic_wall_neumann_bc("gas_solid_catalytic_wall");
+  SimulationInitializer::SimulationInitializer()
+  {
+    if( !_is_initialized )
+      {
+        ErrorEstimatorFactoryInitializer error_est_init;
+        PhysicsFactoryInitializer physics_init;
+        BoundaryConditionFactoryInitializer bc_init;
+        VariableFactoryInitializer var_init;
 
+        _is_initialized = true;
+      }
+  }
 } // end namespace GRINS

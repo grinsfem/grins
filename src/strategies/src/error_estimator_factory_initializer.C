@@ -23,23 +23,31 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/symmetry_type_bc_factories.h"
+#include "grins/error_estimator_factory_initializer.h"
+
+// GRINS
+#include "grins/error_estimator_factory_basic.h"
+#include "grins/adjoint_error_estimator_factories.h"
+#include "grins/strategies_parsing.h"
+
+// libMesh
+#include "libmesh/patch_recovery_error_estimator.h"
+#include "libmesh/kelly_error_estimator.h"
 
 namespace GRINS
 {
-  // Instantiate all the SymmetryType factories.
-  YZSymmetryBCFactory grins_factory_yz_symmetry("yz_symmetry");
-  YZSymmetryBCFactory grins_factory_yz_symmetry_old_style("yz_symmetry_old_style");
-  XZSymmetryBCFactory grins_factory_xz_symmetry("xz_symmetry");
-  XZSymmetryBCFactory grins_factory_xz_symmetry_old_style("xz_symmetry_old_style");
-  XYSymmetryBCFactory grins_factory_xy_symmetry("xy_symmetry");
-  XYSymmetryBCFactory grins_factory_xy_symmetry_old_style("xy_symmetry_old_style");
-  RollerXBCFactory grins_factory_roller_x("roller_x");
-  RollerXBCFactory grins_factory_roller_x_old_style("roller_x_old_style");
-  RollerYBCFactory grins_factory_roller_y("roller_y");
-  RollerYBCFactory grins_factory_roller_y_old_style("roller_y_old_style");
-  RollerZBCFactory grins_factory_roller_z("roller_z");
-  RollerZBCFactory grins_factory_roller_z_old_style("roller_z_old_style");
-  AxisymmetryBCFactory grins_factory_velocity_axisymmetry("Velocity_axisymmetric");
-  AxisymmetryBCFactory grins_factory_velocity_axisymmetry_old_style("Velocity_axisymmetric_old_style");
+  ErrorEstimatorFactoryInitializer::ErrorEstimatorFactoryInitializer()
+  {
+    static ErrorEstimatorFactoryBasic<libMesh::KellyErrorEstimator>
+      grins_factory_kelly_error_est(StrategiesParsing::kelly_error_estimator());
+
+    static ErrorEstimatorFactoryBasic<libMesh::PatchRecoveryErrorEstimator>
+      grins_factory_patch_recovery_error_est(StrategiesParsing::patch_recovery_error_estimator());
+
+    static AdjointRefinementErrorEstimatorFactory
+      grins_factory_adjoint_refinement_estimator(StrategiesParsing::adjoint_refinement_error_estimator());
+
+    static AdjointResidualErrorEstimatorFactory
+      grins_factory_adjoint_residual_estimator(StrategiesParsing::adjoint_residual_error_estimator());
+  }
 } // end namespace GRINS

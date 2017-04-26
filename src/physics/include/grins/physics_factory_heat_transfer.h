@@ -27,6 +27,9 @@
 
 // GRINS
 #include "grins/physics_factory_with_core.h"
+#include "grins/physics_factory_helper.h"
+#include "grins/constant_conductivity.h"
+#include "grins/parsed_conductivity.h"
 
 namespace GRINS
 {
@@ -49,6 +52,46 @@ namespace GRINS
     void cond_error_msg( const std::string& physics, const std::string& conductivity ) const;
 
   };
+
+  template<template<typename> class DerivedPhysics>
+  inline
+  libMesh::UniquePtr<Physics>
+  PhysicsFactoryHeatTransfer<DerivedPhysics>::build_physics
+  ( const GetPot& input, const std::string& physics_name )
+  {
+    std::string core_physics = this->find_core_physics_name(physics_name);
+
+    std::string conductivity;
+    PhysicsFactoryHelper::parse_conductivity_model(input,core_physics,conductivity);
+
+    libMesh::UniquePtr<Physics> new_physics;
+
+    if( conductivity == "constant" )
+      new_physics.reset( new DerivedPhysics<ConstantConductivity>(physics_name,input) );
+
+    else if( conductivity == "parsed" )
+      new_physics.reset( new DerivedPhysics<ParsedConductivity>(physics_name,input) );
+
+    else
+      this->cond_error_msg(physics_name, conductivity);
+
+    libmesh_assert(new_physics);
+
+    return new_physics;
+  }
+
+  template<template<typename> class DerivedPhysics>
+  inline
+  void PhysicsFactoryHeatTransfer<DerivedPhysics>::cond_error_msg( const std::string& physics,
+                                                                   const std::string& conductivity ) const
+  {
+    std::string error = "================================================================\n";
+    error += "Invalid conductivity model for "+physics+"\n";
+    error += "Conductivity model     = "+conductivity+"\n";
+    error += "================================================================\n";
+
+    libmesh_error_msg(error);
+  }
 
 } // end namespace GRINS
 

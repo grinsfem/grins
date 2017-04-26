@@ -28,6 +28,7 @@
 #include <iostream>
 
 // GRINS
+#include "grins/simulation_initializer.h"
 #include "grins/simulation_builder.h"
 #include "grins/simulation.h"
 
@@ -100,6 +101,8 @@ int main(int argc, char* argv[])
 #ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.BeginTimer("Initialize Solver");
 #endif
+
+  GRINS::SimulationInitializer initializer;
 
   GRINS::SimulationBuilder sim_builder;
 

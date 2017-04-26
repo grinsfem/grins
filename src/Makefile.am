@@ -34,16 +34,11 @@ libgrins_la_SOURCES += boundary_conditions/src/parsed_function_factory_helper.C
 libgrins_la_SOURCES += boundary_conditions/src/parsed_function_dirichlet_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/constant_function_dirichlet_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/parsed_function_dirichlet_old_style_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/homogeneous_dirichlet_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/prescribed_vector_value_dirichlet_old_style_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/isothermal_dirichlet_old_style_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/symmetry_type_bc_factories.C
 libgrins_la_SOURCES += boundary_conditions/src/pressure_pinning.C
 libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_instantiate.C
 libgrins_la_SOURCES += boundary_conditions/src/catalycity_factory_abstract.C
-libgrins_la_SOURCES += boundary_conditions/src/catalycity_factories.C
 libgrins_la_SOURCES += boundary_conditions/src/catalycity_factory_old_style_base.C
-libgrins_la_SOURCES += boundary_conditions/src/catalycity_factories_old_style.C
 libgrins_la_SOURCES += boundary_conditions/src/catalycity_base.C
 libgrins_la_SOURCES += boundary_conditions/src/constant_catalycity.C
 libgrins_la_SOURCES += boundary_conditions/src/arrhenius_catalycity.C
@@ -53,16 +48,12 @@ libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_parsed.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_factory_abstract.C
 libgrins_la_SOURCES += boundary_conditions/src/neumann_bc_old_style_factory_abstract.C
 libgrins_la_SOURCES += boundary_conditions/src/parsed_function_neumann_bc_factory_helper.C
-libgrins_la_SOURCES += boundary_conditions/src/parsed_function_neumann_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/parsed_function_neumann_old_style_bc_factory.C
-libgrins_la_SOURCES += boundary_conditions/src/homogeneous_neumann_bc_factory.C
 libgrins_la_SOURCES += boundary_conditions/src/gas_recombination_catalytic_wall_neumann_bc_factory_impl.C
 libgrins_la_SOURCES += boundary_conditions/src/gas_solid_catalytic_wall_neumann_bc_factory_impl.C
 libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_neumann_bc_factory_common.C
 libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_neumann_bc_factory_base.C
 libgrins_la_SOURCES += boundary_conditions/src/catalytic_wall_neumann_bc_old_style_factory_base.C
-libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_factories.C
-libgrins_la_SOURCES += boundary_conditions/src/gas_catalytic_wall_neumann_bc_old_style_factories.C
+libgrins_la_SOURCES += boundary_conditions/src/boundary_condition_factory_initializer.C
 
 # src/common
 libgrins_la_SOURCES += common/src/builder_helper.C
@@ -150,17 +141,11 @@ libgrins_la_SOURCES += physics/src/parsed_source_term.C
 libgrins_la_SOURCES += physics/src/physics_naming.C
 libgrins_la_SOURCES += physics/src/convection_diffusion.C
 libgrins_la_SOURCES += physics/src/physics_factory_base.C
-libgrins_la_SOURCES += physics/src/physics_factory_basic.C
 libgrins_la_SOURCES += physics/src/physics_factory_with_core.C
-libgrins_la_SOURCES += physics/src/physics_factory_incompressible_flow.C
-libgrins_la_SOURCES += physics/src/physics_factory_incompressible_turb_flow.C
-libgrins_la_SOURCES += physics/src/physics_factory_heat_transfer.C
-libgrins_la_SOURCES += physics/src/physics_factory_variable_density_flow.C
-libgrins_la_SOURCES += physics/src/physics_factory_plane_stress_solids.C
-libgrins_la_SOURCES += physics/src/physics_factory_one_d_stress_solids.C
 libgrins_la_SOURCES += physics/src/physics_factory_reacting_flows.C
 libgrins_la_SOURCES += physics/src/physics_builder.C
 libgrins_la_SOURCES += physics/src/variable_pinning.C
+libgrins_la_SOURCES += physics/src/physics_factory_initializer.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/parsed_property_base.C
@@ -225,12 +210,13 @@ libgrins_la_SOURCES += solver/src/steady_mesh_adaptive_solver.C
 libgrins_la_SOURCES += solver/src/solver_parsing.C
 libgrins_la_SOURCES += solver/src/time_stepping_parsing.C
 libgrins_la_SOURCES += solver/src/unsteady_mesh_adaptive_solver.C
+libgrins_la_SOURCES += solver/src/simulation_initializer.C
 
 # src/strategies files
 libgrins_la_SOURCES += strategies/src/strategies_parsing.C
 libgrins_la_SOURCES += strategies/src/error_estimator_factory_base.C
-libgrins_la_SOURCES += strategies/src/error_estimator_factory_basic.C
 libgrins_la_SOURCES += strategies/src/adjoint_error_estimator_factories.C
+libgrins_la_SOURCES += strategies/src/error_estimator_factory_initializer.C
 libgrins_la_SOURCES += strategies/src/error_estimator_options.C
 libgrins_la_SOURCES += strategies/src/adaptive_time_stepping_options.C
 libgrins_la_SOURCES += strategies/src/mesh_adaptivity_options.C
@@ -240,6 +226,7 @@ libgrins_la_SOURCES += variables/src/variable_warehouse.C
 libgrins_la_SOURCES += variables/src/variable_factory.C
 libgrins_la_SOURCES += variables/src/variable_builder.C
 libgrins_la_SOURCES += variables/src/default_variable_builder.C
+libgrins_la_SOURCES += variables/src/variable_factory_initializer.C
 
 # src/utilities files
 libgrins_la_SOURCES += utilities/src/grins_version.C
@@ -326,6 +313,7 @@ include_HEADERS += boundary_conditions/include/grins/catalytic_wall_neumann_bc_f
 include_HEADERS += boundary_conditions/include/grins/catalytic_wall_neumann_bc_old_style_factory_base.h
 include_HEADERS += boundary_conditions/include/grins/gas_catalytic_wall_neumann_bc_factories.h
 include_HEADERS += boundary_conditions/include/grins/gas_catalytic_wall_neumann_bc_old_style_factories.h
+include_HEADERS += boundary_conditions/include/grins/boundary_condition_factory_initializer.h
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
@@ -437,6 +425,7 @@ include_HEADERS += physics/include/grins/physics_factory_one_d_stress_solids.h
 include_HEADERS += physics/include/grins/physics_factory_reacting_flows.h
 include_HEADERS += physics/include/grins/physics_builder.h
 include_HEADERS += physics/include/grins/variable_pinning.h
+include_HEADERS += physics/include/grins/physics_factory_initializer.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
@@ -510,12 +499,14 @@ include_HEADERS += solver/include/grins/solver_names.h
 include_HEADERS += solver/include/grins/time_stepping_parsing.h
 include_HEADERS += solver/include/grins/simulation_parsing.h
 include_HEADERS += solver/include/grins/unsteady_mesh_adaptive_solver.h
+include_HEADERS += solver/include/grins/simulation_initializer.h
 
 # src/strategies headers
 include_HEADERS += strategies/include/grins/strategies_parsing.h
 include_HEADERS += strategies/include/grins/error_estimator_factory_base.h
 include_HEADERS += strategies/include/grins/error_estimator_factory_basic.h
 include_HEADERS += strategies/include/grins/adjoint_error_estimator_factories.h
+include_HEADERS += strategies/include/grins/error_estimator_factory_initializer.h
 include_HEADERS += strategies/include/grins/error_estimator_options.h
 include_HEADERS += strategies/include/grins/adaptive_time_stepping_options.h
 include_HEADERS += strategies/include/grins/mesh_adaptivity_options.h
@@ -531,6 +522,7 @@ include_HEADERS += variables/include/grins/variable_warehouse.h
 include_HEADERS += variables/include/grins/variable_factory.h
 include_HEADERS += variables/include/grins/variable_builder.h
 include_HEADERS += variables/include/grins/default_variable_builder.h
+include_HEADERS += variables/include/grins/variable_factory_initializer.h
 
 # src/utilities headers
 include_HEADERS += $(top_builddir)/src/utilities/include/grins/grins_version.h

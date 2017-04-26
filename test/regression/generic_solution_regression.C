@@ -25,6 +25,7 @@
 #include "grins_config.h"
 
 // GRINS
+#include "grins/simulation_initializer.h"
 #include "grins/mesh_builder.h"
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
@@ -103,6 +104,8 @@ int main(int argc, char* argv[])
 
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
+
+  GRINS::SimulationInitializer initializer;
 
   GRINS::SimulationBuilder sim_builder;
 

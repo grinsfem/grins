@@ -22,17 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/homogeneous_neumann_bc_factory.h"
+#ifndef GRINS_ERROR_ESTIMATOR_FACTORY_INITIALIZER_H
+#define GRINS_ERROR_ESTIMATOR_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  HomogeneousNeumannBCFactory grins_factory_homogeneous_neumann("homogeneous_neumann");
-  HomogeneousNeumannBCFactory grins_factory_adiabatic("adiabatic");
-  HomogeneousNeumannBCFactory grins_factory_adiabatic_old_style("adiabatic_old_style");
-  HomogeneousNeumannBCFactory grins_factory_adiabatic_wall_old_style("adiabatic_wall_old_style");
-  HomogeneousNeumannBCFactory grins_factory_temp_axisym("Temperature_axisymmetric");
-  HomogeneousNeumannBCFactory grins_factory_temp_axisym_old_style("Temperature_axisymmetric_old_style");
-  HomogeneousNeumannBCFactory grins_factory_species_axisym("SpeciesMassFractions_axisymmetric");
-  HomogeneousNeumannBCFactory grins_factory_species_axisym_old_style("SpeciesMassFractions_axisymmetric_old_style");
-} // end namespace GRINS
+  //! Initialize all ErrorEstimatorFactory objects
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the ErrorEstimator factory objects.
+
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class ErrorEstimatorFactoryInitializer
+  {
+  public:
+    ErrorEstimatorFactoryInitializer();
+    ~ErrorEstimatorFactoryInitializer(){}
+  };
+}
+
+#endif // GRINS_ERROR_ESTIMATOR_FACTORY_INITIALIZER_H

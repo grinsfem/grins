@@ -22,13 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-// These classes
-#include "grins/catalycity_factories_old_style.h"
+#ifndef GRINS_PHYSICS_FACTORY_INITIALIZER_H
+#define GRINS_PHYSICS_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  // Instantiate and register factories
-  ConstantCatalycityFactoryOldStyle grins_factory_constant_catalycity_old_style("constant_old_style");
-  ArrheniusCatalycityFactoryOldStyle grins_factory_arrhenius_catalycity_old_style("arrhenius_old_style");
-  PowerLawCatalycityFactoryOldStyle grins_factory_power_law_catalycity_old_style("power_old_style");
-} // end namespace GRINS
+  //! Initialize all PhysicsFactory objects
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the Physics factory objects.
+
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class PhysicsFactoryInitializer
+  {
+  public:
+    PhysicsFactoryInitializer();
+    ~PhysicsFactoryInitializer(){}
+  };
+}
+
+#endif // GRINS_PHYSICS_FACTORY_INITIALIZER_H

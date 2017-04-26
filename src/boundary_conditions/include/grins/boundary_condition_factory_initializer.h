@@ -22,29 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/error_estimator_factory_basic.h"
-#include "grins/strategies_parsing.h"
-
-// libMesh
-#include "libmesh/patch_recovery_error_estimator.h"
-#include "libmesh/kelly_error_estimator.h"
+#ifndef GRINS_BOUNDARY_CONDITION_FACTORY_INITIALIZER_H
+#define GRINS_BOUNDARY_CONDITION_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  template<typename EstimatorType>
-  libMesh::UniquePtr<libMesh::ErrorEstimator>
-  ErrorEstimatorFactoryBasic<EstimatorType>::build_error_estimator
-  ( const GetPot& /*input*/, MultiphysicsSystem& /*system*/, const ErrorEstimatorOptions& /*estimator_options*/ )
+  //! Initialize all Factory objects related to boundary conditions
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the boundary condition factory objects.
+
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class BoundaryConditionFactoryInitializer
   {
-    return libMesh::UniquePtr<libMesh::ErrorEstimator>( new EstimatorType );
-  }
+  public:
+    BoundaryConditionFactoryInitializer();
+    ~BoundaryConditionFactoryInitializer(){}
+  };
+}
 
-  // Instantiate basic ErrorEstimator factories
-  ErrorEstimatorFactoryBasic<libMesh::KellyErrorEstimator>
-  grins_factory_kelly_error_est(StrategiesParsing::kelly_error_estimator());
-
-  ErrorEstimatorFactoryBasic<libMesh::PatchRecoveryErrorEstimator>
-  grins_factory_patch_recovery_error_est(StrategiesParsing::patch_recovery_error_estimator());
-
-} // end namespace GRINS
+#endif // GRINS_BOUNDARY_CONDITION_FACTORY_INITIALIZER_H

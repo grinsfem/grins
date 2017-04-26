@@ -59,9 +59,8 @@ namespace GRINS
     return all_funcs;
   }
 
-  // Instantiate all the ParsedDirichletOldStyle factories.
-  ParsedDirichletOldStyleBCFactory grins_factory_parsed_dirichlet_old_style("parsed_dirichlet_old_style");
-  ParsedDirichletOldStyleBCFactory grins_factory_constant_dirichlet_old_style("constant_dirichlet_old_style");
-  ParsedFEMDirichletOldStyleBCFactory grins_factory_parsed_fem_dirichlet_old_style("parsed_fem_dirichlet_old_style");
+  // Instantiate
+  template class ParsedFunctionDirichletOldStyleBCFactory<libMesh::FunctionBase<libMesh::Number> >;
+  template class ParsedFunctionDirichletOldStyleBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >;
 
 } // end namespace GRINS

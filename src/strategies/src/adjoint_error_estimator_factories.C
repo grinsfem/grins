@@ -24,7 +24,6 @@
 
 // These classes
 #include "grins/adjoint_error_estimator_factories.h"
-#include "grins/strategies_parsing.h"
 
 // libMesh
 #include "libmesh/patch_recovery_error_estimator.h"
@@ -60,14 +59,5 @@ namespace GRINS
     estimator.number_h_refinements = estimator_options.n_adjoint_h_refinements();
     estimator.number_p_refinements = estimator_options.n_adjoint_p_refinements();
   }
-
-  // Instantiate adjoint ErrorEstimator factories
-  AdjointRefinementErrorEstimatorFactory
-  grins_factory_adjoint_refinement_estimator
-  (StrategiesParsing::adjoint_refinement_error_estimator());
-
-  AdjointResidualErrorEstimatorFactory
-  grins_factory_adjoint_residual_estimator
-  (StrategiesParsing::adjoint_residual_error_estimator());
 
 } // end namespace GRINS

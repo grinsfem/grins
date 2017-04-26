@@ -27,6 +27,7 @@
 #include <iostream>
 
 // GRINS
+#include "grins/simulation_initializer.h"
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
 
@@ -87,7 +88,9 @@ int run( int argc, char* argv[], const GetPot& input )
 
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
- 
+
+  GRINS::SimulationInitializer initializer;
+
   GRINS::SimulationBuilder sim_builder;
 
   GRINS::Simulation grins( input,

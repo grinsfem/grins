@@ -53,6 +53,13 @@ namespace GRINS
 
   };
 
+  class ReactingFlowsPhysicsFactoryInitializer
+  {
+  public:
+    ReactingFlowsPhysicsFactoryInitializer();
+    ~ReactingFlowsPhysicsFactoryInitializer(){}
+  };
+
 } // end namespace GRINS
 
 #endif // GRINS_PHYSICS_FACTORY_REACTING_FLOWS_H

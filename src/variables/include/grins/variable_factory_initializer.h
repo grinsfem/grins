@@ -22,13 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-// These classes
-#include "grins/catalycity_factories.h"
+#ifndef GRINS_VARIABLE_FACTORY_INITIALIZER_H
+#define GRINS_VARIABLE_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  // Instantiate and register factories
-  ConstantCatalycityFactory grins_factory_constant_catalycity("constant");
-  ArrheniusCatalycityFactory grins_factory_arrhenius_catalycity("arrhenius");
-  PowerLawCatalycityFactory grins_factory_power_law_catalycity("power");
-} // end namespace GRINS
+  //! Initialize all VariableFactory objects
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the Variable factory objects.
+
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class VariableFactoryInitializer
+  {
+  public:
+    VariableFactoryInitializer();
+    ~VariableFactoryInitializer(){}
+  };
+}
+
+#endif // GRINS_VARIABLE_FACTORY_INITIALIZER_H

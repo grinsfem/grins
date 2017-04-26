@@ -204,11 +204,17 @@ namespace GRINS
     libmesh_error_msg(error);
   }
 
-  // Instantiate all the "reacting flow" Physics factories.
-  PhysicsFactoryReactingFlows<ReactingLowMachNavierStokes> grins_factory_rlmns
-  (PhysicsNaming::reacting_low_mach_navier_stokes(),PhysicsNaming::reacting_low_mach_navier_stokes());
+  ReactingFlowsPhysicsFactoryInitializer::ReactingFlowsPhysicsFactoryInitializer()
+  {
+    static PhysicsFactoryReactingFlows<ReactingLowMachNavierStokes>
+      grins_factory_rlmns
+      (PhysicsNaming::reacting_low_mach_navier_stokes(),
+       PhysicsNaming::reacting_low_mach_navier_stokes());
 
-  PhysicsFactoryReactingFlows<ReactingLowMachNavierStokesSPGSMStabilization> grins_factory_rlmns_spgsm_stab
-  (PhysicsNaming::reacting_low_mach_navier_stokes_spgsm_stab(),PhysicsNaming::reacting_low_mach_navier_stokes());
+    static PhysicsFactoryReactingFlows<ReactingLowMachNavierStokesSPGSMStabilization>
+      grins_factory_rlmns_spgsm_stab
+      (PhysicsNaming::reacting_low_mach_navier_stokes_spgsm_stab(),
+       PhysicsNaming::reacting_low_mach_navier_stokes());
+  }
 
 } // end namespace GRINS

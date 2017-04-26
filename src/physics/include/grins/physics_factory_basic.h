@@ -42,7 +42,10 @@ namespace GRINS
   protected:
 
     virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+                                                       const std::string& physics_name )
+    {
+      return libMesh::UniquePtr<Physics>( new DerivedPhysics(physics_name,input) );
+    }
 
   };
 
