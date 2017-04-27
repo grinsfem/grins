@@ -27,9 +27,7 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation_initializer.h"
-#include "grins/simulation.h"
-#include "grins/simulation_builder.h"
+#include "grins/runner.h"
 
 // libMesh
 #include "libmesh/parallel.h"
@@ -40,7 +38,7 @@ libMesh::Real
 initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
 		const std::string& system_name, const std::string& unknown_name );
 
-int run( int argc, char* argv[], const GetPot& input );
+int run( char* argv[], GRINS::Runner & grins );
 
 int main(int argc, char* argv[])
 {
@@ -52,40 +50,25 @@ int main(int argc, char* argv[])
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
 
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
-
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
-
-  // But allow command line options to override the file
-  libMesh_inputfile.parse_command_line(argc, argv);
+  GRINS::Runner grins(argc,argv);
 
   int return_flag = 0;
 
-  return_flag = run( argc, argv, libMesh_inputfile );
+  return_flag = run( argv, grins );
 
   return return_flag;
 }
 
-int run( int argc, char* argv[], const GetPot& input )
+int run( char* argv[], GRINS::Runner & grins )
 {
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
-
-  GRINS::SimulationInitializer initializer;
-
-  GRINS::SimulationBuilder sim_builder;
-
-  GRINS::Simulation grins( input,
-			   sim_builder,
-                           libmesh_init.comm() );
-
+  grins.init();
   grins.run();
+
+  GRINS::Simulation & sim = grins.get_simulation();
 
   // Get equation systems to create ExactSolution object
   GRINS::SharedPtr<libMesh::EquationSystems>
-    es = grins.get_equation_system();
+    es = sim.get_equation_system();
 
   //es->write("foobar.xdr");
 

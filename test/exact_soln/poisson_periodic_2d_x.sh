@@ -17,7 +17,7 @@ ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins \
 
 # Now run the test part to make sure we're getting the correct thing
 ${LIBMESH_RUN:-} ${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
-  input=$INPUT \
+  --input $INPUT \
   Mesh/Generation/n_elems_x=20 \
   Mesh/Generation/n_elems_y=20 \
   vars='u' norms='L2' tol='1.0e-8' \

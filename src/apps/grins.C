@@ -22,42 +22,14 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#include "grins_config.h"
-
-#include <iostream>
-
 // GRINS
 #include "grins/runner.h"
-
-//libMesh
-#include "libmesh/exact_solution.h"
 
 int main(int argc, char* argv[])
 {
   GRINS::Runner grins(argc,argv);
   grins.init();
-
-  // Solve
   grins.run();
 
-  GRINS::Simulation & sim = grins.get_simulation();
-
-  libMesh::Number qoi = sim.get_qoi_value( 0 );
-
-  int return_flag = 0;
-  const libMesh::Number exact_value = -0.5;
-  const libMesh::Number rel_error = std::fabs( (qoi - exact_value )/exact_value );
-  const libMesh::Number tol = 1.0e-11;
-  if( rel_error > tol )
-    {
-      std::cerr << "Computed voriticity QoI mismatch greater than tolerance." << std::endl
-		<< "Computed value = " << qoi << std::endl
-		<< "Exact value = " << exact_value << std::endl
-		<< "Relative error = " << rel_error << std::endl
-		<< "Tolerance = " << tol << std::endl;
-      return_flag = 1;
-    }
-
-  return return_flag;
+  return 0;
 }

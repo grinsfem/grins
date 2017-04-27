@@ -89,13 +89,10 @@ namespace GRINS
 
     if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
-
-    this->check_for_unused_vars(input, false /*warning only*/);
-
   }
 
   Simulation::Simulation( const GetPot& input,
-                          GetPot& command_line,
+                          GetPot& /*command_line*/,
                           SimulationBuilder& sim_builder,
                           const libMesh::Parallel::Communicator &comm )
     :  _mesh( sim_builder.build_mesh(input, comm) ),
@@ -136,10 +133,6 @@ namespace GRINS
 
     if( SimulationParsing::have_restart(input) )
         this->init_restart(input,sim_builder,comm);
-
-    bool warning_only = command_line.search("--warn-only-unused-var");
-    this->check_for_unused_vars(input, warning_only );
-
   }
 
   void Simulation::init_multiphysics_system( const GetPot& input )
@@ -197,8 +190,6 @@ namespace GRINS
           "no QoIs have been specified.\n" << std::endl;
         libmesh_error();
       }
-
-    return;
   }
 
   void Simulation::init_params( const GetPot& input,
@@ -266,66 +257,8 @@ namespace GRINS
     /* \todo Any way to tell if the mesh got refined so we don't unnecessarily
        call reinit()? */
     _equation_system->reinit();
-
-    return;
   }
 
-  void Simulation::check_for_unused_vars( const GetPot& input, bool warning_only )
-  {
-    /* Everything should be set up now, so check if there's any unused variables
-       in the input file. If so, then tell the user what they were and error out. */
-    std::vector<std::string> unused_vars = input.unidentified_variables();
-
-    bool unused_vars_detected = false;
-
-    // String we use to check if there is a variable in the Materials section
-    std::string mat_string = "Materials/";
-
-    // If we do have unused variables, make sure they are in the Materials
-    // section since we're allowing those to be present and not used.
-    if( !unused_vars.empty() )
-      {
-        int n_total = unused_vars.size();
-
-        int n_mats = 0;
-
-        for( int v = 0; v < n_total; v++ )
-            if( (unused_vars[v]).find(mat_string) != std::string::npos )
-              n_mats += 1;
-
-        libmesh_assert_greater_equal( n_total, n_mats );
-
-        if( n_mats < n_total )
-          unused_vars_detected = true;
-      }
-
-    if( unused_vars_detected )
-      {
-        libMesh::err << "==========================================================" << std::endl;
-        if( warning_only )
-          libMesh::err << "Warning: ";
-        else
-          libMesh::err << "Error: ";
-
-        libMesh::err << "Found unused variables!" << std::endl;
-
-        for( std::vector<std::string>::const_iterator it = unused_vars.begin();
-             it != unused_vars.end(); ++it )
-          {
-            // Don't print out any unused Material variables, since we allow these
-            if( (*it).find(mat_string) != std::string::npos )
-              continue;
-
-            libMesh::err << *it << std::endl;
-          }
-        libMesh::err << "==========================================================" << std::endl;
-
-        if( !warning_only )
-          libmesh_error();
-      }
-
-    return;
-  }
 
   void Simulation::run()
   {

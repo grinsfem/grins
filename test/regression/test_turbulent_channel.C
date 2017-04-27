@@ -28,10 +28,8 @@
 #include <iostream>
 
 // GRINS
-#include "grins/simulation_initializer.h"
+#include "grins/runner.h"
 #include "grins/mesh_builder.h"
-#include "grins/simulation.h"
-#include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/dirichlet_bc_factory_function_old_style_base.h"
 #include "grins/var_typedefs.h"
@@ -229,45 +227,33 @@ namespace GRINSTesting
     }
   };
 
-  SATurbUBCFactory grins_factory_testing_turb_u_bc("testing_turb_u");
-  SATurbNuBCFactory grins_factory_testing_turb_nu_bc("testing_turb_nu");
-
 } // end namespace GRINSTesting
 
 int main(int argc, char* argv[])
 {
-  // Check command line count.
-  if( argc < 2 )
-    {
-      // TODO: Need more consistent error handling.
-      std::cerr << "Error: Must specify libMesh input file." << std::endl;
-      exit(1); // TODO: something more sophisticated for parallel runs?
-    }
+  // Factories needed for run
+  GRINSTesting::SATurbUBCFactory grins_factory_testing_turb_u_bc("testing_turb_u");
+  GRINSTesting::SATurbNuBCFactory grins_factory_testing_turb_nu_bc("testing_turb_nu");
 
-  // libMesh input file should be first argument
-  std::string libMesh_input_filename = argv[1];
+  // Need only
+  GRINS::Runner grins(argc,argv);
 
-  // Create our GetPot object.
-  GetPot libMesh_inputfile( libMesh_input_filename );
+  const GetPot & command_line = grins.get_command_line();
 
-  // But allow command line options to override the file
-  libMesh_inputfile.parse_command_line(argc, argv);
+  const GetPot & inputfile = grins.get_input_file();
 
   // Don't flag our command-line-specific variables as UFOs later
-  libMesh_inputfile.have_variable("mesh-1d");
-  libMesh_inputfile.have_variable("data-1d");
-  libMesh_inputfile.have_variable("soln-data");
-  libMesh_inputfile.have_variable("vars");
-  libMesh_inputfile.have_variable("norms");
-  libMesh_inputfile.have_variable("tol");
+  inputfile.have_variable("mesh-1d");
+  inputfile.have_variable("data-1d");
+  inputfile.have_variable("soln-data");
+  inputfile.have_variable("vars");
+  inputfile.have_variable("norms");
+  inputfile.have_variable("tol");
 
-  // Initialize libMesh library.
-  libMesh::LibMeshInit libmesh_init(argc, argv);
+  const libMesh::LibMeshInit & libmesh_init = grins.get_libmesh_init();
 
   // Build a 1-d turbulent_bc_system to get the bc data from files
   libMesh::SerialMesh mesh(libmesh_init.comm());
-
-  GetPot command_line(argc,argv);
 
   std::string oned_mesh = command_line("mesh-1d", "DIE!");
   mesh.read(oned_mesh);
@@ -318,19 +304,16 @@ int main(int argc, char* argv[])
 
   GRINSTesting::SATurbBCFactoryBase::set_turb_bc_values( turbulent_bc_values.get() );
 
-  GRINS::SimulationInitializer initializer;
-
-  GRINS::SimulationBuilder sim_builder;
-
-  GRINS::Simulation grins( libMesh_inputfile,
-			   sim_builder,
-                           libmesh_init.comm() );
+  // Initialize
+  grins.init();
 
   // Solve
   grins.run();
 
+  GRINS::Simulation & sim = grins.get_simulation();
+
 // Get equation systems to create ExactSolution object
-  GRINS::SharedPtr<libMesh::EquationSystems> es = grins.get_equation_system();
+  GRINS::SharedPtr<libMesh::EquationSystems> es = sim.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   //libMesh::ExactSolution exact_sol(*es);
@@ -372,7 +355,7 @@ int main(int argc, char* argv[])
         }
     }
 
-  const std::string& system_name = grins.get_multiphysics_system_name();
+  const std::string& system_name = sim.get_multiphysics_system_name();
 
   // Now compute error for each variable
   for( unsigned int v = 0; v < n_vars; v++ )
