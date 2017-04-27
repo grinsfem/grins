@@ -23,24 +23,39 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_INFLATING_SHEET_SOLVER_FACTORY_H
-#define GRINS_INFLATING_SHEET_SOLVER_FACTORY_H
+#ifndef GRINS_STEADY_SOLVER_H
+#define GRINS_STEADY_SOLVER_H
 
 //GRINS
-#include "grins/solver_factory.h"
+#include "grins/solver.h"
 
 namespace GRINS
 {
-  class InflatingSheetSolverFactory : public SolverFactory
+  class SteadySolver : public Solver
   {
   public:
 
-    InflatingSheetSolverFactory(){};
-    virtual ~InflatingSheetSolverFactory(){};
+    SteadySolver( const GetPot& input );
+    virtual ~SteadySolver();
 
-    virtual GRINS::SharedPtr<GRINS::Solver> build(const GetPot& input);
+    virtual void solve( SolverContext& context );
+
+    virtual void adjoint_qoi_parameter_sensitivity
+      (SolverContext&                  context,
+       const libMesh::QoISet&          qoi_indices,
+       const libMesh::ParameterVector& parameters_in,
+       libMesh::SensitivityData&       sensitivities) const;
+
+    virtual void forward_qoi_parameter_sensitivity
+      (SolverContext&                  context,
+       const libMesh::QoISet&          qoi_indices,
+       const libMesh::ParameterVector& parameters_in,
+       libMesh::SensitivityData&       sensitivities) const;
+
+  protected:
+
+    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
+
   };
-
-} // end namespace GRINS
-
-#endif // GRINS_INFLATING_SHEET_SOLVER_FACTORY_H
+} // namespace GRINS
+#endif // GRINS_STEADY_SOLVER_H

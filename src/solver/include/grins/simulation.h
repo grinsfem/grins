@@ -32,7 +32,7 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/shared_ptr.h"
-#include "grins/grins_solver.h"
+#include "grins/solver.h"
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"
 #include "grins/physics_naming.h"
@@ -110,11 +110,13 @@ namespace GRINS
 
     void build_error_estimator(const GetPot& input);
 
+    void build_solver(const GetPot& input);
+
     SharedPtr<libMesh::UnstructuredMesh> _mesh;
 
     SharedPtr<libMesh::EquationSystems> _equation_system;
 
-    SharedPtr<GRINS::Solver> _solver;
+    libMesh::UniquePtr<GRINS::Solver> _solver;
 
     //! GRINS::Multiphysics system name
     std::string _system_name;

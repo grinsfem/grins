@@ -22,42 +22,30 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_DISPLACEMENT_CONTINUATION_SOLVER_FACTORY_H
-#define GRINS_DISPLACEMENT_CONTINUATION_SOLVER_FACTORY_H
-
-// GRINS
-#include "grins/solver_factory.h"
-#include "grins/solver_parsing.h"
-
-#include "displacement_continuation_solver.h"
+// This class
+#include "grins/solver_factory_abstract.h"
 
 namespace GRINS
 {
-  class DisplacementContinuationSolverFactory : public SolverFactory
+  libMesh::UniquePtr<Solver> SolverFactoryAbstract::create()
   {
-  public:
-    DisplacementContinuationSolverFactory(){};
-    virtual ~DisplacementContinuationSolverFactory(){};
+    if( !this->_input )
+      libmesh_error_msg("ERROR: must call set_getpot() before building boundary condition!");
 
-    virtual SharedPtr<GRINS::Solver> build(const GetPot& input);
-  };
-
-  SharedPtr<GRINS::Solver> DisplacementContinuationSolverFactory::build(const GetPot& input)
-  {
-    std::string solver_type = input("SolverOptions/solver_type", "DIE!");
-
-    SharedPtr<Solver> solver;  // Effectively NULL
-
-    if( solver_type == std::string("displacement_continuation") )
-      {
-        solver.reset( new DisplacementContinuationSolver(input) );
-      }
-    else
-      solver = SolverFactory::build(input);
-
-    return solver;
+    return this->build_solver(*(this->_input));
   }
 
-} // end namespace GRINS
+  // Full specialization for the Factory<Solver>
+  template<>
+  std::map<std::string, FactoryAbstract<Solver>*>&
+  FactoryAbstract<Solver>::factory_map()
+  {
+    static std::map<std::string, FactoryAbstract<Solver>*> _map;
+    return _map;
+  }
 
-#endif // GRINS_DISPLACEMENT_CONTINUATION_SOLVER_FACTORY_H
+  // Definition of static members
+  template<>
+  const GetPot* FactoryWithGetPot<Solver>::_input = NULL;
+
+} // end namespace GRINS

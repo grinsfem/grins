@@ -27,7 +27,7 @@
 #define GRINS_UNSTEADY_SOLVER_H
 
 //GRINS
-#include "grins/grins_solver.h"
+#include "grins/solver.h"
 #include "grins/adaptive_time_stepping_options.h"
 
 //libMesh

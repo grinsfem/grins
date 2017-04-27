@@ -22,33 +22,38 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "inflating_sheet_solver_factory.h"
+#ifndef GRINS_SOLVER_FACTORY_ABSTRACT_H
+#define GRINS_SOLVER_FACTORY_ABSTRACT_H
 
-// Inflating Sheet Example
-#include "pressure_continuation_solver.h"
-
-// libMesh
-#include "libmesh/getpot.h"
+// GRINS
+#include "grins/factory_with_getpot.h"
+#include "grins/solver.h"
 
 namespace GRINS
 {
-  GRINS::SharedPtr<Solver> InflatingSheetSolverFactory::build(const GetPot& input)
+  class SolverFactoryAbstract : public FactoryWithGetPot<Solver>
   {
-    std::string solver_type = input("SolverOptions/solver_type", "DIE!");
+  public:
+    SolverFactoryAbstract( const std::string & bc_type_name )
+      : FactoryWithGetPot<Solver>(bc_type_name)
+    {}
 
-    GRINS::SharedPtr<Solver> solver;  // Effectively NULL
+    virtual ~SolverFactoryAbstract() =0;
 
-    if( solver_type == std::string("pressure_continuation") )
-      {
-        solver.reset( new PressureContinuationSolver(input) );
-      }
-    else
-      {
-        solver = SolverFactory::build(input);
-      }
+  protected:
 
-    return solver;
-  }
+    virtual libMesh::UniquePtr<Solver> build_solver( const GetPot & input ) =0;
+
+  private:
+
+    virtual libMesh::UniquePtr<Solver> create();
+
+    SolverFactoryAbstract();
+  };
+
+  inline
+  SolverFactoryAbstract:: ~SolverFactoryAbstract(){}
 
 } // end namespace GRINS
+
+#endif // GRINS_SOLVER_FACTORY_ABSTRACT_H

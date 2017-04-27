@@ -195,12 +195,13 @@ libgrins_la_SOURCES += qoi/src/absorption_coeff.C
 libgrins_la_SOURCES += qoi/src/spectroscopic_absorption.C
 
 # src/solver files
-libgrins_la_SOURCES += solver/src/grins_solver.C
+libgrins_la_SOURCES += solver/src/solver.C
 libgrins_la_SOURCES += solver/src/mesh_builder.C
 libgrins_la_SOURCES += solver/src/simulation.C
-libgrins_la_SOURCES += solver/src/solver_factory.C
-libgrins_la_SOURCES += solver/src/grins_steady_solver.C
-libgrins_la_SOURCES += solver/src/grins_unsteady_solver.C
+libgrins_la_SOURCES += solver/src/solver_factory_abstract.C
+libgrins_la_SOURCES += solver/src/solver_factory_initializer.C
+libgrins_la_SOURCES += solver/src/steady_solver.C
+libgrins_la_SOURCES += solver/src/unsteady_solver.C
 libgrins_la_SOURCES += solver/src/simulation_builder.C
 libgrins_la_SOURCES += solver/src/solver_context.C
 libgrins_la_SOURCES += solver/src/mesh_adaptive_solver_base.C
@@ -483,12 +484,14 @@ include_HEADERS += qoi/include/grins/absorption_coeff.h
 include_HEADERS += qoi/include/grins/spectroscopic_absorption.h
 
 # src/solver headers
-include_HEADERS += solver/include/grins/grins_solver.h
+include_HEADERS += solver/include/grins/solver.h
 include_HEADERS += solver/include/grins/mesh_builder.h
 include_HEADERS += solver/include/grins/simulation.h
-include_HEADERS += solver/include/grins/solver_factory.h
-include_HEADERS += solver/include/grins/grins_steady_solver.h
-include_HEADERS += solver/include/grins/grins_unsteady_solver.h
+include_HEADERS += solver/include/grins/solver_factory_abstract.h
+include_HEADERS += solver/include/grins/solver_factory_basic.h
+include_HEADERS += solver/include/grins/solver_factory_initializer.h
+include_HEADERS += solver/include/grins/steady_solver.h
+include_HEADERS += solver/include/grins/unsteady_solver.h
 include_HEADERS += solver/include/grins/simulation_builder.h
 include_HEADERS += solver/include/grins/solver_context.h
 include_HEADERS += solver/include/grins/mesh_adaptive_solver_base.h

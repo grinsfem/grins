@@ -22,33 +22,33 @@
 //
 //-----------------------------------------------------------------------el-
 
+// This class
+#include "grins/solver_factory_initializer.h"
 
-#ifndef GRINS_SOLVER_FACTORY_H
-#define GRINS_SOLVER_FACTORY_H
+// GRINS
+#include "grins/solver_factory_basic.h"
+#include "grins/solver_names.h"
 
-//GRINS
-#include "grins/grins_solver.h"
-
-// libMesh forward declarations
-class GetPot;
+// GRINS-Solvers
+#include "grins/steady_solver.h"
+#include "grins/unsteady_solver.h"
+#include "grins/steady_mesh_adaptive_solver.h"
+#include "grins/unsteady_mesh_adaptive_solver.h"
 
 namespace GRINS
 {
-  //! This object handles constructing the solver to be used.
-  /*! To allow the user to easily extend the (limited) available solvers,
-      the solver construction is handled in this object. */
-  class SolverFactory
+  SolverFactoryInitializer::SolverFactoryInitializer()
   {
-  public:
+    static SolverFactoryBasic<UnsteadySolver>
+      grins_factory_unsteady_solver(SolverNames::unsteady_solver());
 
-    SolverFactory(){};
-    virtual ~SolverFactory(){};
+    static SolverFactoryBasic<SteadySolver>
+      grins_factory_steady_solver(SolverNames::steady_solver());
 
-    //! Builds GRINS::Solver object.
-    /*! Users should override this method to construct 
-        their own solvers. */
-    virtual SharedPtr<GRINS::Solver> build(const GetPot& input);
+    static SolverFactoryBasic<UnsteadyMeshAdaptiveSolver>
+      grins_factory_unsteady_mesh_adapt_solver(SolverNames::unsteady_mesh_adaptive_solver());
 
-  };
-} // namespace GRINS
-#endif //GRINS_SOLVER_FACTORY_H
+    static SolverFactoryBasic<SteadyMeshAdaptiveSolver>
+      grins_factory_steady_mesh_adapt_solver(SolverNames::steady_mesh_adaptive_solver());
+  }
+} // end namespace GRINS

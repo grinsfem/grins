@@ -22,30 +22,40 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_SOLVER_FACTORY_BASIC_H
+#define GRINS_SOLVER_FACTORY_BASIC_H
 
-#include "grins_config.h"
+#include "grins/solver_factory_abstract.h"
 
-#include <iostream>
-
-// GRINS
-#include "grins/runner.h"
-#include "grins/solver_factory_basic.h"
-
-// libMesh
-#include "libmesh/parallel.h"
-
-#include "displacement_continuation_solver.h"
-
-int main(int argc, char* argv[])
+namespace GRINS
 {
-  // Register new solver
-  GRINS::SolverFactoryBasic<GRINS::DisplacementContinuationSolver>
-    cont_solver_factory("displacement_continuation");
+  template<typename DerivedSolver>
+  class SolverFactoryBasic : public SolverFactoryAbstract
+  {
+  public:
+    SolverFactoryBasic( const std::string & bc_type_name )
+      : SolverFactoryAbstract(bc_type_name)
+    {}
 
-  GRINS::Runner grins(argc,argv);
+    virtual ~SolverFactoryBasic(){}
 
-  grins.init();
-  grins.run();
+  protected:
 
-  return 0;
-}
+    virtual libMesh::UniquePtr<Solver> build_solver( const GetPot & input );
+
+  private:
+
+    SolverFactoryBasic();
+  };
+
+  template<typename DerivedSolver>
+  inline
+  libMesh::UniquePtr<Solver>
+  SolverFactoryBasic<DerivedSolver>::build_solver( const GetPot & input )
+  {
+    return libMesh::UniquePtr<Solver>( new DerivedSolver(input) );
+  }
+
+} // end namespace GRINS
+
+#endif // GRINS_SOLVER_FACTORY_BASIC_H

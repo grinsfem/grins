@@ -371,6 +371,21 @@
 # time stepping.
 [SolverOptions]
 
+   # Set the solver_type to be used for the simulation.
+   # For the grins native solvers, this is currently optional,
+   # since transience and AMR is detected from other options.
+   # But the user may explictly set this option. Additionally,
+   # if the user wishes to deploy their own solver, they will
+   # set the name of the solver, if it's to be used in the
+   # simulation, here.
+   #
+   # Current valid options are:
+   #   grins_steady_solver
+   #   grins_unsteady_solver
+   #   grins_steady_mesh_adaptive_solver
+   #   grins_unsteady_mesh_adaptive_solver
+   solver_type = 'grins_steady_solver'
+
    # Options related for time stepping algorithms
    [./TimeStepping]
 

@@ -22,40 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-
-#ifndef GRINS_STEADY_SOLVER_H
-#define GRINS_STEADY_SOLVER_H
-
-//GRINS
-#include "grins/grins_solver.h"
+#ifndef GRINS_SOLVER_FACTORY_INITIALIZER_H
+#define GRINS_SOLVER_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  class SteadySolver : public Solver
+  //! Initialize all Factory objects related to Solvers
+  /*! To avoid symbol stripping from static linking, we use this
+      class to initialize/register the Solvers factory objects.
+
+      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class SolverFactoryInitializer
   {
   public:
-
-    SteadySolver( const GetPot& input );
-    virtual ~SteadySolver();
-
-    virtual void solve( SolverContext& context );
-
-    virtual void adjoint_qoi_parameter_sensitivity
-      (SolverContext&                  context,
-       const libMesh::QoISet&          qoi_indices,
-       const libMesh::ParameterVector& parameters_in,
-       libMesh::SensitivityData&       sensitivities) const;
-
-    virtual void forward_qoi_parameter_sensitivity
-      (SolverContext&                  context,
-       const libMesh::QoISet&          qoi_indices,
-       const libMesh::ParameterVector& parameters_in,
-       libMesh::SensitivityData&       sensitivities) const;
-
-  protected:
-
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
-
+    SolverFactoryInitializer();
+    ~SolverFactoryInitializer(){}
   };
-} // namespace GRINS
-#endif // GRINS_STEADY_SOLVER_H
+} // end namespace GRINS
+
+#endif // GRINS_SOLVER_FACTORY_INITIALIZER_H

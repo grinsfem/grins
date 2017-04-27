@@ -26,7 +26,7 @@
 #define GRINS_UNSTEADY_MESH_ADAPTIVE_SOLVER_H
 
 // GRINS
-#include "grins/grins_unsteady_solver.h"
+#include "grins/unsteady_solver.h"
 #include "grins/mesh_adaptive_solver_base.h"
 
 namespace GRINS

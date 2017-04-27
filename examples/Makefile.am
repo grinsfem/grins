@@ -137,7 +137,6 @@ EXTRA_DIST += $(simpleprop_DATA)
 elasticsheetdir = $(prefix)/examples/elastic_sheet
 elasticsheet_PROGRAMS = stretching_sheet
 elasticsheet_DATA  = $(top_srcdir)/examples/elastic_sheet/sheet.in
-elasticsheet_DATA += $(top_srcdir)/examples/elastic_sheet/displacement_continuation_solver_factory.h
 elasticsheet_DATA += $(top_srcdir)/examples/elastic_sheet/displacement_continuation_solver.h
 elasticsheet_SCRIPTS = $(top_builddir)/examples/elastic_sheet/run.sh
 
@@ -156,14 +155,12 @@ inflatingsheetdir = $(prefix)/examples/inflating_sheet
 inflatingsheet_PROGRAMS = sheet
 inflatingsheet_DATA  = $(top_srcdir)/examples/inflating_sheet/sheet.in
 inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/sheet_coarse.e
-inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/inflating_sheet_solver_factory.h
 inflatingsheet_DATA += $(top_srcdir)/examples/inflating_sheet/pressure_continuation_solver.h
 inflatingsheet_SCRIPTS = $(top_builddir)/examples/inflating_sheet/run.sh
 
 EXTRA_DIST += $(inflatingsheet_DATA)
 
 sheet_SOURCES  = inflating_sheet/inflating_sheet.C
-sheet_SOURCES += inflating_sheet/inflating_sheet_solver_factory.C
 sheet_SOURCES += inflating_sheet/pressure_continuation_solver.C
 
 sheet_LDADD = $(LIBGRINS_LIBS)

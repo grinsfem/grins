@@ -34,17 +34,10 @@ namespace GRINS
 {
   SimulationBuilder::SimulationBuilder()
     : _mesh_builder( new MeshBuilder ),
-      _solver_factory( new SolverFactory ),
       _vis_factory( new VisualizationFactory ),
       _qoi_factory( new QoIFactory ),
       _postprocessing_factory( new PostprocessingFactory )
   {}
-
-  void SimulationBuilder::attach_solver_factory( SharedPtr<SolverFactory> solver_factory )
-  {
-    this->_solver_factory = solver_factory;
-    return;
-  }
 
   void SimulationBuilder::attach_mesh_builder( SharedPtr<MeshBuilder> mesh_builder )
   {
@@ -73,11 +66,6 @@ namespace GRINS
       const libMesh::Parallel::Communicator &comm)
   {
     return (this->_mesh_builder)->build(input, comm);
-  }
-
-  SharedPtr<GRINS::Solver> SimulationBuilder::build_solver( const GetPot& input )
-  {
-    return (this->_solver_factory)->build(input);
   }
 
   SharedPtr<GRINS::Visualization> SimulationBuilder::build_vis

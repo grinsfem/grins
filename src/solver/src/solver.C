@@ -28,7 +28,7 @@
 #include <iomanip>
 
 // This class
-#include "grins/grins_solver.h"
+#include "grins/solver.h"
 
 // GRINS
 #include "grins/multiphysics_sys.h"
