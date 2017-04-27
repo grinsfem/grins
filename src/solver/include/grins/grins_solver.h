@@ -32,12 +32,6 @@
 // libMesh
 #include "libmesh/equation_systems.h"
 
-#ifdef GRINS_HAVE_GRVY
-#include "libmesh/ignore_warnings.h" // avoid auto_ptr deprecated warnings
-#include "grvy.h" // GRVY timers
-#include "libmesh/restore_warnings.h"
-#endif
-
 // libMesh forward declarations
 class GetPot;
 

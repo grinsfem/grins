@@ -64,10 +64,6 @@ namespace GRINS
                                                                           AssemblyContext& context,
                                                                           CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("BoussinesqBuoyancySPGSMStabilization::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u()).size();
 
@@ -151,12 +147,6 @@ namespace GRINS
 
           } // End i dof loop
       } // End quadrature loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("BoussinesqBuoyancySPGSMStabilization::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -164,10 +154,6 @@ namespace GRINS
                                                                      AssemblyContext& context,
                                                                      CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("BoussinesqBuoyancySPGSMStabilization::element_constraint");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(_press_var.p()).size();
 
@@ -226,12 +212,6 @@ namespace GRINS
           } // End i dof loop
 
       } // End quadrature loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("BoussinesqBuoyancySPGSMStabilization::element_constraint");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -240,10 +220,6 @@ namespace GRINS
                                                                 CachedValues& /*cache*/ )
   {
     /*
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("BoussinesqBuoyancySPGSMStabilization::mass_residual");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u()).size();
 
@@ -308,13 +284,7 @@ namespace GRINS
 
           } // End i dof loop
       } // End quadrature loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("BoussinesqBuoyancySPGSMStabilization::mass_residual");
-#endif
     */
-
-    return;
   }
 
   template<class Mu>

@@ -552,10 +552,6 @@ else
    libgrins_la_LIBADD = $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
 endif
 
-if GRVY_ENABLED
-   libgrins_la_LIBADD += $(GRVY_PREFIX)/lib/libgrvy.la
-endif
-
 if ANTIOCH_ENABLED
    libgrins_la_LIBADD += $(ANTIOCH_LDFLAGS) $(ANTIOCH_LIBS)
 endif
@@ -613,7 +609,6 @@ AM_CPPFLAGS += -I$(top_builddir)/src/utilities/include #For grins_version.h
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 AM_CPPFLAGS += $(LIBMESH_CPPFLAGS)
-AM_CPPFLAGS += $(GRVY_CFLAGS)
 
 AM_LDFLAGS =
 

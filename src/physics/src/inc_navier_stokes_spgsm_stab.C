@@ -46,10 +46,6 @@ namespace GRINS
                                                                               AssemblyContext& context,
                                                                               CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("IncompressibleNavierStokesSPGSMStabilization::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
 
@@ -117,10 +113,6 @@ namespace GRINS
         if( compute_jacobian )
           libmesh_not_implemented();
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("IncompressibleNavierStokesSPGSMStabilization::element_time_derivative");
-#endif
   }
 
   template<class Mu>
@@ -128,10 +120,6 @@ namespace GRINS
                                                                          AssemblyContext& context,
                                                                          CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("IncompressibleNavierStokesSPGSMStabilization::element_constraint");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
 
@@ -172,12 +160,6 @@ namespace GRINS
         if( compute_jacobian )
           libmesh_not_implemented();
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("IncompressibleNavierStokesSPGSMStabilization::element_constraint");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -185,10 +167,6 @@ namespace GRINS
                                                                     AssemblyContext& context,
                                                                     CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("IncompressibleNavierStokesSPGSMStabilization::mass_residual");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -260,12 +238,6 @@ namespace GRINS
           }
 
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("IncompressibleNavierStokesSPGSMStabilization::mass_residual");
-#endif
-
-    return;
   }
 
 } // end namespace GRINS

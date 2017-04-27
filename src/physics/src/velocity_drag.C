@@ -47,8 +47,6 @@ namespace GRINS
   {
     context.get_element_fe(this->_flow_vars.u())->get_xyz();
     context.get_element_fe(this->_flow_vars.u())->get_phi();
-
-    return;
   }
 
 
@@ -57,10 +55,6 @@ namespace GRINS
 					      AssemblyContext& context,
 					      CachedValues& /* cache */ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityDrag::element_time_derivative");
-#endif
-
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
@@ -158,13 +152,6 @@ namespace GRINS
               }
           }
       }
-
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityDrag::element_time_derivative");
-#endif
-
-    return;
   }
 
 } // namespace GRINS

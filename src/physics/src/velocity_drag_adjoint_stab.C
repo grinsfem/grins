@@ -68,10 +68,6 @@ namespace GRINS
       AssemblyContext& context,
       CachedValues& /* cache */ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityDragAdjointStabilization::element_time_derivative");
-#endif
-
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
     // Element Jacobian * quadrature weights for interior integration
@@ -158,7 +154,7 @@ namespace GRINS
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] + 
+            libMesh::Real test_func = this->_rho*U*u_gradphi[i][qp] +
               mu_qp*( u_hessphi[i][qp](0,0) + u_hessphi[i][qp](1,1) + u_hessphi[i][qp](2,2) );
             Fu(i) += tau_M*F(0)*test_func*JxW[qp];
 
@@ -225,12 +221,6 @@ namespace GRINS
 
           } // End i dof loop
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityDragAdjointStabilization::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class Mu>
@@ -238,10 +228,6 @@ namespace GRINS
                                                                 AssemblyContext& context,
                                                                 CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("VelocityDragAdjointStabilization::element_constraint");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -250,7 +236,7 @@ namespace GRINS
     const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
@@ -360,12 +346,6 @@ namespace GRINS
               }
           }
       } // End quadrature loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("VelocityDragAdjointStabilization::element_constraint");
-#endif
-
-    return;
   }
 
 

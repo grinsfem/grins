@@ -84,7 +84,6 @@ namespace GRINS
                       << "Adaptive Refinement Step " << r_step << std::endl
                       << "==========================================================" << std::endl;
 
-            // GRVY timers contained in here (if enabled)
             context.system->solve();
 
             sim_time = context.system->time;

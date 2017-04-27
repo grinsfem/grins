@@ -563,12 +563,4 @@ namespace GRINS
       }
   }
 
-#ifdef GRINS_USE_GRVY_TIMERS
-  void Simulation::attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer )
-  {
-    this->_multiphysics_system->attach_grvy_timer( grvy_timer );
-    return;
-  }
-#endif
-
 } // namespace GRINS

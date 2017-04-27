@@ -107,19 +107,15 @@ namespace GRINS
 					         AssemblyContext& context,
 					         CachedValues& /* cache */ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("ParsedVelocitySource::element_time_derivative");
-#endif
-
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<libMesh::Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u())->get_JxW();
 
     // The shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& u_phi = 
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u())->get_xyz();
 
     // The number of local degrees of freedom in each variable
@@ -200,13 +196,6 @@ namespace GRINS
               }
           }
       }
-
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("ParsedVelocitySource::element_time_derivative");
-#endif
-
-    return;
   }
 
   template<class Mu>

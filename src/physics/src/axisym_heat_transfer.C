@@ -96,10 +96,6 @@ namespace GRINS
 									AssemblyContext& context,
 									CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("AxisymmetricHeatTransfer::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u()).size();
@@ -210,12 +206,6 @@ namespace GRINS
 
 	  } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("AxisymmetricHeatTransfer::element_time_derivative");
-#endif
-
-    return;
   }
 
   template< class Conductivity>
@@ -223,10 +213,6 @@ namespace GRINS
 							      AssemblyContext& context,
 							      CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("AxisymmetricHeatTransfer::mass_residual");
-#endif
-
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.
 
@@ -282,12 +268,6 @@ namespace GRINS
 	  } // End of element dof loop
 
       } // End of the quadrature point loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("AxisymmetricHeatTransfer::mass_residual");
-#endif
-
-    return;
   }
 
   template< class Conductivity>

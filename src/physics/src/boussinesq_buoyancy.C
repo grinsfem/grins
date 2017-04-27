@@ -53,10 +53,6 @@ namespace GRINS
                                                     AssemblyContext& context,
                                                     CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("BoussinesqBuoyancy::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u()).size();
     const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T()).size();
@@ -134,10 +130,6 @@ namespace GRINS
 
           } // End i dof loop
       } // End quadrature loop
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("BoussinesqBuoyancy::element_time_derivative");
-#endif
   }
 
 } // namespace GRINS

@@ -35,7 +35,7 @@ namespace GRINS
 {
 
   template<class K>
-  HeatTransferSPGSMStabilization<K>::HeatTransferSPGSMStabilization( const std::string& physics_name, 
+  HeatTransferSPGSMStabilization<K>::HeatTransferSPGSMStabilization( const std::string& physics_name,
                                                                   const GetPot& input )
     : HeatTransferStabilizationBase<K>(physics_name,input)
   {
@@ -53,10 +53,6 @@ namespace GRINS
                                                                 AssemblyContext& context,
                                                                 CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("HeatTransferSPGSMStabilization::element_time_derivative");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
 
@@ -84,10 +80,10 @@ namespace GRINS
           {
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
-      
+
 	// Compute Conductivity at this qp
 	libMesh::Real _k_qp = this->_k(context, qp);
-	
+
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, this->_rho, this->_Cp, _k_qp,  U, this->_is_steady );
 
         libMesh::Real RE_s = this->_stab_helper.compute_res_energy_steady( context, qp, this->_rho, this->_Cp, _k_qp );
@@ -103,11 +99,6 @@ namespace GRINS
           }
 
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("HeatTransferSPGSMStabilization::element_time_derivative");
-#endif
-    return;
   }
 
   template<class K>
@@ -115,10 +106,6 @@ namespace GRINS
                                                       AssemblyContext& context,
                                                       CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("HeatTransferSPGSMStabilization::mass_residual");
-#endif
-
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
 
@@ -149,7 +136,7 @@ namespace GRINS
 
 	// Compute Conductivity at this qp
 	libMesh::Real _k_qp = this->_k(context, qp);
-      
+
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, this->_rho, this->_Cp, _k_qp,  U, false );
 
         libMesh::Real RE_t = this->_stab_helper.compute_res_energy_transient( context, qp, this->_rho, this->_Cp );
@@ -160,11 +147,6 @@ namespace GRINS
           }
 
       }
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("HeatTransferSPGSMStabilization::mass_residual");
-#endif
-    return;
   }
 
 } // namespace GRINS

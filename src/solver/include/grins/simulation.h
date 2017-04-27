@@ -46,13 +46,6 @@
 #include "libmesh/getpot.h"
 #include "libmesh/mesh.h"
 
-// GRVY
-#ifdef GRINS_HAVE_GRVY
-#include "libmesh/ignore_warnings.h" // avoid auto_ptr deprecated warnings
-#include "grvy.h"
-#include "libmesh/restore_warnings.h"
-#endif
-
 // libMesh forward declarations
 class GetPot;
 
@@ -92,10 +85,6 @@ namespace GRINS
 
     const std::string& get_multiphysics_system_name() const;
 
-#ifdef GRINS_USE_GRVY_TIMERS
-    void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
-#endif
-
   protected:
 
     void read_restart( const GetPot& input );
@@ -132,7 +121,7 @@ namespace GRINS
 
     //! GRINS::Multiphysics system name
     std::string _system_name;
-    
+
     // This needs to be a standard pointer, as _equation_system will own and destroy the object.
     GRINS::MultiphysicsSystem* _multiphysics_system;
 

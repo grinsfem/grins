@@ -38,7 +38,7 @@
 namespace GRINS
 {
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::LowMachNavierStokesSPGSMStabilization( const std::string& physics_name, 
+  LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::LowMachNavierStokesSPGSMStabilization( const std::string& physics_name,
 											  const GetPot& input )
     : LowMachNavierStokesStabilizationBase<Mu,SH,TC>(physics_name,input)
   {
@@ -55,18 +55,9 @@ namespace GRINS
 										 AssemblyContext& context,
 										 CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::element_time_derivative");
-#endif
-
     this->assemble_continuity_time_deriv( compute_jacobian, context );
     this->assemble_momentum_time_deriv( compute_jacobian, context );
     this->assemble_energy_time_deriv( compute_jacobian, context );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::element_time_derivative");
-#endif
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -74,18 +65,9 @@ namespace GRINS
 								       AssemblyContext& context,
 								       CachedValues& /*cache*/ )
   {
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->BeginTimer("LowMachNavierStokesSPGSMStabilization::mass_residual");
-#endif
-
     this->assemble_continuity_mass_residual( compute_jacobian, context );
     this->assemble_momentum_mass_residual( compute_jacobian, context );
     this->assemble_energy_mass_residual( compute_jacobian, context );
-
-#ifdef GRINS_USE_GRVY_TIMERS
-    this->_timer->EndTimer("LowMachNavierStokesSPGSMStabilization::mass_residual");
-#endif
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -390,7 +372,7 @@ namespace GRINS
 	libMesh::Real RC_t = this->compute_res_continuity_transient( context, qp );
 	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
 	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
-      
+
 	for (unsigned int i=0; i != n_u_dofs; i++)
 	  {
 	    Fu(i) -= ( tau_C*RC_t*u_gradphi[i][qp](0)
