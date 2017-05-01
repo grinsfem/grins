@@ -327,12 +327,12 @@ namespace GRINS
           {
             if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
               {
-                ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
+                ((*(physics_iter->second)).*resfunc)( compute_jacobian, c );
               }
           }
         else
           {
-            ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
+            ((*(physics_iter->second)).*resfunc)( compute_jacobian, c );
           }
       }
 

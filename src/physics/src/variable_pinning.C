@@ -51,7 +51,7 @@ namespace GRINS
       }
   }
 
-  void VariablePinning::auxiliary_init( MultiphysicsSystem& system )
+  void VariablePinning::auxiliary_init( MultiphysicsSystem & system )
   {
     if( _pin_variable )
       {
@@ -69,7 +69,7 @@ namespace GRINS
       }
   }
 
-  void VariablePinning::init_context( AssemblyContext& context )
+  void VariablePinning::init_context( AssemblyContext & context )
   {
     // We should prerequest all the data
     // we will need to build the linear system
@@ -81,15 +81,13 @@ namespace GRINS
       }
   }
 
-  void VariablePinning::element_constraint( bool compute_jacobian,
-                                            AssemblyContext& context,
-                                            CachedValues& /*cache*/ )
+  void VariablePinning::element_constraint
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // Pin var = var_value at p_point
     if( _pin_variable )
-      {
-        _var_pinning.pin_value( context, compute_jacobian, this->_variable_to_pin, this->_penalty );
-      }
+      _var_pinning.pin_value( context, compute_jacobian, this->_variable_to_pin, this->_penalty );
   }
 
 } // namespace GRINS

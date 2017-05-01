@@ -221,9 +221,8 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticCable<StressStrainLaw>::element_time_derivative( bool compute_jacobian,
-                                                               AssemblyContext& context,
-                                                               CachedValues& /*cache*/)
+  void ElasticCable<StressStrainLaw>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     const unsigned int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
 

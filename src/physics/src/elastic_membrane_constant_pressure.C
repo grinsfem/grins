@@ -65,9 +65,9 @@ namespace GRINS
       libmesh_error_msg("ERROR: ElasticMembraneConstantPressure only valid for three dimensions! Make sure you have three components in your Displacement type variable.");
   }
 
-  void ElasticMembraneConstantPressure::element_time_derivative( bool compute_jacobian,
-                                                                 AssemblyContext& context,
-                                                                 CachedValues& /*cache*/ )
+  void ElasticMembraneConstantPressure::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     const unsigned int n_u_dofs = context.get_dof_indices(_disp_vars.u()).size();
 

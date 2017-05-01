@@ -41,18 +41,17 @@ namespace GRINS
     ~VariablePinning(){};
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext & context );
 
     //! Initialize pinning helper object
-    virtual void auxiliary_init( MultiphysicsSystem& system );
+    virtual void auxiliary_init( MultiphysicsSystem & system );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext& context,
-                                     CachedValues& cache );
+                                     AssemblyContext & context );
 
   protected:
 

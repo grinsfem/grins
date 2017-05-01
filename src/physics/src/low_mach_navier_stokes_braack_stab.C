@@ -53,9 +53,9 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
-                                                                                  AssemblyContext& context,
-                                                                                  CachedValues& /*cache*/ )
+  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     this->assemble_continuity_time_deriv( compute_jacobian, context );
     this->assemble_momentum_time_deriv( compute_jacobian, context );
@@ -63,9 +63,8 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::mass_residual( bool compute_jacobian,
-                                                                        AssemblyContext& context,
-                                                                        CachedValues& /*cache*/ )
+  void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     this->assemble_continuity_mass_residual( compute_jacobian, context );
     this->assemble_momentum_mass_residual( compute_jacobian, context );

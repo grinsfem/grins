@@ -42,9 +42,9 @@ namespace GRINS
   {}
 
   template<class Mu>
-  void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
-                                                                                  AssemblyContext& context,
-                                                                                  CachedValues& /*cache*/ )
+  void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -116,9 +116,8 @@ namespace GRINS
   }
 
   template<class Mu>
-  void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                             AssemblyContext& context,
-                                                                             CachedValues& /*cache*/ )
+  void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_constraint
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -163,9 +162,8 @@ namespace GRINS
   }
 
   template<class Mu>
-  void IncompressibleNavierStokesSPGSMStabilization<Mu>::mass_residual( bool compute_jacobian,
-                                                                        AssemblyContext& context,
-                                                                        CachedValues& /*cache*/ )
+  void IncompressibleNavierStokesSPGSMStabilization<Mu>::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();

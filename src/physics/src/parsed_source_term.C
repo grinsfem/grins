@@ -44,11 +44,6 @@ namespace GRINS
                         "DIE!");
   }
 
-  ParsedSourceTerm::~ParsedSourceTerm()
-  {
-    return;
-  }
-
   void ParsedSourceTerm::init_context( AssemblyContext& context )
   {
     for( std::vector<VariableIndex>::const_iterator v_it = _vars.begin();
@@ -62,9 +57,8 @@ namespace GRINS
       }
   }
 
-  void ParsedSourceTerm::element_time_derivative( bool /*compute_jacobian*/,
-                                                  AssemblyContext& context,
-                                                  CachedValues& /*cache*/ )
+  void ParsedSourceTerm::element_time_derivative
+  ( bool /*compute_jacobian*/, AssemblyContext & context )
   {
     for( std::vector<VariableIndex>::const_iterator v_it = _vars.begin();
          v_it != _vars.end(); ++v_it )

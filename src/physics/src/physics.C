@@ -132,69 +132,6 @@ namespace GRINS
     return;
   }
 
-  void Physics::element_time_derivative( bool /*compute_jacobian*/,
-                                         AssemblyContext& /*context*/,
-                                         CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::side_time_derivative( bool /*compute_jacobian*/,
-                                      AssemblyContext& /*context*/,
-                                      CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::nonlocal_time_derivative( bool /*compute_jacobian*/,
-                                          AssemblyContext& /*context*/,
-                                          CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::element_constraint( bool /*compute_jacobian*/,
-                                    AssemblyContext& /*context*/,
-                                    CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::side_constraint( bool /*compute_jacobian*/,
-                                 AssemblyContext& /*context*/,
-                                 CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::nonlocal_constraint( bool /*compute_jacobian*/,
-                                     AssemblyContext& /*context*/,
-                                     CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::damping_residual( bool /*compute_jacobian*/,
-                                  AssemblyContext& /*context*/,
-                                  CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::mass_residual( bool /*compute_jacobian*/,
-                               AssemblyContext& /*context*/,
-                               CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::nonlocal_mass_residual( bool /*compute_jacobian*/,
-                                        AssemblyContext& /*context*/,
-                                        CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
   void Physics::compute_postprocessed_quantity( unsigned int /*quantity_index*/,
                                                 const AssemblyContext& /*context*/,
                                                 const libMesh::Point& /*point*/,

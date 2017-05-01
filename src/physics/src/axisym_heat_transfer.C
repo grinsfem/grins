@@ -92,9 +92,8 @@ namespace GRINS
   }
 
   template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::element_time_derivative( bool compute_jacobian,
-                                                                        AssemblyContext& context,
-                                                                        CachedValues& /*cache*/ )
+  void AxisymmetricHeatTransfer<Conductivity>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T()).size();
@@ -209,9 +208,8 @@ namespace GRINS
   }
 
   template< class Conductivity>
-  void AxisymmetricHeatTransfer<Conductivity>::mass_residual( bool compute_jacobian,
-                                                              AssemblyContext& context,
-                                                              CachedValues& /*cache*/ )
+  void AxisymmetricHeatTransfer<Conductivity>::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.

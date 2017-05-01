@@ -92,7 +92,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::init_context( AssemblyContext& context )
+  void LowMachNavierStokes<Mu,SH,TC>::init_context( AssemblyContext & context )
   {
     // First call base class
     LowMachNavierStokesBase<Mu,SH,TC>::init_context(context);
@@ -111,10 +111,11 @@ namespace GRINS
 
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
-                                                               AssemblyContext& context,
-                                                               CachedValues& cache )
+  void LowMachNavierStokes<Mu,SH,TC>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
+    const CachedValues & cache = context.get_cached_values();
+
     this->assemble_mass_time_deriv( compute_jacobian, context, cache );
     this->assemble_momentum_time_deriv( compute_jacobian, context, cache );
     this->assemble_energy_time_deriv( compute_jacobian, context, cache );
@@ -124,9 +125,9 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::element_constraint( bool compute_jacobian,
-                                                          AssemblyContext& context,
-                                                          CachedValues& /* cache */ )
+  void LowMachNavierStokes<Mu,SH,TC>::element_constraint
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
@@ -134,9 +135,8 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::mass_residual( bool compute_jacobian,
-                                                     AssemblyContext& context,
-                                                     CachedValues& /*cache*/ )
+  void LowMachNavierStokes<Mu,SH,TC>::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     this->assemble_continuity_mass_residual( compute_jacobian, context );
 
@@ -150,8 +150,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::assemble_mass_time_deriv( bool compute_jacobian,
-                                                                AssemblyContext& context,
-                                                                CachedValues& cache )
+                                                                AssemblyContext & context,
+                                                                const CachedValues & cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -285,8 +285,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::assemble_momentum_time_deriv( bool compute_jacobian,
-                                                                    AssemblyContext& context,
-                                                                    CachedValues& cache )
+                                                                    AssemblyContext & context,
+                                                                    const CachedValues & cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -579,8 +579,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::assemble_energy_time_deriv( bool compute_jacobian,
-                                                                  AssemblyContext& context,
-                                                                  CachedValues& cache )
+                                                                  AssemblyContext & context,
+                                                                  const CachedValues & cache )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
@@ -1018,8 +1018,10 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( AssemblyContext & context,
-                                                                             CachedValues& cache )
+                                                                             CachedValues & /*cache*/ )
   {
+    CachedValues & cache = context.get_cached_values();
+
     const unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     std::vector<libMesh::Real> u, v, w, T, p, p0;

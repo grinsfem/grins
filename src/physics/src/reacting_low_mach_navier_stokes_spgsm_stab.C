@@ -39,9 +39,9 @@ namespace GRINS
   {}
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokesSPGSMStabilization<Mixture,Evaluator>::element_time_derivative( bool compute_jacobian,
-                                                                                                  AssemblyContext& context,
-                                                                                                  CachedValues& /*cache*/ )
+  void ReactingLowMachNavierStokesSPGSMStabilization<Mixture,Evaluator>::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -191,9 +191,8 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokesSPGSMStabilization<Mixture,Evaluator>::mass_residual( bool compute_jacobian,
-                                                                                        AssemblyContext& context,
-                                                                                        CachedValues& /*cache*/ )
+  void ReactingLowMachNavierStokesSPGSMStabilization<Mixture,Evaluator>::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();

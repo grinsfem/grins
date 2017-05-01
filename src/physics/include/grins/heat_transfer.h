@@ -54,13 +54,11 @@ namespace GRINS
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+                                          AssemblyContext& context );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext& context,
-                                CachedValues& cache );
+                                AssemblyContext & context );
 
     //! Compute value of postprocessed quantities at libMesh::Point.
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,

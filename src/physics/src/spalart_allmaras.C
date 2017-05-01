@@ -120,9 +120,8 @@ namespace GRINS
   }
 
   template<class Mu>
-  void SpalartAllmaras<Mu>::element_time_derivative( bool compute_jacobian,
-                                                     AssemblyContext& context,
-                                                     CachedValues& /*cache*/ )
+  void SpalartAllmaras<Mu>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // Get a pointer to the current element, we need this for computing
     // the distance to wall for the  quadrature points
@@ -262,9 +261,8 @@ namespace GRINS
   }
 
   template<class K>
-  void SpalartAllmaras<K>::mass_residual( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& /*cache*/ )
+  void SpalartAllmaras<K>::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.

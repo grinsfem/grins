@@ -220,8 +220,9 @@ namespace GRINS
     //! Constraint application object
     libMesh::UniquePtr<libMesh::System::Constraint> _constraint;
 
-    // Useful typedef for refactoring
-    typedef void (GRINS::Physics::*ResFuncType) (bool, AssemblyContext &, CachedValues &);
+    // Useful typedef to pointer-to-member functions so we can call all
+    // residual and caching functions using a single function (_general_residual)
+    typedef void (GRINS::Physics::*ResFuncType) (bool, AssemblyContext &);
     typedef void (GRINS::Physics::*CacheFuncType) (AssemblyContext &, CachedValues &);
 
     // Refactored residual evaluation implementation

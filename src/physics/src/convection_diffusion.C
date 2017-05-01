@@ -78,9 +78,9 @@ namespace GRINS
     context.get_element_fe(_var.var())->get_xyz();
   }
 
-  void ConvectionDiffusion::element_time_derivative( bool compute_jacobian,
-                                                     AssemblyContext& context,
-                                                     CachedValues& /*cache*/ )
+  void ConvectionDiffusion::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     const unsigned int n_dofs = context.get_dof_indices(_var.var()).size();
 
@@ -134,9 +134,8 @@ namespace GRINS
       }
   }
 
-  void ConvectionDiffusion::mass_residual( bool compute_jacobian,
-                                           AssemblyContext& context,
-                                           CachedValues& /*cache*/ )
+  void ConvectionDiffusion::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     const unsigned int n_dofs = context.get_dof_indices(_var.var()).size();
 

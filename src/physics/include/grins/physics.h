@@ -170,49 +170,40 @@ namespace GRINS
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     //! Time dependent part(s) of physics for element interiors
-    virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+    virtual void element_time_derivative( bool /*compute_jacobian*/,
+                                          AssemblyContext & /*context*/ ){}
 
     //! Time dependent part(s) of physics for boundaries of elements on the domain boundary
-    virtual void side_time_derivative( bool compute_jacobian,
-                                       AssemblyContext& context,
-                                       CachedValues& cache );
+    virtual void side_time_derivative( bool /*compute_jacobian*/,
+                                       AssemblyContext & /*context*/ ){}
 
     //! Time dependent part(s) of physics for scalar variables
-    virtual void nonlocal_time_derivative( bool compute_jacobian,
-                                           AssemblyContext& context,
-                                           CachedValues& cache );
+    virtual void nonlocal_time_derivative( bool /*compute_jacobian*/,
+                                           AssemblyContext & /*context*/ ){}
 
     //! Constraint part(s) of physics for element interiors
-    virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext& context,
-                                     CachedValues& cache );
+    virtual void element_constraint( bool /*compute_jacobian*/,
+                                     AssemblyContext & /*context*/ ){}
 
     //! Constraint part(s) of physics for boundaries of elements on the domain boundary
-    virtual void side_constraint( bool compute_jacobian,
-                                  AssemblyContext& context,
-                                  CachedValues& cache );
+    virtual void side_constraint( bool /*compute_jacobian*/,
+                                  AssemblyContext & /*context*/ ){}
 
     //! Constraint part(s) of physics for scalar variables
-    virtual void nonlocal_constraint( bool compute_jacobian,
-                                      AssemblyContext& context,
-                                      CachedValues& cache );
+    virtual void nonlocal_constraint( bool /*compute_jacobian*/,
+                                      AssemblyContext & /*context*/ ){}
 
     //! Damping matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
-    virtual void damping_residual( bool compute_jacobian,
-                                   AssemblyContext& context,
-                                   CachedValues& cache );
+    virtual void damping_residual( bool /*compute_jacobian*/,
+                                   AssemblyContext & /*context*/ ){}
 
     //! Mass matrix part(s) for element interiors. All boundary terms lie within the time_derivative part
-    virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext& context,
-                                CachedValues& cache );
+    virtual void mass_residual( bool /*compute_jacobian*/,
+                                AssemblyContext & /*context*/ ){}
 
     //! Mass matrix part(s) for scalar variables.
-    virtual void nonlocal_mass_residual( bool compute_jacobian,
-                                         AssemblyContext& context,
-                                         CachedValues& cache );
+    virtual void nonlocal_mass_residual( bool /*compute_jacobian*/,
+                                         AssemblyContext & /*context*/ ){}
 
     void init_ics( libMesh::FEMSystem* system,
                    libMesh::CompositeFunction<libMesh::Number>& all_ics );

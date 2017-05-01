@@ -42,12 +42,10 @@ namespace GRINS
     virtual ~LowMachNavierStokesVMSStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+                                          AssemblyContext& context );
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext& context,
-                                CachedValues& cache );
+                                AssemblyContext & context );
 
   protected:
 

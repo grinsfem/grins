@@ -159,9 +159,7 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_time_derivative
-  ( bool compute_jacobian,
-    AssemblyContext & context,
-    CachedValues & /*cache*/ )
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     if( compute_jacobian )
       libmesh_not_implemented();
@@ -400,9 +398,9 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_constraint( bool compute_jacobian,
-                                                                           AssemblyContext& context,
-                                                                           CachedValues& /* cache */ )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_constraint
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
@@ -414,9 +412,8 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::mass_residual( bool compute_jacobian,
-                                                                      AssemblyContext& context,
-                                                                      CachedValues& /*cache*/ )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();

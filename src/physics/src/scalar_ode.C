@@ -102,9 +102,8 @@ namespace GRINS
   }
 
 
-  void ScalarODE::nonlocal_time_derivative(bool compute_jacobian,
-                                           AssemblyContext& context,
-                                           CachedValues& /* cache */ )
+  void ScalarODE::nonlocal_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
       context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
@@ -148,9 +147,8 @@ namespace GRINS
   }
 
 
-  void ScalarODE::nonlocal_mass_residual(bool compute_jacobian,
-                                         AssemblyContext& context,
-                                         CachedValues& /* cache */ )
+  void ScalarODE::nonlocal_mass_residual
+  (bool compute_jacobian, AssemblyContext & context )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
       context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
@@ -194,9 +192,8 @@ namespace GRINS
   }
 
 
-  void ScalarODE::nonlocal_constraint(bool compute_jacobian,
-                                      AssemblyContext& context,
-                                      CachedValues& /* cache */ )
+  void ScalarODE::nonlocal_constraint
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
       context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}

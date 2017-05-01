@@ -49,9 +49,8 @@ namespace GRINS
   }
 
   template<class K>
-  void HeatTransferSPGSMStabilization<K>::element_time_derivative( bool compute_jacobian,
-                                                                   AssemblyContext& context,
-                                                                   CachedValues& /*cache*/ )
+  void HeatTransferSPGSMStabilization<K>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
@@ -102,10 +101,12 @@ namespace GRINS
   }
 
   template<class K>
-  void HeatTransferSPGSMStabilization<K>::mass_residual( bool /*compute_jacobian*/,
-                                                         AssemblyContext& context,
-                                                         CachedValues& /*cache*/ )
+  void HeatTransferSPGSMStabilization<K>::mass_residual( bool compute_jacobian,
+                                                         AssemblyContext & context )
   {
+    if( compute_jacobian )
+      libmesh_not_implemented();
+
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
 

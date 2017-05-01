@@ -42,20 +42,17 @@ namespace GRINS
 
     //! Register postprocessing variables for ElasticMembrane
     virtual void register_postprocessing_vars( const GetPot& input,
-                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+                                               PostProcessedQuantities<libMesh::Real> & postprocessing );
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& /*cache*/ );
+                                          AssemblyContext & context );
 
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext& context,
-                                     CachedValues& cache );
+                                     AssemblyContext & context );
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext& context,
-                                CachedValues& /*cache*/ )
+                                AssemblyContext & context )
     { this->mass_residual_impl(compute_jacobian,
                                context,
                                &libMesh::FEMContext::interior_accel,

@@ -97,9 +97,9 @@ namespace GRINS
   }
 
   template<class Mu>
-  void AveragedFan<Mu>::element_time_derivative( bool compute_jacobian,
-                                                 AssemblyContext& context,
-                                                 CachedValues& /* cache */ )
+  void AveragedFan<Mu>::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW =
