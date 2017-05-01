@@ -65,8 +65,8 @@ namespace GRINS
 
     if( context.output_vis )
       {
-	context.postprocessing->update_quantities( *(context.equation_system) );
-	context.vis->output( context.equation_system );
+        context.postprocessing->update_quantities( *(context.equation_system) );
+        context.vis->output( context.equation_system );
       }
 
     context.system->solve();
@@ -76,17 +76,17 @@ namespace GRINS
 
     if( context.do_adjoint_solve )
       {
-	// Get the linear solver
-	libMesh::LinearSolver<libMesh::Number> *linear_solver = context.system->get_linear_solver();
+        // Get the linear solver
+        libMesh::LinearSolver<libMesh::Number> *linear_solver = context.system->get_linear_solver();
 
-	// Set ourselves to reuse the preconditioner
-	linear_solver->reuse_preconditioner(true);
+        // Set ourselves to reuse the preconditioner
+        linear_solver->reuse_preconditioner(true);
 
-	// Solve the adjoint problem
-	this->steady_adjoint_solve(context);
+        // Solve the adjoint problem
+        this->steady_adjoint_solve(context);
 
-	// Go back to not reusing the preconditioner
-	linear_solver->reuse_preconditioner(false);
+        // Go back to not reusing the preconditioner
+        linear_solver->reuse_preconditioner(false);
       }
 
     if( context.output_adjoint )
@@ -94,8 +94,8 @@ namespace GRINS
 
     if( context.output_vis )
       {
-	context.postprocessing->update_quantities( *(context.equation_system) );
-	context.vis->output( context.equation_system );
+        context.postprocessing->update_quantities( *(context.equation_system) );
+        context.vis->output( context.equation_system );
       }
 
     if( context.output_residual ) context.vis->output_residual( context.equation_system, context.system );
@@ -104,10 +104,10 @@ namespace GRINS
   }
 
   void SteadySolver::adjoint_qoi_parameter_sensitivity
-    (SolverContext& context,
-     const libMesh::QoISet&          qoi_indices,
-     const libMesh::ParameterVector& parameters_in,
-     libMesh::SensitivityData&       sensitivities) const
+  (SolverContext& context,
+   const libMesh::QoISet&          qoi_indices,
+   const libMesh::ParameterVector& parameters_in,
+   libMesh::SensitivityData&       sensitivities) const
   {
     // Get the linear solver
     libMesh::LinearSolver<libMesh::Number> *linear_solver = context.system->get_linear_solver();
@@ -123,10 +123,10 @@ namespace GRINS
   }
 
   void SteadySolver::forward_qoi_parameter_sensitivity
-    (SolverContext& context,
-     const libMesh::QoISet&          qoi_indices,
-     const libMesh::ParameterVector& parameters_in,
-     libMesh::SensitivityData&       sensitivities) const
+  (SolverContext& context,
+   const libMesh::QoISet&          qoi_indices,
+   const libMesh::ParameterVector& parameters_in,
+   libMesh::SensitivityData&       sensitivities) const
   {
     context.system->forward_qoi_parameter_sensitivity
       (qoi_indices, parameters_in, sensitivities);

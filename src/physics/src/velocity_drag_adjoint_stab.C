@@ -40,7 +40,7 @@ namespace GRINS
   template<class Mu>
   VelocityDragAdjointStabilization<Mu>::VelocityDragAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : VelocityDragBase<Mu>(physics_name, input),
-      _stab_helper( physics_name+"StabHelper", input )
+    _stab_helper( physics_name+"StabHelper", input )
   {}
 
   template<class Mu>
@@ -64,9 +64,9 @@ namespace GRINS
 
   template<class Mu>
   void VelocityDragAdjointStabilization<Mu>::element_time_derivative
-    ( bool compute_jacobian,
-      AssemblyContext& context,
-      CachedValues& /* cache */ )
+  ( bool compute_jacobian,
+    AssemblyContext& context,
+    CachedValues& /* cache */ )
   {
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
@@ -142,8 +142,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         libMesh::NumberVectorValue F;
         libMesh::NumberTensorValue dFdU;
@@ -225,8 +225,8 @@ namespace GRINS
 
   template<class Mu>
   void VelocityDragAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                AssemblyContext& context,
-                                                                CachedValues& /*cache*/ )
+                                                                 AssemblyContext& context,
+                                                                 CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -295,8 +295,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         libMesh::NumberVectorValue F;
         libMesh::NumberTensorValue dFdU;

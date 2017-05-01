@@ -106,7 +106,7 @@ namespace GRINS
     _g(0) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 0 );
 
     if( g_dim > 1)
-    _g(1) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 1 );
+      _g(1) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 1 );
 
     if( g_dim == 3)
       _g(2) = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/g", 0.0, 2 );
@@ -154,8 +154,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBase<Mu,SH,TC>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     ParameterUser::register_parameter(param_name, param_pointer);

@@ -40,19 +40,19 @@ namespace GRINS
 {
   //! Class to encapsulate initializing and running GRINS Simulation
   /*! This class encapsulates all of the construction, initialization, etc.
-      libMesh and GRINS objects to facilitate easy construction of a GRINS-based
-      program. The user only needs to construct this object, init(), and then run().
-      Accessors are provided to perform auxillary functions as needed beyond a single
-      Simulation run. */
+    libMesh and GRINS objects to facilitate easy construction of a GRINS-based
+    program. The user only needs to construct this object, init(), and then run().
+    Accessors are provided to perform auxillary functions as needed beyond a single
+    Simulation run. */
   class Runner
   {
   public:
 
     //! Setup input objects
     /*! The constructor will only setup input parsing objects and LibMeshInit.
-        The user must call init() to initialize the Simulation objects. This allows
-        the user to use the underlying command line and input file objects to do steps
-        that may be needed before Simulation initialization. */
+      The user must call init() to initialize the Simulation objects. This allows
+      the user to use the underlying command line and input file objects to do steps
+      that may be needed before Simulation initialization. */
     Runner( int argc, char* argv[] );
 
     ~Runner(){}

@@ -36,10 +36,10 @@ namespace GRINS
 {
 
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesStabilizationBase<Mu,SH,TC>::LowMachNavierStokesStabilizationBase( const std::string& physics_name, 
-											const GetPot& input )
+  LowMachNavierStokesStabilizationBase<Mu,SH,TC>::LowMachNavierStokesStabilizationBase( const std::string& physics_name,
+                                                                                        const GetPot& input )
     : LowMachNavierStokesBase<Mu,SH,TC>(physics_name,PhysicsNaming::low_mach_navier_stokes(),input),
-      _stab_helper( physics_name+"StabHelper", input )
+    _stab_helper( physics_name+"StabHelper", input )
   {}
 
   template<class Mu, class SH, class TC>
@@ -58,13 +58,13 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_steady( AssemblyContext& context,
-											       unsigned int qp ) const
+                                                                                               unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T(), qp);
     libMesh::RealGradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
 
     libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp),
-			     context.fixed_interior_value(this->_flow_vars.v(), qp) );
+                             context.fixed_interior_value(this->_flow_vars.v(), qp) );
 
     libMesh::RealGradient grad_u, grad_v;
 
@@ -76,8 +76,8 @@ namespace GRINS
 
     if( this->_flow_vars.dim() == 3 )
       {
-	U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
-	divU += (context.fixed_interior_gradient(this->_flow_vars.w(), qp))(2);
+        U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
+        divU += (context.fixed_interior_gradient(this->_flow_vars.w(), qp))(2);
       }
 
     return divU - (U*grad_T)/T;
@@ -85,7 +85,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_continuity_transient( AssemblyContext& context,
-												  unsigned int qp ) const
+                                                                                                  unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T(), qp);
     libMesh::Real T_dot = context.interior_value(this->_temp_vars.T(), qp);
@@ -94,10 +94,10 @@ namespace GRINS
 
     if( this->_enable_thermo_press_calc )
       {
-	libMesh::Real p0 = context.fixed_interior_value(this->_p0_var->p0(), qp);
-	libMesh::Real p0_dot = context.interior_value(this->_p0_var->p0(), qp);
+        libMesh::Real p0 = context.fixed_interior_value(this->_p0_var->p0(), qp);
+        libMesh::Real p0_dot = context.interior_value(this->_p0_var->p0(), qp);
 
-	RC_t += p0_dot/p0;
+        RC_t += p0_dot/p0;
       }
 
     return RC_t;
@@ -105,14 +105,14 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_steady( AssemblyContext& context,
-												     unsigned int qp ) const
+                                                                                                     unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T(), qp);
 
     libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
 
     libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp),
-			     context.fixed_interior_value(this->_flow_vars.v(), qp) );
+                             context.fixed_interior_value(this->_flow_vars.v(), qp) );
 
     if(this->_flow_vars.dim() == 3)
       U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
@@ -132,58 +132,58 @@ namespace GRINS
 
     if( this->_flow_vars.dim() < 3 )
       {
-	rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v );
-	divGradU  = _stab_helper.div_GradU( hess_u, hess_v );
-	divGradUT = _stab_helper.div_GradU_T( hess_u, hess_v );
-	divdivU   = _stab_helper.div_divU_I( hess_u, hess_v );
+        rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v );
+        divGradU  = _stab_helper.div_GradU( hess_u, hess_v );
+        divGradUT = _stab_helper.div_GradU_T( hess_u, hess_v );
+        divdivU   = _stab_helper.div_divU_I( hess_u, hess_v );
       }
     else
       {
-	libMesh::RealGradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
-	libMesh::RealTensor hess_w = context.fixed_interior_hessian(this->_flow_vars.w(), qp);
+        libMesh::RealGradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
+        libMesh::RealTensor hess_w = context.fixed_interior_hessian(this->_flow_vars.w(), qp);
 
-	rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v, grad_w );
+        rhoUdotGradU = rho*_stab_helper.UdotGradU( U, grad_u, grad_v, grad_w );
 
-	divGradU  = _stab_helper.div_GradU( hess_u, hess_v, hess_w );
-	divGradUT = _stab_helper.div_GradU_T( hess_u, hess_v, hess_w );
-	divdivU   = _stab_helper.div_divU_I( hess_u, hess_v, hess_w );
+        divGradU  = _stab_helper.div_GradU( hess_u, hess_v, hess_w );
+        divGradUT = _stab_helper.div_GradU_T( hess_u, hess_v, hess_w );
+        divdivU   = _stab_helper.div_divU_I( hess_u, hess_v, hess_w );
       }
 
     libMesh::RealGradient divT = this->_mu(T)*(divGradU + divGradUT - 2.0/3.0*divdivU);
 
     if( this->_mu.deriv(T) != 0.0 )
       {
-	libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
+        libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
 
-	libMesh::Gradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
-	libMesh::Gradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
+        libMesh::Gradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
+        libMesh::Gradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
 
-	libMesh::Gradient gradTgradu( grad_T*grad_u, grad_T*grad_v );
+        libMesh::Gradient gradTgradu( grad_T*grad_u, grad_T*grad_v );
 
-	libMesh::Gradient gradTgraduT( grad_T(0)*grad_u(0) + grad_T(1)*grad_u(1),
-				       grad_T(0)*grad_v(0) + grad_T(1)*grad_v(1) );
+        libMesh::Gradient gradTgraduT( grad_T(0)*grad_u(0) + grad_T(1)*grad_u(1),
+                                       grad_T(0)*grad_v(0) + grad_T(1)*grad_v(1) );
 
-	libMesh::Real divU = grad_u(0) + grad_v(1);
+        libMesh::Real divU = grad_u(0) + grad_v(1);
 
-	libMesh::Gradient gradTdivU( grad_T(0)*divU, grad_T(1)*divU );
+        libMesh::Gradient gradTdivU( grad_T(0)*divU, grad_T(1)*divU );
 
-	if(this->_flow_vars.dim() == 3)
-	  {
-	    libMesh::Gradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
+        if(this->_flow_vars.dim() == 3)
+          {
+            libMesh::Gradient grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
 
-	    gradTgradu(2) = grad_T*grad_w;
+            gradTgradu(2) = grad_T*grad_w;
 
-	    gradTgraduT(0) += grad_T(2)*grad_u(2);
-	    gradTgraduT(1) += grad_T(2)*grad_v(2);
-	    gradTgraduT(2) = grad_T(0)*grad_w(0) + grad_T(1)*grad_w(1) + grad_T(2)*grad_w(2);
+            gradTgraduT(0) += grad_T(2)*grad_u(2);
+            gradTgraduT(1) += grad_T(2)*grad_v(2);
+            gradTgraduT(2) = grad_T(0)*grad_w(0) + grad_T(1)*grad_w(1) + grad_T(2)*grad_w(2);
 
-	    divU += grad_w(2);
-	    gradTdivU(0) += grad_T(0)*grad_w(2);
-	    gradTdivU(1) += grad_T(1)*grad_w(2);
-	    gradTdivU(2) += grad_T(2)*divU;
-	  }
+            divU += grad_w(2);
+            gradTdivU(0) += grad_T(0)*grad_w(2);
+            gradTdivU(1) += grad_T(1)*grad_w(2);
+            gradTdivU(2) += grad_T(2)*divU;
+          }
 
-	divT += this->_mu.deriv(T)*( gradTgradu + gradTgraduT - 2.0/3.0*gradTdivU );
+        divT += this->_mu.deriv(T)*( gradTgradu + gradTgraduT - 2.0/3.0*gradTdivU );
       }
 
     libMesh::RealGradient rhog( rho*this->_g(0), rho*this->_g(1) );
@@ -195,7 +195,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   libMesh::RealGradient LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_momentum_transient( AssemblyContext& context,
-													unsigned int qp ) const
+                                                                                                        unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T(), qp);
     libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
@@ -210,7 +210,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_steady( AssemblyContext& context,
-											   unsigned int qp ) const
+                                                                                           unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T(), qp);
     libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
@@ -220,7 +220,7 @@ namespace GRINS
     libMesh::Real rho_cp = rho*this->_cp(T);
 
     libMesh::RealGradient rhocpU( rho_cp*context.fixed_interior_value(this->_flow_vars.u(), qp),
-				  rho_cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
+                                  rho_cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
 
     if(this->_flow_vars.dim() == 3)
       rhocpU(2) = rho_cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
@@ -236,7 +236,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   libMesh::Real LowMachNavierStokesStabilizationBase<Mu,SH,TC>::compute_res_energy_transient( AssemblyContext& context,
-											      unsigned int qp ) const
+                                                                                              unsigned int qp ) const
   {
     libMesh::Real T = context.fixed_interior_value(this->_temp_vars.T(), qp);
     libMesh::Real rho = this->rho(T, this->get_p0_transient(context,qp) );
@@ -247,9 +247,9 @@ namespace GRINS
 
     if( this->_enable_thermo_press_calc )
       {
-	RE_t -= context.interior_value(this->_p0_var->p0(), qp);
+        RE_t -= context.interior_value(this->_p0_var->p0(), qp);
       }
-  
+
     return RE_t;
   }
 

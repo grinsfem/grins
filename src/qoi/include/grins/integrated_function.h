@@ -41,13 +41,13 @@ namespace GRINS
 
   //! IntegratedFunction
   /*!
-  The purpose of this class is to integrate a function along a 1D line through a 2D mesh.
-  This class utilizes the RayfireMesh class to calculate the line and provide 1D elements for evaluating
-  the function.
+    The purpose of this class is to integrate a function along a 1D line through a 2D mesh.
+    This class utilizes the RayfireMesh class to calculate the line and provide 1D elements for evaluating
+    the function.
 
-  The template parameter must be FunctionBase or FEMFunctionBase.
+    The template parameter must be FunctionBase or FEMFunctionBase.
 
-  Currently, calculating element qoi derivatives is not supported.
+    Currently, calculating element qoi derivatives is not supported.
   */
   template<typename Function>
   class IntegratedFunction : public QoIBase
@@ -55,10 +55,10 @@ namespace GRINS
   public:
     //! Constructor
     /*!
-    @param p_level The desired Gauss Quadrature level
-    @param f A FunctionBase or FEMFunctionBase object for evaluting the QoI
-    @param rayfire A RayfireMesh object (will be initialized in init())
-    @param qoi_name Passed to the QoIBase
+      @param p_level The desired Gauss Quadrature level
+      @param f A FunctionBase or FEMFunctionBase object for evaluting the QoI
+      @param rayfire A RayfireMesh object (will be initialized in init())
+      @param qoi_name Passed to the QoIBase
     */
     IntegratedFunction(unsigned int p_level, SharedPtr<Function> f, SharedPtr<RayfireMesh> rayfire, const std::string& qoi_name);
 
@@ -75,7 +75,7 @@ namespace GRINS
 
     //! Compute the qoi derivative with respect to the solution.
     /*!
-    Currently not implemented
+      Currently not implemented
     */
     virtual void element_qoi_derivative( AssemblyContext& context,
                                          const unsigned int qoi_index );

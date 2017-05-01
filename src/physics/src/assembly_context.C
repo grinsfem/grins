@@ -32,7 +32,7 @@ namespace GRINS
   {
     return;
   }
-    
+
   AssemblyContext::~AssemblyContext()
   {
     return;

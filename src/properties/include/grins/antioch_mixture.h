@@ -56,7 +56,7 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-   */
+  */
   class AntiochMixture : public AntiochChemistry
   {
   public:
@@ -68,9 +68,9 @@ namespace GRINS
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+      const;
 
     const Antioch::ReactionSet<libMesh::Real>& reaction_set() const;
 

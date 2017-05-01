@@ -85,10 +85,10 @@ namespace GRINS
             this->check_qoi_physics_consistency( input, *name );
           }
 
-	if( input( "screen-options/echo_qoi", false ) )
-	  {
-	    this->echo_qoi_list( qois );
-	  }
+        if( input( "screen-options/echo_qoi", false ) )
+          {
+            this->echo_qoi_list( qois );
+          }
       }
 
     return qois;
@@ -150,7 +150,7 @@ namespace GRINS
 
         std::string hitran_partition;
         this->get_var_value<std::string>(input,hitran_partition,"QoI/SpectroscopicAbsorption/hitran_partition_function_file","");
-          
+
         libMesh::Real T_min,T_max,T_step;
         std::string partition_temp_var = "QoI/SpectroscopicAbsorption/partition_temperatures";
         if (input.have_variable(partition_temp_var))
@@ -200,8 +200,8 @@ namespace GRINS
 
     else
       {
-	 libMesh::err << "Error: Invalid QoI name " << qoi_name << std::endl;
-	 libmesh_error();
+        libMesh::err << "Error: Invalid QoI name " << qoi_name << std::endl;
+        libmesh_error();
       }
 
     libmesh_assert(qoi);
@@ -212,7 +212,7 @@ namespace GRINS
   }
 
   void QoIFactory::check_qoi_physics_consistency( const GetPot& input,
-						  const std::string& qoi_name )
+                                                  const std::string& qoi_name )
   {
     int num_physics =  input.vector_variable_size("Physics/enabled_physics");
 
@@ -225,16 +225,16 @@ namespace GRINS
     // Build Physics name set
     for( int i = 0; i < num_physics; i++ )
       {
-	requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
+        requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
       }
 
     /* If it's Nusselt, we'd better have HeatTransfer or LowMachNavierStokes.
        HeatTransfer implicitly requires fluids, so no need to check for those. `*/
     if( qoi_name == avg_nusselt )
       {
-	required_physics.insert(PhysicsNaming::heat_transfer());
-	required_physics.insert(PhysicsNaming::low_mach_navier_stokes());
-	this->consistency_helper( requested_physics, required_physics, qoi_name );
+        required_physics.insert(PhysicsNaming::heat_transfer());
+        required_physics.insert(PhysicsNaming::low_mach_navier_stokes());
+        this->consistency_helper( requested_physics, required_physics, qoi_name );
       }
 
     return;
@@ -244,7 +244,7 @@ namespace GRINS
   {
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
     std::cout << "==========================================================" << std::endl
-	      << "List of Enabled QoIs:" << std::endl;
+              << "List of Enabled QoIs:" << std::endl;
 
     for( unsigned int q = 0; q < qois->n_qois(); q++ )
       {
@@ -257,16 +257,16 @@ namespace GRINS
   }
 
   void QoIFactory::consistency_helper( const std::set<std::string>& requested_physics,
-				       const std::set<std::string>& required_physics,
-				       const std::string& qoi_name )
+                                       const std::set<std::string>& required_physics,
+                                       const std::string& qoi_name )
   {
     bool physics_found = false;
     for( std::set<std::string>::const_iterator name = required_physics.begin();
-	 name != required_physics.end();
-	 name++ )
+         name != required_physics.end();
+         name++ )
       {
-	if( requested_physics.find( (*name) ) != requested_physics.end() )
-	  physics_found = true;
+        if( requested_physics.find( (*name) ) != requested_physics.end() )
+          physics_found = true;
       }
 
     if( !physics_found )
@@ -276,17 +276,17 @@ namespace GRINS
   }
 
   void QoIFactory::consistency_error_msg( const std::string& qoi_name,
-					  const std::set<std::string>& required_physics )
+                                          const std::set<std::string>& required_physics )
   {
     libMesh::err << "================================================================" << std::endl
-		 << "QoI " << qoi_name << std::endl
-		 << "requires one of the following physics which were not found:" <<std::endl;
+                 << "QoI " << qoi_name << std::endl
+                 << "requires one of the following physics which were not found:" <<std::endl;
 
     for( std::set<std::string>::const_iterator name = required_physics.begin();
-	 name != required_physics.end();
-	 name++ )
+         name != required_physics.end();
+         name++ )
       {
-	libMesh::err << *name << std::endl;
+        libMesh::err << *name << std::endl;
       }
 
     libMesh::err << "================================================================" << std::endl;
@@ -314,9 +314,9 @@ namespace GRINS
     libMesh::Real theta;
 
     if (input.have_variable("QoI/"+qoi_string+"/Rayfire/theta"))
-        theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
+      theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
     else
-        libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
+      libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
 
 
     if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
@@ -324,7 +324,7 @@ namespace GRINS
 
     return new RayfireMesh(origin,theta);
   }
-  
+
   template<typename T>
   void QoIFactory::get_var_value( const GetPot & input, T & value, std::string input_var, T default_value )
   {
@@ -334,7 +334,7 @@ namespace GRINS
       libmesh_error_msg("ERROR: Could not find required input parameter: "+input_var);
   }
 
-template void QoIFactory::get_var_value<std::string>( const GetPot &, std::string &, std::string, std::string);
-template void QoIFactory::get_var_value<libMesh::Real>( const GetPot &, libMesh::Real &, std::string, libMesh::Real);
+  template void QoIFactory::get_var_value<std::string>( const GetPot &, std::string &, std::string, std::string);
+  template void QoIFactory::get_var_value<libMesh::Real>( const GetPot &, libMesh::Real &, std::string, libMesh::Real);
 
 } //namespace GRINS

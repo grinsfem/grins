@@ -311,11 +311,11 @@ namespace GRINS
 
             if( this->_flow_vars.dim() > 1 )
               (*Fv)(i) -= ( tau_C*RC_t*u_gradphi[i][qp](1)
-                          + tau_M*RM_t(1)*rho*U*u_gradphi[i][qp] )*jac;
+                            + tau_M*RM_t(1)*rho*U*u_gradphi[i][qp] )*jac;
 
             if( this->_flow_vars.dim() == 3 )
               (*Fw)(i) -= ( tau_C*RC_t*u_gradphi[i][qp](2)
-                          + tau_M*RM_t(2)*rho*U*u_gradphi[i][qp] )*jac;
+                            + tau_M*RM_t(2)*rho*U*u_gradphi[i][qp] )*jac;
           }
 
         for (unsigned int i=0; i != n_T_dofs; i++)

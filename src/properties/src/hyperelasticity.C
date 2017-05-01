@@ -43,7 +43,7 @@ namespace GRINS
   {
     return;
   }
-  
+
   template <typename StrainEnergy>
   void Hyperelasticity<StrainEnergy>::compute_stress_imp( unsigned int dim,
                                                           const libMesh::TensorValue<libMesh::Real>& g_contra,

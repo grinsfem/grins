@@ -55,7 +55,7 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-   */
+  */
   class AntiochChemistry : public ParameterUser
   {
   public:
@@ -82,7 +82,7 @@ namespace GRINS
 
     //! Mole fraction for all species, unitless
     void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
-	    std::vector<libMesh::Real>& mole_fractions ) const;
+            std::vector<libMesh::Real>& mole_fractions ) const;
 
     //! Species molar density, [mol/m^3]
     libMesh::Real molar_density( const unsigned int species,
@@ -91,8 +91,8 @@ namespace GRINS
 
     //! Molar density for all species, [mol/m^3]
     void molar_densities( const libMesh::Real rho,
-			  const std::vector<libMesh::Real>& mass_fractions,
-			  std::vector<libMesh::Real>& molar_densities ) const;
+                          const std::vector<libMesh::Real>& mass_fractions,
+                          std::vector<libMesh::Real>& molar_densities ) const;
 
     unsigned int n_species() const;
 

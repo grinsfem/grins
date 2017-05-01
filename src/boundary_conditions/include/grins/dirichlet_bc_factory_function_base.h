@@ -46,20 +46,20 @@ namespace GRINS
 
     //! Builds the FunctionBase object for boundary condition
     /*! Subclasses should override this function to build the
-        FunctionBase object that corresponds to the variables passed
-        in var_names. The variable names passed in will correspond to
-        only a single VariableBase object, e.g.  Velocity. The section
-        arguments corresponds to the section to parse for the
-        variables in the input file, e.g. input(section+"/"+var_names[0]).
+      FunctionBase object that corresponds to the variables passed
+      in var_names. The variable names passed in will correspond to
+      only a single VariableBase object, e.g.  Velocity. The section
+      arguments corresponds to the section to parse for the
+      variables in the input file, e.g. input(section+"/"+var_names[0]).
 
-        The variable names passed in correspond to all the active
-        variable names for a Variable group. The variable names
-        present in var_names after this function is called will
-        correspond to those variables. Note that var_names is *NOT*
-        const. This is because one of the behaviors of subclasses may
-        be to *remove* variables from the list. For example, for some
-        symmetry conditions, we only want to enforce zero on certain
-        components of the solution while leaving others untouched. */
+      The variable names passed in correspond to all the active
+      variable names for a Variable group. The variable names
+      present in var_names after this function is called will
+      correspond to those variables. Note that var_names is *NOT*
+      const. This is because one of the behaviors of subclasses may
+      be to *remove* variables from the list. For example, for some
+      symmetry conditions, we only want to enforce zero on certain
+      components of the solution while leaving others untouched. */
     virtual libMesh::UniquePtr<FunctionType>
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,

@@ -95,14 +95,14 @@ int main(int argc, char* argv[])
       return_flag = 1;
 
       std::cout << "Tolerance exceeded for thermally driven flow test." << std::endl
-		<< "tolerance = " << tol << std::endl
-		<< "u l2 error = " << u_l2error << std::endl
-		<< "u h1 error = " << u_h1error << std::endl
-		<< "v l2 error = " << v_l2error << std::endl
-		<< "v h1 error = " << v_h1error << std::endl
-		<< "p l2 error = " << p_l2error << std::endl
-		<< "p h1 error = " << p_h1error << std::endl;
+                << "tolerance = " << tol << std::endl
+                << "u l2 error = " << u_l2error << std::endl
+                << "u h1 error = " << u_h1error << std::endl
+                << "v l2 error = " << v_l2error << std::endl
+                << "v h1 error = " << v_h1error << std::endl
+                << "p l2 error = " << p_l2error << std::endl
+                << "p h1 error = " << p_h1error << std::endl;
     }
 
- return return_flag;
+  return return_flag;
 }

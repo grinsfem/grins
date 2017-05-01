@@ -42,7 +42,7 @@ int main()
   {
     double gamma_exact = gamma0*std::exp(-Ta/T1);
     double dgamma_exact = gamma0*(Ta/(T1*T1))*std::exp(-Ta/T1);
-    
+
     if( std::fabs( gamma(T1) - gamma_exact ) > tol )
       {
         std::cerr << "Error: mismatch in gamma" << std::endl
@@ -71,7 +71,7 @@ int main()
   {
     double gamma_exact = params[0]*std::exp(-params[1]/T1);
     double dgamma_exact = params[0]*(params[1]/(T1*T1))*std::exp(-params[1]/T1);
-    
+
     if( std::fabs( gamma(T1) - gamma_exact ) > tol )
       {
         std::cerr << "Error: mismatch in gamma" << std::endl

@@ -43,7 +43,7 @@ namespace GRINS
   //! Physics class for Axisymmetric Heat Transfer
   /*
     This physics class implements the classical Axisymmetric Heat Transfer (neglecting viscous dissipation)
-   */
+  */
   template<class Conductivity>
   class AxisymmetricHeatTransfer : public Physics
   {
@@ -64,20 +64,20 @@ namespace GRINS
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache  );
+                                          AssemblyContext& context,
+                                          CachedValues& cache  );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				AssemblyContext& context,
-				CachedValues& cache );
+                                AssemblyContext& context,
+                                CachedValues& cache );
 
     // Registers all parameters in this physics and in its property
     // class
     virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+      const;
 
   protected:
 
@@ -87,9 +87,9 @@ namespace GRINS
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they
-              are assumed constant */
+      are assumed constant */
     /*! \todo Shouldn't this rho be the same as the one in the flow? Need
-              to figure out how to have those shared */
+      to figure out how to have those shared */
     libMesh::Number _rho, _Cp;
 
     Conductivity _k;

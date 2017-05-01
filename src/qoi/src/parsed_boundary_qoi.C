@@ -50,9 +50,9 @@ namespace GRINS
         this->qoi_functional = original.qoi_functional->clone();
         this->move_parameter
           (*libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
-             (original.qoi_functional.get()),
+           (original.qoi_functional.get()),
            *libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
-             (this->qoi_functional.get()));
+           (this->qoi_functional.get()));
       }
 
     this->_bc_ids = original._bc_ids;
@@ -87,7 +87,7 @@ namespace GRINS
 
     libMesh::ParsedFEMFunction<libMesh::Number> *qf
       (new libMesh::ParsedFEMFunction<libMesh::Number>
-         (system, ""));
+       (system, ""));
     this->qoi_functional.reset(qf);
 
     this->set_parameter(*qf, input,
@@ -110,7 +110,7 @@ namespace GRINS
     bool on_correct_side = false;
 
     for (std::set<libMesh::boundary_id_type>::const_iterator id =
-         _bc_ids.begin(); id != _bc_ids.end(); id++ )
+           _bc_ids.begin(); id != _bc_ids.end(); id++ )
       if( context.has_side_boundary_id( (*id) ) )
         {
           on_correct_side = true;
@@ -146,7 +146,7 @@ namespace GRINS
     bool on_correct_side = false;
 
     for (std::set<libMesh::boundary_id_type>::const_iterator id =
-         _bc_ids.begin(); id != _bc_ids.end(); id++ )
+           _bc_ids.begin(); id != _bc_ids.end(); id++ )
       if( context.has_side_boundary_id( (*id) ) )
         {
           on_correct_side = true;
@@ -171,7 +171,7 @@ namespace GRINS
     // differenting purposes
     libMesh::DenseVector<libMesh::Number>& elem_solution =
       const_cast<libMesh::DenseVector<libMesh::Number>&>
-        (context.get_elem_solution());
+      (context.get_elem_solution());
 
     /*! \todo Need to generalize this to the multiple QoI case */
     libMesh::DenseVector<libMesh::Number> &Qu =
@@ -199,7 +199,7 @@ namespace GRINS
               (*qoi_functional)(context, x_qp[qp], context.get_time());
 
             Qu(i) += (plus_val - minus_val) *
-                     (0.5 / libMesh::TOLERANCE) * JxW[qp];
+              (0.5 / libMesh::TOLERANCE) * JxW[qp];
 
             // Don't forget to restore the correct solution...
             current_solution = original_solution;

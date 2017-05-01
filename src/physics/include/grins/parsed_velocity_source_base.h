@@ -57,11 +57,11 @@ namespace GRINS
                          const AssemblyContext& c,
                          libMesh::NumberVectorValue& F,
                          libMesh::NumberTensorValue *dFdU = NULL);
-   
+
   protected:
 
     libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
-      velocity_source_function;
+    velocity_source_function;
 
   private:
 

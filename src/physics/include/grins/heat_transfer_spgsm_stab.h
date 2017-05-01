@@ -48,7 +48,7 @@ namespace GRINS
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext& context,
                                 CachedValues& cache );
-    
+
   private:
     HeatTransferSPGSMStabilization();
 

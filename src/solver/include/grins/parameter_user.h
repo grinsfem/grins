@@ -76,10 +76,10 @@ namespace GRINS
     //! Each subclass can simultaneously read a parameter value from
     // file and prepare it for registration with this call.
     virtual void set_parameter
-      ( libMesh::Number & param_variable,
-        const GetPot & input,
-        const std::string & param_name,
-        libMesh::Number param_default );
+    ( libMesh::Number & param_variable,
+      const GetPot & input,
+      const std::string & param_name,
+      libMesh::Number param_default );
 
     //! Each subclass can simultaneously read a parsed function from
     // file and prepare its inline variables for registration with this call.
@@ -87,10 +87,10 @@ namespace GRINS
     // Pass a default value of "DIE!" to assert that the input file
     // contains a value for this parameter.
     virtual void set_parameter
-      ( libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & func,
-        const GetPot & input,
-        const std::string & func_param_name,
-        const std::string & param_default);
+    ( libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & func,
+      const GetPot & input,
+      const std::string & func_param_name,
+      const std::string & param_default);
 
     //! Each subclass can simultaneously read a parsed function from
     // file and prepare its inline variables for registration with this call.
@@ -98,28 +98,28 @@ namespace GRINS
     // Pass a default value of "DIE!" to assert that the input file
     // contains a value for this parameter.
     virtual void set_parameter
-      ( libMesh::ParsedFEMFunction<libMesh::Number> & func,
-        const GetPot & input,
-        const std::string & func_param_name,
-        const std::string & param_default);
+    ( libMesh::ParsedFEMFunction<libMesh::Number> & func,
+      const GetPot & input,
+      const std::string & func_param_name,
+      const std::string & param_default);
 
     //! When cloning an object, we need to update parameter pointers
     //to point to the clone
     virtual void move_parameter
-      (const libMesh::Number & old_parameter,
-       libMesh::Number & new_parameter);
+    (const libMesh::Number & old_parameter,
+     libMesh::Number & new_parameter);
 
     //! When cloning an object, we need to update parameter pointers
     //to point to the clone
     virtual void move_parameter
-      (const libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & old_func,
-       libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & new_func);
+    (const libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & old_func,
+     libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient> & new_func);
 
     //! When cloning an object, we need to update parameter pointers
     //to point to the clone
     virtual void move_parameter
-      (const libMesh::ParsedFEMFunction<libMesh::Number> & old_func,
-       libMesh::ParsedFEMFunction<libMesh::Number> & new_func);
+    (const libMesh::ParsedFEMFunction<libMesh::Number> & old_func,
+     libMesh::ParsedFEMFunction<libMesh::Number> & new_func);
 
     //! A parseable function string with LIBMESH_DIM components, all 0
     static std::string zero_vector_function;
@@ -132,20 +132,20 @@ namespace GRINS
     //  previously assigned with set_parameter, then this method will
     //  need to be overridden.
     virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+      const;
 
   private:
     std::map<std::string, libMesh::Number*> _my_parameters;
 
     std::map<std::string,
              libMesh::ParsedFunction<libMesh::Number,libMesh::Gradient>*>
-      _my_parsed_functions;
+    _my_parsed_functions;
 
     std::map<std::string,
              libMesh::ParsedFEMFunction<libMesh::Number>*>
-      _my_parsed_fem_functions;
+    _my_parsed_fem_functions;
 
     // This could be more efficient as a reference now, but we'd
     // probably inadvertently break it later.

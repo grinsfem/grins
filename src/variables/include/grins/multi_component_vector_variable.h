@@ -32,8 +32,8 @@ namespace GRINS
 {
   //! Variables that are effectively vectors
   /*! The variables are effectively vector-valued, but we treat each component
-      as a separate variable. This is in contrast to vector-valued FE types,
-      e.g. LAGRANGE_VEC, or NEDELEC_ONE.  */
+    as a separate variable. This is in contrast to vector-valued FE types,
+    e.g. LAGRANGE_VEC, or NEDELEC_ONE.  */
   class MultcomponentVectorVariable : public FEVariablesBase
   {
   public:

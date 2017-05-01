@@ -62,17 +62,17 @@ int main( int argc, char* argv[] )
   const double M_NO = (14.00674+15.9994);
 
   double R_exact = Cantera::GasConstant*( mass_fractions[0]/M_N2
-                                          + mass_fractions[1]/M_O2 
+                                          + mass_fractions[1]/M_O2
                                           + mass_fractions[3]/M_N
                                           + mass_fractions[4]/M_O
                                           + mass_fractions[2]/M_NO );
 
   double M_exact = 1.0/( mass_fractions[0]/M_N2
-                         + mass_fractions[1]/M_O2 
+                         + mass_fractions[1]/M_O2
                          + mass_fractions[3]/M_N
                          + mass_fractions[4]/M_O
                          + mass_fractions[2]/M_NO );
-  
+
   std::vector<double> X_exact(5, 0.0);
   X_exact[0] = mass_fractions[0]*M_exact/M_N2;
   X_exact[1] = mass_fractions[1]*M_exact/M_O2;
@@ -87,33 +87,33 @@ int main( int argc, char* argv[] )
   if( std::fabs( (cantera.R_mix(mass_fractions) - R_exact)/R_exact) > tol )
     {
       std::cerr << "Error: Mismatch in mixture gas constant." << std::endl
-		<< std::setprecision(16) << std::scientific
-		<< "R       = " << cantera.R_mix(mass_fractions) << std::endl
-		<< "R_exact = " << R_exact <<  std::endl;
+                << std::setprecision(16) << std::scientific
+                << "R       = " << cantera.R_mix(mass_fractions) << std::endl
+                << "R_exact = " << R_exact <<  std::endl;
       return_flag = 1;
     }
 
   if( std::fabs( (cantera.M_mix(mass_fractions) - M_exact)/M_exact ) > tol )
     {
       std::cerr << "Error: Mismatch in mixture molar mass." << std::endl
-		<< std::setprecision(16) << std::scientific
-		<< "M       = " << cantera.M_mix(mass_fractions) << std::endl
-		<< "M_exact = " << M_exact << std::endl;
+                << std::setprecision(16) << std::scientific
+                << "M       = " << cantera.M_mix(mass_fractions) << std::endl
+                << "M_exact = " << M_exact << std::endl;
       return_flag = 1;
     }
-  
+
   std::vector<double> X(5);
   cantera.X( cantera.M_mix(mass_fractions), mass_fractions, X );
   for( unsigned int s = 0; s < 5; s++ )
     {
       if( std::fabs( (X[s] - X_exact[s])/X_exact[s]) > tol )
-	{
-	  std::cerr << "Error: Mismatch in mole fraction for species " << s << std::endl
-		    << std::setprecision(16) << std::scientific
-		    << "X       = " << X[s] << std::endl
-		    << "X_exact = " << X_exact[s] << std::endl;
-	  return_flag = 1;
-	}
+        {
+          std::cerr << "Error: Mismatch in mole fraction for species " << s << std::endl
+                    << std::setprecision(16) << std::scientific
+                    << "X       = " << X[s] << std::endl
+                    << "X_exact = " << X_exact[s] << std::endl;
+          return_flag = 1;
+        }
     }
 
   return return_flag;

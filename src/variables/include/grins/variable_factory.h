@@ -49,8 +49,8 @@ namespace GRINS
 
     //! Build the variable names for the FEVariablesBase type (name), returned in the std::vector
     /*! Similarly to build(), this will grab the factory subclass and then
-        internally call parse_var_names. set_getpot() must called before
-        calling this method. */
+      internally call parse_var_names. set_getpot() must called before
+      calling this method. */
     static std::vector<std::string> build_var_names( const std::string& name );
 
     static std::string parse_fe_family( const std::string& name );
@@ -89,8 +89,8 @@ namespace GRINS
 
     //! Subclasses implement construction of the FEVariablesBase object using the var_names and var_indices
     /*! This function will be called from within create(), which called from
-        VariableFactoryAbstract::build. Note the var_names can be built a priori
-        using the VariableFactoryAbstract::build_var_names() method. */
+      VariableFactoryAbstract::build. Note the var_names can be built a priori
+      using the VariableFactoryAbstract::build_var_names() method. */
     virtual libMesh::UniquePtr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
                                                               const std::vector<VariableIndex>& var_indices,
                                                               const std::set<libMesh::subdomain_id_type>& subdomain_ids ) =0;
@@ -153,7 +153,7 @@ namespace GRINS
 
     virtual std::string parse_fe_order_impl( const GetPot& input, const std::string& var_section )
     {
-       return this->parse_var_option(input,var_section,std::string("order"),std::string("DIE!"));
+      return this->parse_var_option(input,var_section,std::string("order"),std::string("DIE!"));
     }
 
   };
@@ -188,7 +188,7 @@ namespace GRINS
 
   //! Factory to build SCALAR variable
   /*! In particular, we don't let the user set fe_family in the input file since the
-      implicit assumption is that this is a SCALAR variable. */
+    implicit assumption is that this is a SCALAR variable. */
   template<typename VariableType>
   class ScalarVariableFactory : public VariableFactoryBasic<VariableType>
   {
@@ -214,7 +214,7 @@ namespace GRINS
 
   //! Factory to build FEVariablesBase classes that use species names as variables
   /*! Thus, we need a special way to parse the input to figure out what all
-      the species names are. */
+    the species names are. */
   template<typename VariableType>
   class SpeciesVariableFactory : public VariableFactoryBase
   {
@@ -230,9 +230,9 @@ namespace GRINS
 
     //! Implementation species variable name parsing
     /*! First, we look for the [Variables/<VariableType>/prefix], which is the prefix for all
-        the species variable component names. The, we need to look up the material to figure out
-        where to grab the species from. With the material name, then we look up the species names
-        and accordingly build up the variable names. */
+      the species variable component names. The, we need to look up the material to figure out
+      where to grab the species from. With the material name, then we look up the species names
+      and accordingly build up the variable names. */
     virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section );
 
     virtual libMesh::UniquePtr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,

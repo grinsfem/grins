@@ -40,7 +40,7 @@ namespace GRINS
 
   //! Factory helper class for building catalytic wall Neumann boundary conditions
   /*! Note for catalytic walls, we're currently assuming that both SpeciesMassFractions
-      and Temperature FEVariables are in the system. */
+    and Temperature FEVariables are in the system. */
   template<typename ImplType>
   class CatalyticWallNeumannBCFactoryCommon
   {

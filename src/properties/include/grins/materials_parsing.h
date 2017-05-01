@@ -38,7 +38,7 @@ namespace GRINS
 
   //! Helper functions for parsing material properties
   /*! There's no state needed for these functions so we put them in
-      a namespace instead of an object. */
+    a namespace instead of an object. */
   class MaterialsParsing
   {
   public:
@@ -78,7 +78,7 @@ namespace GRINS
 
     //! Helper function to reading density from input
     /*! In particular, we want to handle backward compatibility before
-        the introduction of material names in the input. */
+      the introduction of material names in the input. */
     static void read_density( const std::string& core_physics_name,
                               const GetPot& input,
                               ParameterUser& params,
@@ -86,7 +86,7 @@ namespace GRINS
 
     //! Helper function to reading scalar specific heat from input
     /*! In particular, we want to handle backward compatibility before
-        the introduction of material names in the input. */
+      the introduction of material names in the input. */
     static void read_specific_heat( const std::string& core_physics_name,
                                     const GetPot& input,
                                     ParameterUser& params,
@@ -94,9 +94,9 @@ namespace GRINS
 
     //! Helper function for parsing/maintaing backward compatibility
     /*! This function assumes that one of the old_option or the material-based
-        property input must be specified. If that's not the case, this function
-        should'nt be used. This also assumes that the property value should
-        be positive and will error out if it's not.*/
+      property input must be specified. If that's not the case, this function
+      should'nt be used. This also assumes that the property value should
+      be positive and will error out if it's not.*/
     static void read_property( const GetPot& input,
                                const std::string& old_option,
                                const std::string& property,
@@ -118,18 +118,18 @@ namespace GRINS
 
     //! Helper function for parsing the chemical species
     /*! The user-provided vector will populated with the chemical
-        species names in the input file. "Physics/Chemistry/species" is
-        deprecated in favor of "Material/"+material+"/GasMixture/species" */
+      species names in the input file. "Physics/Chemistry/species" is
+      deprecated in favor of "Material/"+material+"/GasMixture/species" */
     static void parse_chemical_species( const GetPot& input,
                                         const std::string& material,
                                         std::vector<std::string>& species_names );
 
     //! Helper function for parsing the chemical species and setting variable name
     /*! The user-provided vector will populated with the chemical
-        species variable names based on the species name the input file. The variable
-        name will used for adding the variable to the libMesh System.
-        "Physics/Chemistry/species" is deprecated in favor of
-        "Material/"+material+"/GasMixture/species" */
+      species variable names based on the species name the input file. The variable
+      name will used for adding the variable to the libMesh System.
+      "Physics/Chemistry/species" is deprecated in favor of
+      "Material/"+material+"/GasMixture/species" */
     static void parse_species_varnames( const GetPot& input,
                                         const std::string& material,
                                         const std::string& prefix,

@@ -40,7 +40,7 @@ namespace GRINS
     This is a templated class, the class Viscosity can be instantiated as a specific type
     (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
     to specify a constant or spatially varying viscosity in the input file
-   */
+  */
   template<class Viscosity>
   class IncompressibleNavierStokesBase : public Physics
   {
@@ -61,9 +61,9 @@ namespace GRINS
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+      const;
 
     // A getter function for the Viscosity object
     libMesh::Real get_viscosity_value(AssemblyContext& context, unsigned int qp) const;

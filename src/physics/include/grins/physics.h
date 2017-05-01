@@ -142,7 +142,7 @@ namespace GRINS
 
     //! Any auxillary initialization a Physics class may need
     /*! This is called after all variables are added, so this method can
-        safely query the MultiphysicsSystem about variable information. */
+      safely query the MultiphysicsSystem about variable information. */
     virtual void auxiliary_init( MultiphysicsSystem& system );
 
     //! Register name of postprocessed quantity with PostProcessedQuantities
@@ -150,7 +150,7 @@ namespace GRINS
       Each Physics class will need to cache an unsigned int corresponding to each
       postprocessed quantity. This will be used in computing the values and putting
       them in the CachedVariables object.
-     */
+    */
     virtual void register_postprocessing_vars( const GetPot& input,
                                                PostProcessedQuantities<libMesh::Real>& postprocessing );
 
@@ -162,8 +162,8 @@ namespace GRINS
 
     //! Any reinitialization that needs to be done
     /*! This is called through libMesh::FEMSystem::reinit, which is called e.g.
-        after adaptive mesh refinement/coarsening. So, for Physics that need to
-        reinit internally, then this method should be overridden. */
+      after adaptive mesh refinement/coarsening. So, for Physics that need to
+      reinit internally, then this method should be overridden. */
     virtual void reinit( MultiphysicsSystem & /*system*/ ){};
 
     // residual and jacobian calculations

@@ -109,8 +109,8 @@ namespace GRINSTesting
       GRINS::SimulationBuilder sim_builder;
 
       _sim = new GRINS::Simulation(*_input,
-                                    empty_command_line,
-                                    sim_builder,
+                                   empty_command_line,
+                                   sim_builder,
                                    *TestCommWorld );
     }
 

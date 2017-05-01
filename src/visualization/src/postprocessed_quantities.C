@@ -76,7 +76,7 @@ namespace GRINS
 
   template<class NumericType>
   void PostProcessedQuantities<NumericType>::initialize( MultiphysicsSystem& system,
-							 libMesh::EquationSystems& equation_systems )
+                                                         libMesh::EquationSystems& equation_systems )
   {
     // Only need to initialize if the user requested any output quantities.
     if( !_quantity_name_index_map.empty() )
@@ -110,13 +110,13 @@ namespace GRINS
 
     return;
   }
-  
+
 
   template<class NumericType>
-  NumericType PostProcessedQuantities<NumericType>::component( const libMesh::FEMContext& context, 
-							       unsigned int component,
-							       const libMesh::Point& p,
-							       libMesh::Real /*time*/ )
+  NumericType PostProcessedQuantities<NumericType>::component( const libMesh::FEMContext& context,
+                                                               unsigned int component,
+                                                               const libMesh::Point& p,
+                                                               libMesh::Real /*time*/ )
   {
     // Check if the Elem is the same between the incoming context and the cached one.
     // If not, reinit the cached MultiphysicsSystem context
@@ -187,20 +187,20 @@ namespace GRINS
 
   template<class NumericType>
   void PostProcessedQuantities<NumericType>::operator()( const libMesh::FEMContext& context, const libMesh::Point& p,
-							 const libMesh::Real time,
-							 libMesh::DenseVector<NumericType>& output )
+                                                         const libMesh::Real time,
+                                                         libMesh::DenseVector<NumericType>& output )
   {
     for( unsigned int i = 0; i != output.size(); i++ )
       {
-	output(i) = this->component(context,i,p,time);
+        output(i) = this->component(context,i,p,time);
       }
     return;
   }
 
   template<class NumericType>
-  NumericType PostProcessedQuantities<NumericType>::operator()( const libMesh::FEMContext&, 
-								const libMesh::Point&,
-								const libMesh::Real )
+  NumericType PostProcessedQuantities<NumericType>::operator()( const libMesh::FEMContext&,
+                                                                const libMesh::Point&,
+                                                                const libMesh::Real )
   {
     libmesh_error();
     return 0.0; //dummy

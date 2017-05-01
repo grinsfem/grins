@@ -30,8 +30,8 @@ namespace GRINS
 {
 
   LowMachNavierStokesStabilizationHelper::LowMachNavierStokesStabilizationHelper
-    (const std::string & helper_name,
-     const GetPot& input)
+  (const std::string & helper_name,
+   const GetPot& input)
     : IncompressibleNavierStokesStabilizationHelper(helper_name, input)
   {
     return;

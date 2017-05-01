@@ -37,14 +37,14 @@ namespace GRINS
 
   template<class Mu>
   IncompressibleNavierStokesSPGSMStabilization<Mu>::IncompressibleNavierStokesSPGSMStabilization( const std::string& physics_name,
-                                                                                              const GetPot& input )
+                                                                                                  const GetPot& input )
     : IncompressibleNavierStokesStabilizationBase<Mu>(physics_name,input)
   {}
 
   template<class Mu>
   void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
-                                                                              AssemblyContext& context,
-                                                                              CachedValues& /*cache*/ )
+                                                                                  AssemblyContext& context,
+                                                                                  CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -86,8 +86,8 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
 
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
@@ -117,8 +117,8 @@ namespace GRINS
 
   template<class Mu>
   void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                         AssemblyContext& context,
-                                                                         CachedValues& /*cache*/ )
+                                                                             AssemblyContext& context,
+                                                                             CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -147,8 +147,8 @@ namespace GRINS
         if( this->_flow_vars.dim() == 3 )
           U(2) = context.interior_value( this->_flow_vars.w(), qp );
 
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
 
@@ -164,8 +164,8 @@ namespace GRINS
 
   template<class Mu>
   void IncompressibleNavierStokesSPGSMStabilization<Mu>::mass_residual( bool compute_jacobian,
-                                                                    AssemblyContext& context,
-                                                                    CachedValues& /*cache*/ )
+                                                                        AssemblyContext& context,
+                                                                        CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -203,8 +203,8 @@ namespace GRINS
 
         libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
                                  context.fixed_interior_value( this->_flow_vars.v(), qp ) );
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if( this->_flow_vars.dim() == 3 )
           {

@@ -175,7 +175,7 @@ namespace GRINS
     const std::string& material = species_fe_var.material();
 
     /*! \todo We should have a ChemsitryWarehouse or something to just
-              grab this from one place instead of rebuilding. */
+      grab this from one place instead of rebuilding. */
     ChemistryType chem(input,material);
 
     const unsigned int n_vars = species_mole_fracs.size();

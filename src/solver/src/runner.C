@@ -76,14 +76,14 @@ namespace GRINS
   std::string Runner::check_and_get_inputfile(int argc, char* argv[], GetPot & command_line)
   {
     if( argc < 2 )
-    {
-      std::stringstream error_msg;
-      error_msg << "ERROR: Found only 1 command line argument, but was expecting an inputfile name!"
-                << std::endl
-                << "       Please specify the name of the input file on the command line as the first" << std::endl
-                << "       command line argument or using the '--input <filename>' option." << std::endl;
-      libmesh_error_msg(error_msg.str());
-    }
+      {
+        std::stringstream error_msg;
+        error_msg << "ERROR: Found only 1 command line argument, but was expecting an inputfile name!"
+                  << std::endl
+                  << "       Please specify the name of the input file on the command line as the first" << std::endl
+                  << "       command line argument or using the '--input <filename>' option." << std::endl;
+        libmesh_error_msg(error_msg.str());
+      }
 
     std::string inputfile_name;
     if( command_line.search("--input") )
@@ -131,8 +131,8 @@ namespace GRINS
         int n_mats = 0;
 
         for( int v = 0; v < n_total; v++ )
-            if( (unused_vars[v]).find(mat_string) != std::string::npos )
-              n_mats += 1;
+          if( (unused_vars[v]).find(mat_string) != std::string::npos )
+            n_mats += 1;
 
         libmesh_assert_greater_equal( n_total, n_mats );
 

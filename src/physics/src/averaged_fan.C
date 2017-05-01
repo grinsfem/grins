@@ -42,9 +42,9 @@ namespace GRINS
   template<class Mu>
   AveragedFan<Mu>::AveragedFan( const std::string& physics_name, const GetPot& input )
     : AveragedFanBase<Mu>(physics_name, input),
-      _base_velocity_x_index(0),
-      _base_velocity_y_index(0),
-      _base_velocity_z_index(0)
+    _base_velocity_x_index(0),
+    _base_velocity_y_index(0),
+    _base_velocity_z_index(0)
   {
     return;
   }
@@ -98,8 +98,8 @@ namespace GRINS
 
   template<class Mu>
   void AveragedFan<Mu>::element_time_derivative( bool compute_jacobian,
-					      AssemblyContext& context,
-					      CachedValues& /* cache */ )
+                                                 AssemblyContext& context,
+                                                 CachedValues& /* cache */ )
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW =
@@ -174,7 +174,7 @@ namespace GRINS
             if( this->_flow_vars.dim() == 3 )
               (*Fw)(i) += F(2)*jac_i;
 
-	    if( compute_jacobian )
+            if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {

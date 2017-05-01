@@ -161,12 +161,12 @@ namespace GRINS
                                                         libMesh::CompositeFunction<libMesh::Number>& composite_func,
                                                         std::set<std::string>& vars_added ) const
 #else
-   void MoleFractionsDirichletBCFactory::add_found_vars( const GetPot& input,
-                                                         MultiphysicsSystem& /*system*/,
-                                                         const std::string& section,
-                                                         const std::set<std::string>& /*vars_found*/,
-                                                         libMesh::CompositeFunction<libMesh::Number>& /*composite_func*/,
-                                                         std::set<std::string>& /*vars_added*/ ) const
+  void MoleFractionsDirichletBCFactory::add_found_vars( const GetPot& input,
+                                                        MultiphysicsSystem& /*system*/,
+                                                        const std::string& section,
+                                                        const std::set<std::string>& /*vars_found*/,
+                                                        libMesh::CompositeFunction<libMesh::Number>& /*composite_func*/,
+                                                        std::set<std::string>& /*vars_added*/ ) const
 #endif
   {
     // Strip out the Variable name from the section

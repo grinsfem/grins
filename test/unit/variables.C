@@ -241,9 +241,9 @@ namespace GRINSTesting
       // make sure both the species are there.
       CPPUNIT_ASSERT_EQUAL(2,(int)var_names.size());
       CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(),"Y_N2")
-                        != var_names.end() );
+                      != var_names.end() );
       CPPUNIT_ASSERT( std::find( var_names.begin(), var_names.end(),"Y_N")
-                        != var_names.end() );
+                      != var_names.end() );
     }
 
     void test_vel_fe_2d( const libMesh::System& system )

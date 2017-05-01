@@ -53,7 +53,7 @@ namespace GRINS
     This source term is added to the governing flow equations through the
     element_time_derivative routine. This class requires an axisymmetric flow physics enabled
     and the AxisymmetricHeatTransfer physics class enabled.
-   */
+  */
   class AxisymmetricBoussinesqBuoyancy : public Physics
   {
   public:
@@ -66,11 +66,11 @@ namespace GRINS
 
     //! Source term contribution for AxisymmetricBoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
-        the AxisymmetricIncompNavierStokes class.
-     */
+      the AxisymmetricIncompNavierStokes class.
+    */
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
   protected:
 

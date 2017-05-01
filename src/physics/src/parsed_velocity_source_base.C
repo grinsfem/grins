@@ -40,7 +40,7 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
-      _input(input)
+    _input(input)
   {
   }
 
@@ -49,8 +49,8 @@ namespace GRINS
   {
     return;
   }
-  
-  template<class Mu>  
+
+  template<class Mu>
   void ParsedVelocitySourceBase<Mu>::set_time_evolving_vars ( libMesh::FEMSystem* system)
   {
     std::string base_physics_name = "ParsedVelocitySource";
@@ -66,11 +66,11 @@ namespace GRINS
 
   template<class Mu>
   bool ParsedVelocitySourceBase<Mu>::compute_force
-    ( const libMesh::Point& point,
-      const libMesh::Real time,
-      const AssemblyContext &c,
-      libMesh::NumberVectorValue& F,
-      libMesh::NumberTensorValue *dFdU)
+  ( const libMesh::Point& point,
+    const libMesh::Real time,
+    const AssemblyContext &c,
+    libMesh::NumberVectorValue& F,
+    libMesh::NumberTensorValue *dFdU)
   {
     libmesh_assert(velocity_source_function.get());
 

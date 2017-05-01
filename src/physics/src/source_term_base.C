@@ -58,7 +58,7 @@ namespace GRINS
 
     // Make sure we have consisent number of FE types and FE orders
     /*! \todo In the future, after refactoring Variable parsing, we should be
-              able get the FE type and order information from there. */
+      able get the FE type and order information from there. */
     unsigned int n_fe_types = input.vector_variable_size("Physics/"+this->_physics_name+"/Variables/FE_types");
 
     unsigned int n_fe_orders = input.vector_variable_size("Physics/"+this->_physics_name+"/Variables/FE_orders");

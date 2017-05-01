@@ -40,7 +40,7 @@ namespace GRINS
   template<class Mu>
   AveragedFanAdjointStabilization<Mu>::AveragedFanAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : AveragedFanBase<Mu>(physics_name, input),
-      _stab_helper( physics_name+"StabHelper", input )
+    _stab_helper( physics_name+"StabHelper", input )
   {}
 
   template<class Mu>
@@ -64,9 +64,9 @@ namespace GRINS
 
   template<class Mu>
   void AveragedFanAdjointStabilization<Mu>::element_time_derivative
-    ( bool compute_jacobian,
-      AssemblyContext& context,
-      CachedValues& /* cache */ )
+  ( bool compute_jacobian,
+    AssemblyContext& context,
+    CachedValues& /* cache */ )
   {
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
@@ -142,8 +142,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         libMesh::NumberVectorValue F;
         libMesh::NumberTensorValue dFdU;
@@ -295,8 +295,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         libMesh::NumberVectorValue F;
         libMesh::NumberTensorValue dFdU;
@@ -325,24 +325,24 @@ namespace GRINS
                 const libMesh::Real JxWxF = JxW[qp] * fixed_deriv;
 
                 for (unsigned int j=0; j != n_u_dofs; ++j)
-                if( this->_flow_vars.dim() == 3 )
-                  {
-                    Kpu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*F*p_dphi[i][qp]*JxWxF;
-                    Kpv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*F*p_dphi[i][qp]*JxWxF;
-                    for (unsigned int d=0; d != 3; ++d)
-                      {
-                        Kpu(i,j) += -tau_M*dFdU(d,0)*u_phi[j][qp]*p_dphi[i][qp](d)*JxWxS;
-                        Kpv(i,j) += -tau_M*dFdU(d,1)*u_phi[j][qp]*p_dphi[i][qp](d)*JxWxS;
-                      }
-                  }
-                  for (unsigned int j=0; j != n_u_dofs; ++j)
+                  if( this->_flow_vars.dim() == 3 )
                     {
-                      (*Kpw)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*F*p_dphi[i][qp]*JxWxF;
+                      Kpu(i,j) += -d_tau_M_dU(0)*u_phi[j][qp]*F*p_dphi[i][qp]*JxWxF;
+                      Kpv(i,j) += -d_tau_M_dU(1)*u_phi[j][qp]*F*p_dphi[i][qp]*JxWxF;
                       for (unsigned int d=0; d != 3; ++d)
                         {
-                          (*Kpw)(i,j) += -tau_M*dFdU(d,2)*u_phi[j][qp]*p_dphi[i][qp](d)*JxWxS;
+                          Kpu(i,j) += -tau_M*dFdU(d,0)*u_phi[j][qp]*p_dphi[i][qp](d)*JxWxS;
+                          Kpv(i,j) += -tau_M*dFdU(d,1)*u_phi[j][qp]*p_dphi[i][qp](d)*JxWxS;
                         }
                     }
+                for (unsigned int j=0; j != n_u_dofs; ++j)
+                  {
+                    (*Kpw)(i,j) += -d_tau_M_dU(2)*u_phi[j][qp]*F*p_dphi[i][qp]*JxWxF;
+                    for (unsigned int d=0; d != 3; ++d)
+                      {
+                        (*Kpw)(i,j) += -tau_M*dFdU(d,2)*u_phi[j][qp]*p_dphi[i][qp](d)*JxWxS;
+                      }
+                  }
               }
           }
       } // End quadrature loop

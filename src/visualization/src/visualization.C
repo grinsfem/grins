@@ -60,31 +60,31 @@ namespace GRINS
         std::string mesh_class = input("mesh-options/mesh_class", "default");
 
         if (mesh_class == "parallel")
-	  _output_format.push_back("Nemesis");
+          _output_format.push_back("Nemesis");
         else if (mesh_class == "serial")
-	  _output_format.push_back("ExodusII");
+          _output_format.push_back("ExodusII");
         else if (mesh_class == "default")
           {
             // Is our default Mesh distributable?
             libMesh::Mesh testdefault(comm);
             testdefault.delete_remote_elements();
             if (testdefault.is_serial())
-	      _output_format.push_back("ExodusII");
+              _output_format.push_back("ExodusII");
             else
-	      _output_format.push_back("Nemesis");
+              _output_format.push_back("Nemesis");
           }
         else
           {
-	    std::cerr << " Visualization::Visualization:"
-		      << " mesh-options/mesh_class had invalid value " << mesh_class
-		      << std::endl;
-	    libmesh_error();
+            std::cerr << " Visualization::Visualization:"
+                      << " mesh-options/mesh_class had invalid value " << mesh_class
+                      << std::endl;
+            libmesh_error();
           }
       }
 
     for( unsigned int i = 0; i < num_formats; i++ )
       {
-	_output_format.push_back( input("vis-options/output_format", "DIE", i ) );
+        _output_format.push_back( input("vis-options/output_format", "DIE", i ) );
       }
 
     return;
@@ -103,9 +103,9 @@ namespace GRINS
   }
 
   void Visualization::output
-    ( SharedPtr<libMesh::EquationSystems> equation_system,
-      const unsigned int time_step,
-      const libMesh::Real time )
+  ( SharedPtr<libMesh::EquationSystems> equation_system,
+    const unsigned int time_step,
+    const libMesh::Real time )
   {
     std::stringstream suffix;
 
@@ -120,16 +120,16 @@ namespace GRINS
   }
 
   void Visualization::output_residual( SharedPtr<libMesh::EquationSystems> equation_system,
-				       MultiphysicsSystem* system )
+                                       MultiphysicsSystem* system )
   {
     this->output_residual( equation_system, system, 0, 0.0 );
     return;
   }
 
   void Visualization::output_residual_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
-     MultiphysicsSystem* system,
-     const libMesh::ParameterVector & params)
+  (SharedPtr<libMesh::EquationSystems> equation_system,
+   MultiphysicsSystem* system,
+   const libMesh::ParameterVector & params)
   {
     this->output_residual_sensitivities
       ( equation_system, system, params, 0, 0.0 );
@@ -142,27 +142,27 @@ namespace GRINS
   }
 
   void Visualization::output_solution_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
-     MultiphysicsSystem* system,
-     const libMesh::ParameterVector & params)
+  (SharedPtr<libMesh::EquationSystems> equation_system,
+   MultiphysicsSystem* system,
+   const libMesh::ParameterVector & params)
   {
     this->output_solution_sensitivities
       ( equation_system, system, params, 0, 0.0 );
   }
 
   void Visualization::dump_visualization
-    ( SharedPtr<libMesh::EquationSystems> equation_system,
-      const std::string& filename_prefix,
-      const libMesh::Real time )
+  ( SharedPtr<libMesh::EquationSystems> equation_system,
+    const std::string& filename_prefix,
+    const libMesh::Real time )
   {
     libMesh::MeshBase& mesh = equation_system->get_mesh();
 
     if( this->_vis_output_file_prefix == "unknown" )
       {
-	// TODO: Need consisent way to print warning messages.
-	std::cout << " WARNING in Visualization::dump_visualization :"
-		  << " using 'unknown' as file prefix since it was not set "
-		  << std::endl;
+        // TODO: Need consisent way to print warning messages.
+        std::cout << " WARNING in Visualization::dump_visualization :"
+                  << " using 'unknown' as file prefix since it was not set "
+                  << std::endl;
       }
 
     // If we're asked to put files in a subdirectory, let's make sure
@@ -176,77 +176,77 @@ namespace GRINS
           libmesh_file_error(this->_vis_output_file_prefix.substr(0,pos));
 
     for( std::vector<std::string>::const_iterator format = _output_format.begin();
-	 format != _output_format.end();
-	 format ++ )
+         format != _output_format.end();
+         format ++ )
       {
-	// The following is a modifed copy from the FIN-S code.
-	if ((*format) == "tecplot" ||
-	    (*format) == "dat")
-	  {
-	    std::string filename = filename_prefix+".dat";
-	    libMesh::TecplotIO(mesh,false).write_equation_systems( filename,
-								   *equation_system );
-	  }
-	else if ((*format) == "tecplot_binary" ||
-		 (*format) == "plt")
-	  {
-	    std::string filename = filename_prefix+".plt";
-	    libMesh::TecplotIO(mesh,true).write_equation_systems( filename,
-								  *equation_system );
-	  }
-	else if ((*format) == "gmv")
-	  {
-	    std::string filename = filename_prefix+".gmv";
+        // The following is a modifed copy from the FIN-S code.
+        if ((*format) == "tecplot" ||
+            (*format) == "dat")
+          {
+            std::string filename = filename_prefix+".dat";
+            libMesh::TecplotIO(mesh,false).write_equation_systems( filename,
+                                                                   *equation_system );
+          }
+        else if ((*format) == "tecplot_binary" ||
+                 (*format) == "plt")
+          {
+            std::string filename = filename_prefix+".plt";
+            libMesh::TecplotIO(mesh,true).write_equation_systems( filename,
+                                                                  *equation_system );
+          }
+        else if ((*format) == "gmv")
+          {
+            std::string filename = filename_prefix+".gmv";
             libMesh::GMVIO(mesh).write_equation_systems( filename,
-						*equation_system );
-	  }
-	else if ((*format) == "pvtu")
-	  {
-	    std::string filename = filename_prefix+".pvtu";
+                                                         *equation_system );
+          }
+        else if ((*format) == "pvtu")
+          {
+            std::string filename = filename_prefix+".pvtu";
             libMesh::VTKIO(mesh).write_equation_systems( filename,
-						*equation_system );
-	  }
-	else if ((*format) == "ExodusII")
-	  {
-	    std::string filename = filename_prefix+".exo";
+                                                         *equation_system );
+          }
+        else if ((*format) == "ExodusII")
+          {
+            std::string filename = filename_prefix+".exo";
 
-	    // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
-	    // it should be the number of timesteps within the file. Here, we are explicitly only doing
-	    // one timestep per file.
+            // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
+            // it should be the number of timesteps within the file. Here, we are explicitly only doing
+            // one timestep per file.
             libMesh::ExodusII_IO(mesh).write_timestep
               ( filename, *equation_system, 1, time );
-	  }
-	else if ((*format) == "Nemesis")
-	  {
-	    std::string filename = filename_prefix+".nem";
+          }
+        else if ((*format) == "Nemesis")
+          {
+            std::string filename = filename_prefix+".nem";
 
-	    // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
-	    // it should be the number of timesteps within the file. Here, we are explicitly only doing
-	    // one timestep per file.
+            // The "1" is hardcoded for the number of time steps because the ExodusII manual states that
+            // it should be the number of timesteps within the file. Here, we are explicitly only doing
+            // one timestep per file.
             libMesh::Nemesis_IO(mesh).write_timestep
               ( filename, *equation_system, 1, time );
-	  }
-	else if ((*format).find("xda") != std::string::npos ||
-		 (*format).find("xdr") != std::string::npos)
-	  {
-	    std::string filename = filename_prefix+"."+(*format);
-	    const bool binary = ((*format).find("xdr") != std::string::npos);
-	    equation_system->write( filename,
-				    binary ? GRINSEnums::ENCODE : GRINSEnums::WRITE,
-				    libMesh::EquationSystems::WRITE_DATA |
+          }
+        else if ((*format).find("xda") != std::string::npos ||
+                 (*format).find("xdr") != std::string::npos)
+          {
+            std::string filename = filename_prefix+"."+(*format);
+            const bool binary = ((*format).find("xdr") != std::string::npos);
+            equation_system->write( filename,
+                                    binary ? GRINSEnums::ENCODE : GRINSEnums::WRITE,
+                                    libMesh::EquationSystems::WRITE_DATA |
                                     libMesh::EquationSystems::WRITE_ADDITIONAL_DATA );
-	  }
-	else if ((*format) == "mesh_only" )
-	  {
-	    std::string filename = filename_prefix+"_mesh.xda";
-	    equation_system->get_mesh().write( filename );
-	  }
-	else
-	  {
-	    // TODO: Do we want to use this to error throughout the code?
-	    // TODO: (at least need to pass/print some message/string) - sahni
-	    libmesh_error();
-	  }
+          }
+        else if ((*format) == "mesh_only" )
+          {
+            std::string filename = filename_prefix+"_mesh.xda";
+            equation_system->get_mesh().write( filename );
+          }
+        else
+          {
+            // TODO: Do we want to use this to error throughout the code?
+            // TODO: (at least need to pass/print some message/string) - sahni
+            libmesh_error();
+          }
       } // End loop over formats
 
     return;

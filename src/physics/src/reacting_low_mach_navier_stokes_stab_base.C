@@ -197,34 +197,34 @@ namespace GRINS
 
     // Terms if we have vicosity derivatives w.r.t. temp.
     /*
-    if( this->_mu.deriv(T) != 0.0 )
+      if( this->_mu.deriv(T) != 0.0 )
       {
-        libMesh::Gradient gradTgradu( grad_T*grad_u, grad_T*grad_v );
+      libMesh::Gradient gradTgradu( grad_T*grad_u, grad_T*grad_v );
 
-        libMesh::Gradient gradTgraduT( grad_T(0)*grad_u(0) + grad_T(1)*grad_u(1),
-                                       grad_T(0)*grad_v(0) + grad_T(1)*grad_v(1) );
+      libMesh::Gradient gradTgraduT( grad_T(0)*grad_u(0) + grad_T(1)*grad_u(1),
+      grad_T(0)*grad_v(0) + grad_T(1)*grad_v(1) );
 
-        libMesh::Real divU = grad_u(0) + grad_v(1);
+      libMesh::Real divU = grad_u(0) + grad_v(1);
 
-        libMesh::Gradient gradTdivU( grad_T(0)*divU, grad_T(1)*divU );
+      libMesh::Gradient gradTdivU( grad_T(0)*divU, grad_T(1)*divU );
 
-        if(this->_flow_vars.dim() == 3)
-          {
-            libMesh::Gradient grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
+      if(this->_flow_vars.dim() == 3)
+      {
+      libMesh::Gradient grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
 
-            gradTgradu(2) = grad_T*grad_w;
+      gradTgradu(2) = grad_T*grad_w;
 
-            gradTgraduT(0) += grad_T(2)*grad_u(2);
-            gradTgraduT(1) += grad_T(2)*grad_v(2);
-            gradTgraduT(2) = grad_T(0)*grad_w(0) + grad_T(1)*grad_w(1) + grad_T(2)*grad_w(2);
+      gradTgraduT(0) += grad_T(2)*grad_u(2);
+      gradTgraduT(1) += grad_T(2)*grad_v(2);
+      gradTgraduT(2) = grad_T(0)*grad_w(0) + grad_T(1)*grad_w(1) + grad_T(2)*grad_w(2);
 
-            divU += grad_w(2);
-            gradTdivU(0) += grad_T(0)*grad_w(2);
-            gradTdivU(1) += grad_T(1)*grad_w(2);
-            gradTdivU(2) += grad_T(2)*divU;
-          }
+      divU += grad_w(2);
+      gradTdivU(0) += grad_T(0)*grad_w(2);
+      gradTdivU(1) += grad_T(1)*grad_w(2);
+      gradTdivU(2) += grad_T(2)*divU;
+      }
 
-        divT += this->_mu.deriv(T)*( gradTgradu + gradTgraduT - 2.0/3.0*gradTdivU );
+      divT += this->_mu.deriv(T)*( gradTgradu + gradTgraduT - 2.0/3.0*gradTdivU );
       }
     */
 
@@ -256,9 +256,9 @@ namespace GRINS
 
         // Species residual
         /*! \todo Still missing derivative of species diffusion coefficient.
-                  rho*grad_D[s]*grad_ws[s] */
+          rho*grad_D[s]*grad_ws[s] */
         Rs_s[s] = rho*U*grad_ws[s] - rho*D[s]*hess_s_term - grad_rho*D[s]*grad_ws[s]
-                  - omega_dot[s];
+          - omega_dot[s];
       }
     mass_term *= M;
 

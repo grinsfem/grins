@@ -39,7 +39,7 @@ namespace GRINS
 {
   template<class Mu, class SH, class TC>
   LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::LowMachNavierStokesSPGSMStabilization( const std::string& physics_name,
-											  const GetPot& input )
+                                                                                          const GetPot& input )
     : LowMachNavierStokesStabilizationBase<Mu,SH,TC>(physics_name,input)
   {
   }
@@ -52,8 +52,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::element_time_derivative( bool compute_jacobian,
-										 AssemblyContext& context,
-										 CachedValues& /*cache*/ )
+                                                                                 AssemblyContext& context,
+                                                                                 CachedValues& /*cache*/ )
   {
     this->assemble_continuity_time_deriv( compute_jacobian, context );
     this->assemble_momentum_time_deriv( compute_jacobian, context );
@@ -62,8 +62,8 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::mass_residual( bool compute_jacobian,
-								       AssemblyContext& context,
-								       CachedValues& /*cache*/ )
+                                                                       AssemblyContext& context,
+                                                                       CachedValues& /*cache*/ )
   {
     this->assemble_continuity_mass_residual( compute_jacobian, context );
     this->assemble_momentum_mass_residual( compute_jacobian, context );
@@ -72,7 +72,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_continuity_time_deriv( bool /*compute_jacobian*/,
-											AssemblyContext& context )
+                                                                                        AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -91,32 +91,32 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
+        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::Real T = context.interior_value( this->_temp_vars.T(), qp );
+        libMesh::Real T = context.interior_value( this->_temp_vars.T(), qp );
 
-	libMesh::Real mu = this->_mu(T);
+        libMesh::Real mu = this->_mu(T);
 
-	libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
+        libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
 
-	libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
-				 context.interior_value( this->_flow_vars.v(), qp ) );
-	if( this->_flow_vars.dim() == 3 )
-	  U(2) = context.interior_value( this->_flow_vars.w(), qp );
+        libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
+                                 context.interior_value( this->_flow_vars.v(), qp ) );
+        if( this->_flow_vars.dim() == 3 )
+          U(2) = context.interior_value( this->_flow_vars.w(), qp );
 
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, this->_is_steady );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, this->_is_steady );
 
-	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
+        libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
 
-	// Now a loop over the pressure degrees of freedom.  This
-	// computes the contributions of the continuity equation.
-	for (unsigned int i=0; i != n_p_dofs; i++)
-	  {
-	    Fp(i) += tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
-	  }
+        // Now a loop over the pressure degrees of freedom.  This
+        // computes the contributions of the continuity equation.
+        for (unsigned int i=0; i != n_p_dofs; i++)
+          {
+            Fp(i) += tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
+          }
 
       }
 
@@ -125,7 +125,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_momentum_time_deriv( bool /*compute_jacobian*/,
-										      AssemblyContext& context )
+                                                                                      AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -156,48 +156,48 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Real T = context.interior_value( this->_temp_vars.T(), qp );
-	libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
+        libMesh::Real T = context.interior_value( this->_temp_vars.T(), qp );
+        libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
 
-	libMesh::RealGradient U( context.interior_value(this->_flow_vars.u(), qp),
-				 context.interior_value(this->_flow_vars.v(), qp) );
+        libMesh::RealGradient U( context.interior_value(this->_flow_vars.u(), qp),
+                                 context.interior_value(this->_flow_vars.v(), qp) );
 
-	libMesh::RealGradient grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
-	libMesh::RealGradient grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
-	libMesh::RealGradient grad_w;
+        libMesh::RealGradient grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
+        libMesh::RealGradient grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
+        libMesh::RealGradient grad_w;
 
-	if( this->_flow_vars.dim() == 3 )
-	  {
-	    U(2) = context.interior_value(this->_flow_vars.w(), qp);
-	    grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
-	  }
+        if( this->_flow_vars.dim() == 3 )
+          {
+            U(2) = context.interior_value(this->_flow_vars.w(), qp);
+            grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
+          }
 
-	libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
+        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
-	libMesh::Real mu = this->_mu(T);
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::Real mu = this->_mu(T);
 
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, this->_is_steady );
-	libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, this->_is_steady );
+        libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-	libMesh::Real RC_s = this->compute_res_continuity_steady( context, qp );
-	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
+        libMesh::Real RC_s = this->compute_res_continuity_steady( context, qp );
+        libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
 
-	for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
-	    Fu(i) += ( - tau_C*RC_s*u_gradphi[i][qp](0)
-		       - tau_M*RM_s(0)*rho*U*u_gradphi[i][qp]  )*JxW[qp];
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) += ( - tau_C*RC_s*u_gradphi[i][qp](0)
+                       - tau_M*RM_s(0)*rho*U*u_gradphi[i][qp]  )*JxW[qp];
 
-	    Fv(i) += ( - tau_C*RC_s*u_gradphi[i][qp](1)
-		       - tau_M*RM_s(1)*rho*U*u_gradphi[i][qp] )*JxW[qp];
+            Fv(i) += ( - tau_C*RC_s*u_gradphi[i][qp](1)
+                       - tau_M*RM_s(1)*rho*U*u_gradphi[i][qp] )*JxW[qp];
 
-	    if( this->_flow_vars.dim() == 3 )
-	      {
-		(*Fw)(i) += ( - tau_C*RC_s*u_gradphi[i][qp](2)
+            if( this->_flow_vars.dim() == 3 )
+              {
+                (*Fw)(i) += ( - tau_C*RC_s*u_gradphi[i][qp](2)
                               - tau_M*RM_s(2)*rho*U*u_gradphi[i][qp] )*JxW[qp];
-	      }
-	  }
+              }
+          }
 
       }
     return;
@@ -205,7 +205,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_energy_time_deriv( bool /*compute_jacobian*/,
-										    AssemblyContext& context )
+                                                                                    AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
@@ -224,37 +224,37 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v;
-	u = context.interior_value(this->_flow_vars.u(), qp);
-	v = context.interior_value(this->_flow_vars.v(), qp);
+        libMesh::Number u, v;
+        u = context.interior_value(this->_flow_vars.u(), qp);
+        v = context.interior_value(this->_flow_vars.v(), qp);
 
-	libMesh::Gradient grad_T = context.interior_gradient(this->_temp_vars.T(), qp);
+        libMesh::Gradient grad_T = context.interior_gradient(this->_temp_vars.T(), qp);
 
-	libMesh::NumberVectorValue U(u,v);
-	if (this->_flow_vars.dim() == 3)
-	  U(2) = context.interior_value(this->_flow_vars.w(), qp); // w
+        libMesh::NumberVectorValue U(u,v);
+        if (this->_flow_vars.dim() == 3)
+          U(2) = context.interior_value(this->_flow_vars.w(), qp); // w
 
-	libMesh::Real T = context.interior_value( this->_temp_vars.T(), qp );
-	libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
+        libMesh::Real T = context.interior_value( this->_temp_vars.T(), qp );
+        libMesh::Real rho = this->rho( T, this->get_p0_steady( context, qp ) );
 
-	libMesh::Real k = this->_k(T);
-	libMesh::Real cp = this->_cp(T);
+        libMesh::Real k = this->_k(T);
+        libMesh::Real cp = this->_cp(T);
 
-	libMesh::Number rho_cp = rho*this->_cp(T);
+        libMesh::Number rho_cp = rho*this->_cp(T);
 
-	libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
+        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, qp, g, G, rho, U, k, cp, this->_is_steady );
+        libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, qp, g, G, rho, U, k, cp, this->_is_steady );
 
-	libMesh::Real RE_s = this->compute_res_energy_steady( context, qp );
+        libMesh::Real RE_s = this->compute_res_energy_steady( context, qp );
 
-	for (unsigned int i=0; i != n_T_dofs; i++)
-	  {
-	    FT(i) -= rho_cp*tau_E*RE_s*U*T_gradphi[i][qp]*JxW[qp];
-	  }
+        for (unsigned int i=0; i != n_T_dofs; i++)
+          {
+            FT(i) -= rho_cp*tau_E*RE_s*U*T_gradphi[i][qp]*JxW[qp];
+          }
 
       }
 
@@ -263,7 +263,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_continuity_mass_residual( bool /*compute_jacobian*/,
-											   AssemblyContext& context)
+                                                                                           AssemblyContext& context)
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -282,30 +282,30 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
+        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::Real T = context.fixed_interior_value( this->_temp_vars.T(), qp );
-	libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
+        libMesh::Real T = context.fixed_interior_value( this->_temp_vars.T(), qp );
+        libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
 
-	libMesh::Real mu = this->_mu(T);
+        libMesh::Real mu = this->_mu(T);
 
-	libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
-				 context.fixed_interior_value( this->_flow_vars.v(), qp ) );
-	if( this->_flow_vars.dim() == 3 )
-	  U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
+        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
+                                 context.fixed_interior_value( this->_flow_vars.v(), qp ) );
+        if( this->_flow_vars.dim() == 3 )
+          U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
 
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, false );
-	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, false );
+        libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
 
-	// Now a loop over the pressure degrees of freedom.  This
-	// computes the contributions of the continuity equation.
-	for (unsigned int i=0; i != n_p_dofs; i++)
-	  {
-	    Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
-	  }
+        // Now a loop over the pressure degrees of freedom.  This
+        // computes the contributions of the continuity equation.
+        for (unsigned int i=0; i != n_p_dofs; i++)
+          {
+            Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
+          }
       }
 
     return;
@@ -313,7 +313,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_momentum_mass_residual( bool /*compute_jacobian*/,
-											 AssemblyContext& context )
+                                                                                         AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -343,50 +343,50 @@ namespace GRINS
     unsigned int n_qpoints = context.get_element_qrule().n_points();
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Real T = context.fixed_interior_value( this->_temp_vars.T(), qp );
-	libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
+        libMesh::Real T = context.fixed_interior_value( this->_temp_vars.T(), qp );
+        libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
 
-	libMesh::Real mu = this->_mu(T);
+        libMesh::Real mu = this->_mu(T);
 
-	libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp),
-				 context.fixed_interior_value(this->_flow_vars.v(), qp) );
+        libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp),
+                                 context.fixed_interior_value(this->_flow_vars.v(), qp) );
 
-	libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
-	libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
-	libMesh::RealGradient grad_w;
+        libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
+        libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
+        libMesh::RealGradient grad_w;
 
-	if( this->_flow_vars.dim() == 3 )
-	  {
-	    U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
-	    grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
-	  }
+        if( this->_flow_vars.dim() == 3 )
+          {
+            U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
+            grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
+          }
 
-	libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
+        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, false );
-	libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
+        libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, rho, U, mu, false );
+        libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
-	libMesh::Real RC_t = this->compute_res_continuity_transient( context, qp );
-	libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
-	libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
+        libMesh::Real RC_t = this->compute_res_continuity_transient( context, qp );
+        libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
+        libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
 
-	for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
-	    Fu(i) -= ( tau_C*RC_t*u_gradphi[i][qp](0)
-		       + tau_M*RM_t(0)*rho*U*u_gradphi[i][qp] )*JxW[qp];
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fu(i) -= ( tau_C*RC_t*u_gradphi[i][qp](0)
+                       + tau_M*RM_t(0)*rho*U*u_gradphi[i][qp] )*JxW[qp];
 
-	    Fv(i) -= ( tau_C*RC_t*u_gradphi[i][qp](1)
-		       + tau_M*RM_t(1)*rho*U*u_gradphi[i][qp] )*JxW[qp];
+            Fv(i) -= ( tau_C*RC_t*u_gradphi[i][qp](1)
+                       + tau_M*RM_t(1)*rho*U*u_gradphi[i][qp] )*JxW[qp];
 
-	    if( this->_flow_vars.dim() == 3 )
-	      {
-		(*Fw)(i) -= ( tau_C*RC_t*u_gradphi[i][qp](2)
+            if( this->_flow_vars.dim() == 3 )
+              {
+                (*Fw)(i) -= ( tau_C*RC_t*u_gradphi[i][qp](2)
                               + tau_M*RM_t(2)*rho*U*u_gradphi[i][qp] )*JxW[qp];
-	      }
-	  }
+              }
+          }
 
       }
     return;
@@ -394,7 +394,7 @@ namespace GRINS
 
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::assemble_energy_mass_residual( bool /*compute_jacobian*/,
-										       AssemblyContext& context )
+                                                                                       AssemblyContext& context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
@@ -413,37 +413,37 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	libMesh::Number u, v;
-	u = context.fixed_interior_value(this->_flow_vars.u(), qp);
-	v = context.fixed_interior_value(this->_flow_vars.v(), qp);
+        libMesh::Number u, v;
+        u = context.fixed_interior_value(this->_flow_vars.u(), qp);
+        v = context.fixed_interior_value(this->_flow_vars.v(), qp);
 
-	libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
+        libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
 
-	libMesh::NumberVectorValue U(u,v);
-	if (this->_flow_vars.dim() == 3)
-	  U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp); // w
+        libMesh::NumberVectorValue U(u,v);
+        if (this->_flow_vars.dim() == 3)
+          U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp); // w
 
-	libMesh::Real T = context.fixed_interior_value( this->_temp_vars.T(), qp );
-	libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
+        libMesh::Real T = context.fixed_interior_value( this->_temp_vars.T(), qp );
+        libMesh::Real rho = this->rho( T, this->get_p0_transient( context, qp ) );
 
-	libMesh::Real k = this->_k(T);
-	libMesh::Real cp = this->_cp(T);
+        libMesh::Real k = this->_k(T);
+        libMesh::Real cp = this->_cp(T);
 
-	libMesh::Number rho_cp = rho*this->_cp(T);
+        libMesh::Number rho_cp = rho*this->_cp(T);
 
-	libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
+        libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
-	libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
-	libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
+        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
+        libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
-	libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, qp, g, G, rho, U, k, cp, false );
+        libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, qp, g, G, rho, U, k, cp, false );
 
-	libMesh::Real RE_t = this->compute_res_energy_transient( context, qp );
+        libMesh::Real RE_t = this->compute_res_energy_transient( context, qp );
 
-	for (unsigned int i=0; i != n_T_dofs; i++)
-	  {
-	    FT(i) -= rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]*JxW[qp];
-	  }
+        for (unsigned int i=0; i != n_T_dofs; i++)
+          {
+            FT(i) -= rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]*JxW[qp];
+          }
 
       }
 

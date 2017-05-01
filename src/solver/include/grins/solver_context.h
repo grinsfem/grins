@@ -45,13 +45,13 @@ namespace GRINS
 
   //! Simple class to hold objects passed to Solver::solve
   /*! Allows some flexibility for adding objects needed to pass to the Solver::solve
-      method so that the solver can still be agnostic to creation etc. of those objects,
-      but can operate on them. 
-   */
+    method so that the solver can still be agnostic to creation etc. of those objects,
+    but can operate on them.
+  */
   class SolverContext
   {
   public:
-    
+
     SolverContext();
     ~SolverContext(){};
 

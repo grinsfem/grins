@@ -60,19 +60,19 @@ namespace GRINS
 
     {
       /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
+        Not sure if we will get thread lock here or not. */
       libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
       try
-	{
-	  _cantera_gas.setState_TRY(T, rho, &mass_fractions[0]);
-	  _cantera_gas.getNetProductionRates(&omega_dot[0]);
-	}
+        {
+          _cantera_gas.setState_TRY(T, rho, &mass_fractions[0]);
+          _cantera_gas.getNetProductionRates(&omega_dot[0]);
+        }
       catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
+        {
+          Cantera::showErrors(std::cerr);
+          libmesh_error();
+        }
     }
 
     for( unsigned int s = 0; s < omega_dot.size(); s++ )

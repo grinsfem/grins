@@ -52,7 +52,7 @@ namespace GRINS
         grins_warning(warning);
       }
     else if( input.have_variable("SolverOptions/TimeStepping/n_timesteps") )
-        n_timesteps = input("SolverOptions/TimeStepping/n_timesteps",0);
+      n_timesteps = input("SolverOptions/TimeStepping/n_timesteps",0);
     else
       libmesh_error_msg("ERROR: Could not find valid entry for n_timesteps!");
 

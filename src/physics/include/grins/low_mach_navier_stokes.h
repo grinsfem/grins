@@ -36,7 +36,7 @@ namespace GRINS
   //! Physics class for Incompressible Navier-Stokes
   /*!
     This physics class implements the classical Incompressible Navier-Stokes equations.
-   */
+  */
   template<class Viscosity, class SpecificHeat, class ThermalConductivity>
   class LowMachNavierStokes : public LowMachNavierStokesBase<Viscosity,SpecificHeat,ThermalConductivity>
   {
@@ -57,8 +57,8 @@ namespace GRINS
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,
@@ -66,11 +66,11 @@ namespace GRINS
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				AssemblyContext& context,
-				CachedValues& cache );
+                                AssemblyContext& context,
+                                CachedValues& cache );
 
     virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
-							CachedValues& cache );
+                                                        CachedValues& cache );
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
@@ -89,39 +89,39 @@ namespace GRINS
 
     //! Helper function
     void assemble_mass_time_deriv( bool compute_jacobian,
-				   AssemblyContext& context,
-				   CachedValues& cache );
+                                   AssemblyContext& context,
+                                   CachedValues& cache );
 
     //! Helper function
     void assemble_momentum_time_deriv( bool compute_jacobian,
-				       AssemblyContext& context,
-				       CachedValues& cache );
+                                       AssemblyContext& context,
+                                       CachedValues& cache );
 
     //! Helper function
     void assemble_energy_time_deriv( bool compute_jacobian,
-				     AssemblyContext& context,
-				     CachedValues& cache );
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
 
     //! Helper function
     void assemble_continuity_mass_residual( bool compute_jacobian,
-					    AssemblyContext& c );
+                                            AssemblyContext& c );
 
     //! Helper function
     void assemble_momentum_mass_residual( bool compute_jacobian,
-					  AssemblyContext& c );
+                                          AssemblyContext& c );
 
     //! Helper function
     void assemble_energy_mass_residual( bool compute_jacobian,
-					AssemblyContext& c );
+                                        AssemblyContext& c );
 
     void assemble_thermo_press_elem_time_deriv( bool compute_jacobian,
-						AssemblyContext& c );
+                                                AssemblyContext& c );
 
     void assemble_thermo_press_side_time_deriv( bool compute_jacobian,
-						AssemblyContext& c );
+                                                AssemblyContext& c );
 
     void assemble_thermo_press_mass_residual( bool compute_jacobian,
-					      AssemblyContext& c );
+                                              AssemblyContext& c );
 
   private:
 

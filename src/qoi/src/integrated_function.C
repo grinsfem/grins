@@ -63,9 +63,9 @@ namespace GRINS
 
   template<typename Function>
   void IntegratedFunction<Function>::init
-    (const GetPot& /*input*/,
-     const MultiphysicsSystem& system,
-     unsigned int /*qoi_num*/ )
+  (const GetPot& /*input*/,
+   const MultiphysicsSystem& system,
+   unsigned int /*qoi_num*/ )
   {
     _rayfire->init(system.get_mesh());
   }
@@ -78,7 +78,7 @@ namespace GRINS
 
   template<typename Function>
   void IntegratedFunction<Function>::element_qoi( AssemblyContext& context,
-                                       const unsigned int qoi_index )
+                                                  const unsigned int qoi_index )
   {
     const libMesh::Elem& original_elem = context.get_elem();
     const libMesh::Elem* rayfire_elem = _rayfire->map_to_rayfire_elem(original_elem.id());
@@ -107,14 +107,14 @@ namespace GRINS
         libMesh::Number& qoi = context.get_qois()[qoi_index];
 
         for (unsigned int qp = 0; qp != n_qpoints; ++qp)
-            qoi += this->qoi_value((*_f),context,xyz[qp])*JxW[qp];
+          qoi += this->qoi_value((*_f),context,xyz[qp])*JxW[qp];
 
       }
   }
 
   template<typename Function>
   void IntegratedFunction<Function>::element_qoi_derivative( AssemblyContext& /*context*/,
-                                       const unsigned int /*qoi_index*/ )
+                                                             const unsigned int /*qoi_index*/ )
   {
     //TODO
     libmesh_not_implemented();
@@ -133,7 +133,7 @@ namespace GRINS
     return f(xyz);
   }
 
-template class IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >;
-template class IntegratedFunction<libMesh::FEMFunctionBase<libMesh::Real> >;
+  template class IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >;
+  template class IntegratedFunction<libMesh::FEMFunctionBase<libMesh::Real> >;
 
 } //namespace GRINS

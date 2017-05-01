@@ -43,10 +43,10 @@ namespace GRINS
   class GenericICHandler : public ICHandlingBase
   {
   public:
-    
+
     GenericICHandler(const std::string& physics_name,
                      const GetPot& input);
-    
+
     virtual ~GenericICHandler();
   };
 

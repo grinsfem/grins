@@ -42,7 +42,7 @@ namespace GRINS
 
     //! Constructor with specified material
     /*! Will look in the input file for [Materials/material/ThermalConductivity/Pr]
-        for the value of viscosity. */
+      for the value of viscosity. */
     ConstantPrandtlConductivity( const GetPot& input, const std::string& material );
 
     //! Deprecated constructor
@@ -56,14 +56,14 @@ namespace GRINS
     libMesh::Real _Pr;
 
   };
-  
+
   /* ------------------------- Inline Functions -------------------------*/
   inline
   libMesh::Real ConstantPrandtlConductivity::operator()( const libMesh::Real mu, const libMesh::Real cp ) const
   {
     return mu*cp/_Pr;
   }
-  
+
 } // end namespace GRINS
 
 #endif // GRINS_CONSTANT_PRANDTL_CONDUCTIVITY_H

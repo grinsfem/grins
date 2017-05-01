@@ -54,20 +54,20 @@ namespace GRINS
   public:
 
     PressurePinning( const GetPot& input,
-		     const std::string& physics_name );
+                     const std::string& physics_name );
     ~PressurePinning();
 
     //! Check the mesh to ensure pin location is found
     /*! If the pin location is found, we set _pin_location_found to true
-        (for assertion later). If not found, we throw an error. */
+      (for assertion later). If not found, we throw an error. */
     void check_pin_location( const libMesh::MeshBase& mesh );
 
     /*! The idea here is to pin a variable to a particular value if there is
       a null space - e.g. pressure for IncompressibleNavierStokes. */
     void pin_value( libMesh::DiffContext& context,
-		    const bool request_jacobian,
-		    const GRINS::VariableIndex var,
-		    const double penalty = 1.0 );
+                    const bool request_jacobian,
+                    const GRINS::VariableIndex var,
+                    const double penalty = 1.0 );
 
   private:
 
@@ -79,8 +79,8 @@ namespace GRINS
 
     //! Cache element id for element that contains _pin_location
     /*! We will initalize this to libMesh::DofObject::invalid_id
-        and use that to check whether or not we located an element
-        that contains the _pin_location. */
+      and use that to check whether or not we located an element
+      that contains the _pin_location. */
     libMesh::dof_id_type _pinned_elem_id;
 
   };

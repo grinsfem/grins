@@ -53,13 +53,13 @@ namespace GRINS
                                                  std::vector<std::string>& sections )
   {
     if( !input.have_section(VariablesParsing::variables_section()) )
-       libmesh_error_msg("ERROR: Could not find "+VariablesParsing::variables_section()+" section!");
+      libmesh_error_msg("ERROR: Could not find "+VariablesParsing::variables_section()+" section!");
 
     // We need to extract all the Variable subsections from the input file
     sections = input.get_subsection_names(VariablesParsing::variables_section());
 
     // Make sure we found some variable subsections
     if( sections.empty() )
-       libmesh_error_msg("ERROR: Did not find any Variable subsections!");
+      libmesh_error_msg("ERROR: Did not find any Variable subsections!");
   }
 } // end namespace GRINS

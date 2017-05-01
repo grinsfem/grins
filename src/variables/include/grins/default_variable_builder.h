@@ -66,9 +66,9 @@ namespace GRINS
 
     //! Parses the [Variable/<var_section>/var_type] option
     /*! The var_type is how we distinguish between the Variables so that
-        the user can name the section whatever they want. If var_type
-        is not present, then we assume that the var_type is actually the
-        the section name, var_section. */
+      the user can name the section whatever they want. If var_type
+      is not present, then we assume that the var_type is actually the
+      the section name, var_section. */
     std::string parse_var_type( const GetPot& input,
                                 const std::string& var_section ) const
     { std::string input_sec = VariablesParsing::variables_section()+"/"+var_section+"/type";

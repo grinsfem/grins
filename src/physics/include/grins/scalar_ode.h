@@ -47,7 +47,7 @@ namespace GRINS
   /*
     This physics class allows ODEs specified in ParsedFEMFunction
     config file arguments to be solved.
-   */
+  */
   class ScalarODE : public Physics
   {
   public:
@@ -66,18 +66,18 @@ namespace GRINS
 
     // User-specified ODE(s)
     virtual void nonlocal_time_derivative ( bool compute_jacobian,
-				            AssemblyContext& context,
-				            CachedValues& cache );
+                                            AssemblyContext& context,
+                                            CachedValues& cache );
 
     // User-specified constraint equation
     virtual void nonlocal_constraint ( bool compute_jacobian,
-				       AssemblyContext& context,
-				       CachedValues& cache );
+                                       AssemblyContext& context,
+                                       CachedValues& cache );
 
     // User-specified (or default "s'") mass term
     virtual void nonlocal_mass_residual ( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     VariableIndex scalar_ode_var() const { return _var.var(); }
 
@@ -86,7 +86,7 @@ namespace GRINS
     // ParsedFEMFunctions evaluating the mass, time derivative, and
     // constraint components of an ODE.
     libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
-      time_deriv_function,
+    time_deriv_function,
       constraint_function,
       mass_residual_function;
 

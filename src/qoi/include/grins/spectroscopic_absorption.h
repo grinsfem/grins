@@ -38,9 +38,9 @@ namespace GRINS
 
     Relies upon the IntegratedFunction class for hooking into QoI infrastructure,
     and AbsorptionCoeff class for evaluating the <i>spectral absorption coefficient</i>, \f$ k_{\nu} \f$
-    
+
     \f$ \frac{I_{\nu}}{I_{\nu}^0} = \exp\left\{- \int_0^L k_{\nu} dx\right\} \f$
-    
+
     where \f$ \frac{I_{\nu}}{I_{\nu}^0} \f$ is the <i>spectral absorption</i>
 
     Expects all parameters given in standard SI units [m], [K], [Pa]
@@ -59,8 +59,8 @@ namespace GRINS
 
     //! Override the QoIBase implementation to perform exp(-kv*L)
     virtual void parallel_op( const libMesh::Parallel::Communicator & communicator,
-                                    libMesh::Number & sys_qoi,
-		                                libMesh::Number & local_qoi );
+                              libMesh::Number & sys_qoi,
+                              libMesh::Number & local_qoi );
 
   private:
 

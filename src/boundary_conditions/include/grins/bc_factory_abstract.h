@@ -63,9 +63,9 @@ namespace GRINS
 
     //! Sets the current section of the input file
     /*! The section here corresponds to the section in the GetPot
-        input file, e.g. if we're wanting to parse functions from
-        [Variables/SideWall/Velocity/u], then section will be
-        "Variables/SideWall/Velocity". */
+      input file, e.g. if we're wanting to parse functions from
+      [Variables/SideWall/Velocity/u], then section will be
+      "Variables/SideWall/Velocity". */
     static void set_section( const std::string& section )
     { _section = section; }
 
@@ -75,9 +75,9 @@ namespace GRINS
 
     //! Ensure that there is only one expression for the [Section/var_name] variable
     /*! When parsing expressions to give to Parsed(FEM)Function, this function checks
-        that there's only one expression for the given [Section/var_name] in the input
-        file. This also helps protect against white space in the expression, which we
-        don't currently support. */
+      that there's only one expression for the given [Section/var_name] in the input
+      file. This also helps protect against white space in the expression, which we
+      don't currently support. */
     void check_for_multiple_expressions( const GetPot& input,const std::string& section,
                                          const std::string& var_name ) const;
 
@@ -92,8 +92,8 @@ namespace GRINS
     virtual void reset_state();
 
     /*! We store only a raw pointer here because we *can't* make a copy.
-        Otherwise, bad things will happen. We are not taking
-        ownership of this, so we need to *not* delete this.*/
+      Otherwise, bad things will happen. We are not taking
+      ownership of this, so we need to *not* delete this.*/
     static MultiphysicsSystem* _system;
 
     //! BoundaryID for constructing a particular boundary condition
@@ -101,8 +101,8 @@ namespace GRINS
 
     //! The FEVariablesBase class associated with the boundary condition being built
     /*! We only build one boundary condition at a time, so this pointer will
-        change with each boundary condition construction. We store a raw pointer
-        here because we don't own this. Do not delete!*/
+      change with each boundary condition construction. We store a raw pointer
+      here because we don't own this. Do not delete!*/
     static const FEVariablesBase* _fe_var;
 
     static std::string _section;

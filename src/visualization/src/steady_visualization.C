@@ -38,8 +38,8 @@ namespace GRINS
 {
 
   SteadyVisualization::SteadyVisualization
-    ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm )
+  ( const GetPot& input,
+    const libMesh::Parallel::Communicator &comm )
     : Visualization(input, comm)
   {
     return;
@@ -51,9 +51,9 @@ namespace GRINS
   }
 
   void SteadyVisualization::output_residual( SharedPtr<libMesh::EquationSystems> equation_system,
-					     MultiphysicsSystem* system,
-					     const unsigned int,
-					     const libMesh::Real )
+                                             MultiphysicsSystem* system,
+                                             const unsigned int,
+                                             const libMesh::Real )
   {
     std::string filename = this->_vis_output_file_prefix+"_residual";
 
@@ -75,11 +75,11 @@ namespace GRINS
   }
 
   void SteadyVisualization::output_residual_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
-     MultiphysicsSystem* system,
-     const libMesh::ParameterVector & params,
-     const unsigned int,
-     const libMesh::Real )
+  (SharedPtr<libMesh::EquationSystems> equation_system,
+   MultiphysicsSystem* system,
+   const libMesh::ParameterVector & params,
+   const unsigned int,
+   const libMesh::Real )
   {
     for (unsigned int p=0; p != params.size(); ++p)
       {
@@ -130,11 +130,11 @@ namespace GRINS
   }
 
   void SteadyVisualization::output_solution_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
-     MultiphysicsSystem* system,
-     const libMesh::ParameterVector & params,
-     const unsigned int,
-     const libMesh::Real )
+  (SharedPtr<libMesh::EquationSystems> equation_system,
+   MultiphysicsSystem* system,
+   const libMesh::ParameterVector & params,
+   const unsigned int,
+   const libMesh::Real )
   {
     for (unsigned int p=0; p != params.size(); ++p)
       {

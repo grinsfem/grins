@@ -41,11 +41,11 @@ namespace GRINS
 {
   //! Manages runtime construction of Physics objects
   /*! This will parse the input file for the requested Physics
-      and manage their construction. Actual construction of the
-      Physics object is delegated to PhysicsFactoryBase subclasses.
-      The PhysicsBuilder merely manages tasks around them as
-      needed. To add a new Physics, the user should instantiate
-      an appropriate PhysicsFactoryBase subclass. */
+    and manage their construction. Actual construction of the
+    Physics object is delegated to PhysicsFactoryBase subclasses.
+    The PhysicsBuilder merely manages tasks around them as
+    needed. To add a new Physics, the user should instantiate
+    an appropriate PhysicsFactoryBase subclass. */
   class PhysicsBuilder
   {
   public:

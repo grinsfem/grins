@@ -70,8 +70,8 @@ namespace GRINS
   }
 
   void Solver::initialize( const GetPot& /*input*/,
-			   SharedPtr<libMesh::EquationSystems> equation_system,
-			   MultiphysicsSystem* system )
+                           SharedPtr<libMesh::EquationSystems> equation_system,
+                           MultiphysicsSystem* system )
   {
 
     // Defined in subclasses depending on the solver used.

@@ -40,19 +40,19 @@ namespace GRINS
 {
   /*!
     Evaluates the Beer-Lambert Law at a given point in space. It is intended to be used with the IntegratedFunction class for QoI evaluation.
-    
+
     We use the differential form for calculating the absorbance \f$ \alpha_{\nu} \f$
-    
+
     \f$ \alpha_{\nu} = -\frac{dI_{\nu}}{I_{\nu}} = k_{\nu} dx \f$
-    
+
     This class calculates the <i>spectral absorption coefficient</i>, denoted above as \f$ k_{\nu} \f$, which is passed back to IntegratedFunction::element_qoi()
     to evaluate the integral Beer-Lambert law
-    
+
     \f$ \frac{I_{\nu}}{I_{\nu}^0} = \exp\left\{- \int_0^L k_{\nu} dx\right\} \f$
 
     This class operates internally in [cm], [K], and [atm] since those are the base units used in the HITRAN data.
     In addition, the coefficients used in calculating the Voigt profile require these units to be used.
-    
+
     However, values given to the physics class(es) must be in standard SI units [m] and [Pa].
 
     A chemistry library (Antioch or Cantera) is also required.
@@ -150,7 +150,7 @@ namespace GRINS
 
     //! Initialize the coeff matrix for calculating the Voigt profile
     void init_voigt();
-    
+
     //! User should not call empty constructor
     AbsorptionCoeff();
   };

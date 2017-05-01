@@ -40,7 +40,7 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
-      _coefficient("")
+    _coefficient("")
   {
     this->read_input_options(input);
   }
@@ -62,11 +62,11 @@ namespace GRINS
 
   template<class Mu>
   bool VelocityDragBase<Mu>::compute_force
-    ( const libMesh::Point& point,
-      const libMesh::Real time,
-      const libMesh::NumberVectorValue& U,
-      libMesh::NumberVectorValue& F,
-      libMesh::NumberTensorValue *dFdU)
+  ( const libMesh::Point& point,
+    const libMesh::Real time,
+    const libMesh::NumberVectorValue& U,
+    libMesh::NumberVectorValue& F,
+    libMesh::NumberTensorValue *dFdU)
   {
     const libMesh::Number Umag = U.size();
 

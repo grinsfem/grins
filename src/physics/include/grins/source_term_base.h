@@ -45,8 +45,8 @@ namespace GRINS
 {
   //! Base class for generic source function term, f(x,y,z,t).
   /*! Idea is for the user to specify which variables they want to add a source
-      term and then, depending on the subclass, parse for each variable and
-      have it added to that equation.*/
+    term and then, depending on the subclass, parse for each variable and
+    have it added to that equation.*/
   class SourceTermBase : public Physics
   {
   public:

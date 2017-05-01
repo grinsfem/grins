@@ -39,13 +39,13 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
-      base_velocity_function(""),
-      local_vertical_function(""),
-      lift_function(""),
-      drag_function(""),
-      chord_function(""),
-      area_swept_function(""),
-      aoa_function("")
+    base_velocity_function(""),
+    local_vertical_function(""),
+    lift_function(""),
+    drag_function(""),
+    chord_function(""),
+    area_swept_function(""),
+    aoa_function("")
   {
     this->read_input_options(input);
   }
@@ -110,11 +110,11 @@ namespace GRINS
 
   template<class Mu>
   bool AveragedFanBase<Mu>::compute_force
-    ( const libMesh::Point& point,
-      const libMesh::Real time,
-      const libMesh::NumberVectorValue& U,
-      libMesh::NumberVectorValue& F,
-      libMesh::NumberTensorValue *dFdU)
+  ( const libMesh::Point& point,
+    const libMesh::Real time,
+    const libMesh::NumberVectorValue& U,
+    libMesh::NumberVectorValue& F,
+    libMesh::NumberTensorValue *dFdU)
   {
     // Find base velocity of moving fan at this point
     libMesh::DenseVector<libMesh::Number> output_vec(3);

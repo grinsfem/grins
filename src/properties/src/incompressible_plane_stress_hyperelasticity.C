@@ -125,8 +125,8 @@ namespace GRINS
                 for( unsigned int mu = 0; mu < 2; mu++ )
                   {
                     C(alpha,beta,lambda,mu) = a_contra(alpha,beta)*daterm_dstrain(lambda,mu)
-                                            + dAcontra_dstrain(alpha,beta,lambda,mu)*A_term
-                                            + A_contra(alpha,beta)*dAterm_dstrain(lambda,mu);
+                      + dAcontra_dstrain(alpha,beta,lambda,mu)*A_term
+                      + A_contra(alpha,beta)*dAterm_dstrain(lambda,mu);
                   }
               }
           }
@@ -212,7 +212,7 @@ namespace GRINS
             const libMesh::Real dI1_dstrain = 2.0*a_contra(alpha,beta) + dlamsq_dstrain;
 
             const libMesh::Real dp_dstrain = -2.0*dlamsq_dstrain*( dWdI1 + dWdI2*(I1-lambda_sq) )
-                                             -2.0*lambda_sq*dWdI2*(dI1_dstrain - dlamsq_dstrain);
+              -2.0*lambda_sq*dWdI2*(dI1_dstrain - dlamsq_dstrain);
 
             dAterm_dstrain(alpha,beta) = 2.0*dWdI2*A_over_a*(2.0*A_contra(alpha,beta)) + dp_dstrain;
           }

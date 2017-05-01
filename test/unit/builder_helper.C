@@ -78,7 +78,7 @@ namespace GRINSTesting
       CPPUNIT_ASSERT( sections.find("Temperature") != sections.end() );
       CPPUNIT_ASSERT( sections.find("SpeciesMassFractions") != sections.end() );
     }
- };
+  };
 
   CPPUNIT_TEST_SUITE_REGISTRATION( BuilderHelperTest );
 

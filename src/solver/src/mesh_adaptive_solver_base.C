@@ -191,7 +191,7 @@ namespace GRINS
         }
         break;
 
-      // Wat?!
+        // Wat?!
       default:
         {
           libmesh_error();

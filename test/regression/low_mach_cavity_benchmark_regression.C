@@ -32,7 +32,7 @@
 // Function for getting initial temperature field
 libMesh::Real
 initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
-		const std::string& system_name, const std::string& unknown_name );
+                const std::string& system_name, const std::string& unknown_name );
 
 int main(int argc, char* argv[])
 {
@@ -98,11 +98,11 @@ int main(int argc, char* argv[])
       return_flag = 77;
 
       std::cerr << std::setprecision(16)
-		<< std::scientific
-		<< "Error: QoI value mismatch." << std::endl
-		<< "Computed qoi   = " << qoi << std::endl
-		<< "Exact qoi      = " << exact_qoi << std::endl
-		<< "Relative error = " << rel_error << std::endl;
+                << std::scientific
+                << "Error: QoI value mismatch." << std::endl
+                << "Computed qoi   = " << qoi << std::endl
+                << "Exact qoi      = " << exact_qoi << std::endl
+                << "Relative error = " << rel_error << std::endl;
     }
 
   return return_flag;
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 
 libMesh::Real
 initial_values( const libMesh::Point&, const libMesh::Parameters &params,
-		const std::string& , const std::string& unknown_name )
+                const std::string& , const std::string& unknown_name )
 {
   libMesh::Real value = 0.0;
 

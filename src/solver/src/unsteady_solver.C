@@ -119,8 +119,8 @@ namespace GRINS
 
     if( context.output_vis )
       {
-	context.postprocessing->update_quantities( *(context.equation_system) );
-	context.vis->output( context.equation_system );
+        context.postprocessing->update_quantities( *(context.equation_system) );
+        context.vis->output( context.equation_system );
       }
 
     // We may need to initialize acceleration for second order solvers
@@ -135,30 +135,30 @@ namespace GRINS
       {
         std::time_t latest_wall_time = std::time(NULL);
 
-	std::cout << "==========================================================" << std::endl
-		  << "   Beginning time step " << t_step  <<
-                     ", t = " << context.system->time <<
-                     ", dt = " << context.system->deltat <<
-                     ", runtime = " << (latest_wall_time - first_wall_time) <<
-                     std::endl
-		  << "==========================================================" << std::endl;
+        std::cout << "==========================================================" << std::endl
+                  << "   Beginning time step " << t_step  <<
+          ", t = " << context.system->time <<
+          ", dt = " << context.system->deltat <<
+          ", runtime = " << (latest_wall_time - first_wall_time) <<
+          std::endl
+                  << "==========================================================" << std::endl;
 
         // If we have any solution-dependent Dirichlet boundaries, we
         // need to update them with the current solution.
         this->update_dirichlet_bcs(context);
 
-	context.system->solve();
+        context.system->solve();
 
-	sim_time = context.system->time;
+        sim_time = context.system->time;
 
-	if( context.output_vis && !((t_step+1)%context.timesteps_per_vis) )
-	  {
-	    context.postprocessing->update_quantities( *(context.equation_system) );
-	    context.vis->output( context.equation_system, t_step, sim_time );
-	  }
+        if( context.output_vis && !((t_step+1)%context.timesteps_per_vis) )
+          {
+            context.postprocessing->update_quantities( *(context.equation_system) );
+            context.vis->output( context.equation_system, t_step, sim_time );
+          }
 
-	if( context.output_residual && !((t_step+1)%context.timesteps_per_vis) )
-	  context.vis->output_residual( context.equation_system, context.system,
+        if( context.output_residual && !((t_step+1)%context.timesteps_per_vis) )
+          context.vis->output_residual( context.equation_system, context.system,
                                         t_step, sim_time );
 
         if ( context.print_perflog && context.timesteps_per_perflog
@@ -168,15 +168,15 @@ namespace GRINS
         if ( context.print_scalars )
           this->print_scalar_vars(context);
 
-	// Advance to the next timestep
-	context.system->time_solver->advance_timestep();
+        // Advance to the next timestep
+        context.system->time_solver->advance_timestep();
       }
 
     std::time_t final_wall_time = std::time(NULL);
     std::cout << "==========================================================" << std::endl
-	      << "   Ending time stepping, t = " << context.system->time <<
-                 ", runtime = " << (final_wall_time - first_wall_time) <<
-                 std::endl
+              << "   Ending time stepping, t = " << context.system->time <<
+      ", runtime = " << (final_wall_time - first_wall_time) <<
+      std::endl
               << "==========================================================" << std::endl;
 
 
@@ -199,12 +199,12 @@ namespace GRINS
 
           // If we have a FEMFunctionBase, we assume nonlinearity
           if (bdy->f_fem.get())
-              have_nonlinear_dirichlet_bc = true;
+            have_nonlinear_dirichlet_bc = true;
 
           // Check for time-dependence of FunctionBase
           if( bdy->f.get() )
-              if( bdy->f->is_time_dependent() )
-                  have_time_dependence = true;
+            if( bdy->f->is_time_dependent() )
+              have_time_dependence = true;
 
           if( have_nonlinear_dirichlet_bc || have_time_dependence )
             break;

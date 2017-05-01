@@ -69,8 +69,8 @@ namespace GRINS
   }
 
   void AntiochMixture::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     // Use common code for any GRINS parameters
@@ -80,7 +80,7 @@ namespace GRINS
     if (param_name.find("Antioch") == 0) // name starts with Antioch
       param_pointer.push_back
         (ParameterAntiochReset
-          (*this->_reaction_set.get(), param_name));
+         (*this->_reaction_set.get(), param_name));
   }
 
 

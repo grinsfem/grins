@@ -61,15 +61,15 @@ namespace GRINS
         ss <<"Invalid specification of wavenumber range:" <<std::endl
            <<"nu_min: " <<nu_min <<std::endl
            <<"nu_max: " <<nu_max <<std::endl
-           <<"desired_nu: " <<desired_nu <<std::endl;   
+           <<"desired_nu: " <<desired_nu <<std::endl;
         libmesh_error_msg(ss.str());
       }
-    
+
     _species_idx = _chemistry->species_index(species);
     unsigned int data_size = _hitran->get_data_size();
-    
+
     bool min_flag = false;
-    
+
     for (unsigned int i=0; i<data_size; i++)
       {
         if (_hitran->nu0(i) > nu_min)
@@ -79,16 +79,16 @@ namespace GRINS
             break;
           }
       }
-      
+
     if (!min_flag)
       {
         std::stringstream ss;
         ss <<"Minimum wavenumber " <<nu_min <<" is greater than the maximum wavenumber in provided HITRAN data";
         libmesh_error_msg(ss.str());
       }
-    
+
     bool max_flag = false;
-    
+
     for (unsigned int i=data_size-1; i>=0; i--)
       {
         if (_hitran->nu0(i) < nu_max)
@@ -98,7 +98,7 @@ namespace GRINS
             break;
           }
       }
-      
+
     if (!max_flag)
       _max_index = data_size-1;
 
@@ -148,9 +148,9 @@ namespace GRINS
 
   template<typename Chemistry>
   void AbsorptionCoeff<Chemistry>::operator()( const libMesh::FEMContext& /*context*/,
-                                          const libMesh::Point& /*p*/,
-                                          const libMesh::Real /*time*/,
-                                          libMesh::DenseVector<libMesh::Real>& /*output*/)
+                                               const libMesh::Point& /*p*/,
+                                               const libMesh::Real /*time*/,
+                                               libMesh::DenseVector<libMesh::Real>& /*output*/)
   {
     libmesh_not_implemented();
   }
@@ -165,12 +165,12 @@ namespace GRINS
   libMesh::Real AbsorptionCoeff<Chemistry>::kv(libMesh::Real P,libMesh::Real T,libMesh::Real X,libMesh::Real M)
   {
     libMesh::Real kv = 0.0;
-    
+
     for (unsigned int i=_min_index; i<=_max_index; i++)
       {
-        // isotopologue 
+        // isotopologue
         unsigned int iso = _hitran->isotopologue(i);
-        
+
         // linecenter wavenumber
         libMesh::Real nu0 = _hitran->nu0(i);
 
@@ -192,7 +192,7 @@ namespace GRINS
         // pressure shift of the linecenter wavenumber
         libMesh::Real nu = nu0 + d_air*(P/_Pref);
 
-        // linestrength 
+        // linestrength
         libMesh::Real S = sw0 * (QT0/QT) * std::exp(-E*_rad_coeff*( (1.0/T) - (1.0/_T0) )) * ( 1.0-std::exp(-_rad_coeff*nu/T) ) * pow(1.0-std::exp(-_rad_coeff*nu/_T0),-1.0);
 
         // convert linestrength units to [cm^-2 atm^-1]
@@ -211,7 +211,7 @@ namespace GRINS
         // absorption coefficient [cm^-1]
         kv += S*P*X*phi_V;
       }
-      
+
     return kv;
   }
 
@@ -248,14 +248,14 @@ namespace GRINS
     libMesh::Real V = 0.0;
 
     for(int i=0; i<4; i++)
-     {
+      {
         libMesh::Real Ai = _voigt_coeffs[0][i];
         libMesh::Real Bi = _voigt_coeffs[1][i];
         libMesh::Real Ci = _voigt_coeffs[2][i];
         libMesh::Real Di = _voigt_coeffs[3][i];
 
         V += ( Ci*(a-Ai) + Di*(w-Bi) )/( (a-Ai)*(a-Ai) + (w-Bi)*(w-Bi) );
-     }
+      }
 
     libMesh::Real phi_V = (2.0*root_ln2)/(std::sqrt(Constants::pi)*nu_D)*V;
 
@@ -266,7 +266,7 @@ namespace GRINS
   void AbsorptionCoeff<Chemistry>::init_voigt() {
     _voigt_coeffs.resize(4);
     for (int i=0; i<4; i++)
-        _voigt_coeffs[i].resize(4);
+      _voigt_coeffs[i].resize(4);
 
     _voigt_coeffs[0][0] = -1.2150;
     _voigt_coeffs[0][1] = -1.3509;
@@ -287,10 +287,10 @@ namespace GRINS
   }
 
 #if GRINS_HAVE_ANTIOCH
-template class AbsorptionCoeff<AntiochChemistry>;
+  template class AbsorptionCoeff<AntiochChemistry>;
 #endif
 
 #if GRINS_HAVE_CANTERA
-template class AbsorptionCoeff<CanteraMixture>;
+  template class AbsorptionCoeff<CanteraMixture>;
 #endif
 } //namespace GRINS

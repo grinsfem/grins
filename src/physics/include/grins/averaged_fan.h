@@ -45,7 +45,7 @@ namespace GRINS
   /*
     This physics class imposes lift/drag forces on velocity as
     affected by a region in which airfoils are moving.
-   */
+  */
   template<class Viscosity>
   class AveragedFan : public AveragedFanBase<Viscosity>
   {
@@ -68,8 +68,8 @@ namespace GRINS
 
     // Constraint part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     //! Compute value of postprocessed quantities at libMesh::Point.
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,

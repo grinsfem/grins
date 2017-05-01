@@ -68,7 +68,7 @@ namespace GRINS
     // boundary id that touches multiple elements with differing
     // subdomain ids
     std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >
-             bc_id_to_subdomain_id_map;
+      bc_id_to_subdomain_id_map;
 
     this->build_bc_to_subdomain_map_check_with_mesh( system,
                                                      bc_id_to_subdomain_id_map );
@@ -225,7 +225,7 @@ namespace GRINS
         system.comm().allgather(subdomain_ids);
         std::sort( subdomain_ids.begin(), subdomain_ids.end() );
         subdomain_ids.erase
-	  (std::unique(subdomain_ids.begin(), subdomain_ids.end()),
+          (std::unique(subdomain_ids.begin(), subdomain_ids.end()),
            subdomain_ids.end() );
 
         // Grab the FEVariable

@@ -44,11 +44,11 @@ namespace GRINS
 
   //! Encapsulate QoI output flags and functionality
   /*! This class handles both the parsing of the options for triggering
-      QoI output and implements the functionality for outputting the QoIs
-      (which is really just a wrapper around calling output from QoI classes).
-      Currently, the user can enable printing the QoI info to the display
-      (std::cout) and to a file by specifing the filename in the corresponding
-      input option. */
+    QoI output and implements the functionality for outputting the QoIs
+    (which is really just a wrapper around calling output from QoI classes).
+    Currently, the user can enable printing the QoI info to the display
+    (std::cout) and to a file by specifing the filename in the corresponding
+    input option. */
   class QoIOutput
   {
   public:
@@ -59,13 +59,13 @@ namespace GRINS
 
     //! Function to query whether any input options set to output qoi
     /*! Returns true if user requested to output QoI in any one of the avaiable
-        modes, false otherwise. */
+      modes, false otherwise. */
     bool output_qoi_set() const
     { return (_output_to_display || _output_to_file ); }
 
     //! Output the QoI values for all triggered output modes
     /*! This function assumes that the qoi values have been assembled by
-        the System. */
+      the System. */
     void output_qois( const CompositeQoI & qois, const libMesh::Parallel::Communicator & comm ) const;
 
   protected:

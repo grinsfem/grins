@@ -90,10 +90,10 @@ namespace GRINSTesting
               message += ", species = "+mixture.species_name(species);
 
               /*
-              std::cout << message
-                        << ", omega_dot_exact = " << omega_dot_exact[s]
-                        << ", omega_dot_computed = " << omega_dot_computed[s]
-                        << std::endl;
+                std::cout << message
+                << ", omega_dot_exact = " << omega_dot_exact[s]
+                << ", omega_dot_computed = " << omega_dot_computed[s]
+                << std::endl;
               */
 
               libMesh::Real tol = TestingUtils::abs_tol_from_rel_tol( omega_dot_exact[s], rel_tol );

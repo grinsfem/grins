@@ -90,8 +90,8 @@ namespace GRINS
 
   template<class K>
   void HeatTransferBase<K>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     ParameterUser::register_parameter(param_name, param_pointer);

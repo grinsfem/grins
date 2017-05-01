@@ -355,9 +355,9 @@ namespace GRINS
     species_names.reserve(n_species);
     for( unsigned int i = 0; i < n_species; i++ )
       {
-	/*! \todo Make this prefix string an input option */
+        /*! \todo Make this prefix string an input option */
 
-	species_names.push_back( input( species_input, "DIE!", i ) );
+        species_names.push_back( input( species_input, "DIE!", i ) );
       }
   }
 

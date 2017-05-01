@@ -57,9 +57,9 @@ namespace GRINS
                                                            const unsigned int reactant_solid_species_idx,
                                                            const unsigned int product_species_idx )
     : CatalyticWallBase<Chemistry>(chem_mixture,gamma,reactant_gas_species_idx),
-      _reactant_gas_species_idx(reactant_gas_species_idx),
-      _reactant_solid_species_idx(reactant_solid_species_idx),
-      _product_species_idx(product_species_idx)
+    _reactant_gas_species_idx(reactant_gas_species_idx),
+    _reactant_solid_species_idx(reactant_solid_species_idx),
+    _product_species_idx(product_species_idx)
   {
     libmesh_deprecated();
   }

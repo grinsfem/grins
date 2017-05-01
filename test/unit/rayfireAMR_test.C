@@ -413,7 +413,7 @@ namespace GRINSTesting
 
       std::vector<unsigned int> children_not_in_rayfire;
       children_not_in_rayfire.push_back(0);
-      
+
       this->test_deformed_elem(mesh,origin,theta,children_in_rayfire,children_not_in_rayfire);
     }
 
@@ -452,7 +452,7 @@ namespace GRINSTesting
 
       std::vector<unsigned int> children_not_in_rayfire;
       children_not_in_rayfire.push_back(1);
-      
+
       this->test_deformed_elem(mesh,origin,theta,children_in_rayfire,children_not_in_rayfire);
     }
 

@@ -58,19 +58,19 @@ namespace GRINS
   }
 
   void WeightedFluxQoI::init
-    (const GetPot& input,
-     const MultiphysicsSystem& system,
-     unsigned int qoi_num )
+  (const GetPot& input,
+   const MultiphysicsSystem& system,
+   unsigned int qoi_num )
   {
     // Read variables for which we want to compute fluxes
     int num_vars = input.vector_variable_size("QoI/WeightedFlux/variables");
 
     if( num_vars <= 0 )
       {
-	std::cerr << "Error: Must specify at least one variable to compute"
+        std::cerr << "Error: Must specify at least one variable to compute"
                   << " weighted fluxes." << std::endl
                   << "Found: " << num_vars << std::endl;
-	libmesh_error();
+        libmesh_error();
       }
 
     // Read boundary ids on which we want to compute fluxes
@@ -83,7 +83,7 @@ namespace GRINS
                   << " for each specified weighted flux variable."
                   << std::endl
                   << "Found: " << num_bcs << std::endl;
-	libmesh_error();
+        libmesh_error();
       }
 
     std::vector<libMesh::boundary_id_type> bc_ids;
@@ -101,7 +101,7 @@ namespace GRINS
                   << " for each specified weighted flux variable."
                   << std::endl
                   << "Found: " << num_weights << std::endl;
-	libmesh_error();
+        libmesh_error();
       }
 
     for( int i = 0; i < num_weights; i++ )

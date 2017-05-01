@@ -78,7 +78,7 @@ namespace GRINS
     libMesh::Real omega_dot( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
     libMesh::Real domega_dot_dws(  const libMesh::Real rho_s, const libMesh::Real w_s,
-				   const libMesh::Real T, const libMesh::Real R ) const;
+                                   const libMesh::Real T, const libMesh::Real R ) const;
 
     libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
@@ -113,9 +113,9 @@ namespace GRINS
 
     //! Thermodynamic pressure
     /*! Currently, we assume that the thermodynamic pressure is constant. This
-        is not true in cavity type systems.
+      is not true in cavity type systems.
 
-        \todo make const */
+      \todo make const */
     libMesh::Real _p0;
   };
 

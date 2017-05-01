@@ -54,7 +54,7 @@ namespace GRINS
 
     //! Updates Dirichlet boundary conditions
     /*! If the Dirichlet boundary condition is nonlinear or time-dependent,
-        we need to update the constraints with the new solution. */
+      we need to update the constraints with the new solution. */
     void update_dirichlet_bcs( SolverContext& context );
 
     void init_second_order_in_time_solvers( SolverContext& context );

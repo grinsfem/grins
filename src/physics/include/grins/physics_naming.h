@@ -50,13 +50,13 @@ namespace GRINS
 
     //! Extract the physics name from the full_name.
     /*! If the delimiter is not present in the full_name, then
-        the physics_name is the full_name. */
+      the physics_name is the full_name. */
     static std::string extract_physics( const std::string& full_name );
 
     //! Extract the suffix from the full_name.
     /*! Note returned suffix includes the delimiter. If there is
-        no delimiter present, then the returned suffix is an empty
-        string. */
+      no delimiter present, then the returned suffix is an empty
+      string. */
     static std::string extract_suffix( const std::string& full_name );
 
     static PhysicsName stokes()

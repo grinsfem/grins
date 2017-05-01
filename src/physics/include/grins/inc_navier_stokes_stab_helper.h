@@ -43,8 +43,8 @@ namespace GRINS
   public:
 
     IncompressibleNavierStokesStabilizationHelper
-      ( const std::string & helper_name,
-        const GetPot& input );
+    ( const std::string & helper_name,
+      const GetPot& input );
 
     ~IncompressibleNavierStokesStabilizationHelper();
 
@@ -58,7 +58,7 @@ namespace GRINS
                                             libMesh::Real &tau_C,
                                             libMesh::Real &d_tau_C_d_rho,
                                             libMesh::Gradient &d_tau_C_d_U
-                                          ) const;
+                                            ) const;
 
     libMesh::Real compute_tau_momentum( AssemblyContext& c,
                                         unsigned int qp,
@@ -126,7 +126,7 @@ namespace GRINS
                                                  libMesh::Tensor &d_res_M_dU,
                                                  libMesh::Gradient &d_res_Muvw_dgraduvw,
                                                  libMesh::Tensor &d_res_Muvw_dhessuvw
-                                               ) const;
+                                                 ) const;
 
     libMesh::RealGradient compute_res_momentum_transient( AssemblyContext& context,
                                                           unsigned int qp,
@@ -137,7 +137,7 @@ namespace GRINS
                                                     const libMesh::Real rho,
                                                     libMesh::RealGradient &res_M,
                                                     libMesh::Real &d_res_Muvw_duvw
-                                                  ) const;
+                                                    ) const;
 
     /*! \todo Should we inline this? */
     libMesh::RealGradient UdotGradU( libMesh::Gradient& U, libMesh::Gradient& grad_u ) const;
@@ -207,13 +207,13 @@ namespace GRINS
 
   inline
   void IncompressibleNavierStokesStabilizationHelper::compute_tau_continuity_and_derivs
-    ( libMesh::Real tau_M,
-      libMesh::Real d_tau_M_d_rho,
-      libMesh::Gradient d_tau_M_d_U,
-      libMesh::RealGradient& g,
-      libMesh::Real &tau_C,
-      libMesh::Real &d_tau_C_d_rho,
-      libMesh::Gradient &d_tau_C_d_U
+  ( libMesh::Real tau_M,
+    libMesh::Real d_tau_M_d_rho,
+    libMesh::Gradient d_tau_M_d_U,
+    libMesh::RealGradient& g,
+    libMesh::Real &tau_C,
+    libMesh::Real &d_tau_C_d_rho,
+    libMesh::Gradient &d_tau_C_d_U
     ) const
   {
     tau_C = this->_tau_factor/(tau_M*(g*g));
@@ -234,27 +234,27 @@ namespace GRINS
   {
     return this->compute_tau( c, qp, mu*mu, g, G, rho, U, is_steady );
   }
- 
+
   inline void
   IncompressibleNavierStokesStabilizationHelper::compute_tau_momentum_and_derivs
-    ( AssemblyContext& c,
-      unsigned int qp,
-      libMesh::RealGradient& g,
-      libMesh::RealTensor& G,
-      libMesh::Real rho,
-      libMesh::Gradient U,
-      libMesh::Real mu,
-      libMesh::Real& tau_M,
-      libMesh::Real &d_tau_M_d_rho,
-      libMesh::Gradient &d_tau_M_d_U,
-      bool is_steady ) const
+  ( AssemblyContext& c,
+    unsigned int qp,
+    libMesh::RealGradient& g,
+    libMesh::RealTensor& G,
+    libMesh::Real rho,
+    libMesh::Gradient U,
+    libMesh::Real mu,
+    libMesh::Real& tau_M,
+    libMesh::Real &d_tau_M_d_rho,
+    libMesh::Gradient &d_tau_M_d_U,
+    bool is_steady ) const
   {
     this->compute_tau_and_derivs( c, qp, mu*mu, g, G, rho, U, tau_M,
                                   d_tau_M_d_rho, d_tau_M_d_U,
                                   is_steady );
   }
-  
- 
+
+
   inline
   libMesh::Real IncompressibleNavierStokesStabilizationHelper::compute_tau( AssemblyContext& c,
                                                                             unsigned int /*qp*/,
@@ -266,7 +266,7 @@ namespace GRINS
                                                                             bool is_steady ) const
   {
     libMesh::Real tau = (rho*U)*(G*(rho*U)) + this->_C*mat_prop_sq*G.contract(G);
-    
+
     if(!is_steady)
       tau += (2.0*rho/c.get_deltat_value())*(2.0*rho/c.get_deltat_value());
 
@@ -276,17 +276,17 @@ namespace GRINS
   inline
   void
   IncompressibleNavierStokesStabilizationHelper::compute_tau_and_derivs
-    ( AssemblyContext& c,
-      unsigned int /*qp*/,
-      libMesh::Real mat_prop_sq,
-      libMesh::RealGradient& /*g*/, // constant
-      libMesh::RealTensor& G, // constant
-      libMesh::Real rho,
-      libMesh::Gradient U,
-      libMesh::Real& tau,
-      libMesh::Real& d_tau_d_rho,
-      libMesh::Gradient& d_tau_d_U,
-      bool is_steady ) const
+  ( AssemblyContext& c,
+    unsigned int /*qp*/,
+    libMesh::Real mat_prop_sq,
+    libMesh::RealGradient& /*g*/, // constant
+    libMesh::RealTensor& G, // constant
+    libMesh::Real rho,
+    libMesh::Gradient U,
+    libMesh::Real& tau,
+    libMesh::Real& d_tau_d_rho,
+    libMesh::Gradient& d_tau_d_U,
+    bool is_steady ) const
   {
     libMesh::Gradient rhoU = rho*U;
     libMesh::Gradient GrhoU = G*rhoU;
@@ -295,7 +295,7 @@ namespace GRINS
     tau = rhoUGrhoU + this->_C*mat_prop_sq*GG;
     d_tau_d_rho = rhoUGrhoU*2/rho;
     d_tau_d_U = 2*rho*GrhoU;
-    
+
     if(!is_steady)
       {
         libMesh::Real two_rho_over_dt = 2*rho/c.get_deltat_value();
@@ -314,6 +314,6 @@ namespace GRINS
 
     tau = this->_tau_factor / root_oldtau;
   }
-  
+
 }
 #endif // GRINS_INC_NAVIER_STOKES_STAB_HELPER_H

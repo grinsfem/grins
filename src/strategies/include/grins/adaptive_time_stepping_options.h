@@ -74,8 +74,8 @@ namespace GRINS
 
     // target tolerance parameter for adaptive time stepping
     /*! 0.0 means there is no adaptive time stepping enabled. To enable
-        adaptive time stepping with the libMesh::TwostepTimeSolver, this
-        parameter should be positive. */
+      adaptive time stepping with the libMesh::TwostepTimeSolver, this
+      parameter should be positive. */
     double _target_tolerance;
     double _upper_tolerance;
     double _max_growth;

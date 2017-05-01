@@ -68,10 +68,10 @@ namespace GRINS
   {
     // First do the mass part
     this->mass_residual_impl(compute_jacobian,
-                               context,
-                               &libMesh::FEMContext::interior_rate,
-                               &libMesh::DiffContext::get_elem_solution_rate_derivative,
-                               _mu_factor);
+                             context,
+                             &libMesh::FEMContext::interior_rate,
+                             &libMesh::DiffContext::get_elem_solution_rate_derivative,
+                             _mu_factor);
 
     // Now do the stiffness part
     const unsigned int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
@@ -180,7 +180,7 @@ namespace GRINS
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
+          {
             libMesh::RealGradient u_gradphi( dphi_dxi[i][qp], dphi_deta[i][qp] );
 
             for( unsigned int alpha = 0; alpha < manifold_dim; alpha++ )
@@ -335,7 +335,7 @@ namespace GRINS
                                     // Here, we're missing derivatives of C(alpha,beta,lambda,mu) w.r.t. strain
                                     // Nonzero for hyperelasticity models
                                     const libMesh::Real dxterm_du = C1*(  u_gradphi_j(beta)*u_gradphi_i(alpha)
-                                                                        + u_gradphi_j(alpha)*u_gradphi_i(beta) )*context.get_elem_solution_derivative();
+                                                                          + u_gradphi_j(alpha)*u_gradphi_i(beta) )*context.get_elem_solution_derivative();
 
                                     const libMesh::Real dyterm_dv = dxterm_du;
 
@@ -358,14 +358,14 @@ namespace GRINS
                                       }
 
                                     const libMesh::Real dgamma_sum_du = 0.5*(   u_gradphi_j(lambda)*(grad_x(mu)+grad_u(mu))*context.get_elem_solution_rate_derivative()
-                                                                              + dgradu_dt(lambda)*u_gradphi_j(mu)*context.get_elem_solution_derivative()
-                                                                              + u_gradphi_j(mu)*(grad_x(lambda)+grad_u(lambda))*context.get_elem_solution_rate_derivative()
-                                                                              + dgradu_dt(mu)*u_gradphi_j(lambda)*context.get_elem_solution_derivative() );
+                                                                                + dgradu_dt(lambda)*u_gradphi_j(mu)*context.get_elem_solution_derivative()
+                                                                                + u_gradphi_j(mu)*(grad_x(lambda)+grad_u(lambda))*context.get_elem_solution_rate_derivative()
+                                                                                + dgradu_dt(mu)*u_gradphi_j(lambda)*context.get_elem_solution_derivative() );
 
                                     const libMesh::Real dgamma_sum_dv = 0.5*(   u_gradphi_j(lambda)*(grad_y(mu)+grad_v(mu))*context.get_elem_solution_rate_derivative()
-                                                                              + dgradv_dt(lambda)*u_gradphi_j(mu)*context.get_elem_solution_derivative()
-                                                                              + u_gradphi_j(mu)*(grad_y(lambda)+grad_v(lambda))*context.get_elem_solution_rate_derivative()
-                                                                              + dgradv_dt(mu)*u_gradphi_j(lambda)*context.get_elem_solution_derivative() );
+                                                                                + dgradv_dt(lambda)*u_gradphi_j(mu)*context.get_elem_solution_derivative()
+                                                                                + u_gradphi_j(mu)*(grad_y(lambda)+grad_v(lambda))*context.get_elem_solution_rate_derivative()
+                                                                                + dgradv_dt(mu)*u_gradphi_j(lambda)*context.get_elem_solution_derivative() );
 
                                     Kuu(i,j) += x_term*dgamma_sum_du;
                                     Kuv(i,j) += x_term*dgamma_sum_dv;
@@ -376,9 +376,9 @@ namespace GRINS
                                     if( this->_disp_vars.dim() == 3 )
                                       {
                                         const libMesh::Real dgamma_sum_dw = 0.5*(   u_gradphi_j(lambda)*(grad_z(mu)+grad_w(mu))*context.get_elem_solution_rate_derivative()
-                                                                                  + dgradw_dt(lambda)*u_gradphi_j(mu)*context.get_elem_solution_derivative()
-                                                                                  + u_gradphi_j(mu)*(grad_z(lambda)+grad_w(lambda))*context.get_elem_solution_rate_derivative()
-                                                                                  + dgradw_dt(mu)*u_gradphi_j(lambda)*context.get_elem_solution_derivative() );
+                                                                                    + dgradw_dt(lambda)*u_gradphi_j(mu)*context.get_elem_solution_derivative()
+                                                                                    + u_gradphi_j(mu)*(grad_z(lambda)+grad_w(lambda))*context.get_elem_solution_rate_derivative()
+                                                                                    + dgradw_dt(mu)*u_gradphi_j(lambda)*context.get_elem_solution_derivative() );
 
                                         (*Kuw)(i,j) += x_term*dgamma_sum_dw;
                                         (*Kvw)(i,j) += y_term*dgamma_sum_dw;

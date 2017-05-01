@@ -52,8 +52,8 @@ namespace GRINS
   }
 
   void SpectroscopicAbsorption::parallel_op( const libMesh::Parallel::Communicator & communicator,
-                                            libMesh::Number & sys_qoi,
-	                                        libMesh::Number & local_qoi )
+                                             libMesh::Number & sys_qoi,
+                                             libMesh::Number & local_qoi )
   {
     QoIBase::parallel_op(communicator,sys_qoi,local_qoi);
 

@@ -29,7 +29,7 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-#define INSTANTIATE_ANTIOCH_TRANSPORT(class_name) \
+#define INSTANTIATE_ANTIOCH_TRANSPORT(class_name)                       \
   template class GRINS::class_name<Antioch::StatMechThermodynamics<libMesh::Real>, \
                                    Antioch::SutherlandViscosity<libMesh::Real>, \
                                    Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >, \
@@ -41,7 +41,7 @@
 
 
 #ifdef ANTIOCH_HAVE_GSL
-#define INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(class_name) \
+#define INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(class_name)       \
   template class GRINS::class_name<Antioch::StatMechThermodynamics<libMesh::Real>, \
                                    Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
                                    Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real>, \

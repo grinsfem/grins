@@ -39,8 +39,8 @@ namespace GRINSTesting
 
     //! Get absolute tolerance from input relative tol
     /*! CppUnit uses absolute tolerance for double tests. This will
-        let the user input a relative tolerance and an exact value
-        to get back the corresponding absolute tolerance. */
+      let the user input a relative tolerance and an exact value
+      to get back the corresponding absolute tolerance. */
     static libMesh::Real abs_tol_from_rel_tol( libMesh::Real exact, libMesh::Real rel_tol )
     {
       return std::abs(exact)*rel_tol;

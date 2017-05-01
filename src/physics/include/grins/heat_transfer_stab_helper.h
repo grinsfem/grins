@@ -65,13 +65,13 @@ namespace GRINS
                                                libMesh::Gradient &d_res_dgradT,
                                                libMesh::Tensor   &d_res_dhessT,
                                                libMesh::Gradient &d_res_dU
-                                             ) const;
+                                               ) const;
 
     libMesh::Real compute_res_energy_transient( AssemblyContext& context,
                                                 unsigned int qp,
                                                 const libMesh::Real rho,
                                                 const libMesh::Real Cp
-                                              ) const;
+                                                ) const;
 
 
     void compute_res_energy_transient_and_derivs( AssemblyContext& context,
@@ -80,7 +80,7 @@ namespace GRINS
                                                   const libMesh::Real Cp,
                                                   libMesh::Real &res,
                                                   libMesh::Real &d_res_dTdot
-                                                ) const;
+                                                  ) const;
 
     libMesh::Real compute_tau_energy( AssemblyContext& c,
                                       libMesh::RealTensor& G,
@@ -115,15 +115,15 @@ namespace GRINS
   /* ------------- Inline Functions ---------------*/
   inline
   libMesh::Real HeatTransferStabilizationHelper::compute_tau_energy( AssemblyContext& c,
-								     libMesh::RealTensor& G,
-								     libMesh::Real rho,
-								     libMesh::Real cp,
-								     libMesh::Real k,
-								     libMesh::Gradient U,
-								     bool is_steady ) const
+                                                                     libMesh::RealTensor& G,
+                                                                     libMesh::Real rho,
+                                                                     libMesh::Real cp,
+                                                                     libMesh::Real k,
+                                                                     libMesh::Gradient U,
+                                                                     bool is_steady ) const
   {
     libMesh::Real tau = (rho*cp*U)*(G*(rho*cp*U)) + this->_C*k*k*G.contract(G);
-    
+
     if(!is_steady)
       tau += (2.0*rho*cp/c.get_deltat_value())*(2.0*rho*cp/c.get_deltat_value());
 
@@ -133,16 +133,16 @@ namespace GRINS
 
   inline
   void HeatTransferStabilizationHelper::compute_tau_energy_and_derivs
-    ( AssemblyContext& c,
-      libMesh::RealTensor& G,
-      libMesh::Real rho,
-      libMesh::Real cp,
-      libMesh::Real k,
-      libMesh::Gradient U,
-      libMesh::Real &tau_E,
-      libMesh::Real &d_tau_E_d_rho,
-      libMesh::Gradient &d_tau_E_d_U,
-      bool is_steady ) const
+  ( AssemblyContext& c,
+    libMesh::RealTensor& G,
+    libMesh::Real rho,
+    libMesh::Real cp,
+    libMesh::Real k,
+    libMesh::Gradient U,
+    libMesh::Real &tau_E,
+    libMesh::Real &d_tau_E_d_rho,
+    libMesh::Gradient &d_tau_E_d_U,
+    bool is_steady ) const
   {
     libMesh::Gradient rhocpU = rho*cp*U;
     libMesh::Gradient GrhocpU = G*rhocpU;
@@ -151,7 +151,7 @@ namespace GRINS
     tau_E = (rhocpU)*(GrhocpU) + this->_C*k*k*GG;
     d_tau_E_d_rho = rhocpUGrhocpU*2/rho/cp;
     d_tau_E_d_U = 2*rho*cp*GrhocpU;
-    
+
     if(!is_steady)
       {
         libMesh::Real two_rhocp_over_dt = 2*rho*cp/c.get_deltat_value();
@@ -170,6 +170,6 @@ namespace GRINS
 
     tau_E = this->_tau_factor / root_oldtau;
   }
-  
+
 }
 #endif // GRINS_HEAT_TRANSFER_STAB_HELPER_H

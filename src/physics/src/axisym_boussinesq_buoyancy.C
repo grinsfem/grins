@@ -43,7 +43,7 @@ namespace GRINS
 {
 
   AxisymmetricBoussinesqBuoyancy::AxisymmetricBoussinesqBuoyancy( const std::string& physics_name,
-								  const GetPot& input )
+                                                                  const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,physics_name))),
       _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,physics_name))),
@@ -70,15 +70,15 @@ namespace GRINS
 
   void AxisymmetricBoussinesqBuoyancy::init_context( AssemblyContext& context )
   {
-      context.get_element_fe(_flow_vars.u())->get_JxW();
-      context.get_element_fe(_flow_vars.u())->get_phi();
-      context.get_element_fe(_flow_vars.u())->get_xyz();
-      context.get_element_fe(_temp_vars.T())->get_phi();
+    context.get_element_fe(_flow_vars.u())->get_JxW();
+    context.get_element_fe(_flow_vars.u())->get_phi();
+    context.get_element_fe(_flow_vars.u())->get_xyz();
+    context.get_element_fe(_temp_vars.T())->get_phi();
   }
 
   void AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,
-								AssemblyContext& context,
-								CachedValues& /*cache*/ )
+                                                                AssemblyContext& context,
+                                                                CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u()).size();
@@ -118,33 +118,33 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	const libMesh::Number r = u_qpoint[qp](0);
+        const libMesh::Number r = u_qpoint[qp](0);
 
-	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Number T;
-	T = context.interior_value(_temp_vars.T(), qp);
+        // Compute the solution & its gradient at the old Newton iterate.
+        libMesh::Number T;
+        T = context.interior_value(_temp_vars.T(), qp);
 
-	// First, an i-loop over the velocity degrees of freedom.
-	// We know that n_u_dofs == n_v_dofs so we can compute contributions
-	// for both at the same time.
-	for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
-	    Fr(i) += -_rho*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*r*JxW[qp];
-	    Fz(i) += -_rho*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*r*JxW[qp];
+        // First, an i-loop over the velocity degrees of freedom.
+        // We know that n_u_dofs == n_v_dofs so we can compute contributions
+        // for both at the same time.
+        for (unsigned int i=0; i != n_u_dofs; i++)
+          {
+            Fr(i) += -_rho*_beta_T*(T - _T_ref)*_g(0)*vel_phi[i][qp]*r*JxW[qp];
+            Fz(i) += -_rho*_beta_T*(T - _T_ref)*_g(1)*vel_phi[i][qp]*r*JxW[qp];
 
-	    if (compute_jacobian && context.get_elem_solution_derivative())
-	      {
-		for (unsigned int j=0; j != n_T_dofs; j++)
-		  {
-		    const libMesh::Number val =
+            if (compute_jacobian && context.get_elem_solution_derivative())
+              {
+                for (unsigned int j=0; j != n_T_dofs; j++)
+                  {
+                    const libMesh::Number val =
                       -_rho*_beta_T*vel_phi[i][qp]*T_phi[j][qp]*r*JxW[qp]
                       * context.get_elem_solution_derivative();
-		    KrT(i,j) += val*_g(0);
-		    KzT(i,j) += val*_g(1);
-		  } // End j dof loop
-	      } // End compute_jacobian check
+                    KrT(i,j) += val*_g(0);
+                    KzT(i,j) += val*_g(1);
+                  } // End j dof loop
+              } // End compute_jacobian check
 
-	  } // End i dof loop
+          } // End i dof loop
       } // End quadrature loop
   }
 

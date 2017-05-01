@@ -48,9 +48,9 @@ namespace GRINS
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+      const
     {
       ParameterUser::register_parameter(param_name, param_pointer);
       _gas_mixture.register_parameter(param_name, param_pointer);

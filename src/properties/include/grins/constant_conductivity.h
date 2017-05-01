@@ -43,7 +43,7 @@ namespace GRINS
 
     //! Constructor with specified material
     /*! Will look in the input file for [Materials/material/ThermalConductivity/value]
-        for the value of viscosity. */
+      for the value of viscosity. */
     ConstantConductivity( const GetPot& input, const std::string& material );
 
     //! Deprecated constructor
@@ -65,11 +65,11 @@ namespace GRINS
   private:
 
     ConstantConductivity();
-    
+
     libMesh::Real _k;
 
   };
-  
+
   /* ------------------------- Inline Functions -------------------------*/
   inline
   libMesh::Real ConstantConductivity::operator()() const
@@ -107,7 +107,7 @@ namespace GRINS
   {
     return 0.0;
   }
-  
+
 } // end namespace GRINS
 
 #endif // GRINS_CONSTANT_CONDUCTIVITY_H

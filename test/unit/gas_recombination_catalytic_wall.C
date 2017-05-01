@@ -64,7 +64,7 @@ int test( ChemicalMixture& chem_mixture )
   const double domega_dot_dT_exact = 0.5*rho_s*gamma*std::sqrt( R_N/(T*GRINS::Constants::two_pi) );
   const double drho_dws = -rho*rho_s/R;
   const double domega_dot_dws_exact = drho_dws*w_s*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi) )
-                                    + rho*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi) );
+    + rho*gamma*std::sqrt( R_N*T/(GRINS::Constants::two_pi) );
 
   int return_flag = 0;
 
@@ -84,11 +84,11 @@ int test( ChemicalMixture& chem_mixture )
       {
         std::cerr << std::setprecision(16) << std::scientific
                   << "Mismatch in omega_dot_N!" << std::endl
-		  << "omega_dot_N = " << omega_dot_N << std::endl
-		  << "omega_dot_exact = " << omega_dot_exact << std::endl
-		  << "rel error = " << rel_error << std::endl;
+                  << "omega_dot_N = " << omega_dot_N << std::endl
+                  << "omega_dot_exact = " << omega_dot_exact << std::endl
+                  << "rel error = " << rel_error << std::endl;
 
-	return_flag = 1;
+        return_flag = 1;
       }
   }
 
@@ -100,11 +100,11 @@ int test( ChemicalMixture& chem_mixture )
       {
         std::cerr << std::setprecision(16) << std::scientific
                   << "Mismatch in domega_dot_dT_N!" << std::endl
-		  << "domega_dot_dT_N = " << domega_dot_dT_N << std::endl
-		  << "domega_dot_dT_exact = " << domega_dot_dT_exact << std::endl
-		  << "rel error = " << rel_error << std::endl;
+                  << "domega_dot_dT_N = " << domega_dot_dT_N << std::endl
+                  << "domega_dot_dT_exact = " << domega_dot_dT_exact << std::endl
+                  << "rel error = " << rel_error << std::endl;
 
-	return_flag = 1;
+        return_flag = 1;
       }
   }
 
@@ -116,11 +116,11 @@ int test( ChemicalMixture& chem_mixture )
       {
         std::cerr << std::setprecision(16) << std::scientific
                   << "Mismatch in domega_dot_dws_N!" << std::endl
-		  << "domega_dot_dws_N = " << domega_dot_dws_N << std::endl
-		  << "domega_dot_dws_exact = " << domega_dot_dws_exact << std::endl
-		  << "rel error = " << rel_error << std::endl;
+                  << "domega_dot_dws_N = " << domega_dot_dws_N << std::endl
+                  << "domega_dot_dws_exact = " << domega_dot_dws_exact << std::endl
+                  << "rel error = " << rel_error << std::endl;
 
-	return_flag = 1;
+        return_flag = 1;
       }
   }
 

@@ -32,11 +32,11 @@ namespace GRINS
 {
   //! Manages runtime construction of Dirichlet boundary conditions
   /*! This will parse the input for the request Dirichlet boundary
-      conditions and manage their construction. Actual construction of
-      the DirichletBoundary objects is delegated to factory
-      classes. This builder classes merely manages tasks around the
-      factories as needed.  To add new Dirichlet boundary conditions,
-      the user should instantiate an appropriate factory sub class. */
+    conditions and manage their construction. Actual construction of
+    the DirichletBoundary objects is delegated to factory
+    classes. This builder classes merely manages tasks around the
+    factories as needed.  To add new Dirichlet boundary conditions,
+    the user should instantiate an appropriate factory sub class. */
   class OldStyleBCBuilder : public BCBuilder
   {
   public:
@@ -56,8 +56,8 @@ namespace GRINS
 
     //! Determine the FEVariable type from the raw_physics_name
     /*! This will set var_section and return the FEVariablesBase pointer. We do
-        it this way, instead of a void function, to avoid a [-Wunused-but-set-parameter]
-        warning on setting the FEVariablesBase pointer. */
+      it this way, instead of a void function, to avoid a [-Wunused-but-set-parameter]
+      warning on setting the FEVariablesBase pointer. */
     const FEVariablesBase* determine_variable_group( const std::string& raw_physics_name,
                                                      const std::string& bc_type_str,
                                                      std::string& var_section );

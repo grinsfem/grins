@@ -61,15 +61,15 @@ namespace GRINS
   }
 
   void ICHandlingBase::attach_initial_func
-    ( const libMesh::FunctionBase<libMesh::Number>& initial_val)
+  ( const libMesh::FunctionBase<libMesh::Number>& initial_val)
   {
     _ic_func = initial_val.clone();
   }
 
   void ICHandlingBase::read_ic_data( const GetPot& input, const std::string& id_str,
-				     const std::string& ic_str,
-				     const std::string& var_str,
-				     const std::string& value_str)
+                                     const std::string& ic_str,
+                                     const std::string& var_str,
+                                     const std::string& value_str)
   {
     int num_ids = input.vector_variable_size(id_str);
     int num_ics = input.vector_variable_size(ic_str);
@@ -78,26 +78,26 @@ namespace GRINS
 
     if( num_ids != num_ics )
       {
-	std::cerr << "Error: number of subdomain ids " << num_ids
+        std::cerr << "Error: number of subdomain ids " << num_ids
                   << "must equal number of initial condition types " << num_ics
-		  << std::endl;
-	libmesh_error();
+                  << std::endl;
+        libmesh_error();
       }
 
     if( num_ids != num_vars )
       {
-	std::cerr << "Error: number of subdomain ids " << num_ids
+        std::cerr << "Error: number of subdomain ids " << num_ids
                   << "must equal number of variable name lists " << num_vars
-		  << std::endl;
-	libmesh_error();
+                  << std::endl;
+        libmesh_error();
       }
 
     if( num_ids != num_values )
       {
-	std::cerr << "Error: number of subdomain ids " << num_ids
+        std::cerr << "Error: number of subdomain ids " << num_ids
                   << "must equal number of initial condition values " << num_values
-		  << std::endl;
-	libmesh_error();
+                  << std::endl;
+        libmesh_error();
       }
 
     if( num_ids > 1 )
@@ -108,18 +108,18 @@ namespace GRINS
 
     for( int i = 0; i < num_ids; i++ )
       {
-	int ic_id = input(id_str, -1, i );
-	std::string ic_type_in = input(ic_str, "NULL", i );
-	std::string ic_value_in = input(value_str, "NULL", i );
-	std::string ic_vars_in = input(var_str, "NULL", i );
+        int ic_id = input(id_str, -1, i );
+        std::string ic_type_in = input(ic_str, "NULL", i );
+        std::string ic_value_in = input(value_str, "NULL", i );
+        std::string ic_vars_in = input(var_str, "NULL", i );
 
-	int ic_type = this->string_to_int( ic_type_in );
+        int ic_type = this->string_to_int( ic_type_in );
 
-	std::stringstream ss;
-	ss << ic_id;
-	std::string ic_id_string = ss.str();
+        std::stringstream ss;
+        ss << ic_id;
+        std::string ic_id_string = ss.str();
 
-	this->init_ic_types( ic_id, ic_id_string, ic_type, ic_vars_in, ic_value_in, input );
+        this->init_ic_types( ic_id, ic_id_string, ic_type, ic_vars_in, ic_value_in, input );
       }
 
     return;
@@ -156,21 +156,21 @@ namespace GRINS
       }
     else
       {
-	std::cerr << "=========================================================="  << std::endl
-		  << "Error: Invalid ic_type " << ic_type_in                       << std::endl
-		  << "       Physics class is " << _physics_name                   << std::endl
-		  << "=========================================================="  << std::endl;
-	libmesh_error();
+        std::cerr << "=========================================================="  << std::endl
+                  << "Error: Invalid ic_type " << ic_type_in                       << std::endl
+                  << "       Physics class is " << _physics_name                   << std::endl
+                  << "=========================================================="  << std::endl;
+        libmesh_error();
       }
     return ic_type_out;
   }
 
-  void ICHandlingBase::init_ic_types( const libMesh::subdomain_id_type /*ic_id*/, 
-				      const std::string& /*ic_id_string*/, 
-				      const int ic_type, 
-				      const std::string& ic_vars_string, 
-				      const std::string& ic_value_string, 
-				      const GetPot& /*input*/ )
+  void ICHandlingBase::init_ic_types( const libMesh::subdomain_id_type /*ic_id*/,
+                                      const std::string& /*ic_id_string*/,
+                                      const int ic_type,
+                                      const std::string& ic_vars_string,
+                                      const std::string& ic_value_string,
+                                      const GetPot& /*input*/ )
   {
     StringUtilities::split_string(ic_vars_string, ":", _subfunction_variables);
 
@@ -179,28 +179,28 @@ namespace GRINS
     switch(ic_type)
       {
       case(PARSED):
-	{
+        {
           _ic_func = libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
             (new libMesh::ParsedFunction<libMesh::Number>(ic_value_string));
-	}
-	break;
+        }
+        break;
 
       case(CONSTANT):
-	{
+        {
           _ic_func = libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
             (new libMesh::ConstFunction<libMesh::Number>
-              (StringUtilities::string_to_T<libMesh::Number>(ic_value_string)));
-	}
-	break;
+             (StringUtilities::string_to_T<libMesh::Number>(ic_value_string)));
+        }
+        break;
 
       default:
-	{
-	  std::cerr << "==========================================================" 
-		    << "Error: Invalid IC type for " << _physics_name << std::endl
-		    << "       Detected IC type was " << ic_type << std::endl
-		    << "==========================================================" << std::endl;
-	  libmesh_error();
-	}
+        {
+          std::cerr << "=========================================================="
+                    << "Error: Invalid IC type for " << _physics_name << std::endl
+                    << "       Detected IC type was " << ic_type << std::endl
+                    << "==========================================================" << std::endl;
+          libmesh_error();
+        }
       }
     return;
   }

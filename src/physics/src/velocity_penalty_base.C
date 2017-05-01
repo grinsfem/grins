@@ -89,11 +89,11 @@ namespace GRINS
 
   template<class Mu>
   bool VelocityPenaltyBase<Mu>::compute_force
-    ( const libMesh::Point& point,
-      const AssemblyContext& context,
-      const libMesh::NumberVectorValue& U,
-      libMesh::NumberVectorValue& F,
-      libMesh::NumberTensorValue *dFdU)
+  ( const libMesh::Point& point,
+    const AssemblyContext& context,
+    const libMesh::NumberVectorValue& U,
+    libMesh::NumberVectorValue& F,
+    libMesh::NumberTensorValue *dFdU)
   {
     // Velocity discrepancy (current velocity minus base velocity)
     // normal to constraint plane, scaled by constraint penalty

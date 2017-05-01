@@ -46,13 +46,13 @@ namespace GRINS
 
     /*! \todo Should we inline this? */
     libMesh::RealGradient compute_g( libMesh::FEBase* fe,
-				     AssemblyContext& c,
-				     unsigned int qp ) const;
-    
+                                     AssemblyContext& c,
+                                     unsigned int qp ) const;
+
     /*! \todo Should we inline this? */
     libMesh::RealTensor compute_G( libMesh::FEBase* fe,
-				   AssemblyContext& c,
-				   unsigned int qp ) const;
+                                   AssemblyContext& c,
+                                   unsigned int qp ) const;
   };
 
 } // namespace GRINS

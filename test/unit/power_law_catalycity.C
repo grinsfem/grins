@@ -44,7 +44,7 @@ int main()
   {
     double gamma_exact = gamma0*std::pow(T1/Tref, alpha);
     double dgamma_exact = gamma0*alpha/T1*std::pow(T1/Tref, alpha);
-    
+
     if( std::fabs( gamma(T1) - gamma_exact ) > tol )
       {
         std::cerr << "Error: mismatch in gamma" << std::endl
@@ -74,7 +74,7 @@ int main()
   {
     double gamma_exact = params[0]*std::pow(T1/params[1], params[2]);
     double dgamma_exact = params[0]*params[2]/T1*std::pow(T1/params[1], params[2]);
-    
+
     if( std::fabs( gamma(T1) - gamma_exact ) > tol )
       {
         std::cerr << "Error: mismatch in gamma" << std::endl

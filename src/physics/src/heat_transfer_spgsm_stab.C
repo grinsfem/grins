@@ -36,7 +36,7 @@ namespace GRINS
 
   template<class K>
   HeatTransferSPGSMStabilization<K>::HeatTransferSPGSMStabilization( const std::string& physics_name,
-                                                                  const GetPot& input )
+                                                                     const GetPot& input )
     : HeatTransferStabilizationBase<K>(physics_name,input)
   {
     return;
@@ -50,8 +50,8 @@ namespace GRINS
 
   template<class K>
   void HeatTransferSPGSMStabilization<K>::element_time_derivative( bool compute_jacobian,
-                                                                AssemblyContext& context,
-                                                                CachedValues& /*cache*/ )
+                                                                   AssemblyContext& context,
+                                                                   CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
@@ -81,8 +81,8 @@ namespace GRINS
             U(2) = context.interior_value( this->_flow_vars.w(), qp );
           }
 
-	// Compute Conductivity at this qp
-	libMesh::Real _k_qp = this->_k(context, qp);
+        // Compute Conductivity at this qp
+        libMesh::Real _k_qp = this->_k(context, qp);
 
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, this->_rho, this->_Cp, _k_qp,  U, this->_is_steady );
 
@@ -103,8 +103,8 @@ namespace GRINS
 
   template<class K>
   void HeatTransferSPGSMStabilization<K>::mass_residual( bool /*compute_jacobian*/,
-                                                      AssemblyContext& context,
-                                                      CachedValues& /*cache*/ )
+                                                         AssemblyContext& context,
+                                                         CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
@@ -134,8 +134,8 @@ namespace GRINS
             U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
           }
 
-	// Compute Conductivity at this qp
-	libMesh::Real _k_qp = this->_k(context, qp);
+        // Compute Conductivity at this qp
+        libMesh::Real _k_qp = this->_k(context, qp);
 
         libMesh::Real tau_E = this->_stab_helper.compute_tau_energy( context, G, this->_rho, this->_Cp, _k_qp,  U, false );
 

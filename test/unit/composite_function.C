@@ -54,7 +54,7 @@ int main( /*int argc, char* argv[]*/ )
   index_sets[3][4] = 7;
 
   CompositeFunction<libMesh::Real> composite_outer;
-  
+
   {
     CompositeFunction<libMesh::Real> composite_inner;
     composite_inner.attach_subfunction

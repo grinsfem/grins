@@ -29,10 +29,10 @@ namespace GRINS
 {
   PhysicsFactoryWithCore::PhysicsFactoryWithCore( const std::string& physics_name,
                                                   const std::string& core_physics_name )
-      : PhysicsFactoryBase(physics_name)
-    {
-      this->core_physics_names().insert( std::make_pair(physics_name, core_physics_name) );
-    }
+    : PhysicsFactoryBase(physics_name)
+  {
+    this->core_physics_names().insert( std::make_pair(physics_name, core_physics_name) );
+  }
 
   std::string PhysicsFactoryWithCore::find_core_physics_name( const std::string& physics_name )
   {

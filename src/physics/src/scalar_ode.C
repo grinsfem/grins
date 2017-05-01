@@ -103,14 +103,14 @@ namespace GRINS
 
 
   void ScalarODE::nonlocal_time_derivative(bool compute_jacobian,
-				           AssemblyContext& context,
-				           CachedValues& /* cache */ )
+                                           AssemblyContext& context,
+                                           CachedValues& /* cache */ )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
+      context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
 
     libMesh::DenseSubVector<libMesh::Number> &Fs =
-            context.get_elem_residual(this->scalar_ode_var()); // R_{s}
+      context.get_elem_residual(this->scalar_ode_var()); // R_{s}
 
     const libMesh::Number time_deriv =
       (*time_deriv_function)(context, libMesh::Point(0),
@@ -124,7 +124,7 @@ namespace GRINS
         // AD fparser stuff
         libMesh::DenseSubVector<libMesh::Number> &Us =
           const_cast<libMesh::DenseSubVector<libMesh::Number>&>
-            (context.get_elem_solution(this->scalar_ode_var())); // U_{s}
+          (context.get_elem_solution(this->scalar_ode_var())); // U_{s}
 
         const libMesh::Number s = Us(0);
         Us(0) = s + this->_epsilon;
@@ -149,14 +149,14 @@ namespace GRINS
 
 
   void ScalarODE::nonlocal_mass_residual(bool compute_jacobian,
-				         AssemblyContext& context,
-				         CachedValues& /* cache */ )
+                                         AssemblyContext& context,
+                                         CachedValues& /* cache */ )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
+      context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
 
     libMesh::DenseSubVector<libMesh::Number> &Fs =
-            context.get_elem_residual(this->scalar_ode_var()); // R_{s}
+      context.get_elem_residual(this->scalar_ode_var()); // R_{s}
 
     const libMesh::Number mass_res =
       (*mass_residual_function)(context, libMesh::Point(0),
@@ -170,7 +170,7 @@ namespace GRINS
         // AD fparser stuff
         libMesh::DenseSubVector<libMesh::Number> &Us =
           const_cast<libMesh::DenseSubVector<libMesh::Number>&>
-            (context.get_elem_solution_rate(this->scalar_ode_var())); // U_{s}
+          (context.get_elem_solution_rate(this->scalar_ode_var())); // U_{s}
 
         const libMesh::Number s = Us(0);
         Us(0) = s + this->_epsilon;
@@ -195,14 +195,14 @@ namespace GRINS
 
 
   void ScalarODE::nonlocal_constraint(bool compute_jacobian,
-				      AssemblyContext& context,
-				      CachedValues& /* cache */ )
+                                      AssemblyContext& context,
+                                      CachedValues& /* cache */ )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
+      context.get_elem_jacobian(this->scalar_ode_var(), this->scalar_ode_var()); // R_{s},{s}
 
     libMesh::DenseSubVector<libMesh::Number> &Fs =
-            context.get_elem_residual(this->scalar_ode_var()); // R_{s}
+      context.get_elem_residual(this->scalar_ode_var()); // R_{s}
 
     const libMesh::Number constraint =
       (*constraint_function)(context, libMesh::Point(0),
@@ -216,7 +216,7 @@ namespace GRINS
         // AD fparser stuff
         libMesh::DenseSubVector<libMesh::Number> &Us =
           const_cast<libMesh::DenseSubVector<libMesh::Number>&>
-            (context.get_elem_solution(this->scalar_ode_var())); // U_{s}
+          (context.get_elem_solution(this->scalar_ode_var())); // U_{s}
 
         const libMesh::Number s = Us(0);
         Us(0) = s + this->_epsilon;

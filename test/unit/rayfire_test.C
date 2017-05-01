@@ -301,24 +301,24 @@ namespace GRINSTesting
     {
       // iterate over the starting points
       for(unsigned int i=0; i<pts.size(); i++)
-      {
-        libMesh::Point start_point = pts[i];
-
-        // iterate over all the intersection points
-        for(unsigned int j=0; j<pts.size(); j++)
         {
-          if(j==i)
-            continue;
+          libMesh::Point start_point = pts[i];
 
-          libMesh::Point end_point = pts[j];
+          // iterate over all the intersection points
+          for(unsigned int j=0; j<pts.size(); j++)
+            {
+              if(j==i)
+                continue;
 
-          libMesh::Real theta = calc_theta(start_point,end_point);
+              libMesh::Point end_point = pts[j];
 
-          // run the test
-          this->run_test_with_mesh(mesh,start_point,theta,end_point,0);
+              libMesh::Real theta = calc_theta(start_point,end_point);
+
+              // run the test
+              this->run_test_with_mesh(mesh,start_point,theta,end_point,0);
+            }
+
         }
-
-      }
 
     }
 

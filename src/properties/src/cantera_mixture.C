@@ -99,11 +99,11 @@ namespace GRINS
   libMesh::Real CanteraMixture::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
-    
+
     libMesh::Real M = 0;
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
       {
-	M += mass_fractions[s]/(this->M(s));
+        M += mass_fractions[s]/(this->M(s));
       }
 
     return 1.0/M;
@@ -112,17 +112,17 @@ namespace GRINS
   libMesh::Real CanteraMixture::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
-    
+
     libMesh::Real R = 0.0;
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
       {
-	R += mass_fractions[s]*this->R(s);
+        R += mass_fractions[s]*this->R(s);
       }
-    
+
     return R;
   }
 
-  void CanteraMixture::X( libMesh::Real M_mix, const std::vector<libMesh::Real>& mass_fractions, 
+  void CanteraMixture::X( libMesh::Real M_mix, const std::vector<libMesh::Real>& mass_fractions,
                           std::vector<libMesh::Real>& mole_fractions ) const
   {
     libmesh_assert_equal_to( mass_fractions.size(), _cantera_gas->nSpecies() );
@@ -131,7 +131,7 @@ namespace GRINS
 
     for( unsigned int s = 0; s < mass_fractions.size(); s++ )
       {
-	mole_fractions[s] = this->X(s, M_mix, mass_fractions[s]);
+        mole_fractions[s] = this->X(s, M_mix, mass_fractions[s]);
       }
 
     return;

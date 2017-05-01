@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
     if (!i)
       {
         std::cerr << "Error: Could not read from libMesh input file "
-                << input_filename << std::endl;
+                  << input_filename << std::endl;
         exit(1);
       }
   }

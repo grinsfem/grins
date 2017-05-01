@@ -38,14 +38,14 @@ namespace GRINS
     QoI values and drive QoI-based adaptive refinement. Currently, this QoI
     is only implemented in 2D and will error if it detects a three-dimensional
     problem.
-   */
+  */
   class Vorticity : public QoIBase
   {
   public:
 
     //! Constructor
     /*! Constructor takes GetPot object to read any input options associated
-        with this QoI */
+      with this QoI */
     Vorticity( const std::string& qoi_name );
 
     virtual ~Vorticity();
@@ -59,7 +59,7 @@ namespace GRINS
 
     //! Initialize local variables
     /*! Any local variables that need information from libMesh get initialized
-        here. For example, variable indices. */
+      here. For example, variable indices. */
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
                        unsigned int qoi_num );
@@ -68,14 +68,14 @@ namespace GRINS
 
     //! Compute the qoi value.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
-        computed over area of input subdomain id. Vorticity computed as 
-        \f$ \int_{\Omega} \nabla \times \mathbf{u} \; d\mathbf{x}\f$*/
+      computed over area of input subdomain id. Vorticity computed as
+      \f$ \int_{\Omega} \nabla \times \mathbf{u} \; d\mathbf{x}\f$*/
     virtual void element_qoi( AssemblyContext& context,
                               const unsigned int qoi_index );
 
     //! Compute the qoi derivative with respect to the solution.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
-        computed over area of input subdomain id. */
+      computed over area of input subdomain id. */
     virtual void element_qoi_derivative( AssemblyContext& context,
                                          const unsigned int qoi_index );
 

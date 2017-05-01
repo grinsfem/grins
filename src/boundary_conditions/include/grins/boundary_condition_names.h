@@ -42,7 +42,7 @@ namespace GRINS
 
     //! Names of boundaries to correspond with bc_ids
     /*! These will be the subsections of bc_section() that are parsed
-        for the boundary condition types and values for each variable */
+      for the boundary condition types and values for each variable */
     static std::string bc_id_name_map_var()
     { return BoundaryConditionNames::bc_section()+"/bc_id_name_map"; }
 
@@ -57,7 +57,7 @@ namespace GRINS
 
     //! Default boundary name prefix if bc_id_name_map/bc_ids are not used
     /*! If the user opts to not provide bc_id_name_map/bc_ids, then we'll
-        parse for this prefix appened with the boundary id from the mesh. */
+      parse for this prefix appened with the boundary id from the mesh. */
     static std::string bc_name_prefix_default()
     { return "Boundary"; }
 

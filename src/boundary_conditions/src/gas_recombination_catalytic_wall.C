@@ -54,8 +54,8 @@ namespace GRINS
                                                                            const unsigned int reactant_species_idx,
                                                                            const unsigned int product_species_idx )
     : CatalyticWallBase<Chemistry>(chem_mixture,gamma,reactant_species_idx),
-      _reactant_species_idx(reactant_species_idx),
-      _product_species_idx(product_species_idx)
+    _reactant_species_idx(reactant_species_idx),
+    _product_species_idx(product_species_idx)
   {
     libmesh_deprecated();
   }
@@ -127,11 +127,11 @@ namespace GRINS
         libMesh::Real R_mix = this->_chem_ptr->R_mix(mass_fractions);
         libMesh::Real rho = this->rho( T, this->_p0, R_mix );
 
-         const libMesh::Real r_value = this->compute_reactant_mass_flux(rho, Y_r, T);
+        const libMesh::Real r_value = this->compute_reactant_mass_flux(rho, Y_r, T);
 
-         const libMesh::Real p_value = -r_value;
+        const libMesh::Real p_value = -r_value;
 
-         for (unsigned int i=0; i != n_var_dofs; i++)
+        for (unsigned int i=0; i != n_var_dofs; i++)
           {
             F_r_var(i) += sign*r_value*var_phi_side[i][qp]*jac;
 

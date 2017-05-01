@@ -42,7 +42,7 @@ namespace GRINS
   {
     return;
   }
-  
+
   libMesh::Real ArrheniusCatalycity::operator()( const libMesh::Real T ) const
   {
     return _gamma0*std::exp(-_Ta/T);
@@ -58,7 +58,7 @@ namespace GRINS
     libmesh_assert_equal_to( params.size(), 2 );
 
     _gamma0 = params[0];
-    
+
     _Ta = params[1];
 
     return;

@@ -72,7 +72,7 @@ namespace GRINS
 
     *_time_derivative correspond to calculating terms for \f$F(u)\f$
     *_mass_residual correspond to calculating terms for \f$M(u)\dot{u}\f$
-   */
+    */
   //TODO: is it F(u) or F(u_{\theta})?
   class MultiphysicsSystem : public libMesh::FEMSystem
   {
@@ -80,8 +80,8 @@ namespace GRINS
 
     //! Constructor. Will be called by libMesh only.
     MultiphysicsSystem( libMesh::EquationSystems& es,
-			const std::string& name,
-			const unsigned int number );
+                        const std::string& name,
+                        const unsigned int number );
 
     //! Destructor. Clean up all physics allocations.
     ~MultiphysicsSystem(){};
@@ -97,7 +97,7 @@ namespace GRINS
       This function reads the input options for the MultiphysicsSystem class and then
       enables each of the requested physics in the system. Finally, the input options
       for each of the physics will be read.
-     */
+    */
     virtual void read_input_options( const GetPot& input );
 
     //! System initialization. Calls each physics implementation of init_variables()
@@ -110,8 +110,8 @@ namespace GRINS
     //! Each Physics will register its copy(s) of an independent variable
     //  named in this call.
     void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer );
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
     virtual libMesh::UniquePtr<libMesh::DiffContext> build_context();
@@ -127,7 +127,7 @@ namespace GRINS
 
     //! Override FEMSystem::reinit
     /*! This will allow each Physics to reinit things internally that need it,
-        such as point locators. */
+      such as point locators. */
     virtual void reinit();
 
     // residual and jacobian calculations
@@ -135,28 +135,28 @@ namespace GRINS
 
     //! Element interior contributions to \f$F(u)\f$ which have time varying components.
     virtual bool element_time_derivative( bool request_jacobian,
-					  libMesh::DiffContext& context );
+                                          libMesh::DiffContext& context );
 
     //! Boundary contributions to \f$F(u)\f$ which have time varying components.
     virtual bool side_time_derivative( bool request_jacobian,
-				       libMesh::DiffContext& context );
+                                       libMesh::DiffContext& context );
 
     //! Contributions to \f$F(u)\f$ on SCALAR variables which have time varying components.
     virtual bool nonlocal_time_derivative( bool request_jacobian,
-				           libMesh::DiffContext& context );
+                                           libMesh::DiffContext& context );
 
     //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool element_constraint( bool request_jacobian,
-				     libMesh::DiffContext& context );
+                                     libMesh::DiffContext& context );
 
     //! Boundary contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool side_constraint( bool request_jacobian,
-				  libMesh::DiffContext& context );
+                                  libMesh::DiffContext& context );
 
     //! Contributions to \f$F(u)\f$ on SCALAR variables which do not have time varying components.
     virtual bool nonlocal_constraint( bool request_jacobian,
-				      libMesh::DiffContext& context );
+                                      libMesh::DiffContext& context );
 
     //! Contributions to \f$C(u)\dot{u}\f$
     virtual bool damping_residual( bool request_jacobian,
@@ -164,11 +164,11 @@ namespace GRINS
 
     //! Contributions to \f$M(u)\dot{u}\f$
     virtual bool mass_residual( bool request_jacobian,
-				libMesh::DiffContext& context );
+                                libMesh::DiffContext& context );
 
     //! Contributions to \f$M(u)\dot{u}\f$ on SCALAR variables
     virtual bool nonlocal_mass_residual( bool request_jacobian,
-				         libMesh::DiffContext& context );
+                                         libMesh::DiffContext& context );
 
     //! Query to check if a particular physics has been enabled
     bool has_physics( const std::string physics_name ) const;
@@ -192,7 +192,7 @@ namespace GRINS
 
     //! Container of pointers to GRINS::Physics classes requested at runtime.
     /*! Set using the attach_physics_list method as construction is taken care
-        of by GRINS::PhysicsFactory. */
+      of by GRINS::PhysicsFactory. */
     PhysicsList _physics_list;
 
     bool _use_numerical_jacobians_only;
@@ -206,15 +206,15 @@ namespace GRINS
 
     //! Cached for helping build boundary conditions
     /*! We can't make a copy because it will muck up the UFO detection
-        amongst other things. So, we keep a raw pointer. We don't own this
-        so we *MUST* not delete. */
+      amongst other things. So, we keep a raw pointer. We don't own this
+      so we *MUST* not delete. */
     const GetPot* _input;
 
     //! Neumann boundary conditions
     /*! Store each NeumannBCContainer for each set of BoundaryIDs and Variables,
-        as specified in the input file. The container knows what BoundaryIDs and
-        Variables it applies to. We use SharedPtr here because
-        libMesh::UniquePtr may still actually be an AutoPtr. */
+      as specified in the input file. The container knows what BoundaryIDs and
+      Variables it applies to. We use SharedPtr here because
+      libMesh::UniquePtr may still actually be an AutoPtr. */
     std::vector<SharedPtr<NeumannBCContainer> > _neumann_bcs;
 
     //! Constraint application object
@@ -226,7 +226,7 @@ namespace GRINS
 
     // Refactored residual evaluation implementation
     bool _general_residual( bool request_jacobian,
-			    libMesh::DiffContext& context,
+                            libMesh::DiffContext& context,
                             ResFuncType resfunc,
                             CacheFuncType cachefunc);
 

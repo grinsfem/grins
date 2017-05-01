@@ -63,7 +63,7 @@ int do_transport_eval( const GetPot& input )
                 << std::endl;
       libmesh_error();
     }
-    
+
   for( unsigned int s = 0; s < n_species; s++ )
     {
       Y[s] = input( "Conditions/mass_fractions", 0.0, s );
@@ -75,7 +75,7 @@ int do_transport_eval( const GetPot& input )
 
   std::ofstream output;
   output.open( "transport.dat", std::ios::trunc );
-  
+
   output << "# Species names" << std::endl;
   for( unsigned int s = 0; s < n_species; s++ )
     {
@@ -87,7 +87,7 @@ int do_transport_eval( const GetPot& input )
   output.close();
 
   while( T < T1 )
-    { 
+    {
       output.open( "transport.dat", std::ios::app );
       output << std::scientific << std::setprecision(16);
       output << T << " ";
@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
         {
           std::cerr << "Error: Unknown thermo_model "
                     << thermo_model << "!"  << std::endl;
-      return_flag = 1;
+          return_flag = 1;
         }
     }
   else
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
                 << mixing_model << "!" << std::endl;
       return_flag = 1;
     }
-  
+
   return return_flag;
 }
 

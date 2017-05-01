@@ -99,7 +99,7 @@ namespace GRINS
                                               const libMesh::Real rho,
                                               const libMesh::Real mu,
                                               const libMesh::Real distance_qp,
-					      const bool infinite_distance) const;
+                                              const bool infinite_distance) const;
 
     void compute_res_spalart_steady_and_derivs( AssemblyContext& context,
                                                 unsigned int qp,
@@ -128,7 +128,7 @@ namespace GRINS
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+      const;
 
   protected:
 

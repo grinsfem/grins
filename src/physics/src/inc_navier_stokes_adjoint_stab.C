@@ -38,14 +38,14 @@ namespace GRINS
 
   template<class Mu>
   IncompressibleNavierStokesAdjointStabilization<Mu>::IncompressibleNavierStokesAdjointStabilization( const std::string& physics_name,
-                                                                                                  const GetPot& input )
+                                                                                                      const GetPot& input )
     : IncompressibleNavierStokesStabilizationBase<Mu>(physics_name,input)
   {}
 
   template<class Mu>
   void IncompressibleNavierStokesAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
-                                                                                AssemblyContext& context,
-                                                                                CachedValues& /*cache*/ )
+                                                                                    AssemblyContext& context,
+                                                                                    CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -140,8 +140,8 @@ namespace GRINS
         libMesh::Tensor d_RC_dgradU,
           d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
 
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if (compute_jacobian)
           {
@@ -198,7 +198,7 @@ namespace GRINS
                                     p_gradphi[j][qp](1) +
                                     d_RM_s_dgradp(0,2) *
                                     p_gradphi[j][qp](2)
-                                  )*test_func)*fixed_deriv*JxW[qp];
+                                    )*test_func)*fixed_deriv*JxW[qp];
                     Kvp(i,j) += ( -tau_M*
                                   ( d_RM_s_dgradp(1,0) *
                                     p_gradphi[j][qp](0) +
@@ -206,71 +206,71 @@ namespace GRINS
                                     p_gradphi[j][qp](1) +
                                     d_RM_s_dgradp(1,2) *
                                     p_gradphi[j][qp](2)
-                                  )*test_func)*fixed_deriv*JxW[qp];
+                                    )*test_func)*fixed_deriv*JxW[qp];
                   }
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
                     Kuu(i,j) += ( -d_tau_M_dU(0)*RM_s(0)*test_func
                                   -tau_M*d_RM_s_dU(0,0)*test_func
                                   - d_tau_C_dU(0)*RC*u_gradphi[i][qp](0)
-                                )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                  )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                     Kuu(i,j) += ( -tau_M*RM_s(0)*d_test_func_dU(0)
-                                )*u_phi[j][qp]*JxW[qp];
+                                  )*u_phi[j][qp]*JxW[qp];
                     Kuu(i,j) += ( - tau_C*
                                   (
-                                    d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
-                                    d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
-                                    d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
-                                  )
-                                    *fixed_deriv*u_gradphi[i][qp](0)
-                                )*JxW[qp];
+                                   d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
+                                   d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
+                                   d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
+                                   )
+                                  *fixed_deriv*u_gradphi[i][qp](0)
+                                  )*JxW[qp];
                     Kuu(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dgraduvw*u_gradphi[j][qp])
-                                )*fixed_deriv*JxW[qp];
+                                  )*fixed_deriv*JxW[qp];
                     Kuu(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dhessuvw.contract(u_hessphi[j][qp]))
-                                )*fixed_deriv*JxW[qp];
+                                  )*fixed_deriv*JxW[qp];
                     Kuv(i,j) += ( -d_tau_M_dU(1)*RM_s(0)*test_func
                                   -tau_M*d_RM_s_dU(0,1)*test_func
-                                )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                  )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                     Kuv(i,j) += ( -tau_M*RM_s(0)*d_test_func_dU(1)
-                                )*u_phi[j][qp]*JxW[qp];
+                                  )*u_phi[j][qp]*JxW[qp];
                     Kuv(i,j) += ( - tau_C*
                                   (
-                                    d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
-                                    d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
-                                    d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
-                                  )
-                                    *fixed_deriv*u_gradphi[i][qp](0)
-                                )*JxW[qp];
+                                   d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
+                                   d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
+                                   d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
+                                   )
+                                  *fixed_deriv*u_gradphi[i][qp](0)
+                                  )*JxW[qp];
                     Kvu(i,j) += ( -d_tau_M_dU(0)*RM_s(1)*test_func
                                   -tau_M*d_RM_s_dU(1,0)*test_func
-                                )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                  )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                     Kvu(i,j) += ( -tau_M*RM_s(1)*d_test_func_dU(0)
-                                )*u_phi[j][qp]*JxW[qp];
+                                  )*u_phi[j][qp]*JxW[qp];
                     Kvu(i,j) += ( - tau_C*
                                   (
-                                    d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
-                                    d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
-                                    d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
-                                  )
-                                    *fixed_deriv*u_gradphi[i][qp](1)
-                                )*JxW[qp];
+                                   d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
+                                   d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
+                                   d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
+                                   )
+                                  *fixed_deriv*u_gradphi[i][qp](1)
+                                  )*JxW[qp];
                     Kvv(i,j) += ( -d_tau_M_dU(1)*RM_s(1)*test_func
                                   -tau_M*d_RM_s_dU(1,1)*test_func
-                                )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                  )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                     Kvv(i,j) += ( -tau_M*RM_s(1)*d_test_func_dU(1)
-                                )*u_phi[j][qp]*JxW[qp];
+                                  )*u_phi[j][qp]*JxW[qp];
                     Kvv(i,j) += ( - tau_C*
                                   (
-                                    d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
-                                    d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
-                                    d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
-                                  )
-                                    *fixed_deriv*u_gradphi[i][qp](1)
-                                )*JxW[qp];
+                                   d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
+                                   d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
+                                   d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
+                                   )
+                                  *fixed_deriv*u_gradphi[i][qp](1)
+                                  )*JxW[qp];
                     Kvv(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dgraduvw*u_gradphi[j][qp])
-                                )*fixed_deriv*JxW[qp];
+                                  )*fixed_deriv*JxW[qp];
                     Kvv(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dhessuvw.contract(u_hessphi[j][qp]))
-                                )*fixed_deriv*JxW[qp];
+                                  )*fixed_deriv*JxW[qp];
                   }
                 if(this->_flow_vars.dim() == 3)
                   {
@@ -283,79 +283,79 @@ namespace GRINS
                                            p_gradphi[j][qp](1) +
                                            d_RM_s_dgradp(2,2) *
                                            p_gradphi[j][qp](2)
-                                         )*test_func)*fixed_deriv*JxW[qp];
+                                           )*test_func)*fixed_deriv*JxW[qp];
                       }
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
                         (*Kuw)(i,j) += ( -d_tau_M_dU(2)*RM_s(0)*test_func
                                          -tau_M*d_RM_s_dU(0,2)*test_func
-                                       )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                         )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                         (*Kuw)(i,j) += ( -tau_M*RM_s(0)*d_test_func_dU(2)
-                                       )*u_phi[j][qp]*JxW[qp];
+                                         )*u_phi[j][qp]*JxW[qp];
                         (*Kuw)(i,j) += ( - tau_C*
                                          (
-                                           d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
-                                           d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
-                                           d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
-                                         )
+                                          d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
+                                          d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
+                                          d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
+                                          )
                                          *fixed_deriv* u_gradphi[i][qp](0)
-                                       )*JxW[qp];
+                                         )*JxW[qp];
                         (*Kvw)(i,j) += ( -d_tau_M_dU(2)*RM_s(1)*test_func
                                          -tau_M*d_RM_s_dU(1,2)*test_func
-                                       )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                         )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                         (*Kvw)(i,j) += ( -tau_M*RM_s(1)*d_test_func_dU(2)
-                                       )*u_phi[j][qp]*JxW[qp];
+                                         )*u_phi[j][qp]*JxW[qp];
                         (*Kvw)(i,j) += ( - tau_C*
                                          (
-                                           d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
-                                           d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
-                                           d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
-                                         )
+                                          d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
+                                          d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
+                                          d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
+                                          )
                                          *fixed_deriv* u_gradphi[i][qp](1)
-                                       )*JxW[qp];
+                                         )*JxW[qp];
                         (*Kwu)(i,j) += ( -d_tau_M_dU(0)*RM_s(2)*test_func
                                          -tau_M*d_RM_s_dU(2,0)*test_func
-                                       )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                         )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                         (*Kwu)(i,j) += ( -tau_M*RM_s(2)*d_test_func_dU(0)
-                                       )*u_phi[j][qp]*JxW[qp];
+                                         )*u_phi[j][qp]*JxW[qp];
                         (*Kwu)(i,j) += ( - tau_C*
                                          (
-                                           d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
-                                           d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
-                                           d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
-                                         )
+                                          d_RC_dgradU(0,0)*u_gradphi[j][qp](0) +
+                                          d_RC_dgradU(0,1)*u_gradphi[j][qp](1) +
+                                          d_RC_dgradU(0,2)*u_gradphi[j][qp](2)
+                                          )
                                          *fixed_deriv* u_gradphi[i][qp](2)
-                                       )*JxW[qp];
+                                         )*JxW[qp];
                         (*Kwv)(i,j) += ( -d_tau_M_dU(1)*RM_s(2)*test_func
                                          -tau_M*d_RM_s_dU(2,1)*test_func
-                                       )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                         )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                         (*Kwv)(i,j) += ( -tau_M*RM_s(2)*d_test_func_dU(1)
-                                       )*u_phi[j][qp]*JxW[qp];
+                                         )*u_phi[j][qp]*JxW[qp];
                         (*Kwv)(i,j) += ( - tau_C*
                                          (
-                                           d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
-                                           d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
-                                           d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
-                                         )
+                                          d_RC_dgradU(1,0)*u_gradphi[j][qp](0) +
+                                          d_RC_dgradU(1,1)*u_gradphi[j][qp](1) +
+                                          d_RC_dgradU(1,2)*u_gradphi[j][qp](2)
+                                          )
                                          *fixed_deriv* u_gradphi[i][qp](2)
-                                       )*JxW[qp];
+                                         )*JxW[qp];
                         (*Kww)(i,j) += ( -d_tau_M_dU(2)*RM_s(2)*test_func
                                          -tau_M*d_RM_s_dU(2,2)*test_func
-                                       )*fixed_deriv*u_phi[j][qp]*JxW[qp];
+                                         )*fixed_deriv*u_phi[j][qp]*JxW[qp];
                         (*Kww)(i,j) += ( -tau_M*RM_s(2)*d_test_func_dU(2)
-                                       )*u_phi[j][qp]*JxW[qp];
+                                         )*u_phi[j][qp]*JxW[qp];
                         (*Kww)(i,j) += ( - tau_C*
                                          (
-                                           d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
-                                           d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
-                                           d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
-                                         )
+                                          d_RC_dgradU(2,0)*u_gradphi[j][qp](0) +
+                                          d_RC_dgradU(2,1)*u_gradphi[j][qp](1) +
+                                          d_RC_dgradU(2,2)*u_gradphi[j][qp](2)
+                                          )
                                          *fixed_deriv* u_gradphi[i][qp](2)
-                                       )*JxW[qp];
+                                         )*JxW[qp];
                         (*Kww)(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dgraduvw*u_gradphi[j][qp])
-                                       )*fixed_deriv*JxW[qp];
+                                         )*fixed_deriv*JxW[qp];
                         (*Kww)(i,j) += ( -tau_M*test_func*(d_RM_s_uvw_dhessuvw.contract(u_hessphi[j][qp]))
-                                       )*fixed_deriv*JxW[qp];
+                                         )*fixed_deriv*JxW[qp];
 
                       }
                   }
@@ -366,8 +366,8 @@ namespace GRINS
 
   template<class Mu>
   void IncompressibleNavierStokesAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                             AssemblyContext& context,
-                                                                             CachedValues& /*cache*/ )
+                                                                               AssemblyContext& context,
+                                                                               CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -430,8 +430,8 @@ namespace GRINS
         libMesh::Gradient RM_s, d_RM_s_uvw_dgraduvw;
         libMesh::Tensor d_RM_s_dgradp, d_RM_s_dU, d_RM_s_uvw_dhessuvw;
 
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if (compute_jacobian)
           {
@@ -473,27 +473,27 @@ namespace GRINS
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {
                     Kpu(i,j) += (
-                                  d_tau_M_dU(0)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
-                                  + tau_M*
-                                  (
-                                    d_RM_s_dU(0,0)*u_phi[j][qp]*p_dphi[i][qp](0) +
-                                    d_RM_s_dU(1,0)*u_phi[j][qp]*p_dphi[i][qp](1) +
-                                    d_RM_s_dU(2,0)*u_phi[j][qp]*p_dphi[i][qp](2) +
-                                    d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](0) +
-                                    d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
+                                 d_tau_M_dU(0)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
+                                 + tau_M*
+                                 (
+                                  d_RM_s_dU(0,0)*u_phi[j][qp]*p_dphi[i][qp](0) +
+                                  d_RM_s_dU(1,0)*u_phi[j][qp]*p_dphi[i][qp](1) +
+                                  d_RM_s_dU(2,0)*u_phi[j][qp]*p_dphi[i][qp](2) +
+                                  d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](0) +
+                                  d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
                                   )*fixed_deriv
-                                )*JxW[qp];
+                                 )*JxW[qp];
                     Kpv(i,j) += (
-                                  d_tau_M_dU(1)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
-                                  + tau_M*
-                                  (
-                                    d_RM_s_dU(0,1)*u_phi[j][qp]*p_dphi[i][qp](0) +
-                                    d_RM_s_dU(1,1)*u_phi[j][qp]*p_dphi[i][qp](1) +
-                                    d_RM_s_dU(2,1)*u_phi[j][qp]*p_dphi[i][qp](2) +
-                                    d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](1) +
-                                    d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
+                                 d_tau_M_dU(1)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
+                                 + tau_M*
+                                 (
+                                  d_RM_s_dU(0,1)*u_phi[j][qp]*p_dphi[i][qp](0) +
+                                  d_RM_s_dU(1,1)*u_phi[j][qp]*p_dphi[i][qp](1) +
+                                  d_RM_s_dU(2,1)*u_phi[j][qp]*p_dphi[i][qp](2) +
+                                  d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](1) +
+                                  d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
                                   )*fixed_deriv
-                                )*JxW[qp];
+                                 )*JxW[qp];
                   }
 
                 if(this->_flow_vars.dim() == 3)
@@ -501,16 +501,16 @@ namespace GRINS
                     for (unsigned int j=0; j != n_u_dofs; j++)
                       {
                         (*Kpw)(i,j) += (
-                                         d_tau_M_dU(2)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
-                                         + tau_M*
-                                         (
-                                           d_RM_s_dU(0,2)*u_phi[j][qp]*p_dphi[i][qp](0) +
-                                           d_RM_s_dU(1,2)*u_phi[j][qp]*p_dphi[i][qp](1) +
-                                           d_RM_s_dU(2,2)*u_phi[j][qp]*p_dphi[i][qp](2) +
-                                           d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](2) +
-                                           d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
+                                        d_tau_M_dU(2)*u_phi[j][qp]*(RM_s*p_dphi[i][qp])
+                                        + tau_M*
+                                        (
+                                         d_RM_s_dU(0,2)*u_phi[j][qp]*p_dphi[i][qp](0) +
+                                         d_RM_s_dU(1,2)*u_phi[j][qp]*p_dphi[i][qp](1) +
+                                         d_RM_s_dU(2,2)*u_phi[j][qp]*p_dphi[i][qp](2) +
+                                         d_RM_s_uvw_dgraduvw*u_dphi[j][qp]*p_dphi[i][qp](2) +
+                                         d_RM_s_uvw_dhessuvw.contract(u_d2phi[j][qp])*p_dphi[i][qp](0)
                                          )*fixed_deriv
-                                       )*JxW[qp];
+                                        )*JxW[qp];
                       }
                   }
               }
@@ -520,8 +520,8 @@ namespace GRINS
 
   template<class Mu>
   void IncompressibleNavierStokesAdjointStabilization<Mu>::mass_residual( bool compute_jacobian,
-                                                                      AssemblyContext& context,
-                                                                      CachedValues& /*cache*/ )
+                                                                          AssemblyContext& context,
+                                                                          CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -625,8 +625,8 @@ namespace GRINS
 
         libMesh::Real d_RM_t_uvw_duvw;
 
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if (compute_jacobian)
           {

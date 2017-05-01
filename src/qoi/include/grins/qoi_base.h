@@ -106,7 +106,7 @@ namespace GRINS
      */
     virtual void parallel_op( const libMesh::Parallel::Communicator& communicator,
                               libMesh::Number& sys_qoi,
-			      libMesh::Number& local_qoi );
+                              libMesh::Number& local_qoi );
 
     //! Call the operation to accumulate this QoI from multiple threads
     /*!

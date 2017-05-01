@@ -37,10 +37,10 @@ namespace GRINS
 {
   HookesLaw::HookesLaw(const GetPot& input)
     : StressStrainLaw<HookesLaw>(),
-      ParameterUser("HookesLaw"),
-      _C(),
-      _lambda(0.0),
-      _mu(0.0)
+    ParameterUser("HookesLaw"),
+    _C(),
+    _lambda(0.0),
+    _mu(0.0)
   {
     // Warning about this constructor being deprecated
     {
@@ -56,10 +56,10 @@ namespace GRINS
 
   HookesLaw::HookesLaw(const GetPot& input, const std::string& material)
     : StressStrainLaw<HookesLaw>(),
-      ParameterUser("HookesLaw"),
-      _C(),
-      _lambda(0.0),
-      _mu(0.0)
+    ParameterUser("HookesLaw"),
+    _C(),
+    _lambda(0.0),
+    _mu(0.0)
   {
     MaterialsParsing::duplicate_input_test(input,
                                            "Materials/"+material+"/StressStrainLaw/HookesLaw/lambda",
@@ -107,7 +107,7 @@ namespace GRINS
           (_mu, input, "Physics/HookesLaw/mu", 0.0);
       }
     else if( input.have_variable("Physics/HookesLaw/E") &&
-              input.have_variable("Physics/HookesLaw/nu") )
+             input.have_variable("Physics/HookesLaw/nu") )
       {
         MaterialsParsing::dep_input_warning( "Physics/HookesLaw/E",
                                              "StressStrainLaw/HookesLaw/E" );
@@ -145,9 +145,9 @@ namespace GRINS
   void HookesLaw::read_input_options(const GetPot& input)
   {
     // We'd better have either Lam\'{e} constants or E and nu
-    if( ( !input.have_variable("Physics/HookesLaw/lambda") || 
+    if( ( !input.have_variable("Physics/HookesLaw/lambda") ||
           !input.have_variable("Physics/HookesLaw/mu") ) &&
-        ( !input.have_variable("Physics/HookesLaw/E") || 
+        ( !input.have_variable("Physics/HookesLaw/E") ||
           !input.have_variable("Physics/HookesLaw/nu") ) )
       {
         std::cerr << "Error: Must specify either Lame constants lambda and mu or" << std::endl
@@ -158,12 +158,12 @@ namespace GRINS
     if( input.have_variable("Physics/HookesLaw/lambda") )
       this->set_parameter
         (_lambda, input, "Physics/HookesLaw/lambda", 0.0);
-    
+
     if( input.have_variable("Physics/HookesLaw/mu") )
       this->set_parameter
         (_mu, input, "Physics/HookesLaw/mu", 0.0);
-        
-    if( input.have_variable("Physics/HookesLaw/E") && 
+
+    if( input.have_variable("Physics/HookesLaw/E") &&
         input.have_variable("Physics/HookesLaw/nu") )
       {
         // FIXME - we'll need a special accessor to give parameter
@@ -176,7 +176,7 @@ namespace GRINS
 
     return;
   }
-  
+
   void HookesLaw::compute_stress_imp( unsigned int dim,
                                       const libMesh::TensorValue<libMesh::Real>& g_contra,
                                       const libMesh::TensorValue<libMesh::Real>& g_cov,
@@ -197,7 +197,7 @@ namespace GRINS
                     libMesh::Real strain_kl = 0.5*(G_cov(k,l) - g_cov(k,l));
 
                     _C(i,j,k,l) = _lambda*g_contra(i,j)*g_contra(k,l) +
-                                  _mu*(g_contra(i,k)*g_contra(j,l) + g_contra(i,l)*g_contra(j,k));
+                      _mu*(g_contra(i,k)*g_contra(j,l) + g_contra(i,l)*g_contra(j,k));
 
                     stress(i,j) += _C(i,j,k,l)*strain_kl;
                   }

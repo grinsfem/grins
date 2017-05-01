@@ -38,9 +38,9 @@ namespace GRINS
   template<typename Thermo, typename Conductivity>
   AntiochConstantTransportEvaluator<Thermo,Conductivity>::AntiochConstantTransportEvaluator( const AntiochConstantTransportMixture<Conductivity>& mixture )
     : AntiochEvaluator<Thermo>( mixture ),
-      _mu( mixture.mu() ),
-      _conductivity( mixture.conductivity() ),
-      _diffusivity( mixture.diffusivity() )
+    _mu( mixture.mu() ),
+    _conductivity( mixture.conductivity() ),
+    _diffusivity( mixture.diffusivity() )
   {
     return;
   }
@@ -58,7 +58,7 @@ namespace GRINS
   {
     return _mu;
   }
-  
+
   template<typename Thermo, typename Conductivity>
   libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::k( const libMesh::Real T,
                                                                            const libMesh::Real /*P*/,

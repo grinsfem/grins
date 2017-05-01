@@ -43,8 +43,8 @@ namespace GRINS
 {
 
   MultiphysicsSystem::MultiphysicsSystem( libMesh::EquationSystems& es,
-					  const std::string& name,
-					  const unsigned int number )
+                                          const std::string& name,
+                                          const unsigned int number )
     : FEMSystem(es, name, number),
       _use_numerical_jacobians_only(false)
   {}
@@ -86,18 +86,18 @@ namespace GRINS
 
     const unsigned int n_numerical_jacobian_h_values =
       input.vector_variable_size
-        ("linear-nonlinear-solver/numerical_jacobian_h_values");
+      ("linear-nonlinear-solver/numerical_jacobian_h_values");
 
     if (n_numerical_jacobian_h_values !=
         input.vector_variable_size
-          ("linear-nonlinear-solver/numerical_jacobian_h_variables"))
+        ("linear-nonlinear-solver/numerical_jacobian_h_variables"))
       {
         std::cerr << "Error: found " << n_numerical_jacobian_h_values
                   << " numerical_jacobian_h_values" << std::endl;
         std::cerr << "  but "
                   << input.vector_variable_size
-                       ("linear-nonlinear-solver/numerical_jacobian_h_variables")
-                << " numerical_jacobian_h_variables" << std::endl;
+          ("linear-nonlinear-solver/numerical_jacobian_h_variables")
+                  << " numerical_jacobian_h_variables" << std::endl;
         libmesh_error();
       }
 
@@ -127,10 +127,10 @@ namespace GRINS
     /*! \todo Figure out how to tell compilers not to fuse this loop when
       they want to be aggressive. */
     for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
+         physics_iter != _physics_list.end();
+         physics_iter++ )
       {
-	(physics_iter->second)->init_variables( this );
+        (physics_iter->second)->init_variables( this );
       }
 
     libmesh_assert(_input);
@@ -153,10 +153,10 @@ namespace GRINS
 
     // Now set time_evolving variables
     for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
+         physics_iter != _physics_list.end();
+         physics_iter++ )
       {
-	(physics_iter->second)->set_time_evolving_vars( this );
+        (physics_iter->second)->set_time_evolving_vars( this );
       }
 
     // Set whether the problem we're solving is steady or not
@@ -172,11 +172,11 @@ namespace GRINS
     // conditions to it
     libMesh::CompositeFunction<libMesh::Number> ic_function;
     for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
+         physics_iter != _physics_list.end();
+         physics_iter++ )
       {
-	// Initialize builtin IC's for each physics
-	(physics_iter->second)->init_ics( this, ic_function );
+        // Initialize builtin IC's for each physics
+        (physics_iter->second)->init_ics( this, ic_function );
       }
 
     if (ic_function.n_subfunctions())
@@ -223,8 +223,8 @@ namespace GRINS
                                                          PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
     for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
+         physics_iter != _physics_list.end();
+         physics_iter++ )
       {
         (physics_iter->second)->register_postprocessing_vars( input, postprocessing );
       }
@@ -233,8 +233,8 @@ namespace GRINS
   }
 
   void MultiphysicsSystem::register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer )
   {
     //Loop over each physics to ask each for the requested parameter
     for( PhysicsListIter physics_iter = _physics_list.begin();
@@ -254,10 +254,10 @@ namespace GRINS
 
     //Loop over each physics to initialize relevant variable structures for assembling system
     for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
+         physics_iter != _physics_list.end();
+         physics_iter++ )
       {
-	(physics_iter->second)->init_context( c );
+        (physics_iter->second)->init_context( c );
       }
 
     return;
@@ -298,7 +298,7 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::_general_residual( bool request_jacobian,
-					      libMesh::DiffContext& context,
+                                              libMesh::DiffContext& context,
                                               ResFuncType resfunc,
                                               CacheFuncType cachefunc)
   {
@@ -311,17 +311,17 @@ namespace GRINS
 
     // Now compute cache for this element
     for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
+         physics_iter != _physics_list.end();
+         physics_iter++ )
       {
         // shared_ptr gets confused by operator->*
-	((*(physics_iter->second)).*cachefunc)( c, cache );
+        ((*(physics_iter->second)).*cachefunc)( c, cache );
       }
 
     // Loop over each physics and compute their contributions
     for( PhysicsListIter physics_iter = _physics_list.begin();
-	 physics_iter != _physics_list.end();
-	 physics_iter++ )
+         physics_iter != _physics_list.end();
+         physics_iter++ )
       {
         if(c.has_elem())
           {
@@ -342,7 +342,7 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::element_time_derivative( bool request_jacobian,
-						    libMesh::DiffContext& context )
+                                                    libMesh::DiffContext& context )
   {
     return this->_general_residual
       (request_jacobian,
@@ -368,7 +368,7 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::nonlocal_time_derivative( bool request_jacobian,
-						     libMesh::DiffContext& context )
+                                                     libMesh::DiffContext& context )
   {
     return this->_general_residual
       (request_jacobian,
@@ -378,7 +378,7 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::element_constraint( bool request_jacobian,
-					       libMesh::DiffContext& context )
+                                               libMesh::DiffContext& context )
   {
     return this->_general_residual
       (request_jacobian,
@@ -388,7 +388,7 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::side_constraint( bool request_jacobian,
-					    libMesh::DiffContext& context )
+                                            libMesh::DiffContext& context )
   {
     return this->_general_residual
       (request_jacobian,
@@ -398,7 +398,7 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::nonlocal_constraint( bool request_jacobian,
-					        libMesh::DiffContext& context )
+                                                libMesh::DiffContext& context )
   {
     return this->_general_residual
       (request_jacobian,
@@ -418,7 +418,7 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::mass_residual( bool request_jacobian,
-					  libMesh::DiffContext& context )
+                                          libMesh::DiffContext& context )
   {
     return this->_general_residual
       (request_jacobian,
@@ -428,7 +428,7 @@ namespace GRINS
   }
 
   bool MultiphysicsSystem::nonlocal_mass_residual( bool request_jacobian,
-					           libMesh::DiffContext& context )
+                                                   libMesh::DiffContext& context )
   {
     return this->_general_residual
       (request_jacobian,
@@ -441,8 +441,8 @@ namespace GRINS
   {
     if( _physics_list.find( physics_name ) == _physics_list.end() )
       {
-	std::cerr << "Error: Could not find physics " << physics_name << std::endl;
-	libmesh_error();
+        std::cerr << "Error: Could not find physics " << physics_name << std::endl;
+        libmesh_error();
       }
 
     return _physics_list[physics_name];
@@ -484,7 +484,7 @@ namespace GRINS
     for( std::vector<SharedPtr<NeumannBCContainer> >::const_iterator it = neumann_bcs.begin();
          it < neumann_bcs.end(); ++it )
       if( (*it)->has_bc_id( bc_id ) )
-          active_neumann_bcs.push_back( *it );
+        active_neumann_bcs.push_back( *it );
   }
 
   bool MultiphysicsSystem::apply_neumann_bcs( bool request_jacobian,

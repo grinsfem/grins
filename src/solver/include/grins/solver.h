@@ -55,30 +55,30 @@ namespace GRINS
     virtual ~Solver();
 
     virtual void initialize( const GetPot& input,
-			     SharedPtr<libMesh::EquationSystems> equation_system,
-			     GRINS::MultiphysicsSystem* system );
+                             SharedPtr<libMesh::EquationSystems> equation_system,
+                             GRINS::MultiphysicsSystem* system );
 
     virtual void solve( SolverContext& context )=0;
 
     virtual void adjoint_qoi_parameter_sensitivity
-      (SolverContext&                  /*context*/,
-       const libMesh::QoISet&          /*qoi_indices*/,
-       const libMesh::ParameterVector& /*parameters_in*/,
-       libMesh::SensitivityData&       /*sensitivities*/)
+    (SolverContext&                  /*context*/,
+     const libMesh::QoISet&          /*qoi_indices*/,
+     const libMesh::ParameterVector& /*parameters_in*/,
+     libMesh::SensitivityData&       /*sensitivities*/)
       const
     { libmesh_not_implemented(); }
 
     virtual void forward_qoi_parameter_sensitivity
-      (SolverContext&                  /*context*/,
-       const libMesh::QoISet&          /*qoi_indices*/,
-       const libMesh::ParameterVector& /*parameters_in*/,
-       libMesh::SensitivityData&       /*sensitivities*/)
+    (SolverContext&                  /*context*/,
+     const libMesh::QoISet&          /*qoi_indices*/,
+     const libMesh::ParameterVector& /*parameters_in*/,
+     libMesh::SensitivityData&       /*sensitivities*/)
       const
     { libmesh_not_implemented(); }
 
     //! Do steady version of adjoint solve
     /*! We put this here since we may want to reuse this
-        in multiple different steady solves. */
+      in multiple different steady solves. */
     void steady_adjoint_solve( SolverContext& context );
 
     void print_scalar_vars( SolverContext& context );

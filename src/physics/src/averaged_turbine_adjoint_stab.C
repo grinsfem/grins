@@ -40,7 +40,7 @@ namespace GRINS
   template<class Mu>
   AveragedTurbineAdjointStabilization<Mu>::AveragedTurbineAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : AveragedTurbineBase<Mu>(physics_name, input),
-      _stab_helper( physics_name+"StabHelper", input )
+    _stab_helper( physics_name+"StabHelper", input )
   {}
 
   template<class Mu>
@@ -64,9 +64,9 @@ namespace GRINS
 
   template<class Mu>
   void AveragedTurbineAdjointStabilization<Mu>::element_time_derivative
-    ( bool compute_jacobian,
-      AssemblyContext& context,
-      CachedValues& /* cache */ )
+  ( bool compute_jacobian,
+    AssemblyContext& context,
+    CachedValues& /* cache */ )
   {
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
@@ -94,11 +94,11 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v()); // R_{v},{v}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kus =
-            context.get_elem_jacobian(this->_flow_vars.u(),
-                                      this->fan_speed_var()); // R_{u},{s}
+      context.get_elem_jacobian(this->_flow_vars.u(),
+                                this->fan_speed_var()); // R_{u},{s}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvs =
-            context.get_elem_jacobian(this->_flow_vars.v(),
-                                      this->fan_speed_var()); // R_{v},{s}
+      context.get_elem_jacobian(this->_flow_vars.v(),
+                                this->fan_speed_var()); // R_{v},{s}
 
     libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
@@ -157,8 +157,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         libMesh::NumberVectorValue U_B_1;
         libMesh::NumberVectorValue F;
@@ -240,8 +240,8 @@ namespace GRINS
 
   template<class Mu>
   void AveragedTurbineAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                AssemblyContext& context,
-                                                                CachedValues& /*cache*/ )
+                                                                    AssemblyContext& context,
+                                                                    CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -316,8 +316,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         libMesh::NumberVectorValue U_B_1;
         libMesh::NumberVectorValue F;

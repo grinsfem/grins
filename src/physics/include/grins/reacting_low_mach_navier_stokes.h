@@ -51,8 +51,8 @@ namespace GRINS
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,
@@ -60,11 +60,11 @@ namespace GRINS
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				AssemblyContext& context,
-				CachedValues& cache );
+                                AssemblyContext& context,
+                                CachedValues& cache );
 
-    virtual void compute_element_time_derivative_cache( const AssemblyContext& context, 
-							CachedValues& cache );
+    virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
+                                                        CachedValues& cache );
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
@@ -77,7 +77,7 @@ namespace GRINS
 
     //! Enable pressure pinning
     bool _pin_pressure;
-    
+
     PressurePinning _p_pinning;
 
     //! Index from registering this quantity

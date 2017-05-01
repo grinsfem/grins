@@ -46,7 +46,7 @@ namespace GRINS
 
     The data file must contain comma-separated values for individual spectrscopic lines in the following format:\n
     Isotopologue,Linecenter,Linestrength,Air-broadened Half Width,Self-Broadened Half Width,Lower State Energy,Temperature Coefficient,Air-Pressure Shift
-    
+
     The partition function file must contain comma-separated values for each isotopologue at the same temperature values.
     The temperature limits themselves are specified as inputs to the constructor.
 
@@ -70,7 +70,7 @@ namespace GRINS
            libMesh::Real T_min, libMesh::Real T_max, libMesh::Real T_step);
 
     //! Isotopologue ID
-    unsigned int isotopologue(unsigned int index);    
+    unsigned int isotopologue(unsigned int index);
 
     //! Linecenter wavenumber [\f$ cm^{-1} \f$]
     libMesh::Real nu0(unsigned int index);
@@ -102,7 +102,7 @@ namespace GRINS
 
   protected:
     libMesh::Real _Tmin, _Tmax, _Tstep;
-    
+
     //! Size of spectroscopic data
     int _data_size;
 

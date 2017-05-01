@@ -72,7 +72,7 @@ namespace GRINS
       context.get_element_fe(_flow_vars.u())->get_JxW();
 
     /*
-    const std::vector<std::vector<libMesh::Real> >& u_phi =
+      const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u())->get_phi();
     */
 
@@ -225,19 +225,19 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(_flow_vars.u())->get_JxW();
+    context.get_element_fe(_flow_vars.u())->get_JxW();
 
     const std::vector<std::vector<libMesh::Real> >& u_phi =
-      context.get_element_fe(this->_flow_vars.u())->get_phi();
+    context.get_element_fe(this->_flow_vars.u())->get_phi();
 
     // Get residuals
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(_flow_vars.u()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(_flow_vars.v()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
     if(this->_flow_vars.dim() == 3)
-      {
-        Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
-      }
+    {
+    Fw = &context.get_elem_residual(this->_flow_vars.w()); // R_{w}
+    }
 
     // Now we will build the element Jacobian and residual.
     // Constructing the residual requires the solution and its
@@ -250,47 +250,47 @@ namespace GRINS
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
-      {
-        libMesh::RealGradient g = this->_flow_stab_helper.compute_g( fe, context, qp );
-        libMesh::RealTensor G = this->_flow_stab_helper.compute_G( fe, context, qp );
+    {
+    libMesh::RealGradient g = this->_flow_stab_helper.compute_g( fe, context, qp );
+    libMesh::RealTensor G = this->_flow_stab_helper.compute_G( fe, context, qp );
 
-        libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
-                                 context.fixed_interior_value( this->_flow_vars.v(), qp ) );
-        if( this->_flow_vars.dim() == 3 )
-          {
-            U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
-          }
+    libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),
+    context.fixed_interior_value( this->_flow_vars.v(), qp ) );
+    if( this->_flow_vars.dim() == 3 )
+    {
+    U(2) = context.fixed_interior_value( this->_flow_vars.w(), qp );
+    }
 
-        libMesh::Real tau_E = this->_temp_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
+    libMesh::Real tau_E = this->_temp_stab_helper.compute_tau_energy( context, G, _rho, _Cp, _k,  U, false );
 
-        libMesh::Real RE = this->_temp_stab_helper.compute_res_energy_transient( context, qp, _rho, _Cp );
+    libMesh::Real RE = this->_temp_stab_helper.compute_res_energy_transient( context, qp, _rho, _Cp );
 
 
-        for (unsigned int i=0; i != n_u_dofs; i++)
-          {
-            Fu(i) += -_rho*_beta_T*tau_E*RE*_g(0)*u_phi[i][qp]*JxW[qp];
+    for (unsigned int i=0; i != n_u_dofs; i++)
+    {
+    Fu(i) += -_rho*_beta_T*tau_E*RE*_g(0)*u_phi[i][qp]*JxW[qp];
 
-            Fv(i) += -_rho*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp]*JxW[qp];
+    Fv(i) += -_rho*_beta_T*tau_E*RE*_g(1)*u_phi[i][qp]*JxW[qp];
 
-            if (this->_flow_vars.dim() == 3)
-              {
-                (*Fw)(i) += -_rho*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp]*JxW[qp];
-              }
+    if (this->_flow_vars.dim() == 3)
+    {
+    (*Fw)(i) += -_rho*_beta_T*tau_E*RE*_g(2)*u_phi[i][qp]*JxW[qp];
+    }
 
-            if (compute_jacobian)
-              {
-                libmesh_not_implemented();
-              } // End compute_jacobian check
+    if (compute_jacobian)
+    {
+    libmesh_not_implemented();
+    } // End compute_jacobian check
 
-          } // End i dof loop
-      } // End quadrature loop
+    } // End i dof loop
+    } // End quadrature loop
     */
   }
 
   template<class Mu>
   void BoussinesqBuoyancySPGSMStabilization<Mu>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     ParameterUser::register_parameter(param_name, param_pointer);

@@ -37,8 +37,8 @@ namespace GRINS
 {
   //! Builds VariableBase objects
   /*! Most variable classes only require a GetPot object to the constructor, but
-      others may require more information. Subclasses can dictate the necessary
-      behavior. */
+    others may require more information. Subclasses can dictate the necessary
+    behavior. */
   class ErrorEstimatorFactoryBase : public FactoryWithGetPot<libMesh::ErrorEstimator>
   {
   public:
@@ -63,7 +63,7 @@ namespace GRINS
 
     //! Cache pointer to system
     /*! We can't copy this so it must be a pointer. We do *not* own
-        this so do not delete! */
+      this so do not delete! */
     static MultiphysicsSystem* _system;
 
     //! Cache pointer to system

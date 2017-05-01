@@ -41,7 +41,7 @@ namespace GRINS
     This physics class imposes a force against the direction of (and
     proportional to an exponent of the magnitude of) a specified
     vector field.
-   */
+  */
   template<class Viscosity>
   class VelocityDragAdjointStabilization : public VelocityDragBase<Viscosity>
   {
@@ -57,8 +57,8 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     virtual void element_time_derivative( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,

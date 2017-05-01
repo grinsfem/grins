@@ -52,9 +52,9 @@ namespace GRINS
       {
         libmesh_warning("No Materials/Conductivity/k specified!\n");
 
-	// Try and get the conductivity from other specifications
+        // Try and get the conductivity from other specifications
         this->set_parameter
-	  (_k, input, "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/k", _k);
+          (_k, input, "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/k", _k);
       }
     else
       this->set_parameter
@@ -63,8 +63,8 @@ namespace GRINS
   }
 
   ConstantConductivity::ConstantConductivity( const GetPot& input, const std::string& material )
-  : ParameterUser("ConstantConductivity"),
-    _k(0.0)
+    : ParameterUser("ConstantConductivity"),
+      _k(0.0)
   {
     MaterialsParsing::duplicate_input_test(input,
                                            "Materials/"+material+"/ThermalConductivity/value",

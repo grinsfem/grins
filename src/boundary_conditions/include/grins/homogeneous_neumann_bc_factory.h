@@ -32,9 +32,9 @@ namespace GRINS
 {
   //! Generic factory for homogeneous Neumann boundary conditions
   /*! Merely need to set _is_homogeneous to true at construction time, then
-      the create() method in the base classes should just ignore this boundary
-      condition factory and not construct anything, which is what we want
-      for "do nothing" boundary conditions. */
+    the create() method in the base classes should just ignore this boundary
+    condition factory and not construct anything, which is what we want
+    for "do nothing" boundary conditions. */
   class HomogeneousNeumannBCFactory : public NeumannBCFactoryAbstract
   {
   public:

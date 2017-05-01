@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     {
       species_list[s] = std::string(argv[s+1]);
     }
-  
+
   Antioch::ChemicalMixture<double> chem_mixture( species_list );
 
   Antioch::CEAThermoMixture<double> cea_mixture( chem_mixture );
@@ -99,10 +99,10 @@ int main(int argc, char* argv[])
       for( unsigned int s = 0; s < n_species; s++)
         {
           output << std::scientific << std::setprecision(16)
-                 << stat_mech_thermo.h_tot( s, T ) - stat_mech_thermo.h_tot( s, 298.15 ) 
-                    + stat_mech_thermo.e_0( s ) << " ";
+                 << stat_mech_thermo.h_tot( s, T ) - stat_mech_thermo.h_tot( s, 298.15 )
+            + stat_mech_thermo.e_0( s ) << " ";
         }
-      
+
       for( unsigned int s = 0; s < n_species; s++)
         {
           output << std::scientific << std::setprecision(16)
