@@ -85,6 +85,9 @@ BUILT_SOURCES += .license.stamp
 CLEANFILES = .license.stamp
 endif
 
+reindent:
+	@$(top_srcdir)/src/common/reindent.sh $(GRINS_STAMPED_FILES)
+
 # -------------------------------------------
 # Optional support for code coverage analysis
 # -------------------------------------------
