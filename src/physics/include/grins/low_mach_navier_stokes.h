@@ -66,8 +66,7 @@ namespace GRINS
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext & context );
 
-    virtual void compute_element_time_derivative_cache( AssemblyContext & context,
-                                                        CachedValues & cache );
+    virtual void compute_element_time_derivative_cache( AssemblyContext & context );
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,

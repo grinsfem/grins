@@ -315,7 +315,7 @@ namespace GRINS
          physics_iter++ )
       {
         // shared_ptr gets confused by operator->*
-        ((*(physics_iter->second)).*cachefunc)( c, cache );
+        ((*(physics_iter->second)).*cachefunc)( c );
       }
 
     // Loop over each physics and compute their contributions
@@ -336,6 +336,8 @@ namespace GRINS
           }
       }
 
+    // We need to clear out the cache when we're done so we don't interfere
+    // with other residual functions
     cache.clear();
 
     // TODO: Need to think about the implications of this because there might be some

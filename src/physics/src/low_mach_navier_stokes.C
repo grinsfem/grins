@@ -1017,8 +1017,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( AssemblyContext & context,
-                                                                             CachedValues & /*cache*/ )
+  void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( AssemblyContext & context )
   {
     CachedValues & cache = context.get_cached_values();
 
@@ -1078,8 +1077,6 @@ namespace GRINS
 
     cache.set_values(Cache::PRESSURE, p);
     cache.set_values(Cache::THERMO_PRESSURE, p0);
-
-    return;
   }
 
   template<class Mu, class SH, class TC>

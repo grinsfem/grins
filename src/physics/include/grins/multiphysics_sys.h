@@ -223,7 +223,7 @@ namespace GRINS
     // Useful typedef to pointer-to-member functions so we can call all
     // residual and caching functions using a single function (_general_residual)
     typedef void (GRINS::Physics::*ResFuncType) (bool, AssemblyContext &);
-    typedef void (GRINS::Physics::*CacheFuncType) (AssemblyContext &, CachedValues &);
+    typedef void (GRINS::Physics::*CacheFuncType) (AssemblyContext &);
 
     // Refactored residual evaluation implementation
     bool _general_residual( bool request_jacobian,

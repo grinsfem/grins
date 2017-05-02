@@ -208,32 +208,23 @@ namespace GRINS
     void init_ics( libMesh::FEMSystem* system,
                    libMesh::CompositeFunction<libMesh::Number>& all_ics );
 
-    virtual void compute_element_time_derivative_cache( AssemblyContext & /*context*/,
-                                                        CachedValues & /*cache*/ ){}
+    virtual void compute_element_time_derivative_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_side_time_derivative_cache( AssemblyContext & /*context*/,
-                                                     CachedValues & /*cache*/ ){}
+    virtual void compute_side_time_derivative_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_nonlocal_time_derivative_cache( AssemblyContext & /*context*/,
-                                                         CachedValues & /*cache*/ ){}
+    virtual void compute_nonlocal_time_derivative_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_element_constraint_cache( AssemblyContext & /*context*/,
-                                                   CachedValues & /*cache*/ ){}
+    virtual void compute_element_constraint_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_side_constraint_cache( AssemblyContext & /*context*/,
-                                                CachedValues & /*cache*/ ){}
+    virtual void compute_side_constraint_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_nonlocal_constraint_cache( AssemblyContext & /*context*/,
-                                                    CachedValues & /*cache*/ ){}
+    virtual void compute_nonlocal_constraint_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_damping_residual_cache( AssemblyContext & /*context*/,
-                                                 CachedValues & /*cache*/ ){}
+    virtual void compute_damping_residual_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_mass_residual_cache( AssemblyContext & /*context*/,
-                                              CachedValues & /*cache*/ ){}
+    virtual void compute_mass_residual_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_nonlocal_mass_residual_cache( AssemblyContext & /*context*/,
-                                                       CachedValues & /*cache*/ ){}
+    virtual void compute_nonlocal_mass_residual_cache( AssemblyContext & /*context*/ ){}
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
