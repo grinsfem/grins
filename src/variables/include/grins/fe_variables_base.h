@@ -70,9 +70,9 @@ namespace GRINS
 
     //! Set whether or not this is a "constraint" variable
     /*! Constraint variables are things like Lagrange multipliers.
-        The primary implication is that if the Variable is a constraint
-        variable, then no boundary conditions are required/used for
-        that variable. */
+      The primary implication is that if the Variable is a constraint
+      variable, then no boundary conditions are required/used for
+      that variable. */
     void set_is_constraint_var( bool is_constraint_var )
     { _is_constraint_var = is_constraint_var; }
 
@@ -81,8 +81,8 @@ namespace GRINS
 
     //! Reset whetever Neumann bc is postive or not
     /*! Postive means a value of 1.0 will be used in front of
-        NeumannBC terms while is_positive = false indicates a
-        value of -1.0 should be used.*/
+      NeumannBC terms while is_positive = false indicates a
+      value of -1.0 should be used.*/
     void set_neumann_bc_is_positive( bool is_positive );
 
     libMesh::Real neumann_bc_sign() const
@@ -107,15 +107,15 @@ namespace GRINS
 
     //! Tracks whether this is a constraint variable
     /*! By constraint variable, we mean a variable that is
-        effectively a Lagrange multiplier. The intended use
-        case is to determine whether this variable requires
-        boundary conditions to be specified (constraint variables
-        do not). */
+      effectively a Lagrange multiplier. The intended use
+      case is to determine whether this variable requires
+      boundary conditions to be specified (constraint variables
+      do not). */
     bool _is_constraint_var;
 
     //! Track the sign of the Neumann BC term. Defaults to 1.0.
     /*! Depending on the Physics/Variable combination, the sign in
-        front of the Neumann boundary term can change. */
+      front of the Neumann boundary term can change. */
     libMesh::Real _neumann_bc_sign;
 
     std::set<libMesh::subdomain_id_type> _subdomain_ids;

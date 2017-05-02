@@ -29,9 +29,9 @@ namespace GRINS
 {
   //! Initialize all Factory objects related to Solvers
   /*! To avoid symbol stripping from static linking, we use this
-      class to initialize/register the Solvers factory objects.
+    class to initialize/register the Solvers factory objects.
 
-      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+    Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
   class SolverFactoryInitializer
   {
   public:

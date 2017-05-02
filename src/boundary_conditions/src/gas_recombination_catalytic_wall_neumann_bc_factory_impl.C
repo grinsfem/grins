@@ -46,11 +46,11 @@ namespace GRINS
     const std::vector<VariableIndex>& species_vars,const std::string& material,
     VariableIndex T_var,libMesh::Real p0,const std::string& thermochem_lib )
 #else
-  SharedPtr<NeumannBCAbstract>
-  GasRecombinationCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
-  ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
-    const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
-    VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
+    SharedPtr<NeumannBCAbstract>
+    GasRecombinationCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
+                                                      ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
+                                                        const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
+                                                        VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
 #endif
   {
     std::string reactant;
@@ -66,16 +66,16 @@ namespace GRINS
         this->build_wall_ptr<CanteraMixture>(input,material,gamma_ptr,reactant,product,
                                              species_vars,T_var,p0,catalytic_wall);
 #else
-         libmesh_error_msg("Error: Cantera not enabled in this configuration. Reconfigure using --with-cantera option.");
+        libmesh_error_msg("Error: Cantera not enabled in this configuration. Reconfigure using --with-cantera option.");
 #endif
       }
     else if( thermochem_lib == "antioch" )
       {
 #ifdef GRINS_HAVE_ANTIOCH
-       this->build_wall_ptr<AntiochChemistry>(input,material,gamma_ptr,reactant,product,
-                                             species_vars,T_var,p0,catalytic_wall);
+        this->build_wall_ptr<AntiochChemistry>(input,material,gamma_ptr,reactant,product,
+                                               species_vars,T_var,p0,catalytic_wall);
 #else
-         libmesh_error_msg("Error: Antioch not enabled in this configuration. Reconfigure using --with-antioch option.");
+        libmesh_error_msg("Error: Antioch not enabled in this configuration. Reconfigure using --with-antioch option.");
 #endif
       }
     else

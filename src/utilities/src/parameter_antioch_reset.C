@@ -33,76 +33,76 @@
 namespace GRINS
 {
 
-ParameterAntiochReset::ParameterAntiochReset() {}
+  ParameterAntiochReset::ParameterAntiochReset() {}
 
 
-ParameterAntiochReset::ParameterAntiochReset
+  ParameterAntiochReset::ParameterAntiochReset
   (Antioch::ReactionSet<libMesh::Real> & reaction_set,
    const std::string & param_name) :
-  _reaction_sets(1, &reaction_set)
-{
-  std::stringstream stream(param_name);
-  std::string keyword;
+    _reaction_sets(1, &reaction_set)
+  {
+    std::stringstream stream(param_name);
+    std::string keyword;
 
-  std::getline(stream, keyword, '/');
-  libmesh_assert(!stream.fail());
-  libmesh_assert_equal_to(keyword, "Antioch");
+    std::getline(stream, keyword, '/');
+    libmesh_assert(!stream.fail());
+    libmesh_assert_equal_to(keyword, "Antioch");
 
-  std::getline(stream, keyword, '/');
-  libmesh_assert(!stream.fail());
-  _reaction_id = keyword;
+    std::getline(stream, keyword, '/');
+    libmesh_assert(!stream.fail());
+    _reaction_id = keyword;
 
-  while (std::getline(stream, keyword, '/')) {
-    _keywords.push_back(keyword);
+    while (std::getline(stream, keyword, '/')) {
+      _keywords.push_back(keyword);
+    }
+
+    libmesh_assert_greater (_keywords.size(), 0);
   }
-
-  libmesh_assert_greater (_keywords.size(), 0);
-}
 
 
 
   /**
    * Setter: change the value of the parameter we access.
    */
-void ParameterAntiochReset::set (const libMesh::Number & new_value)
-{
-  libmesh_assert(!_reaction_sets.empty());
+  void ParameterAntiochReset::set (const libMesh::Number & new_value)
+  {
+    libmesh_assert(!_reaction_sets.empty());
 #ifndef NDEBUG
-  libMesh::Number val =
-    _reaction_sets[0]->get_parameter_of_reaction
+    libMesh::Number val =
+      _reaction_sets[0]->get_parameter_of_reaction
       (_reaction_id, _keywords);
 #endif
-  for (unsigned int i=0; i != _reaction_sets.size(); ++i)
-    {
-      // If you're already using inconsistent parameters we can't
-      // help you.
-      libmesh_assert_equal_to
-        (val,
-         _reaction_sets[i]->get_parameter_of_reaction
+    for (unsigned int i=0; i != _reaction_sets.size(); ++i)
+      {
+        // If you're already using inconsistent parameters we can't
+        // help you.
+        libmesh_assert_equal_to
+          (val,
+           _reaction_sets[i]->get_parameter_of_reaction
            (_reaction_id, _keywords));
-      _reaction_sets[i]->set_parameter_of_reaction
-        (_reaction_id, _keywords, new_value);
-    }
-}
+        _reaction_sets[i]->set_parameter_of_reaction
+          (_reaction_id, _keywords, new_value);
+      }
+  }
 
 
 
-/**
- * Getter: get the value of the parameter we access.
- */
-const libMesh::Number & ParameterAntiochReset::get () const
+  /**
+   * Getter: get the value of the parameter we access.
+   */
+  const libMesh::Number & ParameterAntiochReset::get () const
   {
     libmesh_assert(!_reaction_sets.empty());
     _current_val =
       _reaction_sets[0]->get_parameter_of_reaction
-        (_reaction_id, _keywords);
+      (_reaction_id, _keywords);
 #ifndef NDEBUG
     // If you're already using inconsistent parameters we can't help
     // you.
     for (unsigned int i=1; i < _reaction_sets.size(); ++i)
       libmesh_assert_equal_to
         (_current_val, _reaction_sets[i]->get_parameter_of_reaction
-                         (_reaction_id, _keywords));
+         (_reaction_id, _keywords));
 #endif
     return _current_val;
   }

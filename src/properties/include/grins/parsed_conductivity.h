@@ -41,7 +41,7 @@ namespace GRINS
 
     //! Constructor with specified material
     /*! Will look in the input file for [Materials/material/ThermalConductivity/value]
-        for the value of viscosity. */
+      for the value of viscosity. */
     ParsedConductivity( const GetPot& input, const std::string& material );
 
     //! Deprecated constructor
@@ -50,7 +50,7 @@ namespace GRINS
 
   private:
 
-     ParsedConductivity();
+    ParsedConductivity();
 
   };
 } // end namespace GRINS

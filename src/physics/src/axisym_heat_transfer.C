@@ -47,7 +47,7 @@ namespace GRINS
 
   template< class Conductivity>
   AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name,
-								    const GetPot& input)
+                                                                    const GetPot& input)
     : Physics(physics_name, input),
       _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,physics_name))),
       _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,physics_name))),
@@ -93,8 +93,8 @@ namespace GRINS
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::element_time_derivative( bool compute_jacobian,
-									AssemblyContext& context,
-									CachedValues& /*cache*/ )
+                                                                        AssemblyContext& context,
+                                                                        CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T()).size();
@@ -145,73 +145,73 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	const libMesh::Number r = u_qpoint[qp](0);
+        const libMesh::Number r = u_qpoint[qp](0);
 
-	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Number u_r, u_z;
-	u_r = context.interior_value(_flow_vars.u(), qp);
-	u_z = context.interior_value(_flow_vars.v(), qp);
+        // Compute the solution & its gradient at the old Newton iterate.
+        libMesh::Number u_r, u_z;
+        u_r = context.interior_value(_flow_vars.u(), qp);
+        u_z = context.interior_value(_flow_vars.v(), qp);
 
-	libMesh::Gradient grad_T;
-	grad_T = context.interior_gradient(_temp_vars.T(), qp);
+        libMesh::Gradient grad_T;
+        grad_T = context.interior_gradient(_temp_vars.T(), qp);
 
-	libMesh::NumberVectorValue U (u_r,u_z);
+        libMesh::NumberVectorValue U (u_r,u_z);
 
-	libMesh::Number k = this->_k( context, qp );
+        libMesh::Number k = this->_k( context, qp );
 
         // FIXME - once we have T-dependent k, we'll need its
         // derivatives in Jacobians
-	// libMesh::Number dk_dT = this->_k.deriv( T );
+        // libMesh::Number dk_dT = this->_k.deriv( T );
 
-	// First, an i-loop over the  degrees of freedom.
-	for (unsigned int i=0; i != n_T_dofs; i++)
-	  {
-	    FT(i) += JxW[qp]*r*
-	      (-_rho*_Cp*T_phi[i][qp]*(U*grad_T)    // convection term
-	       -k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
+        // First, an i-loop over the  degrees of freedom.
+        for (unsigned int i=0; i != n_T_dofs; i++)
+          {
+            FT(i) += JxW[qp]*r*
+              (-_rho*_Cp*T_phi[i][qp]*(U*grad_T)    // convection term
+               -k*(T_gradphi[i][qp]*grad_T) );  // diffusion term
 
-	    if (compute_jacobian)
-	      {
-		libmesh_assert (context.get_elem_solution_derivative() == 1.0);
+            if (compute_jacobian)
+              {
+                libmesh_assert (context.get_elem_solution_derivative() == 1.0);
 
-		for (unsigned int j=0; j != n_T_dofs; j++)
-		  {
-		    // TODO: precompute some terms like:
-		    //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
+                for (unsigned int j=0; j != n_T_dofs; j++)
+                  {
+                    // TODO: precompute some terms like:
+                    //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
-		    KTT(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*
-		      (-_rho*_Cp*T_phi[i][qp]*(U*T_gradphi[j][qp])  // convection term
-		       -k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
-		  } // end of the inner dof (j) loop
+                    KTT(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*
+                      (-_rho*_Cp*T_phi[i][qp]*(U*T_gradphi[j][qp])  // convection term
+                       -k*(T_gradphi[i][qp]*T_gradphi[j][qp])); // diffusion term
+                  } // end of the inner dof (j) loop
 
 #if 0
-		if( dk_dT != 0.0 )
-		{
-		  for (unsigned int j=0; j != n_T_dofs; j++)
-		    {
-		      // TODO: precompute some terms like:
-		      KTT(i,j) -= JxW[qp] * context.get_elem_solution_derivative() *r*( dk_dT*T_phi[j][qp]*T_gradphi[i][qp]*grad_T );
-		    }
-		}
+                if( dk_dT != 0.0 )
+                  {
+                    for (unsigned int j=0; j != n_T_dofs; j++)
+                      {
+                        // TODO: precompute some terms like:
+                        KTT(i,j) -= JxW[qp] * context.get_elem_solution_derivative() *r*( dk_dT*T_phi[j][qp]*T_gradphi[i][qp]*grad_T );
+                      }
+                  }
 #endif
 
-		// Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
-		for (unsigned int j=0; j != n_u_dofs; j++)
-		  {
-		    KTr(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
-		    KTz(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
-		  } // end of the inner dof (j) loop
+                // Matrix contributions for the Tu, Tv and Tw couplings (n_T_dofs same as n_u_dofs, n_v_dofs and n_w_dofs)
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    KTr(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(0)));
+                    KTz(i,j) += JxW[qp] * context.get_elem_solution_derivative() *r*(-_rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*grad_T(1)));
+                  } // end of the inner dof (j) loop
 
-	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
+              } // end - if (compute_jacobian && context.get_elem_solution_derivative())
 
-	  } // end of the outer dof (i) loop
+          } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
   }
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::mass_residual( bool compute_jacobian,
-							      AssemblyContext& context,
-							      CachedValues& /*cache*/ )
+                                                              AssemblyContext& context,
+                                                              CachedValues& /*cache*/ )
   {
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.
@@ -242,38 +242,38 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	const libMesh::Number r = u_qpoint[qp](0);
+        const libMesh::Number r = u_qpoint[qp](0);
 
-	// For the mass residual, we need to be a little careful.
-	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u' for the residual.
-	// u_fixed will be given by the fixed_interior_value function
-	// while u' will be given by the interior_rate function.
-	libMesh::Real T_dot;
+        // For the mass residual, we need to be a little careful.
+        // The time integrator is handling the time-discretization
+        // for us so we need to supply M(u_fixed)*u' for the residual.
+        // u_fixed will be given by the fixed_interior_value function
+        // while u' will be given by the interior_rate function.
+        libMesh::Real T_dot;
         context.interior_rate(_temp_vars.T(), qp, T_dot);
 
-	for (unsigned int i = 0; i != n_T_dofs; ++i)
-	  {
-	    F(i) -= JxW[qp]*r*(_rho*_Cp*T_dot*phi[i][qp] );
+        for (unsigned int i = 0; i != n_T_dofs; ++i)
+          {
+            F(i) -= JxW[qp]*r*(_rho*_Cp*T_dot*phi[i][qp] );
 
-	    if( compute_jacobian )
+            if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
-		    // We're assuming rho, cp are constant w.r.t. T here.
+                    // We're assuming rho, cp are constant w.r.t. T here.
                     M(i,j) -= JxW[qp] * context.get_elem_solution_rate_derivative() *r*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
                   }
               }// End of check on Jacobian
 
-	  } // End of element dof loop
+          } // End of element dof loop
 
       } // End of the quadrature point loop
   }
 
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     ParameterUser::register_parameter(param_name, param_pointer);

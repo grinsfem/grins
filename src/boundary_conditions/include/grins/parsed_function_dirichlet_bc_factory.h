@@ -40,7 +40,7 @@ namespace GRINS
 
     ParsedFunctionDirichletBCFactory( const std::string& bc_type_name )
       : DirichletBCFactoryFunctionBase<FunctionType>(bc_type_name),
-        ParsedFunctionFactoryHelper<FunctionType>()
+      ParsedFunctionFactoryHelper<FunctionType>()
     {}
 
     ~ParsedFunctionDirichletBCFactory(){};
@@ -48,12 +48,12 @@ namespace GRINS
   protected:
     //! Builds the Parsed(FEM)Function objects for boundary conditions
     /*! The variable names passed in will correspond to only a single
-        VariableBase object, e.g. Velocity. The expected behavior is
-        that if the user didn't specify a value for all the variables,
-        then the unspecified variables will be set to zero. However,
-        the user must've set at least one. The section arguments
-        corresponds to the section to parse for the variables in the
-        input file, e.g. input(section+"/"+var_names[0]). */
+      VariableBase object, e.g. Velocity. The expected behavior is
+      that if the user didn't specify a value for all the variables,
+      then the unspecified variables will be set to zero. However,
+      the user must've set at least one. The section arguments
+      corresponds to the section to parse for the variables in the
+      input file, e.g. input(section+"/"+var_names[0]). */
     virtual libMesh::UniquePtr<FunctionType>
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,

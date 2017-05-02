@@ -70,7 +70,7 @@ namespace GRINS
 
     //! Helper function to encapsulate the names variable in the input file
     /*! This is the full variable name to be passed to GetPot to read in
-        user-supplied names for variables. */
+      user-supplied names for variables. */
     static std::string varnames_input_name( const std::string& subsection )
     { return VariablesParsing::variables_section()+"/"+subsection+"/names"; }
 

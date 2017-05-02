@@ -37,7 +37,7 @@ namespace GRINS
   //! Physics class for Heat Transfer
   /*
     This physics class implements the classical Heat Transfer (neglecting viscous dissipation)
-   */
+  */
   template<class Conductivity>
   class HeatTransferBase : public Physics
   {
@@ -58,9 +58,9 @@ namespace GRINS
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+      const;
 
   protected:
 
@@ -74,9 +74,9 @@ namespace GRINS
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they
-              are assumed constant */
+      are assumed constant */
     /*! \todo Shouldn't this rho be the same as the one in the flow? Need
-              to figure out how to have those shared */
+      to figure out how to have those shared */
     libMesh::Number _rho, _Cp;
 
     //! Conductivity

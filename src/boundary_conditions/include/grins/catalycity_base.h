@@ -44,14 +44,14 @@ namespace GRINS
     virtual libMesh::Real operator()( const libMesh::Real T ) const =0;
 
     virtual libMesh::Real dT( const libMesh::Real T ) const =0;
-    
+
     virtual void set_params( const std::vector<libMesh::Real>& params ) =0;
 
     //! Creates a new copy of the current class.
     /*! A raw pointer is returned and it is assumed the user will take ownership
-        and worry about memory management. */
+      and worry about memory management. */
     virtual CatalycityBase* clone() const = 0;
-    
+
   };
 
 } // end namespace GRINS

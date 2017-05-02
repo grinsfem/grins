@@ -36,7 +36,7 @@
 // Function for getting initial temperature field
 libMesh::Real
 initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
-		const std::string& system_name, const std::string& unknown_name );
+                const std::string& system_name, const std::string& unknown_name );
 
 int run( char* argv[], GRINS::Runner & grins );
 
@@ -108,13 +108,13 @@ int run( char* argv[], GRINS::Runner & grins )
       return_flag = 1;
 
       std::cout << "Tolerance exceeded for thermally driven flow test." << std::endl
-		<< "tolerance     = " << tol << std::endl
-		<< "u l2 error    = " << u_l2error << std::endl
-		<< "u h1 error    = " << u_h1error << std::endl
-		<< "v l2 error    = " << v_l2error << std::endl
-		<< "v h1 error    = " << v_h1error << std::endl
-		<< "w l2 error    = " << w_l2error << std::endl
-		<< "w h1 error    = " << w_h1error << std::endl;
+                << "tolerance     = " << tol << std::endl
+                << "u l2 error    = " << u_l2error << std::endl
+                << "u h1 error    = " << u_h1error << std::endl
+                << "v l2 error    = " << v_l2error << std::endl
+                << "v h1 error    = " << v_h1error << std::endl
+                << "w l2 error    = " << w_l2error << std::endl
+                << "w h1 error    = " << w_h1error << std::endl;
     }
 
   return return_flag;

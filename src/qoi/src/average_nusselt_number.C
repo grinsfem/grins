@@ -58,9 +58,9 @@ namespace GRINS
   }
 
   void AverageNusseltNumber::init
-    (const GetPot& input,
-     const MultiphysicsSystem& system,
-     unsigned int /*qoi_num*/ )
+  (const GetPot& input,
+   const MultiphysicsSystem& system,
+   unsigned int /*qoi_num*/ )
   {
     this->parse_thermal_conductivity(input);
 
@@ -69,9 +69,9 @@ namespace GRINS
 
     if( this->_k < 0.0 )
       {
-	std::cerr << "Error: thermal conductivity for AverageNusseltNumber must be positive." << std::endl
-		  << "Found k = " << _k << std::endl;
-	libmesh_error();
+        std::cerr << "Error: thermal conductivity for AverageNusseltNumber must be positive." << std::endl
+                  << "Found k = " << _k << std::endl;
+        libmesh_error();
       }
 
     // Read boundary ids for which we want to compute
@@ -79,20 +79,20 @@ namespace GRINS
 
     if( num_bcs <= 0 )
       {
-	std::cerr << "Error: Must specify at least one boundary id to compute"
-		  << " average Nusselt number." << std::endl
-		  << "Found: " << num_bcs << std::endl;
-	libmesh_error();
+        std::cerr << "Error: Must specify at least one boundary id to compute"
+                  << " average Nusselt number." << std::endl
+                  << "Found: " << num_bcs << std::endl;
+        libmesh_error();
       }
 
     for( int i = 0; i < num_bcs; i++ )
       {
-	_bc_ids.insert( input("QoI/NusseltNumber/bc_ids", -1, i ) );
+        _bc_ids.insert( input("QoI/NusseltNumber/bc_ids", -1, i ) );
       }
 
     // Grab temperature variable index
     std::string T_var_name = input( "Physics/VariableNames/Temperature",
-				    T_var_name_default );
+                                    T_var_name_default );
 
     this->_T_var = system.variable_number(T_var_name);
 
@@ -117,7 +117,7 @@ namespace GRINS
     bool on_correct_side = false;
 
     for (std::set<libMesh::boundary_id_type>::const_iterator id =
-         _bc_ids.begin(); id != _bc_ids.end(); id++ )
+           _bc_ids.begin(); id != _bc_ids.end(); id++ )
       if( context.has_side_boundary_id( (*id) ) )
         {
           on_correct_side = true;
@@ -142,12 +142,12 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; qp++)
       {
-	// Get the solution value at the quadrature point
-	libMesh::Gradient grad_T = 0.0;
-	context.side_gradient(this->_T_var, qp, grad_T);
+        // Get the solution value at the quadrature point
+        libMesh::Gradient grad_T = 0.0;
+        context.side_gradient(this->_T_var, qp, grad_T);
 
-	// Update the elemental increment dR for each qp
-	qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
+        // Update the elemental increment dR for each qp
+        qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
 
       } // quadrature loop
   }
@@ -157,44 +157,44 @@ namespace GRINS
   {
 
     for( std::set<libMesh::boundary_id_type>::const_iterator id = _bc_ids.begin();
-	 id != _bc_ids.end(); id++ )
+         id != _bc_ids.end(); id++ )
       {
-	if( context.has_side_boundary_id( (*id) ) )
-	  {
-	    libMesh::FEBase* T_side_fe;
-	    context.get_side_fe<libMesh::Real>(this->_T_var, T_side_fe);
+        if( context.has_side_boundary_id( (*id) ) )
+          {
+            libMesh::FEBase* T_side_fe;
+            context.get_side_fe<libMesh::Real>(this->_T_var, T_side_fe);
 
-	    const std::vector<libMesh::Real> &JxW = T_side_fe->get_JxW();
-	    
-	    const std::vector<libMesh::Point>& normals = T_side_fe->get_normals();
+            const std::vector<libMesh::Real> &JxW = T_side_fe->get_JxW();
 
-	    unsigned int n_qpoints = context.get_side_qrule().n_points();
-	    
+            const std::vector<libMesh::Point>& normals = T_side_fe->get_normals();
+
+            unsigned int n_qpoints = context.get_side_qrule().n_points();
+
             const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
 
             const std::vector<std::vector<libMesh::Gradient> >& T_gradphi = T_side_fe->get_dphi();
 
-	    libMesh::DenseSubVector<libMesh::Number>& dQ_dT =
+            libMesh::DenseSubVector<libMesh::Number>& dQ_dT =
               context.get_qoi_derivatives(qoi_index, _T_var);
 
-	    // Loop over quadrature points  
-	    for (unsigned int qp = 0; qp != n_qpoints; qp++)
-	      {
-		// Get the solution value at the quadrature point
-		libMesh::Gradient grad_T = 0.0; 
-		context.side_gradient(this->_T_var, qp, grad_T);
-		
-		// Update the elemental increment dR for each qp
-		//qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
+            // Loop over quadrature points
+            for (unsigned int qp = 0; qp != n_qpoints; qp++)
+              {
+                // Get the solution value at the quadrature point
+                libMesh::Gradient grad_T = 0.0;
+                context.side_gradient(this->_T_var, qp, grad_T);
+
+                // Update the elemental increment dR for each qp
+                //qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
 
                 for( unsigned int i = 0; i != n_T_dofs; i++ )
                   {
                     dQ_dT(i) += _scaling*_k*T_gradphi[i][qp]*normals[qp]*JxW[qp];
                   }
 
-	      } // quadrature loop
+              } // quadrature loop
 
-	  } // end check on boundary id
+          } // end check on boundary id
 
       }
 
@@ -206,8 +206,8 @@ namespace GRINS
     std::string material = input("QoI/NusseltNumber/material", "NoMaterial!");
 
     MaterialsParsing::duplicate_input_test(input,
-                                               "Materials/"+material+"/ThermalConductivity/value",
-                                               "QoI/NusseltNumber/thermal_conductivity");
+                                           "Materials/"+material+"/ThermalConductivity/value",
+                                           "QoI/NusseltNumber/thermal_conductivity");
 
     // Parse the old version
     if( input.have_variable("QoI/NusseltNumber/thermal_conductivity") )

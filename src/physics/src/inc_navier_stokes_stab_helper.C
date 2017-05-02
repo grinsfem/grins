@@ -42,8 +42,8 @@ namespace GRINS
 {
 
   IncompressibleNavierStokesStabilizationHelper::IncompressibleNavierStokesStabilizationHelper
-    (const std::string & helper_name,
-     const GetPot& input)
+  (const std::string & helper_name,
+   const GetPot& input)
     : StabilizationHelper(helper_name),
       _C(1),
       _tau_factor(0.5),
@@ -78,16 +78,16 @@ namespace GRINS
     return libMesh::RealGradient( U*grad_u );
   }
 
-   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U,
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U,
                                                                                   libMesh::Gradient& grad_u,
                                                                                   libMesh::Gradient& grad_v ) const
   {
     return libMesh::RealGradient( U*grad_u, U*grad_v );
   }
-    
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U, 
-                                                                                  libMesh::Gradient& grad_u, 
-                                                                                  libMesh::Gradient& grad_v, 
+
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U,
+                                                                                  libMesh::Gradient& grad_u,
+                                                                                  libMesh::Gradient& grad_v,
                                                                                   libMesh::Gradient& grad_w ) const
   {
     return libMesh::RealGradient( U*grad_u, U*grad_v, U*grad_w );
@@ -98,7 +98,7 @@ namespace GRINS
     return libMesh::RealGradient( hess_u(0,0) );
   }
 
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU( libMesh::RealTensor& hess_u, 
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU( libMesh::RealTensor& hess_u,
                                                                                   libMesh::RealTensor& hess_v ) const
   {
     return libMesh::RealGradient( hess_u(0,0) + hess_u(1,1),
@@ -130,7 +130,7 @@ namespace GRINS
     return libMesh::RealGradient( hess_u(0,0) );
   }
 
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u, 
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u,
                                                                                     libMesh::RealTensor& hess_v ) const
   {
     return libMesh::RealGradient( hess_u(0,0) + hess_v(0,1),
@@ -147,7 +147,7 @@ namespace GRINS
                                   hess_u(1,0) + hess_v(1,1) + grad_u(1)/r );
   }
 
-  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u, 
+  libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::div_GradU_T( libMesh::RealTensor& hess_u,
                                                                                     libMesh::RealTensor& hess_v,
                                                                                     libMesh::RealTensor& hess_w ) const
   {
@@ -210,10 +210,10 @@ namespace GRINS
   }
 
   void IncompressibleNavierStokesStabilizationHelper::compute_res_continuity_and_derivs
-    ( AssemblyContext& context,
-      unsigned int qp,
-      libMesh::Real   &res_C,
-      libMesh::Tensor &d_res_C_dgradU
+  ( AssemblyContext& context,
+    unsigned int qp,
+    libMesh::Real   &res_C,
+    libMesh::Tensor &d_res_C_dgradU
     ) const
   {
     libMesh::RealGradient grad_u =
@@ -286,13 +286,13 @@ namespace GRINS
   }
 
   void IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_steady_and_derivs
-    ( AssemblyContext& context,
-      unsigned int qp, const libMesh::Real rho, const libMesh::Real mu,
-      libMesh::Gradient &res_M,
-      libMesh::Tensor   &d_res_M_dgradp,
-      libMesh::Tensor   &d_res_M_dU,
-      libMesh::Gradient &d_res_Muvw_dgraduvw,
-      libMesh::Tensor   &d_res_Muvw_dhessuvw
+  ( AssemblyContext& context,
+    unsigned int qp, const libMesh::Real rho, const libMesh::Real mu,
+    libMesh::Gradient &res_M,
+    libMesh::Tensor   &d_res_M_dgradp,
+    libMesh::Tensor   &d_res_M_dU,
+    libMesh::Gradient &d_res_Muvw_dgraduvw,
+    libMesh::Tensor   &d_res_Muvw_dhessuvw
     ) const
   {
     libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp) );
@@ -369,7 +369,7 @@ namespace GRINS
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_transient( AssemblyContext& context, unsigned int qp, const libMesh::Real rho ) const
   {
     libMesh::RealGradient u_dot;
-    context.interior_rate(this->_flow_vars.u(), qp, u_dot(0)); 
+    context.interior_rate(this->_flow_vars.u(), qp, u_dot(0));
     if(this->_flow_vars.dim() > 1)
       context.interior_rate(this->_flow_vars.v(), qp, u_dot(1));
     if(this->_flow_vars.dim() == 3)
@@ -380,15 +380,15 @@ namespace GRINS
 
 
   void IncompressibleNavierStokesStabilizationHelper::compute_res_momentum_transient_and_derivs
-    ( AssemblyContext& context,
-      unsigned int qp,
-      const libMesh::Real rho,
-      libMesh::RealGradient &res_M,
-      libMesh::Real &d_res_Muvw_duvw
+  ( AssemblyContext& context,
+    unsigned int qp,
+    const libMesh::Real rho,
+    libMesh::RealGradient &res_M,
+    libMesh::Real &d_res_Muvw_duvw
     ) const
   {
     libMesh::RealGradient u_dot;
-    context.interior_rate(this->_flow_vars.u(), qp, u_dot(0)); 
+    context.interior_rate(this->_flow_vars.u(), qp, u_dot(0));
     if(this->_flow_vars.dim() > 1)
       context.interior_rate(this->_flow_vars.v(), qp, u_dot(1));
     if(this->_flow_vars.dim() == 3)

@@ -91,7 +91,7 @@ namespace GRINS
     this->build_error_estimator(input);
 
     if( SimulationParsing::have_restart(input) )
-        this->init_restart(input,sim_builder,comm);
+      this->init_restart(input,sim_builder,comm);
   }
 
   Simulation::Simulation( const GetPot& input,
@@ -136,7 +136,7 @@ namespace GRINS
     this->build_error_estimator(input);
 
     if( SimulationParsing::have_restart(input) )
-        this->init_restart(input,sim_builder,comm);
+      this->init_restart(input,sim_builder,comm);
   }
 
   void Simulation::init_multiphysics_system( const GetPot& input )
@@ -213,13 +213,13 @@ namespace GRINS
         // sense if we have q
         CompositeQoI* qoi =
           libMesh::cast_ptr<CompositeQoI*>
-            (this->_multiphysics_system->get_qoi());
+          (this->_multiphysics_system->get_qoi());
 
         if (!qoi)
           {
             std::cout <<
               "Error: adjoint_sensitivity_parameters are specified but\n"
-              << "no QoIs have been specified.\n" << std::endl;
+                      << "no QoIs have been specified.\n" << std::endl;
             libmesh_error();
           }
 
@@ -234,7 +234,7 @@ namespace GRINS
         // sense even with no q defined
         CompositeQoI* qoi =
           dynamic_cast<CompositeQoI*>
-            (this->_multiphysics_system->get_qoi());
+          (this->_multiphysics_system->get_qoi());
 
         // dynamic_cast returns NULL if our QoI isn't a CompositeQoI;
         // i.e. if there were no QoIs that made us bother setting up
@@ -289,23 +289,23 @@ namespace GRINS
 
     if (_output_residual_sensitivities &&
         !_forward_parameters.parameter_vector.size())
-    {
-      std::cout <<
-        "Error: output_residual_sensitivities is specified but\n" <<
-        "no forward sensitivity parameters have been specified.\n" <<
-        std::endl;
-      libmesh_error();
-    }
+      {
+        std::cout <<
+          "Error: output_residual_sensitivities is specified but\n" <<
+          "no forward sensitivity parameters have been specified.\n" <<
+          std::endl;
+        libmesh_error();
+      }
 
     if (_output_solution_sensitivities &&
         !_forward_parameters.parameter_vector.size())
-    {
-      std::cout <<
-        "Error: output_solution_sensitivities is specified but\n" <<
-        "no forward sensitivity parameters have been specified.\n" <<
-        std::endl;
-      libmesh_error();
-    }
+      {
+        std::cout <<
+          "Error: output_solution_sensitivities is specified but\n" <<
+          "no forward sensitivity parameters have been specified.\n" <<
+          std::endl;
+        libmesh_error();
+      }
 
     _solver->solve( context );
 
@@ -338,7 +338,7 @@ namespace GRINS
             for (unsigned int p=0; p != params.size(); ++p)
               {
                 std::cout << "dq" << q << "/dp" << p << " = " <<
-                        sensitivities[q][p] << std::endl;
+                  sensitivities[q][p] << std::endl;
               }
           }
       }
@@ -365,7 +365,7 @@ namespace GRINS
             for (unsigned int p=0; p != params.size(); ++p)
               {
                 std::cout << "dq" << q << "/dp" << p << " = " <<
-                        sensitivities[q][p] << std::endl;
+                  sensitivities[q][p] << std::endl;
               }
           }
       }

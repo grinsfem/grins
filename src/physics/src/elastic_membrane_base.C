@@ -121,7 +121,7 @@ namespace GRINS
           (context.*interior_solution)( _disp_vars.w(), qp, w_ddot );
 
         for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
+          {
             Fu(i) += mu*this->_rho*_h0*u_ddot*u_phi[i][qp]*jac;
             Fv(i) += mu*this->_rho*_h0*v_ddot*u_phi[i][qp]*jac;
 

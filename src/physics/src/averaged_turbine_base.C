@@ -38,14 +38,14 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
-      base_velocity_function(""),
-      local_vertical_function(""),
-      lift_function(""),
-      drag_function(""),
-      torque_function(""),
-      chord_function(""),
-      area_swept_function(""),
-      aoa_function(""),
+    base_velocity_function(""),
+    local_vertical_function(""),
+    lift_function(""),
+    drag_function(""),
+    torque_function(""),
+    chord_function(""),
+    area_swept_function(""),
+    aoa_function(""),
     _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<ScalarVariable>(VariablesParsing::physics_scalar_variable_name(input,physics_name)))
   {
     this->read_input_options(input);
@@ -131,8 +131,8 @@ namespace GRINS
 
     if (!moment_of_inertia)
       libmesh_error_msg(
-        "Error! Zero AveragedTurbine moment of inertia specified!" <<
-        std::endl);
+                        "Error! Zero AveragedTurbine moment of inertia specified!" <<
+                        std::endl);
 
     this->set_parameter
       (this->initial_speed, input,
@@ -142,14 +142,14 @@ namespace GRINS
 
   template<class Mu>
   bool AveragedTurbineBase<Mu>::compute_force
-    ( const libMesh::Point& point,
-      const libMesh::Real time,
-      const libMesh::NumberVectorValue& U,
-      libMesh::Number s,
-      libMesh::NumberVectorValue& U_B_1,
-      libMesh::NumberVectorValue& F,
-      libMesh::NumberTensorValue *dFdU,
-      libMesh::NumberVectorValue *dFds)
+  ( const libMesh::Point& point,
+    const libMesh::Real time,
+    const libMesh::NumberVectorValue& U,
+    libMesh::Number s,
+    libMesh::NumberVectorValue& U_B_1,
+    libMesh::NumberVectorValue& F,
+    libMesh::NumberTensorValue *dFdU,
+    libMesh::NumberVectorValue *dFds)
   {
     // Find base velocity of moving fan at this point
     libMesh::DenseVector<libMesh::Number> output_vec(3);

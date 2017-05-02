@@ -61,19 +61,19 @@ namespace GRINS
 
     {
       libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-    
+
       /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
+        Not sure if we will get thread lock here or not. */
       try
-	{
-	  _cantera_gas.setState_TPY(T, P, &Y[0]);
-	  mu =  _cantera_transport.viscosity();
-	}
+        {
+          _cantera_gas.setState_TPY(T, P, &Y[0]);
+          mu =  _cantera_transport.viscosity();
+        }
       catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
+        {
+          Cantera::showErrors(std::cerr);
+          libmesh_error();
+        }
 
     }
 
@@ -90,19 +90,19 @@ namespace GRINS
 
     {
       libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
-    
+
       /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
+        Not sure if we will get thread lock here or not. */
       try
-	{
-	  _cantera_gas.setState_TPY(T, P, &Y[0]);
-	  k =  _cantera_transport.thermalConductivity();
-	}
+        {
+          _cantera_gas.setState_TPY(T, P, &Y[0]);
+          k =  _cantera_transport.thermalConductivity();
+        }
       catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
+        {
+          Cantera::showErrors(std::cerr);
+          libmesh_error();
+        }
 
     }
 
@@ -116,23 +116,23 @@ namespace GRINS
                                          libMesh::Real& mu, libMesh::Real& k,
                                          std::vector<libMesh::Real>& D )
   {
-      libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
+    libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
-      /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
-      try
-	{
-	  _cantera_gas.setState_TRY(T, rho, &Y[0]);
+    /*! \todo Need to make sure this will work in a threaded environment.
+      Not sure if we will get thread lock here or not. */
+    try
+      {
+        _cantera_gas.setState_TRY(T, rho, &Y[0]);
 
-          mu =  _cantera_transport.viscosity();
-          k =  _cantera_transport.thermalConductivity();
-	  _cantera_transport.getMixDiffCoeffsMass(&D[0]);
-	}
-      catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
+        mu =  _cantera_transport.viscosity();
+        k =  _cantera_transport.thermalConductivity();
+        _cantera_transport.getMixDiffCoeffsMass(&D[0]);
+      }
+    catch(Cantera::CanteraError)
+      {
+        Cantera::showErrors(std::cerr);
+        libmesh_error();
+      }
   }
 
 } // namespace GRINS

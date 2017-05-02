@@ -87,8 +87,8 @@ namespace GRINS
 
   template<class K>
   void HeatConduction<K>::element_time_derivative( bool compute_jacobian,
-						AssemblyContext& context,
-						CachedValues& /*cache*/ )
+                                                   AssemblyContext& context,
+                                                   CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_T_dofs = context.get_dof_indices(_temp_vars.T()).size();
@@ -125,32 +125,32 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-	// Compute the solution & its gradient at the old Newton iterate.
-	libMesh::Gradient grad_T;
-	grad_T = context.interior_gradient(_temp_vars.T(), qp);
+        // Compute the solution & its gradient at the old Newton iterate.
+        libMesh::Gradient grad_T;
+        grad_T = context.interior_gradient(_temp_vars.T(), qp);
 
-	// Compute the conductivity at this qp
-	libMesh::Real _k_qp = this->_k(context, qp);
-	
-	// First, an i-loop over the  degrees of freedom.
-	for (unsigned int i=0; i != n_T_dofs; i++)
-	  {
-	    FT(i) += JxW[qp]*(-_k_qp*(T_gradphi[i][qp]*grad_T));
+        // Compute the conductivity at this qp
+        libMesh::Real _k_qp = this->_k(context, qp);
 
-	    if (compute_jacobian)
-	      {
-		for (unsigned int j=0; j != n_T_dofs; j++)
-		  {
-		    // TODO: precompute some terms like:
-		    //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
+        // First, an i-loop over the  degrees of freedom.
+        for (unsigned int i=0; i != n_T_dofs; i++)
+          {
+            FT(i) += JxW[qp]*(-_k_qp*(T_gradphi[i][qp]*grad_T));
 
-		    KTT(i,j) += JxW[qp] * context.get_elem_solution_derivative() *
-		      ( -_k_qp*(T_gradphi[i][qp]*T_gradphi[j][qp]) ); // diffusion term
-		  } // end of the inner dof (j) loop
+            if (compute_jacobian)
+              {
+                for (unsigned int j=0; j != n_T_dofs; j++)
+                  {
+                    // TODO: precompute some terms like:
+                    //   _rho*_Cp*T_phi[i][qp]*(vel_phi[j][qp]*T_grad_phi[j][qp])
 
-	      } // end - if (compute_jacobian && context.get_elem_solution_derivative())
+                    KTT(i,j) += JxW[qp] * context.get_elem_solution_derivative() *
+                      ( -_k_qp*(T_gradphi[i][qp]*T_gradphi[j][qp]) ); // diffusion term
+                  } // end of the inner dof (j) loop
 
-	  } // end of the outer dof (i) loop
+              } // end - if (compute_jacobian && context.get_elem_solution_derivative())
+
+          } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
 
     return;
@@ -158,18 +158,18 @@ namespace GRINS
 
   template<class K>
   void HeatConduction<K>::mass_residual( bool compute_jacobian,
-				      AssemblyContext& context,
-				      CachedValues& /*cache*/ )
+                                         AssemblyContext& context,
+                                         CachedValues& /*cache*/ )
   {
     // First we get some references to cell-specific data that
     // will be used to assemble the linear system.
 
     // Element Jacobian * quadrature weights for interior integration
-    const std::vector<libMesh::Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(_temp_vars.T())->get_JxW();
 
     // The shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& phi = 
+    const std::vector<std::vector<libMesh::Real> >& phi =
       context.get_element_fe(_temp_vars.T())->get_phi();
 
     // The number of local degrees of freedom in each variable
@@ -183,33 +183,33 @@ namespace GRINS
       context.get_elem_jacobian(_temp_vars.T(), _temp_vars.T());
 
     unsigned int n_qpoints = context.get_element_qrule().n_points();
-    
+
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	// For the mass residual, we need to be a little careful.
-	// The time integrator is handling the time-discretization
-	// for us so we need to supply M(u_fixed)*u' for the residual.
-	// u_fixed will be given by the fixed_interior_value function
-	// while u' will be given by the interior_rate function.
+        // For the mass residual, we need to be a little careful.
+        // The time integrator is handling the time-discretization
+        // for us so we need to supply M(u_fixed)*u' for the residual.
+        // u_fixed will be given by the fixed_interior_value function
+        // while u' will be given by the interior_rate function.
         libMesh::Real T_dot;
         context.interior_rate(_temp_vars.T(), qp, T_dot);
 
-	for (unsigned int i = 0; i != n_T_dofs; ++i)
-	  {
-	    F(i) -= JxW[qp]*(_rho*_Cp*T_dot*phi[i][qp] );
+        for (unsigned int i = 0; i != n_T_dofs; ++i)
+          {
+            F(i) -= JxW[qp]*(_rho*_Cp*T_dot*phi[i][qp] );
 
-	    if( compute_jacobian )
+            if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_T_dofs; j++)
                   {
-		    // We're assuming rho, cp are constant w.r.t. T here.
+                    // We're assuming rho, cp are constant w.r.t. T here.
                     M(i,j) -=
                       context.get_elem_solution_rate_derivative()
-                        * JxW[qp]*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
+                      * JxW[qp]*_rho*_Cp*phi[j][qp]*phi[i][qp] ;
                   }
               }// End of check on Jacobian
 
-	  } // End of element dof loop
+          } // End of element dof loop
 
       } // End of the quadrature point loop
 
@@ -218,8 +218,8 @@ namespace GRINS
 
   template<class K>
   void HeatConduction<K>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     ParameterUser::register_parameter(param_name, param_pointer);

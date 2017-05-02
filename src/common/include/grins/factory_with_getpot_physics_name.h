@@ -43,11 +43,11 @@ namespace GRINS
 
     //! Setter for physics name
     /*! We need the physics_name to pass to the constructor, so we need
-        to provide a hook to get it. Note that this should be the "full"
-        physics name, including suffixes, etc. Subclasses dictate final
-        behavior, but generally, this MUST be called each time build()
-        is called as the expected behavior is for the physics_name to
-        be reset after the build() call. */
+      to provide a hook to get it. Note that this should be the "full"
+      physics name, including suffixes, etc. Subclasses dictate final
+      behavior, but generally, this MUST be called each time build()
+      is called as the expected behavior is for the physics_name to
+      be reset after the build() call. */
     static void set_physics_name( const std::string& physics_name )
     { _physics_name = physics_name; }
 

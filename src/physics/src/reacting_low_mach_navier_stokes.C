@@ -352,7 +352,7 @@ namespace GRINS
                        )*jac;
 
             /*! \todo Would it be better to put this in its own DoF loop
-                      and do the if check once?*/
+              and do the if check once?*/
             if(Physics::is_axisymmetric())
               {
                 Fu(i) += u_phi[i][qp]*( p/r - 2*mu*U(0)/(r*r) - 2.0/3.0*mu*divU/r )*jac;
@@ -361,11 +361,11 @@ namespace GRINS
             if (this->_flow_vars.dim() > 1)
               {
                 (*Fv)(i) += ( -rho*U*grad_v*u_phi[i][qp]
-                           + p*u_gradphi[i][qp](1)
-                           - mu*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
-                                 - 2.0/3.0*divU*u_gradphi[i][qp](1) )
-                           + rho*this->_g(1)*u_phi[i][qp]
-                           )*jac;
+                              + p*u_gradphi[i][qp](1)
+                              - mu*(u_gradphi[i][qp]*grad_v + u_gradphi[i][qp]*grad_vT
+                                    - 2.0/3.0*divU*u_gradphi[i][qp](1) )
+                              + rho*this->_g(1)*u_phi[i][qp]
+                              )*jac;
               }
 
             if (this->_flow_vars.dim() == 3)
@@ -405,7 +405,7 @@ namespace GRINS
     // Pin p = p_value at p_point
     if( this->_pin_pressure )
       {
-	_p_pinning.pin_value( context, compute_jacobian, this->_press_var.p() );
+        _p_pinning.pin_value( context, compute_jacobian, this->_press_var.p() );
       }
 
     return;
@@ -600,41 +600,41 @@ namespace GRINS
 
     for (unsigned int qp = 0; qp != n_qpoints; ++qp)
       {
-	u[qp] = context.interior_value(this->_flow_vars.u(), qp);
-	v[qp] = context.interior_value(this->_flow_vars.v(), qp);
+        u[qp] = context.interior_value(this->_flow_vars.u(), qp);
+        v[qp] = context.interior_value(this->_flow_vars.v(), qp);
 
-	grad_u[qp] = context.interior_gradient(this->_flow_vars.u(), qp);
-	grad_v[qp] = context.interior_gradient(this->_flow_vars.v(), qp);
-	if( this->_flow_vars.dim() > 2 )
-	  {
-	    w[qp] = context.interior_value(this->_flow_vars.w(), qp);
-	    grad_w[qp] = context.interior_gradient(this->_flow_vars.w(), qp);
-	  }
+        grad_u[qp] = context.interior_gradient(this->_flow_vars.u(), qp);
+        grad_v[qp] = context.interior_gradient(this->_flow_vars.v(), qp);
+        if( this->_flow_vars.dim() > 2 )
+          {
+            w[qp] = context.interior_value(this->_flow_vars.w(), qp);
+            grad_w[qp] = context.interior_gradient(this->_flow_vars.w(), qp);
+          }
 
-	T[qp] = context.interior_value(this->_temp_vars.T(), qp);
-	grad_T[qp] = context.interior_gradient(this->_temp_vars.T(), qp);
+        T[qp] = context.interior_value(this->_temp_vars.T(), qp);
+        grad_T[qp] = context.interior_gradient(this->_temp_vars.T(), qp);
 
-	p[qp] = context.interior_value(this->_press_var.p(), qp);
-	p0[qp] = this->get_p0_steady(context, qp);
+        p[qp] = context.interior_value(this->_press_var.p(), qp);
+        p0[qp] = this->get_p0_steady(context, qp);
 
-	mass_fractions[qp].resize(this->_n_species);
-	grad_mass_fractions[qp].resize(this->_n_species);
+        mass_fractions[qp].resize(this->_n_species);
+        grad_mass_fractions[qp].resize(this->_n_species);
         h_s[qp].resize(this->_n_species);
 
-	for( unsigned int s = 0; s < this->_n_species; s++ )
-	  {
-	    /*! \todo Need to figure out something smarter for controling species
-	              that go slightly negative. */
-	    mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars.species(s),qp), 0.0 );
-	    grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars.species(s),qp);
+        for( unsigned int s = 0; s < this->_n_species; s++ )
+          {
+            /*! \todo Need to figure out something smarter for controling species
+              that go slightly negative. */
+            mass_fractions[qp][s] = std::max( context.interior_value(this->_species_vars.species(s),qp), 0.0 );
+            grad_mass_fractions[qp][s] = context.interior_gradient(this->_species_vars.species(s),qp);
             h_s[qp][s] = gas_evaluator.h_s( T[qp], s );
-	  }
+          }
 
-	M[qp] = gas_evaluator.M_mix( mass_fractions[qp] );
+        M[qp] = gas_evaluator.M_mix( mass_fractions[qp] );
 
-	R[qp] = gas_evaluator.R_mix( mass_fractions[qp] );
+        R[qp] = gas_evaluator.R_mix( mass_fractions[qp] );
 
-	rho[qp] = this->rho( T[qp], p0[qp], R[qp] );
+        rho[qp] = this->rho( T[qp], p0[qp], R[qp] );
 
         cp[qp] = gas_evaluator.cp(T[qp], p0[qp], mass_fractions[qp]);
 
@@ -654,8 +654,8 @@ namespace GRINS
 
     if(this->_flow_vars.dim() > 2)
       {
-	cache.set_values(Cache::Z_VELOCITY, w);
-	cache.set_gradient_values(Cache::Z_VELOCITY_GRAD, grad_w);
+        cache.set_values(Cache::Z_VELOCITY, w);
+        cache.set_gradient_values(Cache::Z_VELOCITY_GRAD, grad_w);
       }
 
     cache.set_values(Cache::TEMPERATURE, T);

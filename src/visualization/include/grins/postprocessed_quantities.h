@@ -54,19 +54,19 @@ namespace GRINS
         ( new PostProcessedQuantities(*this) );
     }
 
-    virtual NumericType operator()( const libMesh::FEMContext& context, 
-				    const libMesh::Point& p,
-				    const libMesh::Real time = 0. );
+    virtual NumericType operator()( const libMesh::FEMContext& context,
+                                    const libMesh::Point& p,
+                                    const libMesh::Real time = 0. );
 
-    virtual void operator()( const libMesh::FEMContext& context, 
-			     const libMesh::Point& p,
-			     const libMesh::Real time,
-			     libMesh::DenseVector<NumericType>& output );
+    virtual void operator()( const libMesh::FEMContext& context,
+                             const libMesh::Point& p,
+                             const libMesh::Real time,
+                             libMesh::DenseVector<NumericType>& output );
 
-    virtual NumericType component( const libMesh::FEMContext& context, 
-				   unsigned int i,
-				   const libMesh::Point& p,
-				   libMesh::Real time=0. );
+    virtual NumericType component( const libMesh::FEMContext& context,
+                                   unsigned int i,
+                                   const libMesh::Point& p,
+                                   libMesh::Real time=0. );
 
     /* Methods for GRINS usage below */
 
@@ -75,11 +75,11 @@ namespace GRINS
       This method returns an index that will correspond to the name provided.
       Note that this assumes all quantities are scalar. Thus, if there's
       a gradient quantity, each component will need to be separately registered.
-     */
+    */
     unsigned int register_quantity( std::string name );
 
     virtual void initialize( MultiphysicsSystem& system,
-			     libMesh::EquationSystems& equation_systems );
+                             libMesh::EquationSystems& equation_systems );
 
     virtual void update_quantities( libMesh::EquationSystems& equation_systems );
 
@@ -87,7 +87,7 @@ namespace GRINS
 
     std::map<std::string, unsigned int> _quantity_name_index_map;
     std::map<VariableIndex, unsigned int> _quantity_index_var_map;
-    
+
     MultiphysicsSystem* _multiphysics_sys;
     SharedPtr<AssemblyContext> _multiphysics_context;
 

@@ -57,7 +57,7 @@ namespace GRINS
 
   void SpalartAllmarasStabilizationHelper::register_parameter
   ( const std::string &param_name, libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer)
-  const
+    const
   {
     ParameterUser::register_parameter(param_name, param_pointer);
     this->_sa_params.register_parameter(param_name, param_pointer);
@@ -102,13 +102,13 @@ namespace GRINS
     libMesh::Real fw = this->_sa_params.destruction_fn(nu_value, distance_qp, S_tilde, infinite_distance);
     libMesh::Real destruction_term = 0.0;
     if(infinite_distance)
-    {
-      destruction_term = 0.0;
-    }
+      {
+        destruction_term = 0.0;
+      }
     else
-    {
-     destruction_term =  cw1*fw*pow(nu_value/distance_qp, 2.);
-    }
+      {
+        destruction_term =  cw1*fw*pow(nu_value/distance_qp, 2.);
+      }
 
     return rhoUdotGradnu + source_term + inv_sigmadivnuplusnuphysicalGradnu - destruction_term;
   }

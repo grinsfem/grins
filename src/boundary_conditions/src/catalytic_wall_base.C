@@ -42,13 +42,13 @@ namespace GRINS
                                                    VariableIndex T_var,
                                                    libMesh::Real p0,
                                                    unsigned int reactant_species_idx)
-  : _chem_ptr(chem),
-    _chemistry(*(chem.get())),// This will be removed after NeumannBC refactoring
-    _gamma_ptr(gamma),
-    _C( std::sqrt( chem->R(reactant_species_idx)/(GRINS::Constants::two_pi) ) ),
-    _species_vars(species_vars),
-    _T_var(T_var),
-    _p0(p0)
+    : _chem_ptr(chem),
+      _chemistry(*(chem.get())),// This will be removed after NeumannBC refactoring
+      _gamma_ptr(gamma),
+      _C( std::sqrt( chem->R(reactant_species_idx)/(GRINS::Constants::two_pi) ) ),
+      _species_vars(species_vars),
+      _T_var(T_var),
+      _p0(p0)
   {}
 
   template<typename Chemistry>

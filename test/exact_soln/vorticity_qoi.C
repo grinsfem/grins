@@ -52,10 +52,10 @@ int main(int argc, char* argv[])
   if( rel_error > tol )
     {
       std::cerr << "Computed voriticity QoI mismatch greater than tolerance." << std::endl
-		<< "Computed value = " << qoi << std::endl
-		<< "Exact value = " << exact_value << std::endl
-		<< "Relative error = " << rel_error << std::endl
-		<< "Tolerance = " << tol << std::endl;
+                << "Computed value = " << qoi << std::endl
+                << "Exact value = " << exact_value << std::endl
+                << "Relative error = " << rel_error << std::endl
+                << "Tolerance = " << tol << std::endl;
       return_flag = 1;
     }
 

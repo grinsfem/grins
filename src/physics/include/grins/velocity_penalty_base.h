@@ -66,10 +66,10 @@ namespace GRINS
     bool _quadratic_scaling;
 
     libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
-      normal_vector_function;
+    normal_vector_function;
 
     libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
-      base_velocity_function;
+    base_velocity_function;
 
   private:
 

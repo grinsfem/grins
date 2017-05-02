@@ -43,38 +43,38 @@ namespace GRINS
 
     //! Creates NeumannBCContainer for this Factory object
     /*! This method will handle the creation and population of all
-        aspects of the NeumannBCContainer except the function object
-        that is used to evaluate the flux, the NeumannBCAbstract
-        object. The construction of NeumannBCAbstract subclasses
-        is deferred to subclasses of this factory and should
-        be implemented in the build_neumann_func method.
+      aspects of the NeumannBCContainer except the function object
+      that is used to evaluate the flux, the NeumannBCAbstract
+      object. The construction of NeumannBCAbstract subclasses
+      is deferred to subclasses of this factory and should
+      be implemented in the build_neumann_func method.
 
-        Note that an empty libMesh::UniquePtr<NeumannBCContainer>
-        may be returned from create() if the parsed boundary condition
-        type is a homogeneous one.  This is allowed since we force
-        the user to specify boundary conditions for every
-        Variable, for every boundary in the hopes of reducing input
-        file errors at runtime. */
+      Note that an empty libMesh::UniquePtr<NeumannBCContainer>
+      may be returned from create() if the parsed boundary condition
+      type is a homogeneous one.  This is allowed since we force
+      the user to specify boundary conditions for every
+      Variable, for every boundary in the hopes of reducing input
+      file errors at runtime. */
     virtual libMesh::UniquePtr<NeumannBCContainer> create();
 
   protected:
 
     //! Track if this is a homogeneous Neumann boundary condition
     /*! If so, then we literally do nothing: don't create a NeumannBCAbstract
-        object, don't create a NeumannBCContainer, etc. Default is false, so
-        subclasses have to opt-in appropriately. */
+      object, don't create a NeumannBCContainer, etc. Default is false, so
+      subclasses have to opt-in appropriately. */
     bool _is_homogeneous;
 
     //! Builds the NeumannBCAbstract object for Neumann boundary conditions
     /*! Subclasses should override this function to build the
-        NeumannBCAbstract object that corresponds to the variables passed
-        in var_names. The FEVariableBase object corresponds to the variable
-        associated with this boundary condition, e.g. Velocity. The section
-        arguments corresponds to the section to parse for the
-        flux in the input file, e.g. input(section+"/"+flux).
-        Note that for Variables with more than one component, the flux
-        input should be a vector the size of the var_names object, even
-        if one of the components is zero. */
+      NeumannBCAbstract object that corresponds to the variables passed
+      in var_names. The FEVariableBase object corresponds to the variable
+      associated with this boundary condition, e.g. Velocity. The section
+      arguments corresponds to the section to parse for the
+      flux in the input file, e.g. input(section+"/"+flux).
+      Note that for Variables with more than one component, the flux
+      input should be a vector the size of the var_names object, even
+      if one of the components is zero. */
     virtual SharedPtr<NeumannBCAbstract>
     build_neumann_func( const GetPot& input,
                         MultiphysicsSystem& system,
@@ -83,9 +83,9 @@ namespace GRINS
 
     //! Checks that the flux variable has been set
     /*! Check for both the presence of [section/flux] and that the size
-        is the same as var_names. For example, if we are setting a traction vector
-        for Displacement variables, then the input flux vector (traction) should
-        have the name number of components as var_names. */
+      is the same as var_names. For example, if we are setting a traction vector
+      for Displacement variables, then the input flux vector (traction) should
+      have the name number of components as var_names. */
     void check_for_flux( const GetPot& input, const std::string& section,
                          const std::vector<std::string>& var_names );
 

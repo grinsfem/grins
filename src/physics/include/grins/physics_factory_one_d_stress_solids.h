@@ -53,7 +53,7 @@ namespace GRINS
   template<template<typename> class DerivedPhysics>
   inline
   libMesh::UniquePtr<Physics> PhysicsFactoryOneDStressSolids<DerivedPhysics>::build_physics( const GetPot& input,
-                                                                                                const std::string& physics_name )
+                                                                                             const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 

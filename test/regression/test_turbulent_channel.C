@@ -152,7 +152,7 @@ namespace GRINSTesting
 
   protected:
 
-     static libMesh::MeshFunction* _turbulent_bc_values;
+    static libMesh::MeshFunction* _turbulent_bc_values;
   };
 
   libMesh::MeshFunction* SATurbBCFactoryBase::_turbulent_bc_values = NULL;
@@ -296,9 +296,9 @@ int main(int argc, char* argv[])
 
   turbulent_bc_values = libMesh::UniquePtr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
-			       *turbulent_bc_soln,
-			       turbulent_bc_system.get_dof_map(),
-			       turbulent_bc_system_variables ));
+                               *turbulent_bc_soln,
+                               turbulent_bc_system.get_dof_map(),
+                               turbulent_bc_system_variables ));
 
   turbulent_bc_values->init();
 
@@ -312,13 +312,13 @@ int main(int argc, char* argv[])
 
   GRINS::Simulation & sim = grins.get_simulation();
 
-// Get equation systems to create ExactSolution object
+  // Get equation systems to create ExactSolution object
   GRINS::SharedPtr<libMesh::EquationSystems> es = sim.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   //libMesh::ExactSolution exact_sol(*es);
 
-   // Create Exact solution object and attach exact solution quantities
+  // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);
 
   libMesh::EquationSystems es_ref( es->get_mesh() );

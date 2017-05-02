@@ -214,7 +214,7 @@ namespace GRINS
     if( !have_elasticity_model &&
         !input.have_variable("Materials/"+material+"/StressStrainLaw/model") )
       {
-         // But since the old is deprecated, we'll just them to supply the new
+        // But since the old is deprecated, we'll just them to supply the new
         libmesh_error_msg("ERROR: Must specify Materials/"+material+"/StressStrainLaw/model!");
       }
 
@@ -325,7 +325,7 @@ namespace GRINS
     // mixing_model option is now deprecated in favor of transport_model
     else if( input.have_variable("Physics/Antioch/mixing_model") )
       {
-         std::string warning = "Warning: Option Physics/Antioch/mixing_model is DEPRECATED.\n";
+        std::string warning = "Warning: Option Physics/Antioch/mixing_model is DEPRECATED.\n";
         warning += "         Please update to use Use Materials/MATERIAL_NAME/GasMixture/Antioch/transport_model.\n";
         grins_warning(warning);
 

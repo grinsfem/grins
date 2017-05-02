@@ -36,9 +36,9 @@ namespace GRINS
 {
   MooneyRivlin::MooneyRivlin( const GetPot& input )
     : HyperelasticStrainEnergy<MooneyRivlin>(),
-      ParameterUser("MooneyRivlin"),
-      _C1(-1),
-      _C2(-1)
+    ParameterUser("MooneyRivlin"),
+    _C1(-1),
+    _C2(-1)
   {
     // Warning about this constructor being deprecated
     {
@@ -66,9 +66,9 @@ namespace GRINS
 
   MooneyRivlin::MooneyRivlin( const GetPot& input, const std::string& material )
     : HyperelasticStrainEnergy<MooneyRivlin>(),
-      ParameterUser("MooneyRivlin"),
-      _C1(-1),
-      _C2(-1)
+    ParameterUser("MooneyRivlin"),
+    _C1(-1),
+    _C2(-1)
   {
     MaterialsParsing::duplicate_input_test(input,
                                            "Materials/"+material+"/StressStrainLaw/MooneyRivlin/C1",

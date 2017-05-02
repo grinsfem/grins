@@ -55,20 +55,20 @@ namespace GRINS
 
     {
       /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
+        Not sure if we will get thread lock here or not. */
       libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
       try
-	{
-	  _cantera_gas.setState_TPY( T, P, &Y[0] );
-	  
-	  cp = _cantera_gas.cp_mass();
-	}
+        {
+          _cantera_gas.setState_TPY( T, P, &Y[0] );
+
+          cp = _cantera_gas.cp_mass();
+        }
       catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
+        {
+          Cantera::showErrors(std::cerr);
+          libmesh_error();
+        }
 
     }
 
@@ -85,20 +85,20 @@ namespace GRINS
 
     {
       /*! \todo Need to make sure this will work in a threaded environment.
-	Not sure if we will get thread lock here or not. */
+        Not sure if we will get thread lock here or not. */
       libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
 
       try
-	{
-	  _cantera_gas.setState_TPY( T, P, &Y[0] );
-	  
-	  cv = _cantera_gas.cv_mass();
-	}
+        {
+          _cantera_gas.setState_TPY( T, P, &Y[0] );
+
+          cv = _cantera_gas.cv_mass();
+        }
       catch(Cantera::CanteraError)
-	{
-	  Cantera::showErrors(std::cerr);
-	  libmesh_error();
-	}
+        {
+          Cantera::showErrors(std::cerr);
+          libmesh_error();
+        }
 
     }
 

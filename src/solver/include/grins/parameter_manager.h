@@ -46,11 +46,11 @@ namespace GRINS
   class ParameterManager
   {
   public:
-    
+
     ParameterManager() {}
     virtual ~ParameterManager() {}
 
-    virtual void initialize( const GetPot& input, 
+    virtual void initialize( const GetPot& input,
                              const std::string & parameters_varname,
                              GRINS::MultiphysicsSystem & system,
                              GRINS::CompositeQoI * qoi);

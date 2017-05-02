@@ -46,11 +46,11 @@ namespace GRINS
     const std::vector<VariableIndex>& species_vars,const std::string& material,
     VariableIndex T_var,libMesh::Real p0,const std::string& thermochem_lib )
 #else
-  SharedPtr<NeumannBCAbstract>
-  GasSolidCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
-  ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
-    const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
-    VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
+    SharedPtr<NeumannBCAbstract>
+    GasSolidCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
+                                              ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
+                                                const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
+                                                VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
 #endif
   {
     std::string gas_reactant;

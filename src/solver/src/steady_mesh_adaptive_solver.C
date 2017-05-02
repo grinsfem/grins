@@ -68,12 +68,12 @@ namespace GRINS
     // the Adjoint Refinement Error Estimator
     if( _error_estimator_options.compute_qoi_error_estimate() )
       if(context.error_estimator->type() != libMesh::ADJOINT_REFINEMENT)
-      {
-	std::string error_message = "You asked for QoI error estimates but did not use an Adjoint Refinement Error Estimator!\n";
-	error_message += "Please use the ADJOINT_REFINEMENT option for the estimator_type if you want QoI error estimates.\n";
-	std::cout<<error_message<<std::endl;
-	 libmesh_error();
-      }
+        {
+          std::string error_message = "You asked for QoI error estimates but did not use an Adjoint Refinement Error Estimator!\n";
+          error_message += "Please use the ADJOINT_REFINEMENT option for the estimator_type if you want QoI error estimates.\n";
+          std::cout<<error_message<<std::endl;
+          libmesh_error();
+        }
   }
 
   void SteadyMeshAdaptiveSolver::solve( SolverContext& context )
@@ -122,13 +122,13 @@ namespace GRINS
         libMesh::ErrorVector error;
         this->estimate_error_for_amr( context, error );
 
-	// Get the global error estimate if you can and are asked to
-	if( _error_estimator_options.compute_qoi_error_estimate() )
-	  for(unsigned int i = 0; i != context.system->qoi.size(); i++)
-	  {
-	    libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
-	    std::cout<<"The error estimate for QoI("<<i<<") is: "<<adjoint_ref_error_estimator->get_global_QoI_error_estimate(i)<<std::endl;
-	  }
+        // Get the global error estimate if you can and are asked to
+        if( _error_estimator_options.compute_qoi_error_estimate() )
+          for(unsigned int i = 0; i != context.system->qoi.size(); i++)
+            {
+              libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
+              std::cout<<"The error estimate for QoI("<<i<<") is: "<<adjoint_ref_error_estimator->get_global_QoI_error_estimate(i)<<std::endl;
+            }
 
         // Check for convergence of error
         bool converged = this->check_for_convergence( context, error );
@@ -161,20 +161,20 @@ namespace GRINS
   }
 
   void SteadyMeshAdaptiveSolver::adjoint_qoi_parameter_sensitivity
-    (SolverContext& context,
-     const libMesh::QoISet&          qoi_indices,
-     const libMesh::ParameterVector& parameters_in,
-     libMesh::SensitivityData&       sensitivities) const
+  (SolverContext& context,
+   const libMesh::QoISet&          qoi_indices,
+   const libMesh::ParameterVector& parameters_in,
+   libMesh::SensitivityData&       sensitivities) const
   {
     context.system->adjoint_qoi_parameter_sensitivity
       (qoi_indices, parameters_in, sensitivities);
   }
 
   void SteadyMeshAdaptiveSolver::forward_qoi_parameter_sensitivity
-    (SolverContext& context,
-     const libMesh::QoISet&          qoi_indices,
-     const libMesh::ParameterVector& parameters_in,
-     libMesh::SensitivityData&       sensitivities) const
+  (SolverContext& context,
+   const libMesh::QoISet&          qoi_indices,
+   const libMesh::ParameterVector& parameters_in,
+   libMesh::SensitivityData&       sensitivities) const
   {
     context.system->forward_qoi_parameter_sensitivity
       (qoi_indices, parameters_in, sensitivities);

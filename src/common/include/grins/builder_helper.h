@@ -44,23 +44,23 @@ namespace GRINS
 
     //! Parses the input file for [Variables] first-level subsections
     /*! The expected format for the Variables is
-        \code{.unparsed}
-        [Variables]
-           [./Displacement]
-              fe_family = '...'
-              order = '...'
-              names = '...'
-           [../]
-           [./Velocity]
-              ...
-           [../]
-        [../]
-        \endcode
-        For the example above, this function will fill 'sections' with "Displacement"
-        and "Velocity".
+      \code{.unparsed}
+      [Variables]
+      [./Displacement]
+      fe_family = '...'
+      order = '...'
+      names = '...'
+      [../]
+      [./Velocity]
+      ...
+      [../]
+      [../]
+      \endcode
+      For the example above, this function will fill 'sections' with "Displacement"
+      and "Velocity".
 
-        The result is return in an std::set so the actual ordering from the input file
-        is lost.
+      The result is return in an std::set so the actual ordering from the input file
+      is lost.
     */
     static
     void parse_var_sections( const GetPot& input,
@@ -68,8 +68,8 @@ namespace GRINS
 
     //! The same as parse_var_sections, except the result is returned in an std::vector.
     /*! This allows the maintaining of the order of the Variable subsection in the input
-        file. This is important for things like setting up the Variables in the System
-        so that the user can control the order the variables are added to the system.*/
+      file. This is important for things like setting up the Variables in the System
+      so that the user can control the order the variables are added to the system.*/
     static
     void parse_var_sections_vector( const GetPot& input,
                                     std::vector<std::string>& sections );

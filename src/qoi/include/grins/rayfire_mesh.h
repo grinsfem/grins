@@ -39,28 +39,28 @@ namespace GRINS
 
   //! RayfireMesh
   /*!
-  This class performs a rayfire across a given mesh.
-  The user supplies an origin point on the mesh boundary,
-  and spherical angle(s) theta (and phi for 3D) to describe the direction of the rayfire.
-  As is standard in spherical coordinates, theta is the angle from the x-axis in the xy-plane,
-  with counterclockwise being positive. -2&pi; &le; theta &le; +2&pi;.
-  Phi is the angle from the xy-plane, with phi>0 being in the positive half of the z-plane.
-  -&pi; &le; phi &le; +&pi;
+    This class performs a rayfire across a given mesh.
+    The user supplies an origin point on the mesh boundary,
+    and spherical angle(s) theta (and phi for 3D) to describe the direction of the rayfire.
+    As is standard in spherical coordinates, theta is the angle from the x-axis in the xy-plane,
+    with counterclockwise being positive. -2&pi; &le; theta &le; +2&pi;.
+    Phi is the angle from the xy-plane, with phi>0 being in the positive half of the z-plane.
+    -&pi; &le; phi &le; +&pi;
 
-  Starting at the given origin point, this class will walk in a straight line
-  across the mesh in the prescribed direction. On each element along the line,
-  the class will calculate the point where it enters and leaves that element.
-  Knowing the entering and exiting points, an EDGE2 element
-  is created with those points as nodes, and is added to an internal 1D mesh.
-  This repeats until a main mesh boundary is reached.
+    Starting at the given origin point, this class will walk in a straight line
+    across the mesh in the prescribed direction. On each element along the line,
+    the class will calculate the point where it enters and leaves that element.
+    Knowing the entering and exiting points, an EDGE2 element
+    is created with those points as nodes, and is added to an internal 1D mesh.
+    This repeats until a main mesh boundary is reached.
 
-  The intent of this class is to use the 1D mesh to integrate quantities along the
-  rayfire path. Using the map_to_rayfire_elem() function, a separate integration class
-  can access the 1D elements, prescribe a desired quadrature rule, and perform
-  integration directly along the line, rather than using the entire 2D/3D elements
-  of the main mesh.
+    The intent of this class is to use the 1D mesh to integrate quantities along the
+    rayfire path. Using the map_to_rayfire_elem() function, a separate integration class
+    can access the 1D elements, prescribe a desired quadrature rule, and perform
+    integration directly along the line, rather than using the entire 2D/3D elements
+    of the main mesh.
 
-  Refinement and coarsening of the rayfire mesh are supported through the reinit() function.
+    Refinement and coarsening of the rayfire mesh are supported through the reinit() function.
   */
   class RayfireMesh
   {
@@ -68,53 +68,53 @@ namespace GRINS
 
     //! 2D Constructor
     /*!
-    This is restricted to 2D meshes. The init() function must
-    be called to perform the actual rayfire.
-    @param origin Origin point (x,y) of the rayfire on mesh boundary
-    @param theta Spherical polar angle (in radians)
+      This is restricted to 2D meshes. The init() function must
+      be called to perform the actual rayfire.
+      @param origin Origin point (x,y) of the rayfire on mesh boundary
+      @param theta Spherical polar angle (in radians)
     */
     RayfireMesh(libMesh::Point& origin, libMesh::Real theta);
 
     //! 3D Constructor
     /*!
-    This is restricted to 3D meshes. The init() function must
-    be called to perform the actual rayfire.
-    @param origin Origin point (x,y,z) of the rayfire on mesh boundary
-    @param theta  Spherical polar angle (in radians)
-    @param phi    Spherical azimuthal angle (in radians)
+      This is restricted to 3D meshes. The init() function must
+      be called to perform the actual rayfire.
+      @param origin Origin point (x,y,z) of the rayfire on mesh boundary
+      @param theta  Spherical polar angle (in radians)
+      @param phi    Spherical azimuthal angle (in radians)
     */
     RayfireMesh(libMesh::Point& origin, libMesh::Real theta, libMesh::Real phi);
 
     //! Initialization
     /*!
-    This function performs the rayfire and assembles the 1D mesh.
-    Call this immediately after the constructor.
-    Must be called before any refinements of the main mesh.
-    @param mesh_base Reference to the main mesh
+      This function performs the rayfire and assembles the 1D mesh.
+      Call this immediately after the constructor.
+      Must be called before any refinements of the main mesh.
+      @param mesh_base Reference to the main mesh
     */
     void init(const libMesh::MeshBase& mesh_base);
 
     /*!
-    This function takes in an elem_id on the main mesh and returns an elem from the 1D rayfire mesh.
-    @param elem_id The ID of the elem on the main mesh
-    @return Elem* to 1D elem from the rayfire mesh if the elem_id falls along the rayfire path
-    @return NULL if the given elem_id does not correspond to an elem through which the rayfire passes
+      This function takes in an elem_id on the main mesh and returns an elem from the 1D rayfire mesh.
+      @param elem_id The ID of the elem on the main mesh
+      @return Elem* to 1D elem from the rayfire mesh if the elem_id falls along the rayfire path
+      @return NULL if the given elem_id does not correspond to an elem through which the rayfire passes
     */
     const libMesh::Elem* map_to_rayfire_elem(const libMesh::dof_id_type elem_id);
 
     /*!
-    Returns a vector of elem IDs that are currently along the rayfire
+      Returns a vector of elem IDs that are currently along the rayfire
     */
     void elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector);
 
     /*!
-    Checks for refined and coarsened main mesh elements along the rayfire path.
-    They are then passed to refine() and coarsen(), respectively, to update the rayfire mesh.
+      Checks for refined and coarsened main mesh elements along the rayfire path.
+      They are then passed to refine() and coarsen(), respectively, to update the rayfire mesh.
 
-    Only 1 level of refinement and/or coarsening can be done between reinit() calls.
-    Note that this is not limited to doing either refinement or coarsening between reinits.
-    Both can be done on different elements, as long as they are only 1 level in either direction.
-    @param mesh: reference to main mesh, needed to get Elem* from the stored elem_id's
+      Only 1 level of refinement and/or coarsening can be done between reinit() calls.
+      Note that this is not limited to doing either refinement or coarsening between reinits.
+      Both can be done on different elements, as long as they are only 1 level in either direction.
+      @param mesh: reference to main mesh, needed to get Elem* from the stored elem_id's
     */
     void reinit(const libMesh::MeshBase& mesh_base);
 
@@ -143,19 +143,19 @@ namespace GRINS
 
     //! Private function to get a rayfire elem from main_mesh elem ID
     /*!
-    Does not return a const pointer, and is used within this class to simplify
-    rayfire elem access.
+      Does not return a const pointer, and is used within this class to simplify
+      rayfire elem access.
 
-    Also used by map_to_rayfire_elem(), which adds a const to prevent modification
-    outside this class.
+      Also used by map_to_rayfire_elem(), which adds a const to prevent modification
+      outside this class.
     */
     libMesh::Elem* get_rayfire_elem(const libMesh::dof_id_type elem_id);
 
     //! Calculate the intersection point
     /*!
-    @param[out] end_point The intersection point in (x,y) coordinates
-    @return Elem* if intersection is found
-    @return NULL  if no intersection point found (i.e. start_point is on a boundary)
+      @param[out] end_point The intersection point in (x,y) coordinates
+      @return Elem* if intersection is found
+      @return NULL  if no intersection point found (i.e. start_point is on a boundary)
     */
     const libMesh::Elem* get_next_elem(const libMesh::Elem* cur_elem, libMesh::Point& start_point, libMesh::Point& end_point, bool same_parent = false);
 
@@ -170,8 +170,8 @@ namespace GRINS
 
     //! Get the correct starting elem corresponding to _origin
     /*!
-    @return NULL Origin is not on the mesh
-    @return Elem* First elem on the rayfire
+      @return NULL Origin is not on the mesh
+      @return Elem* First elem on the rayfire
     */
     const libMesh::Elem* get_start_elem(const libMesh::MeshBase& mesh_base);
 
@@ -180,40 +180,40 @@ namespace GRINS
 
     //! Iterative solver for calculating the intersection point of the rayfire on the side of an elem
     /*!
-    The rayfire line can be represented in point-slope form:
+      The rayfire line can be represented in point-slope form:
 
-    y-y0 = m(x-x0)
+      y-y0 = m(x-x0)
 
-    where m is the slope and (x0,y0) is the known initial_point. To find the intersection point,
-    we will use a parametric representation of the edge utilizing the shape functions as such:
+      where m is the slope and (x0,y0) is the known initial_point. To find the intersection point,
+      we will use a parametric representation of the edge utilizing the shape functions as such:
 
-    X(&xi;) = sum( x<SUB>j</SUB> &phi;<SUB>j</SUB>(&xi;) )
+      X(&xi;) = sum( x<SUB>j</SUB> &phi;<SUB>j</SUB>(&xi;) )
 
-    Y(&xi;) = sum( y<SUB>j</SUB> &phi;<SUB>j</SUB>(&xi;) )
+      Y(&xi;) = sum( y<SUB>j</SUB> &phi;<SUB>j</SUB>(&xi;) )
 
-    where x<SUB>j</SUB> and y<SUB>j</SUB> are the node x- and y-coordinates, respectively,
-     and &phi;<SUB>j</SUB> is the value of shape function j at reference coordinate &xi;
+      where x<SUB>j</SUB> and y<SUB>j</SUB> are the node x- and y-coordinates, respectively,
+      and &phi;<SUB>j</SUB> is the value of shape function j at reference coordinate &xi;
 
-    The intersection point is then where the x and y coordinates from the point-slope equation
-    equal the X and Y coordinates from the parametric equations for the given edge, respectively.
-    We can then form a residual by substituting the parametric coordinates into the point slope
-    form and bringing all terms to one side of the equation as:
+      The intersection point is then where the x and y coordinates from the point-slope equation
+      equal the X and Y coordinates from the parametric equations for the given edge, respectively.
+      We can then form a residual by substituting the parametric coordinates into the point slope
+      form and bringing all terms to one side of the equation as:
 
-    f = 0 = m(X(&xi;)-x0) - (Y(&xi;)-y0)
+      f = 0 = m(X(&xi;)-x0) - (Y(&xi;)-y0)
 
-    The residual is then a function of a single parameter, namely the reference coordinate &xi;.
-    The derivative is rather trivial and can be expressed as
+      The residual is then a function of a single parameter, namely the reference coordinate &xi;.
+      The derivative is rather trivial and can be expressed as
 
-    df = m*dX - dY
+      df = m*dX - dY
 
-    where
+      where
 
-    dX = sum( x<SUB>j</SUB> d&phi;<SUB>j</SUB>/d&xi; )
+      dX = sum( x<SUB>j</SUB> d&phi;<SUB>j</SUB>/d&xi; )
 
-    dY = sum( y<SUB>j</SUB> d&phi;<SUB>j</SUB>/d&xi; )
+      dY = sum( y<SUB>j</SUB> d&phi;<SUB>j</SUB>/d&xi; )
 
-    @param[out] intersection_point The calculated intersection point (only set if convergence is achieved)
-    @return Whether or not the solver converged before hitting the iteration limit
+      @param[out] intersection_point The calculated intersection point (only set if convergence is achieved)
+      @return Whether or not the solver converged before hitting the iteration limit
     */
     bool newton_solve_intersection(libMesh::Point& initial_point, const libMesh::Elem* edge_elem, libMesh::Point& intersection_point);
 

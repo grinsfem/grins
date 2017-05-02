@@ -55,11 +55,11 @@ namespace GRINS
                             std::vector<libMesh::Real>& results )
     {
       std::vector<std::string> string_vec;
-      
+
       split_string(input,delimiter,string_vec);
-      
+
       results.resize(string_vec.size());
-      
+
       for (unsigned int i=0; i<string_vec.size(); i++)
         results[i] = string_to_T<libMesh::Real>(string_vec[i]);
     }

@@ -60,7 +60,7 @@ namespace GRINS
 
             for (std::vector<std::string>::const_iterator
                    pt_it = point_sections.begin();
-                   pt_it != point_sections.end(); ++pt_it)
+                 pt_it != point_sections.end(); ++pt_it)
               {
                 ConstrainedPoint pt;
 
@@ -176,7 +176,7 @@ namespace GRINS
 
         const libMesh::dof_id_type constrained_dof =
           constrained_node ? constrained_node->dof_number
-            (sys_num, constrained_pt.var, 0) : 0;
+          (sys_num, constrained_pt.var, 0) : 0;
 
         libmesh_assert
           (_sys.comm().semiverify (constrained_node ? &constrained_dof
@@ -185,7 +185,7 @@ namespace GRINS
         libMesh::DofConstraintRow constraint_row;
 
         for (std::vector<ConstrainingPoint>::const_iterator
-             jt = constrained_pt.constrainers.begin();
+               jt = constrained_pt.constrainers.begin();
              jt != constrained_pt.constrainers.end(); ++jt)
           {
             const ConstrainingPoint & constraining_pt = *jt;
@@ -207,7 +207,7 @@ namespace GRINS
 
             libMesh::dof_id_type constraining_dof =
               constraining_node ? constraining_node->dof_number
-                (sys_num, constraining_pt.var, 0) : 0;
+              (sys_num, constraining_pt.var, 0) : 0;
 
             libmesh_assert
               (_sys.comm().semiverify (constraining_node ?

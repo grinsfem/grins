@@ -283,11 +283,11 @@ int main(int argc, char* argv[])
 }
 
 int test_error_norm( libMesh::ExactSolution& exact_sol,
-                      const std::string& system_name,
-                      const std::string& var,
-                      const std::string& norm,
-                      const libMesh::Real exact_error,
-                      const double tol )
+                     const std::string& system_name,
+                     const std::string& var,
+                     const std::string& norm,
+                     const libMesh::Real exact_error,
+                     const double tol )
 {
   int return_flag = 0;
 

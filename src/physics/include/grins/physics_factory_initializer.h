@@ -29,9 +29,9 @@ namespace GRINS
 {
   //! Initialize all PhysicsFactory objects
   /*! To avoid symbol stripping from static linking, we use this
-      class to initialize/register the Physics factory objects.
+    class to initialize/register the Physics factory objects.
 
-      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+    Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
   class PhysicsFactoryInitializer
   {
   public:

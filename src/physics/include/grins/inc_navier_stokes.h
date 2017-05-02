@@ -39,7 +39,7 @@ namespace GRINS
     This is a templated class, the class Viscosity can be instantiated as a specific type
     (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
     to specify a constant or spatially varying viscosity in the input file
-   */
+  */
   template<class Viscosity>
   class IncompressibleNavierStokes : public IncompressibleNavierStokesBase<Viscosity>
   {
@@ -60,18 +60,18 @@ namespace GRINS
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     // Constraint part(s)
     virtual void element_constraint( bool compute_jacobian,
-				     AssemblyContext& context,
-				     CachedValues& cache );
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				AssemblyContext& context,
-				CachedValues& cache );
+                                AssemblyContext& context,
+                                CachedValues& cache );
 
     //! Compute value of postprocessed quantities at libMesh::Point.
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,

@@ -53,7 +53,7 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-   */
+  */
   template<typename Conductivity>
   class AntiochConstantTransportMixture : public AntiochMixture
   {
@@ -75,8 +75,8 @@ namespace GRINS
 
     //! Viscosity
     /*! \todo Template on viscosity model, as we did for conductivity,
-         to support parsed versions. This is going to require we update the
-         API for the transport wrappers. */
+      to support parsed versions. This is going to require we update the
+      API for the transport wrappers. */
     libMesh::UniquePtr<ConstantViscosity> _mu;
 
     //! Thermal conductivity

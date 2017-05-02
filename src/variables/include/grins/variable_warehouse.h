@@ -39,13 +39,13 @@ namespace GRINS
   {
     //! Track what FEVariablesBase objects have been created
     /*! Several modules need to interact with the Variables
-        in use. So, this object creates a place to register
-        a Variable class.
+      in use. So, this object creates a place to register
+      a Variable class.
 
-    \todo Currently, we only allow only unique variable types. This will
-          change in the future once we allow per-subdomain variables.
-          Hence, we have this in GRINSPrivate since the API may
-          change in the future. */
+      \todo Currently, we only allow only unique variable types. This will
+      change in the future once we allow per-subdomain variables.
+      Hence, we have this in GRINSPrivate since the API may
+      change in the future. */
     class VariableWarehouse
     {
     public:
@@ -58,7 +58,7 @@ namespace GRINS
 
       //! First check if var_name is registered and then register
       /*! Use this API if you may be attempting to register the same
-          variable more than once. */
+        variable more than once. */
       static void check_and_register_variable( const std::string& var_name,
                                                SharedPtr<FEVariablesBase>& variable );
 

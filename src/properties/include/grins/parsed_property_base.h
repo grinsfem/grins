@@ -42,8 +42,8 @@ namespace GRINS
 {
   //! Base class for material properties based on ParsedFunction
   /*! This class contains the basic interface and functionality. Subclasses
-      should only need to handle the parsing of the function-string and
-      create the ParsedFunction in the local _func variable. */
+    should only need to handle the parsing of the function-string and
+    create the ParsedFunction in the local _func variable. */
   class ParsedPropertyBase
   {
   public:
@@ -61,8 +61,8 @@ namespace GRINS
 
     //! Returns true if function string is nonzero
     /*! The ParsedFunction used is built through a string argument.
-        This function checks if the string is "0". This is useful
-        for cases where the function must not be zero. */
+      This function checks if the string is "0". This is useful
+      for cases where the function must not be zero. */
     bool check_func_nonzero( const std::string& function ) const;
 
     // User specified parsed function

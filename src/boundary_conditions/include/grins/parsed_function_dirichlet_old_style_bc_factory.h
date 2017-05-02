@@ -40,7 +40,7 @@ namespace GRINS
 
     ParsedFunctionDirichletOldStyleBCFactory( const std::string& bc_type_name )
       : DirichletBCFactoryFunctionOldStyleBase<FunctionType>(bc_type_name),
-        ParsedFunctionFactoryHelper<FunctionType>()
+      ParsedFunctionFactoryHelper<FunctionType>()
     {}
 
     ~ParsedFunctionDirichletOldStyleBCFactory(){};

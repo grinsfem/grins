@@ -52,7 +52,7 @@ namespace GRINSTesting
       libMesh::Real value = 0.0;
 
       if(idx == _N2_idx)
-          value = 28.016;
+        value = 28.016;
 
       else if( idx == _O2_idx)
         value = 32.0;

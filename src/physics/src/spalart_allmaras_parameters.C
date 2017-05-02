@@ -81,13 +81,13 @@ namespace GRINS
     libMesh::Real S_bar = 0.0;
     // Step 4
     if(infinite_distance)
-    {
-      S_bar = 0.0;
-    }
+      {
+        S_bar = 0.0;
+      }
     else
-    {
-      S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0))*(fv2) ;
-    }
+      {
+        S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0))*(fv2) ;
+      }
 
     // Step 5, the absolute value of the vorticity
     libMesh::Real S = vorticity_value;
@@ -112,13 +112,13 @@ namespace GRINS
     // Step 1
     libMesh::Real r = 0.0;
     if(infinite_distance)
-    {
-      r = 0.0;
-    }
+      {
+        r = 0.0;
+      }
     else
-    {
-      r = std::min(nu/(S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
-    }
+      {
+        r = std::min(nu/(S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
+      }
 
     // Step 2
     libMesh::Real g = r + this->_c_w2*(pow(r,6.0) - r);

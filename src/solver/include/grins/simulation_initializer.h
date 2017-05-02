@@ -29,11 +29,11 @@ namespace GRINS
 {
   //! Initialize static objects needed for simulation
   /*! The factory pattern used in GRINS uses static factory objects to handle
-      construction of various modules while providing an easy mechanism for
-      user extensibility for new variants. However, static linking will strip
-      the symbols unless the object is explicitly instantiated. So, we encapluate
-      instantiation of all the factory initialization objects here to ensure they
-      are instantiated before they are used by Simulation at construction time. */
+    construction of various modules while providing an easy mechanism for
+    user extensibility for new variants. However, static linking will strip
+    the symbols unless the object is explicitly instantiated. So, we encapluate
+    instantiation of all the factory initialization objects here to ensure they
+    are instantiated before they are used by Simulation at construction time. */
   class SimulationInitializer
   {
   public:
@@ -44,10 +44,10 @@ namespace GRINS
 
     // Flag to help guard against multiple initializations
     /*! Simulation objects may need to be created multiple times within a single
-        GRINS-linked program (e.g. for parameter variations), so we need to cache
-        whether or not this initializer has been called during the current
-        program run. If so, then we don't instantiate the factory initializer objects
-        because they've already been created. */
+      GRINS-linked program (e.g. for parameter variations), so we need to cache
+      whether or not this initializer has been called during the current
+      program run. If so, then we don't instantiate the factory initializer objects
+      because they've already been created. */
     static bool _is_initialized;
 
   };

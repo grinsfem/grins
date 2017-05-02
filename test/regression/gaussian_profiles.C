@@ -29,14 +29,14 @@
 // libMesh
 #include "libmesh/point.h"
 
-int main() 
+int main()
 {
   const double a = 5.0;
   const double mu = 1.5;
   const double sigma = 2.1;
   const double b = 3.2;
   GRINS::GaussianXYProfile profile( a, mu, sigma, b );
-  
+
   const double x = 1.1;
   const double y = 1.5;
 
@@ -55,10 +55,10 @@ int main()
   if( error > tol )
     {
       std::cout << "Error: GaussianXYProfile tolerance exceeded." << std::endl
-		<< "exact value = " << exact_value << std::endl
-		<< "value = " << value << std::endl
-		<< "error = " << error << std::endl
-		<< "tolerance = " << tol << std::endl;
+                << "exact value = " << exact_value << std::endl
+                << "value = " << value << std::endl
+                << "error = " << error << std::endl
+                << "tolerance = " << tol << std::endl;
       return_flag = 1;
     }
 

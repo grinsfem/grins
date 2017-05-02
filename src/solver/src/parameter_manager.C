@@ -40,10 +40,10 @@
 namespace GRINS
 {
   void ParameterManager::initialize
-    ( const GetPot& input,
-      const std::string & parameters_varname,
-      MultiphysicsSystem & system,
-      CompositeQoI * qoi)
+  ( const GetPot& input,
+    const std::string & parameters_varname,
+    MultiphysicsSystem & system,
+    CompositeQoI * qoi)
   {
     const unsigned int n_parameters =
       input.vector_variable_size(parameters_varname);

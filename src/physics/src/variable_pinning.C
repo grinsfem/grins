@@ -65,7 +65,7 @@ namespace GRINS
         // makes sense in a real run.
         libMesh::out <<
           "Warning!  VariablePinning physics requested but not used!"
-           << std::endl;
+                     << std::endl;
       }
   }
 

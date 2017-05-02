@@ -36,7 +36,7 @@ namespace GRINS
     NeumannBCFactoryAbstract::check_state();
 
     if( this->_value_var_old_style == std::string("DIE!") )
-        libmesh_error_msg("ERROR: must call set_value_var_old_style() before building boundary condition!");
+      libmesh_error_msg("ERROR: must call set_value_var_old_style() before building boundary condition!");
 
     if( this->_value_idx_old_style == libMesh::invalid_uint )
       libmesh_error_msg("ERROR: must call set_value_index_old_style() before building boundary condition!");

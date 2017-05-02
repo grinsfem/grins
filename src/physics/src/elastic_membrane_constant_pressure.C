@@ -135,13 +135,13 @@ namespace GRINS
            But, |A_3| = \sqrt{A} so the normalizing part kills
            the \sqrt{A} in the numerator, so we can leave it out
            and *not* normalize A_3.
-         */
+        */
         libMesh::RealGradient traction = _pressure/sqrt_a*A_3;
 
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
+          {
             Fu(i) -= traction(0)*u_phi[i][qp]*jac;
 
             Fv(i) -= traction(1)*u_phi[i][qp]*jac;

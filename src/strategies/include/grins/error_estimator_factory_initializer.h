@@ -29,9 +29,9 @@ namespace GRINS
 {
   //! Initialize all ErrorEstimatorFactory objects
   /*! To avoid symbol stripping from static linking, we use this
-      class to initialize/register the ErrorEstimator factory objects.
+    class to initialize/register the ErrorEstimator factory objects.
 
-      Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+    Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
   class ErrorEstimatorFactoryInitializer
   {
   public:

@@ -46,8 +46,8 @@ namespace GRINS
 
     //! Helper function
     /*! This will search the given section to make sure at least one of the var names as been
-        set. An error will be thrown if no vars were found to be set. Those vars that have been
-        set in the input file are returned in the vars_found variable, if vars_found is not NULL. */
+      set. An error will be thrown if no vars were found to be set. Those vars that have been
+      set in the input file are returned in the vars_found variable, if vars_found is not NULL. */
     void check_for_vars( const GetPot& input, const std::string& section,
                          const std::vector<std::string>& var_names,
                          std::set<std::string>* vars_found = NULL );

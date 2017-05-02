@@ -45,7 +45,7 @@ namespace GRINS
   //! Physics class for Incompressible Navier-Stokes
   /*!
     This physics class implements the classical Incompressible Navier-Stokes equations.
-   */
+  */
   template<class Viscosity, class SpecificHeat, class ThermalConductivity>
   class LowMachNavierStokesBase : public Physics
   {
@@ -78,9 +78,9 @@ namespace GRINS
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+      const;
 
   protected:
 
@@ -94,7 +94,7 @@ namespace GRINS
     PrimitiveTempFEVariables& _temp_vars;
 
     /*! \todo When we mandate C++11, switch this to a SharedPtr. Then, in the VariableWarhouse,
-              we can use dynamic_pointer_cast to get a SharedPtr. */
+      we can use dynamic_pointer_cast to get a SharedPtr. */
     ThermoPressureVariable*  _p0_var;
 
     //! Viscosity object
@@ -144,16 +144,16 @@ namespace GRINS
   template<class V, class SH, class TC>
   inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const AssemblyContext& c,
-								 unsigned int qp ) const
+                                                                 unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.interior_value( _p0_var->p0(), qp );
+        p0 = c.interior_value( _p0_var->p0(), qp );
       }
     else
       {
-	p0 = _p0;
+        p0 = _p0;
       }
     return p0;
   }
@@ -161,16 +161,16 @@ namespace GRINS
   template<class V, class SH, class TC>
   inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady_side( const AssemblyContext& c,
-								      unsigned int qp ) const
+                                                                      unsigned int qp ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.side_value( _p0_var->p0(), qp );
+        p0 = c.side_value( _p0_var->p0(), qp );
       }
     else
       {
-	p0 = _p0;
+        p0 = _p0;
       }
     return p0;
   }
@@ -178,16 +178,16 @@ namespace GRINS
   template<class V, class SH, class TC>
   inline
   libMesh::Real LowMachNavierStokesBase<V,SH,TC>::get_p0_steady( const AssemblyContext& c,
-								 const libMesh::Point& p ) const
+                                                                 const libMesh::Point& p ) const
   {
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.point_value( _p0_var->p0(), p );
+        p0 = c.point_value( _p0_var->p0(), p );
       }
     else
       {
-	p0 = _p0;
+        p0 = _p0;
       }
     return p0;
   }
@@ -199,11 +199,11 @@ namespace GRINS
     libMesh::Real p0;
     if( this->_enable_thermo_press_calc )
       {
-	p0 = c.fixed_interior_value( _p0_var->p0(), qp );
+        p0 = c.fixed_interior_value( _p0_var->p0(), qp );
       }
     else
       {
-	p0 = _p0;
+        p0 = _p0;
       }
     return p0;
   }

@@ -55,8 +55,8 @@ namespace GRINS
 
   // Helper metafunctions
   template <typename FunctionType,
-	    bool is_fem_function =
-              ParsedFunctionTraits<FunctionType>::is_fem_function>
+            bool is_fem_function =
+            ParsedFunctionTraits<FunctionType>::is_fem_function>
   struct TypeFrom {
     typedef libMesh::CompositeFunction<libMesh::Number> to_composite;
 

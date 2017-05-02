@@ -50,8 +50,8 @@ namespace GRINS
 
     if( context.output_vis )
       {
-	context.postprocessing->update_quantities( *(context.equation_system) );
-	context.vis->output( context.equation_system );
+        context.postprocessing->update_quantities( *(context.equation_system) );
+        context.vis->output( context.equation_system );
       }
 
     // Setup MeshRefinement
@@ -66,13 +66,13 @@ namespace GRINS
       {
         std::time_t latest_wall_time = std::time(NULL);
 
-	std::cout << "==========================================================" << std::endl
-		  << "   Beginning time step " << t_step  <<
-                     ", t = " << context.system->time <<
-                     ", dt = " << context.system->deltat <<
-                     ", runtime = " << (latest_wall_time - first_wall_time) <<
-                     std::endl
-		  << "==========================================================" << std::endl;
+        std::cout << "==========================================================" << std::endl
+                  << "   Beginning time step " << t_step  <<
+          ", t = " << context.system->time <<
+          ", dt = " << context.system->deltat <<
+          ", runtime = " << (latest_wall_time - first_wall_time) <<
+          std::endl
+                  << "==========================================================" << std::endl;
 
         // If we have any solution-dependent Dirichlet boundaries, we
         // need to update them with the current solution.
@@ -106,7 +106,7 @@ namespace GRINS
               this->print_scalar_vars(context);
 
 
-             // Now we construct the data structures for the mesh refinement process
+            // Now we construct the data structures for the mesh refinement process
             libMesh::ErrorVector error;
             this->estimate_error_for_amr(context,error);
 
@@ -137,9 +137,9 @@ namespace GRINS
 
     std::time_t final_wall_time = std::time(NULL);
     std::cout << "==========================================================" << std::endl
-	      << "   Ending time stepping, t = " << context.system->time <<
-                 ", runtime = " << (final_wall_time - first_wall_time) <<
-                 std::endl
+              << "   Ending time stepping, t = " << context.system->time <<
+      ", runtime = " << (final_wall_time - first_wall_time) <<
+      std::endl
               << "==========================================================" << std::endl;
 
     // Print out the QoI, but only do it if the user asks for it

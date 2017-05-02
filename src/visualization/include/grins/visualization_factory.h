@@ -39,9 +39,9 @@ namespace GRINS
     virtual ~VisualizationFactory();
 
     virtual SharedPtr<GRINS::Visualization> build
-      ( const GetPot& input,
-        const libMesh::Parallel::Communicator &comm
-        LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
+    ( const GetPot& input,
+      const libMesh::Parallel::Communicator &comm
+      LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
   };
 
 } // end namespace GRINS

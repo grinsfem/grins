@@ -47,9 +47,9 @@ namespace GRINS
 
     //! Trim out the variables that are pinned
     /*! Symmetry-type boundary conditions amount to pinning a subset of
-        the group of variables, e.g. Velocity or Displacement. Subclasses
-        merely implement this method and remove the variables from var_names
-        that *DON'T* need to be pinned.*/
+      the group of variables, e.g. Velocity or Displacement. Subclasses
+      merely implement this method and remove the variables from var_names
+      that *DON'T* need to be pinned.*/
     virtual void trim_var_names( std::vector<std::string>& var_names ) =0;
 
     //! All the variables are 0, so just return 0 function.
@@ -198,7 +198,7 @@ namespace GRINS
   };
 
   /*! r-coordinate is assumed to be the x-coordinate in the axisymmetric case,
-      so we need to pin the x-coordinate. */
+    so we need to pin the x-coordinate. */
   class AxisymmetryBCFactory : SymmetryTypeBCFactories
   {
   public:

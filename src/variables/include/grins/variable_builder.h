@@ -42,8 +42,8 @@ namespace GRINS
 
   //! Manages runtime construction of the FEVariableBase objects
   /*! build_variables() is intended to be called before building the
-      Physics and boundary conditions so that the VariableWarhouse is
-      populated and can be referenced by the Physics and boundary conditions. */
+    Physics and boundary conditions so that the VariableWarhouse is
+    populated and can be referenced by the Physics and boundary conditions. */
   class VariableBuilder
   {
   public:
@@ -66,7 +66,7 @@ namespace GRINS
 
     //! Given the names, family, and order, this adds the variables to the system and populates var_indices
     /*! The var_indices are the respective indices returned by the System from the add_variable
-        call. */
+      call. */
     void add_vars_to_system( MultiphysicsSystem& system,
                              const std::vector<std::string>& var_names,
                              const std::string& fe_family,

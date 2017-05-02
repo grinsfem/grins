@@ -45,8 +45,8 @@ namespace GRINS
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          PhysicsNaming::stokes(), /* "core" Physics name */
                                          input),
-      _p_pinning(input,physics_name),
-      _pin_pressure( input("Physics/"+PhysicsNaming::stokes()+"/pin_pressure", false ) )
+    _p_pinning(input,physics_name),
+    _pin_pressure( input("Physics/"+PhysicsNaming::stokes()+"/pin_pressure", false ) )
   {
     this->_ic_handler = new GenericICHandler( physics_name, input );
   }
@@ -66,8 +66,8 @@ namespace GRINS
 
   template<class Mu>
   void Stokes<Mu>::element_time_derivative( bool compute_jacobian,
-                                        AssemblyContext& context,
-                                        CachedValues& /*cache*/ )
+                                            AssemblyContext& context,
+                                            CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -148,8 +148,8 @@ namespace GRINS
         if (this->_flow_vars.dim() == 3)
           Uvec(2) = w;
 
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         // First, an i-loop over the velocity degrees of freedom.
         // We know that n_u_dofs == n_v_dofs so we can compute contributions
@@ -209,8 +209,8 @@ namespace GRINS
 
   template<class Mu>
   void Stokes<Mu>::element_constraint( bool compute_jacobian,
-                                   AssemblyContext& context,
-                                   CachedValues& /*cache*/ )
+                                       AssemblyContext& context,
+                                       CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -294,8 +294,8 @@ namespace GRINS
 
   template<class Mu>
   void Stokes<Mu>::mass_residual( bool compute_jacobian,
-                              AssemblyContext& context,
-                              CachedValues& /*cache*/)
+                                  AssemblyContext& context,
+                                  CachedValues& /*cache*/)
   {
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable

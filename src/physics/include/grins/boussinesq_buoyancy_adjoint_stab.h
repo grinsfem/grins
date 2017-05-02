@@ -31,18 +31,18 @@
 #include "grins/inc_navier_stokes_stab_helper.h"
 
 namespace GRINS
-{  
+{
   //! Adds Boussinesq bouyancy adjoint stabilization source term
   /*!
     This class implements the adjiont stabilization term for the BoussinesqBuoyancy
     Physics. Intended to be used with IncompressibleNavierStokesAdjointStabilization
     and HeatTransferStabilization.
-   */
+  */
   template<class Viscosity>
   class BoussinesqBuoyancyAdjointStabilization : public BoussinesqBuoyancyBase
   {
   public:
-    
+
     BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
     ~BoussinesqBuoyancyAdjointStabilization();
@@ -50,8 +50,8 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,
@@ -60,9 +60,9 @@ namespace GRINS
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+      const;
 
   protected:
 

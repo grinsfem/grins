@@ -168,8 +168,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number T;
@@ -320,8 +320,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         // Compute the solution & its gradient at the old Newton iterate.
         libMesh::Number T;
@@ -362,8 +362,8 @@ namespace GRINS
 
   template<class Mu>
   void BoussinesqBuoyancyAdjointStabilization<Mu>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     ParameterUser::register_parameter(param_name, param_pointer);

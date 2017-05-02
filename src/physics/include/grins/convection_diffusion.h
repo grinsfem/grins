@@ -51,14 +51,14 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     virtual void mass_residual( bool compute_jacobian,
-				AssemblyContext& context,
-				CachedValues& cache );
+                                AssemblyContext& context,
+                                CachedValues& cache );
 
- protected:
+  protected:
 
     //! Velocity field, \f$ v(x,y,z,t) \f$;
     std::vector<libMesh::ParsedFunction<libMesh::Number> > _v;

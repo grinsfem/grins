@@ -41,7 +41,7 @@ namespace GRINS
   template<class Mu>
   ParsedVelocitySourceAdjointStabilization<Mu>::ParsedVelocitySourceAdjointStabilization( const std::string& physics_name, const GetPot& input )
     : ParsedVelocitySourceBase<Mu>(physics_name,input),
-      _stab_helper( physics_name+"StabHelper", input )
+    _stab_helper( physics_name+"StabHelper", input )
   {
   }
 
@@ -66,8 +66,8 @@ namespace GRINS
 
   template<class Mu>
   void ParsedVelocitySourceAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
-                                                                     AssemblyContext& context,
-                                                                     CachedValues& /*cache*/ )
+                                                                              AssemblyContext& context,
+                                                                              CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -159,8 +159,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         libMesh::NumberVectorValue F;
         libMesh::NumberTensorValue dFdU;
@@ -232,8 +232,8 @@ namespace GRINS
 
   template<class Mu>
   void ParsedVelocitySourceAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                AssemblyContext& context,
-                                                                CachedValues& /*cache*/ )
+                                                                         AssemblyContext& context,
+                                                                         CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
@@ -302,8 +302,8 @@ namespace GRINS
               this->_is_steady );
         else
           tau_M = this->_stab_helper.compute_tau_momentum
-                    ( context, qp, g, G, this->_rho, U, mu_qp,
-                      this->_is_steady );
+            ( context, qp, g, G, this->_rho, U, mu_qp,
+              this->_is_steady );
 
         libMesh::NumberVectorValue F;
         libMesh::NumberTensorValue dFdU;

@@ -31,18 +31,18 @@
 #include "grins/inc_navier_stokes_stab_helper.h"
 
 namespace GRINS
-{  
+{
   //! Adds Velocity penalty adjoint stabilization source term
   /*!
     This class implements the adjoint stabilization term for the ParsedVelocitySource
     Physics. Intended to be used with
     IncompressibleNavierStokesAdjointStabilization.
-   */
+  */
   template<class Viscosity>
   class ParsedVelocitySourceAdjointStabilization : public ParsedVelocitySourceBase<Viscosity>
   {
   public:
-    
+
     ParsedVelocitySourceAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
     ~ParsedVelocitySourceAdjointStabilization();
@@ -50,8 +50,8 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,

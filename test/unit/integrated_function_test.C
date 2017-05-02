@@ -72,10 +72,10 @@ namespace GRINSTesting
   public:
 
     void tearDown()
-      {
-        // Clear out the VariableWarehouse so it doesn't interfere with other tests.
-        GRINS::GRINSPrivate::VariableWarehouse::clear();
-      }
+    {
+      // Clear out the VariableWarehouse so it doesn't interfere with other tests.
+      GRINS::GRINSPrivate::VariableWarehouse::clear();
+    }
 
     //! Functions that can be integrated exactly using Gauss Quadrature
     void test_exact_answer()
@@ -136,7 +136,7 @@ namespace GRINSTesting
           system->assemble_qoi();
 
           for (unsigned int i=0; i<calc_answers.size(); i++)
-              CPPUNIT_ASSERT_DOUBLES_EQUAL( calc_answers[i], _sim->get_qoi_value(i),libMesh::TOLERANCE  );
+            CPPUNIT_ASSERT_DOUBLES_EQUAL( calc_answers[i], _sim->get_qoi_value(i),libMesh::TOLERANCE  );
 
         } // for t
     }
@@ -144,12 +144,12 @@ namespace GRINSTesting
     //! These functions cannot be integrated exactly wih Gauss Quadrature,
     //! and so we look for quartic convergence to the analytical solution
     /*!
-        A quartic convergence rate is identified by graphing log(error) vs. log(h),
-        where h is the length of the longest rayfire elem.
-        Linear regression is then used to fit a line to that data.
-        For quartic convergence, this line should have a slope of 4.
-        A 2% tolerance for the slope value is allowed in order to keep
-        the test runtime from becoming excessive.
+      A quartic convergence rate is identified by graphing log(error) vs. log(h),
+      where h is the length of the longest rayfire elem.
+      Linear regression is then used to fit a line to that data.
+      For quartic convergence, this line should have a slope of 4.
+      A 2% tolerance for the slope value is allowed in order to keep
+      the test runtime from becoming excessive.
     */
     void test_convergence()
     {
@@ -237,7 +237,7 @@ namespace GRINSTesting
                 {
                   libMesh::Real l = (rayfire->map_to_rayfire_elem(elems_in_rayfire[i]))->length(0,1);
                   if (l>h)
-                      h=l;
+                    h=l;
                 }
 
               CPPUNIT_ASSERT(h > 0.0);
@@ -285,9 +285,9 @@ namespace GRINSTesting
 
             } while(num_converged < calc_answers.size());
 
-            // verify that all functions had quartic convergence within 2%
-            for (unsigned int i=0; i<functions.size(); i++)
-                this->check_convergence_rate(h_vals[i],errors[i],0,errors[i].size()-1,4.0,0.08);
+          // verify that all functions had quartic convergence within 2%
+          for (unsigned int i=0; i<functions.size(); i++)
+            this->check_convergence_rate(h_vals[i],errors[i],0,errors[i].size()-1,4.0,0.08);
 
         } //for t
     }
@@ -391,8 +391,8 @@ namespace GRINSTesting
       GRINS::SimulationBuilder sim_builder;
 
       _sim = new GRINS::Simulation(*_input,
-                                    empty_command_line,
-                                    sim_builder,
+                                   empty_command_line,
+                                   sim_builder,
                                    *TestCommWorld );
     }
 

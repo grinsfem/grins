@@ -36,9 +36,9 @@ namespace GRINS
 {
   //! Abstract factory.
   /*! Copied from libMesh::Factory. The main difference is the helper method
-      to fetch the factory (this was moved out of the build() function in libMesh::Factory).
-      That is useful so subclasses can additional static methods
-      that dispatch to virtual methods of the subclass. */
+    to fetch the factory (this was moved out of the build() function in libMesh::Factory).
+    That is useful so subclasses can additional static methods
+    that dispatch to virtual methods of the subclass. */
   template<typename Base>
   class FactoryAbstract
   {

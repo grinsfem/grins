@@ -52,8 +52,8 @@ namespace GRINS
 
   template<class Mu>
   void VelocityDrag<Mu>::element_time_derivative( bool compute_jacobian,
-					      AssemblyContext& context,
-					      CachedValues& /* cache */ )
+                                                  AssemblyContext& context,
+                                                  CachedValues& /* cache */ )
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW =
@@ -128,7 +128,7 @@ namespace GRINS
             if( this->_flow_vars.dim() == 3 )
               (*Fw)(i) += F(2)*jac_i;
 
-	    if( compute_jacobian )
+            if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
                   {

@@ -39,7 +39,7 @@ namespace GRINS
   {
     return;
   }
-  
+
   GasMixture::~GasMixture()
   {
     return;

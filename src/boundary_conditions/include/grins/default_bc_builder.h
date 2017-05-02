@@ -39,11 +39,11 @@ namespace GRINS
 {
   //! Manages runtime construction of Dirichlet boundary conditions
   /*! This will parse the input for the request Dirichlet boundary
-      conditions and manage their construction. Actual construction of
-      the DirichletBoundary objects is delegated to factory
-      classes. This builder classes merely manages tasks around the
-      factories as needed.  To add new Dirichlet boundary conditions,
-      the user should instantiate an appropriate factory sub class. */
+    conditions and manage their construction. Actual construction of
+    the DirichletBoundary objects is delegated to factory
+    classes. This builder classes merely manages tasks around the
+    factories as needed.  To add new Dirichlet boundary conditions,
+    the user should instantiate an appropriate factory sub class. */
   class DefaultBCBuilder : public BCBuilder,
                            public BuilderHelper
   {
@@ -81,8 +81,8 @@ namespace GRINS
 
     //! Helper function to build boundary conditions using Variable sections
     /*! This is the "standard" part. We parse for each Variable section that
-        should have boundary conditions and then parse the boundary condition
-        type. */
+      should have boundary conditions and then parse the boundary condition
+      type. */
     void build_bcs_by_var_section(const GetPot& input,
                                   MultiphysicsSystem& system,
                                   const std::string& bc_name,
@@ -113,7 +113,7 @@ namespace GRINS
 
     //! Build up bc_id to subdomain_id map
     /*! we also check and make sure that there's only one subdomain id
-        per boundary id. If not, we throw an error. */
+      per boundary id. If not, we throw an error. */
     void build_bc_to_subdomain_map_check_with_mesh
     ( const MultiphysicsSystem& system,
       std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map ) const;

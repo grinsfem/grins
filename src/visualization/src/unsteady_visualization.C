@@ -39,8 +39,8 @@ namespace GRINS
 {
 
   UnsteadyVisualization::UnsteadyVisualization
-    ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm )
+  ( const GetPot& input,
+    const libMesh::Parallel::Communicator &comm )
     : Visualization(input, comm)
   {
     return;
@@ -52,10 +52,10 @@ namespace GRINS
   }
 
   void UnsteadyVisualization::output_residual
-    ( SharedPtr<libMesh::EquationSystems> equation_system,
-      MultiphysicsSystem* system,
-      const unsigned int time_step,
-      const libMesh::Real time )
+  ( SharedPtr<libMesh::EquationSystems> equation_system,
+    MultiphysicsSystem* system,
+    const unsigned int time_step,
+    const libMesh::Real time )
   {
     std::stringstream suffix;
     suffix << time_step;
@@ -94,11 +94,11 @@ namespace GRINS
   }
 
   void UnsteadyVisualization::output_residual_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
-     MultiphysicsSystem* system,
-     const libMesh::ParameterVector & params,
-     const unsigned int time_step,
-     const libMesh::Real time )
+  (SharedPtr<libMesh::EquationSystems> equation_system,
+   MultiphysicsSystem* system,
+   const libMesh::ParameterVector & params,
+   const unsigned int time_step,
+   const libMesh::Real time )
   {
     for (unsigned int p=0; p != params.size(); ++p)
       {
@@ -125,10 +125,10 @@ namespace GRINS
   }
 
   void UnsteadyVisualization::output_adjoint
-    ( SharedPtr<libMesh::EquationSystems> equation_system,
-      MultiphysicsSystem* system,
-      const unsigned int time_step,
-      const libMesh::Real time )
+  ( SharedPtr<libMesh::EquationSystems> equation_system,
+    MultiphysicsSystem* system,
+    const unsigned int time_step,
+    const libMesh::Real time )
   {
     std::stringstream suffix;
     suffix << time_step;
@@ -158,11 +158,11 @@ namespace GRINS
   }
 
   void UnsteadyVisualization::output_solution_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
-     MultiphysicsSystem* system,
-     const libMesh::ParameterVector & params,
-     const unsigned int time_step,
-     const libMesh::Real time )
+  (SharedPtr<libMesh::EquationSystems> equation_system,
+   MultiphysicsSystem* system,
+   const libMesh::ParameterVector & params,
+   const unsigned int time_step,
+   const libMesh::Real time )
   {
     for (unsigned int p=0; p != params.size(); ++p)
       {

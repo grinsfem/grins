@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
   libMesh::Real T0 = input( "Conditions/T0", 300.0 );
   libMesh::Real T1 = input( "Conditions/T1", 300.0 );
   libMesh::Real T_inc = input( "Conditions/T_increment", 100.0 );
-  
+
   libMesh::Real rho = input( "Conditions/density", 1.0e-3 );
 
   const unsigned int n_species = mixture.n_species();
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
   std::ofstream output;
   output.open( "omega_dot.dat", std::ios::trunc );
-  
+
   output << "# Species names" << std::endl;
   for( unsigned int s = 0; s < n_species; s++ )
     {
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 
       for( unsigned int i = 0; i < n_species; i++ )
         {
-          output << std::scientific << std::setprecision(16) 
+          output << std::scientific << std::setprecision(16)
                  << omega_dot[i] << " ";
         }
 

@@ -62,7 +62,7 @@ namespace GRINS
 
     //! Required to provide clone for adding QoI object to libMesh objects.
     /*! Note that we do a deep copy here since the previous object might
-        get destroyed and wipe out the objects being pointed to in _qois. */
+      get destroyed and wipe out the objects being pointed to in _qois. */
     virtual libMesh::UniquePtr<libMesh::DifferentiableQoI> clone();
 
     virtual void add_qoi( const QoIBase& qoi );
@@ -72,9 +72,9 @@ namespace GRINS
     //! Each QoI will register its copy(s) of an independent variable
     //  named in this call.
     void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer)
-    const;
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer)
+      const;
 
     /*!
      * Method to allow QoI to cache any system information needed for QoI calculation,
@@ -112,8 +112,8 @@ namespace GRINS
      */
     virtual void parallel_op( const libMesh::Parallel::Communicator& communicator,
                               std::vector<libMesh::Number>& sys_qoi,
-			      std::vector<libMesh::Number>& local_qoi,
-			      const libMesh::QoISet& qoi_indices );
+                              std::vector<libMesh::Number>& local_qoi,
+                              const libMesh::QoISet& qoi_indices );
 
     //! Operation to accumulate the QoI from multiple MPI processes.
     /*!
@@ -135,7 +135,7 @@ namespace GRINS
     QoIBase& get_qoi( unsigned int qoi_index );
 
   protected:
-    
+
     std::vector<QoIBase*> _qois;
 
   };

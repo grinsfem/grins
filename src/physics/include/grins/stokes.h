@@ -38,8 +38,8 @@ namespace GRINS
   //! Physics class for Stokes
   /*!
     This physics class implements the classical Stokes equations.
-   */
-  template<class Viscosity>  
+  */
+  template<class Viscosity>
   class Stokes : public IncompressibleNavierStokesBase<Viscosity>
   {
   public:
@@ -55,18 +55,18 @@ namespace GRINS
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     // Constraint part(s)
     virtual void element_constraint( bool compute_jacobian,
-				     AssemblyContext& context,
-				     CachedValues& cache );
+                                     AssemblyContext& context,
+                                     CachedValues& cache );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-				AssemblyContext& context,
-				CachedValues& cache );
+                                AssemblyContext& context,
+                                CachedValues& cache );
 
   protected:
 
@@ -74,7 +74,7 @@ namespace GRINS
 
     //! Enable pressure pinning
     bool _pin_pressure;
-    
+
   private:
 
     Stokes();

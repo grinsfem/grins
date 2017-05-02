@@ -33,10 +33,10 @@ namespace GRINS
 {
   //! Builds Physics objects, used by PhysicsBuilder
   /*! The user may subclass this class for more building more complex Physics objects.
-      Because Physics objects require a GetPot input file object and the physics_name
-      at construction time, both set_getpot() and  set_physics_name() MUST be called
-      before build() function. Note that set_physics_name() MUST be called each time
-      a new Physics is built.*/
+    Because Physics objects require a GetPot input file object and the physics_name
+    at construction time, both set_getpot() and  set_physics_name() MUST be called
+    before build() function. Note that set_physics_name() MUST be called each time
+    a new Physics is built.*/
   class PhysicsFactoryBase : public FactoryWithGetPotPhysicsName<Physics>
   {
   public:

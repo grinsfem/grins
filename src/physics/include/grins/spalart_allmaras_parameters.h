@@ -36,7 +36,7 @@ namespace GRINS
 {
   //! Encapsulate Spalart-Allmaras model parameters
   /*! This is mostly a container class, but there are a few helper functions
-      here that are used in different places in SpalartAllmaras classes. */
+    here that are used in different places in SpalartAllmaras classes. */
   class SpalartAllmarasParameters : public ParameterUser
   {
   public:

@@ -30,36 +30,36 @@
 #include "grins/boussinesq_buoyancy_base.h"
 
 namespace GRINS
-{  
+{
   //! Adds Boussinesq bouyancy source term
   /*!
     This class implements the Boussinesq approximation for thermal buoyancy.
     Namely:
     \f$ \mathbf{F} = -\rho_0 \beta_T \left( T - T_0 \right) \mathbf{g} \f$
     where
-    \f$ \rho_0 = \f$ reference density, 
+    \f$ \rho_0 = \f$ reference density,
     \f$ T_0 = \f$ reference temperature,
     \f$ \beta_T = \f$ coefficient of thermal expansion, and
     \f$ \mathbf{g} = \f$ the gravitional vector.
     This source term to the governing flow equations through the
     element_time_derivative routine. This class requires a flow physics enabled
     and the ConvectiveHeatTransfer physics class enabled.
-   */
+  */
   class BoussinesqBuoyancy : public BoussinesqBuoyancyBase
   {
   public:
-    
+
     BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
     ~BoussinesqBuoyancy();
 
     //! Source term contribution for BoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
-        the IncompressibleNavierStokes class.
-     */
+      the IncompressibleNavierStokes class.
+    */
     virtual void element_time_derivative( bool compute_jacobian,
-					  AssemblyContext& context,
-					  CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
   private:
 

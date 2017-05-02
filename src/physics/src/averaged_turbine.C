@@ -55,8 +55,8 @@ namespace GRINS
 
   template<class Mu>
   void AveragedTurbine<Mu>::element_time_derivative( bool compute_jacobian,
-					      AssemblyContext& context,
-					      CachedValues& /* cache */ )
+                                                     AssemblyContext& context,
+                                                     CachedValues& /* cache */ )
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW =
@@ -79,20 +79,20 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> &Kvv = context.get_elem_jacobian(this->_flow_vars.v(), this->_flow_vars.v()); // R_{v},{v}
 
     libMesh::DenseSubMatrix<libMesh::Number> &Kus =
-            context.get_elem_jacobian(this->_flow_vars.u(),
-                                      this->fan_speed_var()); // R_{u},{s}
+      context.get_elem_jacobian(this->_flow_vars.u(),
+                                this->fan_speed_var()); // R_{u},{s}
     libMesh::DenseSubMatrix<libMesh::Number> &Ksu =
-            context.get_elem_jacobian(this->fan_speed_var(),
-                                      this->_flow_vars.u()); // R_{s},{u}
+      context.get_elem_jacobian(this->fan_speed_var(),
+                                this->_flow_vars.u()); // R_{s},{u}
     libMesh::DenseSubMatrix<libMesh::Number> &Kvs =
-            context.get_elem_jacobian(this->_flow_vars.v(),
-                                      this->fan_speed_var()); // R_{v},{s}
+      context.get_elem_jacobian(this->_flow_vars.v(),
+                                this->fan_speed_var()); // R_{v},{s}
     libMesh::DenseSubMatrix<libMesh::Number> &Ksv =
-            context.get_elem_jacobian(this->fan_speed_var(),
-                                      this->_flow_vars.v()); // R_{s},{v}
+      context.get_elem_jacobian(this->fan_speed_var(),
+                                this->_flow_vars.v()); // R_{s},{v}
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(this->fan_speed_var(),
-                                      this->fan_speed_var()); // R_{s},{s}
+      context.get_elem_jacobian(this->fan_speed_var(),
+                                this->fan_speed_var()); // R_{s},{s}
 
     libMesh::DenseSubMatrix<libMesh::Number>* Kwu = NULL;
     libMesh::DenseSubMatrix<libMesh::Number>* Kwv = NULL;
@@ -194,7 +194,7 @@ namespace GRINS
             if( this->_flow_vars.dim() == 3 )
               (*Fw)(i) += F(2)*jac_i;
 
-	    if( compute_jacobian )
+            if( compute_jacobian )
               {
                 Kus(i,0) += dFds(0) * jac_i;
                 Kvs(i,0) += dFds(1) * jac_i;
@@ -227,14 +227,14 @@ namespace GRINS
 
   template<class Mu>
   void AveragedTurbine<Mu>::nonlocal_time_derivative(bool compute_jacobian,
-				                 AssemblyContext& context,
-				                 CachedValues& /* cache */ )
+                                                     AssemblyContext& context,
+                                                     CachedValues& /* cache */ )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(this->fan_speed_var(), this->fan_speed_var()); // R_{s},{s}
+      context.get_elem_jacobian(this->fan_speed_var(), this->fan_speed_var()); // R_{s},{s}
 
     libMesh::DenseSubVector<libMesh::Number> &Fs =
-            context.get_elem_residual(this->fan_speed_var()); // R_{s}
+      context.get_elem_residual(this->fan_speed_var()); // R_{s}
 
     const std::vector<libMesh::dof_id_type>& dof_indices =
       context.get_dof_indices(this->fan_speed_var());
@@ -265,14 +265,14 @@ namespace GRINS
 
   template<class Mu>
   void AveragedTurbine<Mu>::nonlocal_mass_residual( bool compute_jacobian,
-				                AssemblyContext& context,
-				                CachedValues& /* cache */ )
+                                                    AssemblyContext& context,
+                                                    CachedValues& /* cache */ )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
-            context.get_elem_jacobian(this->fan_speed_var(), this->fan_speed_var()); // R_{s},{s}
+      context.get_elem_jacobian(this->fan_speed_var(), this->fan_speed_var()); // R_{s},{s}
 
     libMesh::DenseSubVector<libMesh::Number> &Fs =
-            context.get_elem_residual(this->fan_speed_var()); // R_{s}
+      context.get_elem_residual(this->fan_speed_var()); // R_{s}
 
     const libMesh::DenseSubVector<libMesh::Number> &Us =
       context.get_elem_solution_rate(this->fan_speed_var());

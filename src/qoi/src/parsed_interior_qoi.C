@@ -50,9 +50,9 @@ namespace GRINS
         this->qoi_functional = original.qoi_functional->clone();
         this->move_parameter
           (*libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
-             (original.qoi_functional.get()),
+           (original.qoi_functional.get()),
            *libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
-             (this->qoi_functional.get()));
+           (this->qoi_functional.get()));
       }
   }
 
@@ -64,13 +64,13 @@ namespace GRINS
   }
 
   void ParsedInteriorQoI::init
-    (const GetPot& input,
-     const MultiphysicsSystem& system,
-     unsigned int /*qoi_num*/ )
+  (const GetPot& input,
+   const MultiphysicsSystem& system,
+   unsigned int /*qoi_num*/ )
   {
     libMesh::ParsedFEMFunction<libMesh::Number> *qf
       (new libMesh::ParsedFEMFunction<libMesh::Number>
-         (system, ""));
+       (system, ""));
     this->qoi_functional.reset(qf);
 
     this->set_parameter(*qf, input,
@@ -128,7 +128,7 @@ namespace GRINS
     // differenting purposes
     libMesh::DenseVector<libMesh::Number>& elem_solution =
       const_cast<libMesh::DenseVector<libMesh::Number>&>
-        (context.get_elem_solution());
+      (context.get_elem_solution());
 
     /*! \todo Need to generalize this to the multiple QoI case */
     libMesh::DenseVector<libMesh::Number> &Qu =
@@ -156,7 +156,7 @@ namespace GRINS
               (*qoi_functional)(context, x_qp[qp], context.get_time());
 
             Qu(i) += (plus_val - minus_val) *
-                     (0.5 / libMesh::TOLERANCE) * JxW[qp];
+              (0.5 / libMesh::TOLERANCE) * JxW[qp];
 
             // Don't forget to restore the correct solution...
             current_solution = original_solution;

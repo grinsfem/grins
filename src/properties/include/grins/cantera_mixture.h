@@ -61,7 +61,7 @@ namespace GRINS
     live during the whole program. Note that this documentation will always
     be built regardless if Cantera is included in the GRINS build or not. Check configure
     output to confirm that Cantera was included in the build if you wish to use it.
-   */
+  */
   class CanteraMixture : public ParameterUser
   {
   public:
@@ -84,8 +84,8 @@ namespace GRINS
 
     libMesh::Real X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const;
 
-    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions, 
-	    std::vector<libMesh::Real>& mole_fractions ) const;
+    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
+            std::vector<libMesh::Real>& mole_fractions ) const;
 
     unsigned int n_species() const;
 

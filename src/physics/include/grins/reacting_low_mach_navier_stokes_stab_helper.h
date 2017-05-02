@@ -41,13 +41,13 @@ namespace GRINS
     ~ReactingLowMachNavierStokesStabilizationHelper(){};
 
     libMesh::Real compute_tau_species( AssemblyContext& c,
-				      unsigned int qp,
-				      libMesh::RealGradient& g,
-				      libMesh::RealTensor& G,
-				      libMesh::Real rho,
-				      libMesh::Gradient U,
-				      libMesh::Real D_s,
-				      bool is_steady ) const;
+                                       unsigned int qp,
+                                       libMesh::RealGradient& g,
+                                       libMesh::RealTensor& G,
+                                       libMesh::Real rho,
+                                       libMesh::Gradient U,
+                                       libMesh::Real D_s,
+                                       bool is_steady ) const;
 
   }; // class ReactingLowMachNavierStokesStabilizationHelper
 
@@ -63,12 +63,12 @@ namespace GRINS
                                                                                      bool is_steady ) const
   {
     /*
-    libMesh::Real tau = (rho*U)*(G*(rho*U)) + this->_C*D_s*D_s*G.contract(G);
+      libMesh::Real tau = (rho*U)*(G*(rho*U)) + this->_C*D_s*D_s*G.contract(G);
 
-    if(!is_steady)
+      if(!is_steady)
       tau += (2.0*rho/c.get_deltat_value())*(2.0*rho/c.get_deltat_value());
 
-    return this->_tau_factor/std::sqrt(tau);
+      return this->_tau_factor/std::sqrt(tau);
     */
     return this->compute_tau( c, qp, D_s*D_s, g, G, rho, U, is_steady );
   }

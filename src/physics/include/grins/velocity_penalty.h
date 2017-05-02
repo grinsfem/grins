@@ -45,8 +45,8 @@ namespace GRINS
   /*
     This physics class imposes a penalty on any velocity component in
     the direction of (and proportional to) a specified vector field.
-   */
-  template<class Viscosity> 
+  */
+  template<class Viscosity>
   class VelocityPenalty : public VelocityPenaltyBase<Viscosity>
   {
   public:
@@ -66,8 +66,8 @@ namespace GRINS
 
     // Constraint part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,

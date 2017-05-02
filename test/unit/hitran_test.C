@@ -58,7 +58,7 @@ namespace GRINSTesting
     {
       std::string data_file = std::string(GRINS_TEST_SRCDIR)+"/test_data/CO2_data.dat";
       std::string partition_file = std::string(GRINS_TEST_SRCDIR)+"/test_data/CO2_partition_function.dat";
-      
+
       libMesh::Real T_min = 290;
       libMesh::Real T_max = 310;
       libMesh::Real T_step = 0.01;
@@ -82,14 +82,14 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_DOUBLES_EQUAL(0.75,hitran.n_air(20),libMesh::TOLERANCE);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.008269,hitran.delta_air(0),libMesh::TOLERANCE);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.004588,hitran.delta_air(20),libMesh::TOLERANCE);
-      
+
 
       // these T values are explicitly given in the partition sum data
       CPPUNIT_ASSERT_DOUBLES_EQUAL(279.609573308,hitran.partition_function(290.02,0),libMesh::TOLERANCE);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(563.425588693,hitran.partition_function(290.02,1),libMesh::TOLERANCE);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(593.852717624,hitran.partition_function(290.02,2),libMesh::TOLERANCE);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(3461.78001223,hitran.partition_function(290.02,3),libMesh::TOLERANCE);
-      
+
       // partition function values at the reference temperature T=296K
       CPPUNIT_ASSERT_DOUBLES_EQUAL(286.93557306,hitran.partition_function(296,0),libMesh::TOLERANCE);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(578.40836146,hitran.partition_function(296,1),libMesh::TOLERANCE);

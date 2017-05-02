@@ -35,7 +35,7 @@
 // Function for getting initial temperature field
 libMesh::Real
 initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
-		const std::string& system_name, const std::string& unknown_name );
+                const std::string& system_name, const std::string& unknown_name );
 
 int main(int argc, char* argv[])
 {
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 
 libMesh::Real
 initial_values( const libMesh::Point&, const libMesh::Parameters &params,
-		const std::string& , const std::string& unknown_name )
+                const std::string& , const std::string& unknown_name )
 {
   libMesh::Real value = 0.0;
 

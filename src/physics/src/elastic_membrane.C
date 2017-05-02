@@ -208,7 +208,7 @@ namespace GRINS
         libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
-	  {
+          {
             libMesh::RealGradient u_gradphi( dphi_dxi[i][qp], dphi_deta[i][qp] );
 
             for( unsigned int alpha = 0; alpha < manifold_dim; alpha++ )
@@ -245,8 +245,8 @@ namespace GRINS
                         for( unsigned int beta = 0; beta < manifold_dim; beta++ )
                           {
                             const libMesh::Real diag_term = 0.5*this->_h0*jac*tau(alpha,beta)*context.get_elem_solution_derivative()*
-                                                            ( u_gradphi_j(beta)*u_gradphi_i(alpha) +
-                                                              u_gradphi_j(alpha)*u_gradphi_i(beta) );
+                              ( u_gradphi_j(beta)*u_gradphi_i(alpha) +
+                                u_gradphi_j(alpha)*u_gradphi_i(beta) );
                             Kuu(i,j) += diag_term;
 
                             Kvv(i,j) += diag_term;

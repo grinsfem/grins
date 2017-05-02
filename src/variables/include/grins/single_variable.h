@@ -32,8 +32,8 @@ namespace GRINS
 {
   //! Variables with a single component
   /*! Subclasses can add syntatic sugar, but this class can
-      provide the sanity check on there actually being
-      one component. */
+    provide the sanity check on there actually being
+    one component. */
   class SingleVariable : public FEVariablesBase
   {
   public:

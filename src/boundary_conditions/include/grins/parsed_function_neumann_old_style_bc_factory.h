@@ -65,17 +65,17 @@ namespace GRINS
                                                                             MultiphysicsSystem& system,
                                                                             const FEVariablesBase& fe_var,
                                                                             const std::string& section )
-    {
-      libmesh_assert_equal_to( this->_bc_ids->size(), 1 );
+  {
+    libmesh_assert_equal_to( this->_bc_ids->size(), 1 );
 
-      std::string flux_input = section+"/"+this->flux_input()+"_"+
-        StringUtilities::T_to_string<unsigned int>( *(this->_bc_ids->begin()) );
+    std::string flux_input = section+"/"+this->flux_input()+"_"+
+      StringUtilities::T_to_string<unsigned int>( *(this->_bc_ids->begin()) );
 
-      // Make sure flux input specified and consistent with var_names size
-      this->check_for_flux(input,flux_input,fe_var.active_var_names());
+    // Make sure flux input specified and consistent with var_names size
+    this->check_for_flux(input,flux_input,fe_var.active_var_names());
 
-      return this->build_neumman_func_common( input, system, fe_var, flux_input );
-    }
+    return this->build_neumman_func_common( input, system, fe_var, flux_input );
+  }
 
   template<typename FunctionType>
   class TractionOldStyleBCFactory : public ParsedFunctionNeumannOldStyleBCFactory<FunctionType>

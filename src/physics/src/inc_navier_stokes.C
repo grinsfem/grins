@@ -64,7 +64,7 @@ namespace GRINS
 
   template<class Mu>
   void IncompressibleNavierStokes<Mu>::register_postprocessing_vars( const GetPot& input,
-                                                                                     PostProcessedQuantities<libMesh::Real>& postprocessing )
+                                                                     PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
     std::string section = "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/output_vars";
 
@@ -95,8 +95,8 @@ namespace GRINS
 
   template<class Mu>
   void IncompressibleNavierStokes<Mu>::element_time_derivative( bool compute_jacobian,
-                                                            AssemblyContext& context,
-                                                            CachedValues& /*cache*/ )
+                                                                AssemblyContext& context,
+                                                                CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -208,8 +208,8 @@ namespace GRINS
 
         libMesh::Real jac = JxW[qp];
 
-	// Compute the viscosity at this qp
-	libMesh::Real _mu_qp = this->_mu(context, qp);
+        // Compute the viscosity at this qp
+        libMesh::Real _mu_qp = this->_mu(context, qp);
 
         if(Physics::is_axisymmetric())
           {
@@ -323,8 +323,8 @@ namespace GRINS
 
   template<class Mu>
   void IncompressibleNavierStokes<Mu>::element_constraint( bool compute_jacobian,
-                                                       AssemblyContext& context,
-                                                       CachedValues& /*cache*/ )
+                                                           AssemblyContext& context,
+                                                           CachedValues& /*cache*/ )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
@@ -433,8 +433,8 @@ namespace GRINS
 
   template<class Mu>
   void IncompressibleNavierStokes<Mu>::mass_residual( bool compute_jacobian,
-                                                  AssemblyContext& context,
-                                                  CachedValues& /*cache*/ )
+                                                      AssemblyContext& context,
+                                                      CachedValues& /*cache*/ )
   {
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable

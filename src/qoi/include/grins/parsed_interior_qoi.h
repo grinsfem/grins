@@ -39,14 +39,14 @@ namespace GRINS
   /*!
     This class implements a QoI that is an arbitrary integral of a
     parsed function on the interior of the domain.
-   */
+  */
   class ParsedInteriorQoI : public QoIBase
   {
   public:
 
     //! Constructor
     /*! Constructor takes GetPot object to read any input options associated
-        with this QoI */
+      with this QoI */
     ParsedInteriorQoI( const std::string& qoi_name );
 
     virtual ~ParsedInteriorQoI();
@@ -76,7 +76,7 @@ namespace GRINS
   protected:
 
     libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
-      qoi_functional;
+    qoi_functional;
 
     //! Manual copy constructor due to the UniquePtr
     ParsedInteriorQoI(const ParsedInteriorQoI& original);

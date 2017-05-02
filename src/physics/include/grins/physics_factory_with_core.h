@@ -35,9 +35,9 @@ namespace GRINS
 {
   //! PhysicsFactory base class for Physics that may have a related "core" Physics
   /*! There are some Physics subclasses that are inherently related to some "core"
-      Physics. In such cases, some input options for the derived Physics class are
-      slave to the "core" Physics. Thus, this provides a mechanism of naming the
-      corresponding "core" Physics associated with the primary Physics. */
+    Physics. In such cases, some input options for the derived Physics class are
+    slave to the "core" Physics. Thus, this provides a mechanism of naming the
+    corresponding "core" Physics associated with the primary Physics. */
   class PhysicsFactoryWithCore : public PhysicsFactoryBase
   {
   public:
@@ -53,8 +53,8 @@ namespace GRINS
 
     //! Cache for "core" physics names
     /*! At parsing time, some Physics are slave to some input options from a core Physics.
-        In such cases, we cache the core physics name. Note we use this function to
-        avoid the static initialization fiasco. */
+      In such cases, we cache the core physics name. Note we use this function to
+      avoid the static initialization fiasco. */
     static std::map<std::string,std::string>& core_physics_names();
 
   };

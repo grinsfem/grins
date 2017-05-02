@@ -35,11 +35,11 @@
 #include "libmesh/point.h"
 
 namespace GRINS
-{  
+{
   class BoussinesqBuoyancyBase : public Physics
   {
   public:
-    
+
     BoussinesqBuoyancyBase( const std::string& physics_name, const GetPot& input );
 
     ~BoussinesqBuoyancyBase(){};
@@ -65,7 +65,7 @@ namespace GRINS
     //! \f$ \rho = \f$ density
     libMesh::Number _rho;
 
-    //! \f$ T_0 = \f$ reference temperature 
+    //! \f$ T_0 = \f$ reference temperature
     libMesh::Number _T_ref;
 
     //! \f$ \beta_T = \f$ coefficient of thermal expansion

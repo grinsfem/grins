@@ -51,8 +51,8 @@ namespace GRINS
 
     //! Constructor for function with several variables
     /*! This intended for FunctionTypes that are Composite so we can
-        treat "group" variables, e.g. Displacement, as the same time
-        using a composite function. */
+      treat "group" variables, e.g. Displacement, as the same time
+      using a composite function. */
     NeumannBCFunctionBase( const std::vector<VariableIndex>& vars )
       : NeumannBCAbstract(),
         _vars(vars)
@@ -85,13 +85,13 @@ namespace GRINS
 
     //! Variable indices for the variables whose Neumann contribution we're computing
     /*! We're assuming all _vars use the same FunctionType object. This allows us to
-        use Composite type functions and treat "group" variables, like Displacement,
-        at the same time. */
+      use Composite type functions and treat "group" variables, like Displacement,
+      at the same time. */
     std::vector<VariableIndex> _vars;
 
     //! Function object for the actual Neumann flux
     /*! Subclasses should initialize this function appropriately at construction
-        time. */
+      time. */
     libMesh::UniquePtr<FunctionType> _func;
 
   };

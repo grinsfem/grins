@@ -47,27 +47,27 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     libMesh::Real compute_res_continuity_steady( AssemblyContext& context,
-						 unsigned int qp ) const;
-    
+                                                 unsigned int qp ) const;
+
     libMesh::Real compute_res_continuity_transient( AssemblyContext& context,
-						    unsigned int qp ) const;
-    
+                                                    unsigned int qp ) const;
+
     libMesh::RealGradient compute_res_momentum_steady( AssemblyContext& context,
-						       unsigned int qp ) const;
-    
+                                                       unsigned int qp ) const;
+
     libMesh::RealGradient compute_res_momentum_transient( AssemblyContext& context,
-							  unsigned int qp ) const;
-    
+                                                          unsigned int qp ) const;
+
     libMesh::Real compute_res_energy_steady( AssemblyContext& context,
-					     unsigned int qp ) const;
-    
+                                             unsigned int qp ) const;
+
     libMesh::Real compute_res_energy_transient( AssemblyContext& context,
-						unsigned int qp ) const;
+                                                unsigned int qp ) const;
 
   protected:
 
     LowMachNavierStokesStabilizationHelper _stab_helper;
-    
+
   private:
 
     LowMachNavierStokesStabilizationBase();

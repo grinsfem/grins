@@ -38,9 +38,9 @@ namespace GRINS
 
   template<class Mu>
   SpalartAllmarasStabilizationBase<Mu>::SpalartAllmarasStabilizationBase( const std::string& physics_name,
-                                                                                            const GetPot& input )
+                                                                          const GetPot& input )
     : SpalartAllmaras<Mu>(physics_name,input),
-      _stab_helper( physics_name+"StabHelper", input )
+    _stab_helper( physics_name+"StabHelper", input )
   {}
 
   template<class Mu>
@@ -55,8 +55,8 @@ namespace GRINS
 
   template<class Mu>
   void SpalartAllmarasStabilizationBase<Mu>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     SpalartAllmaras<Mu>::register_parameter(param_name, param_pointer);

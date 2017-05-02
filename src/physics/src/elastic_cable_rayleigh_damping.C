@@ -68,10 +68,10 @@ namespace GRINS
   {
     // First, do the "mass" contribution
     this->mass_residual_impl(compute_jacobian,
-                               context,
-                               &libMesh::FEMContext::interior_rate,
-                               &libMesh::DiffContext::get_elem_solution_rate_derivative,
-                               _mu_factor);
+                             context,
+                             &libMesh::FEMContext::interior_rate,
+                             &libMesh::DiffContext::get_elem_solution_rate_derivative,
+                             _mu_factor);
 
     // Now do the stiffness contribution
     const unsigned int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();

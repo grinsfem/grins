@@ -41,7 +41,7 @@ namespace GRINS
     affected by a region in which airfoils are moving.  The airfoils
     may also be accelerated or decelerated by external power source or
     sink.
-   */
+  */
   template<class Viscosity>
   class AveragedTurbineAdjointStabilization : public AveragedTurbineBase<Viscosity>
   {
@@ -57,8 +57,8 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     virtual void element_time_derivative( bool compute_jacobian,
-				          AssemblyContext& context,
-				          CachedValues& cache );
+                                          AssemblyContext& context,
+                                          CachedValues& cache );
 
     virtual void element_constraint( bool compute_jacobian,
                                      AssemblyContext& context,

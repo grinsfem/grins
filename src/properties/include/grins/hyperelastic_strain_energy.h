@@ -63,6 +63,6 @@ namespace GRINS
 
 } // end namespace GRINS
 
- 
+
 
 #endif // GRINS_HYPERELASTIC_STRAIN_ENERGY_H

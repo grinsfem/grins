@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
       std::cerr << "Error: Must specify input file." << std::endl;
       exit(1); // TODO: something more sophisticated for parallel runs?
     }
-  
+
   GetPot input( argv[1] );
 
   std::vector<std::string> species(5);
@@ -106,42 +106,42 @@ int main(int argc, char* argv[])
   if( std::fabs( (mu_reg - mu)/mu ) > tol )
     {
       std::cerr << "Error: Mismatch in viscosity." << std::endl
-		<< std::setprecision(16) << std::scientific
-		<< "mu     = " << mu << std::endl
-		<< "mu_reg = " << mu_reg << std::endl;
+                << std::setprecision(16) << std::scientific
+                << "mu     = " << mu << std::endl
+                << "mu_reg = " << mu_reg << std::endl;
       return_flag = 1;
     }
 
   if( std::fabs( (k_reg - k)/k ) > tol )
     {
       std::cerr << "Error: Mismatch in thermal conductivity." << std::endl
-		<< std::setprecision(16) << std::scientific
-		<< "k     = " << k << std::endl
-		<< "k_reg = " << k_reg << std::endl;
+                << std::setprecision(16) << std::scientific
+                << "k     = " << k << std::endl
+                << "k_reg = " << k_reg << std::endl;
       return_flag = 1;
     }
 
   for( unsigned int i = 0; i < 5; i++ )
     {
       if( std::fabs( (D_reg[i] - D[i])/D[i] ) > tol )
-	{
-	  std::cerr << "Error: Mismatch in diffusion coefficient." << std::endl
-		    << std::setprecision(16) << std::scientific
-		    << "i = " << i << std::endl
-		    << "D     = " << D[i] << std::endl
-		    << "D_reg = " << D_reg[i] << std::endl;
-	  return_flag = 1;
-	}
+        {
+          std::cerr << "Error: Mismatch in diffusion coefficient." << std::endl
+                    << std::setprecision(16) << std::scientific
+                    << "i = " << i << std::endl
+                    << "D     = " << D[i] << std::endl
+                    << "D_reg = " << D_reg[i] << std::endl;
+          return_flag = 1;
+        }
     }
   /*
-  std::cout << std::setprecision(16) << std::scientific
-	    << "mu = " << mu << std::endl
-	    << "k = " << k << std::endl;
-  for( unsigned int i = 0; i < 5; i++ )
+    std::cout << std::setprecision(16) << std::scientific
+    << "mu = " << mu << std::endl
+    << "k = " << k << std::endl;
+    for( unsigned int i = 0; i < 5; i++ )
     {
-      std::cout << std::setprecision(16) << std::scientific
-		<< "D[" << i << "] = " << D[i]
-		<< std::endl;
+    std::cout << std::setprecision(16) << std::scientific
+    << "D[" << i << "] = " << D[i]
+    << std::endl;
     }
   */
 

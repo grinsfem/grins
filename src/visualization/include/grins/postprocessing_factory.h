@@ -37,11 +37,11 @@ namespace GRINS
 
   //! This object handles constructing the postprocessing object to be used.
   /*! To allow the user to easily extend the postprocesing capabilities,
-      the postprocessing construction is handled in this object. */
+    the postprocessing construction is handled in this object. */
   class PostprocessingFactory
   {
   public:
-    
+
     PostprocessingFactory();
     virtual ~PostprocessingFactory();
 

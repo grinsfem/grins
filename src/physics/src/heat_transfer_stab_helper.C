@@ -42,8 +42,8 @@ namespace GRINS
 {
 
   HeatTransferStabilizationHelper::HeatTransferStabilizationHelper
-    (const std::string & helper_name,
-     const GetPot& input)
+  (const std::string & helper_name,
+   const GetPot& input)
     : StabilizationHelper(helper_name),
       _C(1),
       _tau_factor(0.5),
@@ -80,7 +80,7 @@ namespace GRINS
     libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
     libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T(), qp);
 
-    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp), 
+    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp),
                                   rho*Cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
     if(this->_flow_vars.dim() == 3)
       rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
@@ -89,22 +89,22 @@ namespace GRINS
   }
 
   void HeatTransferStabilizationHelper::compute_res_energy_steady_and_derivs
-    ( AssemblyContext& context,
-      unsigned int qp,
-      const libMesh::Real rho,
-      const libMesh::Real Cp,
-      const libMesh::Real k,
-      libMesh::Real &res,
-      libMesh::Real &d_res_dT,
-      libMesh::Gradient &d_res_dgradT,
-      libMesh::Tensor   &d_res_dhessT,
-      libMesh::Gradient &d_res_dU
+  ( AssemblyContext& context,
+    unsigned int qp,
+    const libMesh::Real rho,
+    const libMesh::Real Cp,
+    const libMesh::Real k,
+    libMesh::Real &res,
+    libMesh::Real &d_res_dT,
+    libMesh::Gradient &d_res_dgradT,
+    libMesh::Tensor   &d_res_dhessT,
+    libMesh::Gradient &d_res_dU
     ) const
   {
     libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
     libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_temp_vars.T(), qp);
 
-    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp), 
+    libMesh::RealGradient rhocpU( rho*Cp*context.fixed_interior_value(this->_flow_vars.u(), qp),
                                   rho*Cp*context.fixed_interior_value(this->_flow_vars.v(), qp) );
     if(this->_flow_vars.dim() == 3)
       rhocpU(2) = rho*Cp*context.fixed_interior_value(this->_flow_vars.w(), qp);
@@ -133,12 +133,12 @@ namespace GRINS
 
 
   void HeatTransferStabilizationHelper::compute_res_energy_transient_and_derivs
-    ( AssemblyContext& context,
-      unsigned int qp,
-      const libMesh::Real rho,
-      const libMesh::Real Cp,
-      libMesh::Real &res,
-      libMesh::Real &d_res_dTdot
+  ( AssemblyContext& context,
+    unsigned int qp,
+    const libMesh::Real rho,
+    const libMesh::Real Cp,
+    libMesh::Real &res,
+    libMesh::Real &d_res_dTdot
     ) const
   {
     libMesh::Real T_dot;

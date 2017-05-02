@@ -48,12 +48,12 @@ namespace GRINS
 
     // If this delimiter is not found, then the full_name is the physics_name
     if( idx == full_name.npos )
-        physics_name = full_name;
+      physics_name = full_name;
 
     // If it is found, the first part is the physics_name
     // and the second part is the suffix
     else
-        physics_name = full_name.substr(0,idx);
+      physics_name = full_name.substr(0,idx);
 
     return physics_name;
   }
@@ -74,7 +74,7 @@ namespace GRINS
     // and the second part is the suffix.
     // Note the suffix extraction *includes* the delimiter
     if( idx != full_name.npos )
-        suffix = full_name.substr(idx,full_name.npos);
+      suffix = full_name.substr(idx,full_name.npos);
 
     return suffix;
   }

@@ -44,7 +44,7 @@ namespace GRINS
   {
     return;
   }
-  
+
   libMesh::Real PowerLawCatalycity::operator()( const libMesh::Real T ) const
   {
     return _gamma0*std::pow( T/_Tref, _alpha);
@@ -60,7 +60,7 @@ namespace GRINS
     libmesh_assert_equal_to( params.size(), 3 );
 
     _gamma0 = params[0];
-    
+
     _Tref = params[1];
 
     _alpha = params[2];

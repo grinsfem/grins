@@ -30,10 +30,10 @@ namespace GRINS
   void skip_comment_lines( std::istream &in, const char comment_start)
   {
     char c, line[256];
-    
-    while (in.get(c), c==comment_start) 
+
+    while (in.get(c), c==comment_start)
       in.getline (line, 255);
-    
+
     // put back first character of
     // first non-comment line
     in.putback (c);

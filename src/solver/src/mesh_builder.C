@@ -43,8 +43,8 @@
 namespace GRINS
 {
   SharedPtr<libMesh::UnstructuredMesh> MeshBuilder::build
-    (const GetPot& input,
-     const libMesh::Parallel::Communicator &comm)
+  (const GetPot& input,
+   const libMesh::Parallel::Communicator &comm)
   {
     // First check if the user has both old and new versions of mesh input
     if( input.have_section("mesh-options/") &&
@@ -89,9 +89,9 @@ namespace GRINS
         mesh_build_type != std::string("create_3D_mesh") )
       {
         std::string error = "ERROR: Invalid value of "+mesh_build_type+" for Mesh/type.\n";
-          error += "       Valid values are: generate\n";
-          error += "                         read\n";
-          libmesh_error_msg(error);
+        error += "       Valid values are: generate\n";
+        error += "                         read\n";
+        libmesh_error_msg(error);
       }
 
     // Create UnstructuredMesh object (defaults to dimension 1).
@@ -112,8 +112,8 @@ namespace GRINS
       else
         {
           std::string error = "ERROR: Invalid class "+mesh_class+" input for Mesh/class.\n";
-            error += "       Valid choices are: serial, parallel.\n";
-            libmesh_error_msg(error);
+          error += "       Valid choices are: serial, parallel.\n";
+          libmesh_error_msg(error);
         }
     }
 
@@ -132,10 +132,10 @@ namespace GRINS
 
         this->deprecated_option<std::string>( input, "mesh-options/mesh_filename", "Mesh/Read/filename", "DIE!", mesh_filename);
 
-	// According to Roy Stogner, the only read format
-	// that won't properly reset the dimension is gmsh.
-	/*! \todo Need to a check a GMSH meshes */
-	mesh->read(mesh_filename);
+        // According to Roy Stogner, the only read format
+        // that won't properly reset the dimension is gmsh.
+        /*! \todo Need to a check a GMSH meshes */
+        mesh->read(mesh_filename);
 
         // If we have a first order mesh file but we need second order
         // elements we should fix that.
@@ -252,7 +252,7 @@ namespace GRINS
     if( dimension > 1 )
       {
         if( !input.have_variable("mesh-options/mesh_nx2") /* Deprecated */ &&
-        !input.have_variable("Mesh/Generation/n_elems_y") )
+            !input.have_variable("Mesh/Generation/n_elems_y") )
           {
             libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_y for mesh generation.");
           }
@@ -268,7 +268,7 @@ namespace GRINS
     if( dimension > 2 )
       {
         if( !input.have_variable("mesh-options/mesh_nx3") /* Deprecated */ &&
-        !input.have_variable("Mesh/Generation/n_elems_z") )
+            !input.have_variable("Mesh/Generation/n_elems_z") )
           {
             libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_z for mesh generation.");
           }
@@ -286,51 +286,51 @@ namespace GRINS
     if( dimension == 1 )
       {
         if(element_type=="default")
-	  {
-	    element_type = "EDGE3";
-	  }
+          {
+            element_type = "EDGE3";
+          }
 
         GRINSEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
+          libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
-	libMesh::MeshTools::Generation::build_line(*mesh,
+        libMesh::MeshTools::Generation::build_line(*mesh,
                                                    n_elems_x,
                                                    x_min,
                                                    x_max,
-						   element_enum_type);
+                                                   element_enum_type);
       }
 
     else if( dimension == 2 )
       {
-	if(element_type=="default")
-	  {
-	    element_type = "TRI6";
-	  }
+        if(element_type=="default")
+          {
+            element_type = "TRI6";
+          }
 
         GRINSEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
+          libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
-	libMesh::MeshTools::Generation::build_square(*mesh,
+        libMesh::MeshTools::Generation::build_square(*mesh,
                                                      n_elems_x,
                                                      n_elems_y,
                                                      x_min,
                                                      x_max,
                                                      y_min,
                                                      y_max,
-						     element_enum_type);
+                                                     element_enum_type);
       }
 
     else if( dimension == 3 )
       {
-	if(element_type=="default")
-	  {
-	    element_type = "TET10";
-	  }
+        if(element_type=="default")
+          {
+            element_type = "TET10";
+          }
 
         GRINSEnums::ElemType element_enum_type =
-	  libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
+          libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
-	libMesh::MeshTools::Generation::build_cube(*mesh,
+        libMesh::MeshTools::Generation::build_cube(*mesh,
                                                    n_elems_x,
                                                    n_elems_y,
                                                    n_elems_z,
@@ -340,13 +340,13 @@ namespace GRINS
                                                    y_max,
                                                    z_min,
                                                    z_max,
-						   element_enum_type);
+                                                   element_enum_type);
       }
 
     else
       {
         // This shouldn't have happened
-	libmesh_error();
+        libmesh_error();
       }
 
     return;
@@ -357,7 +357,7 @@ namespace GRINS
                                                    libMesh::UnstructuredMesh& mesh ) const
   {
     std::string redistribution_function_string =
-            input("Mesh/Redistribution/function", std::string("0"));
+      input("Mesh/Redistribution/function", std::string("0"));
     this->deprecated_option<std::string>( input, "mesh-options/redistribute", "Mesh/Redistribution/function", "0", redistribution_function_string );
 
     if (redistribution_function_string != "0")
@@ -394,11 +394,11 @@ namespace GRINS
       }
 
     std::string h_refinement_function_string =
-            input("Mesh/Refinement/locally_h_refine", std::string("0"));
+      input("Mesh/Refinement/locally_h_refine", std::string("0"));
     this->deprecated_option<std::string>( input, "mesh-options/locally_h_refine", "Mesh/Refinement/locally_h_refine", "0", h_refinement_function_string );
 
     if (h_refinement_function_string != "0")
-      { 
+      {
         libMesh::ParsedFunction<libMesh::Real>
           h_refinement_function(h_refinement_function_string);
 
@@ -410,9 +410,9 @@ namespace GRINS
           unsigned int max_level_refining = 0;
 
           libMesh::MeshBase::element_iterator elem_it =
-                  mesh.active_elements_begin();
+            mesh.active_elements_begin();
           libMesh::MeshBase::element_iterator elem_end =
-                  mesh.active_elements_end();
+            mesh.active_elements_end();
           for (; elem_it != elem_end; ++elem_it)
             {
               libMesh::Elem *elem = *elem_it;
@@ -420,14 +420,14 @@ namespace GRINS
               const libMesh::Real refinement_val =
                 h_refinement_function(elem->centroid());
 
-	      const unsigned int n_refinements = refinement_val > 0 ?
+              const unsigned int n_refinements = refinement_val > 0 ?
                 refinement_val : 0;
 
               if (elem->level() - uniformly_refine < n_refinements)
                 {
                   elem->set_refinement_flag(libMesh::Elem::REFINE);
                   found_refinements++;
-		  max_level_refining = std::max(max_level_refining,
+                  max_level_refining = std::max(max_level_refining,
                                                 elem->level());
                 }
             }
@@ -437,9 +437,9 @@ namespace GRINS
 
           if (found_refinements)
             {
-	      std::cout << "Found up to " << found_refinements << 
+              std::cout << "Found up to " << found_refinements <<
                 " elements to refine on each processor," << std::endl;
-	      std::cout << "with max level " << max_level_refining << std::endl;
+              std::cout << "with max level " << max_level_refining << std::endl;
               mesh_refinement.refine_and_coarsen_elements();
 
               if( input.have_variable("restart-options/restart_file") )

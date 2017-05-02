@@ -74,7 +74,7 @@ namespace GRINS
             else if( name == std::string("strain") )
               {
                 // eps_xx only, i.e., locally normal to the cutting plane
-            	// eps_yy=eps_zz = 0 by assumption of this Physics
+                // eps_yy=eps_zz = 0 by assumption of this Physics
                 _strain_indices.resize(1);
 
                 this->_strain_indices[0] = postprocessing.register_quantity("cable_strain");
@@ -83,7 +83,7 @@ namespace GRINS
             else if( name == std::string("force") )
               {
                 // force_x only, i.e., locally normal to the cutting plane
-            	// force_y=force_z=0 by assumption of this Physics
+                // force_y=force_z=0 by assumption of this Physics
                 _force_indices.resize(1);
 
                 this->_force_indices[0] = postprocessing.register_quantity("cable_force");
@@ -209,7 +209,7 @@ namespace GRINS
 
             if( _force_indices[0] == quantity_index )
               {
-            	//This force is in deformed configuration and will be significantly influenced by large strains
+                //This force is in deformed configuration and will be significantly influenced by large strains
                 value = tau(0,0)/std::sqrt(I3)*this->_A;
               }
             else

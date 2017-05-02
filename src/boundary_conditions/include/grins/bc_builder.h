@@ -52,11 +52,11 @@ namespace GRINS
 
   //! Manages runtime construction of Dirichlet boundary conditions
   /*! This will parse the input for the request Dirichlet boundary
-      conditions and manage their construction. Actual construction of
-      the DirichletBoundary objects is delegated to factory
-      classes. This builder classes merely manages tasks around the
-      factories as needed.  To add new Dirichlet boundary conditions,
-      the user should instantiate an appropriate factory sub class. */
+    conditions and manage their construction. Actual construction of
+    the DirichletBoundary objects is delegated to factory
+    classes. This builder classes merely manages tasks around the
+    factories as needed.  To add new Dirichlet boundary conditions,
+    the user should instantiate an appropriate factory sub class. */
   class BCBuilder
   {
   public:

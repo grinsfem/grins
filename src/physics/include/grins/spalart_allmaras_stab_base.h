@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-   SpalartAllmarasStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    SpalartAllmarasStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
     virtual ~SpalartAllmarasStabilizationBase(){};
 
@@ -50,7 +50,7 @@ namespace GRINS
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const;
+      const;
 
   protected:
 

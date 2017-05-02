@@ -39,26 +39,26 @@ namespace GRINS
 {
 
   class MeshBuilder
-  {    
+  {
   public:
 
     //! This Object handles building a libMesh::UnstructuredMesh subclass.
     /*! Based on runtime input, either a generic 1, 2, or 3-dimensional
-        mesh is built; or is read from input from a specified file. */
+      mesh is built; or is read from input from a specified file. */
     MeshBuilder(){};
     ~MeshBuilder(){};
 
     //! Builds the libMesh::Mesh according to input options.
     SharedPtr<libMesh::UnstructuredMesh> build
-      ( const GetPot& input,
-        const libMesh::Parallel::Communicator &comm
-        LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
+    ( const GetPot& input,
+      const libMesh::Parallel::Communicator &comm
+      LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
     //! Refine the mesh based on user input parameters
     /*! There are several parameters that allow for the user to specify
-        mesh refinements. They are factored out here because where we
-        need to apply the refinements depends on the existence of a
-        restart file. */
+      mesh refinements. They are factored out here because where we
+      need to apply the refinements depends on the existence of a
+      restart file. */
     void do_mesh_refinement_from_input( const GetPot& input,
                                         const libMesh::Parallel::Communicator &comm,
                                         libMesh::UnstructuredMesh& mesh ) const;
@@ -79,8 +79,8 @@ namespace GRINS
   template <typename T>
   inline
   void MeshBuilder::deprecated_option( const GetPot& input, const std::string& old_option,
-                            const std::string& new_option, const T& default_value,
-                            T& option_value ) const
+                                       const std::string& new_option, const T& default_value,
+                                       T& option_value ) const
   {
     if( input.have_variable(old_option) )
       {

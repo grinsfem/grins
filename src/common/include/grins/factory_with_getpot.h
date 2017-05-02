@@ -50,8 +50,8 @@ namespace GRINS
   protected:
 
     /*! We store only a raw pointer here because we *can't* make a copy.
-        Otherwise, the UFO detection will be all screwed. We are not taking
-        ownership of this, so we need to *not* delete this.*/
+      Otherwise, the UFO detection will be all screwed. We are not taking
+      ownership of this, so we need to *not* delete this.*/
     static const GetPot* _input;
 
   };

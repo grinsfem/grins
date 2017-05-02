@@ -105,7 +105,7 @@ namespace GRINS
         libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
         elem->set_node(0) = start_node;
         elem->set_node(1) = end_node;
-        
+
         // warn if rayfire elem is shorter than TOLERANCE
         if ( (start_point-end_point).norm() < libMesh::TOLERANCE)
           {
@@ -264,8 +264,8 @@ namespace GRINS
     std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it;
     it = _elem_id_map.find(elem_id);
     if (it != _elem_id_map.end())
-        if (it->second->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
-          retval = it->second;
+      if (it->second->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
+        retval = it->second;
 
     return retval;
   }
@@ -281,7 +281,7 @@ namespace GRINS
     for (unsigned int s=0; s<cur_elem->n_sides(); s++)
       {
         const libMesh::UniquePtr<libMesh::Elem> edge_elem = cur_elem->build_edge(s);
-        
+
         // Using the default tol can cause a false positive when start_point is near a node,
         // causing this loop to skip over an otherwise valid edge to check
         if (edge_elem->contains_point(start_point,libMesh::TOLERANCE*0.1))
@@ -330,7 +330,7 @@ namespace GRINS
 
     // If the elem is too small, need to shorten L so we stay within the elem
     if ( elem->hmin() < libMesh::TOLERANCE )
-        L = elem->hmin() * 0.1;
+      L = elem->hmin() * 0.1;
 
     // parametric representation of rayfire line
     libMesh::Real x = end_point(0) + L*std::cos(_theta);
@@ -580,7 +580,7 @@ namespace GRINS
         elem->set_node(1) = new_node;
 
         libmesh_assert_less( (*(elem->get_node(0))-_origin).norm(),  (*(elem->get_node(1))-_origin).norm());
-        
+
         // warn if rayfire elem is shorter than TOLERANCE
         if ( (start_point-end_point).norm() < libMesh::TOLERANCE)
           {

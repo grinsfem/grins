@@ -214,18 +214,18 @@ namespace GRINS
         // The wall destruction term
         libMesh::Real fw = this->_sa_params.destruction_fn(nu, (*distance_qp)(qp), S_tilde, _infinite_distance);
 
-	libMesh::Real nud = 0.0;
-	if(_infinite_distance)
-	{
-	  nud = 0.0;
-	}
-	else
-	{
-	  nud = nu/(*distance_qp)(qp);
-	}
+        libMesh::Real nud = 0.0;
+        if(_infinite_distance)
+          {
+            nud = 0.0;
+          }
+        else
+          {
+            nud = nu/(*distance_qp)(qp);
+          }
         libMesh::Real nud2 = nud*nud;
         libMesh::Real kappa2 = (this->_sa_params.get_kappa())*(this->_sa_params.get_kappa());
-	libMesh::Real cw1 = this->_sa_params.get_cb1()/kappa2 + (1.0 + this->_sa_params.get_cb2())/this->_sa_params.get_sigma();
+        libMesh::Real cw1 = this->_sa_params.get_cb1()/kappa2 + (1.0 + this->_sa_params.get_cb2())/this->_sa_params.get_sigma();
         libMesh::Real destruction_term = (cw1*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
 
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
@@ -313,8 +313,8 @@ namespace GRINS
 
   template<class Mu>
   void SpalartAllmaras<Mu>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
     const
   {
     ParameterUser::register_parameter(param_name, param_pointer);

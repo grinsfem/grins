@@ -62,15 +62,15 @@ namespace GRINS
   }
 
   SharedPtr<libMesh::UnstructuredMesh> SimulationBuilder::build_mesh
-    ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm)
+  ( const GetPot& input,
+    const libMesh::Parallel::Communicator &comm)
   {
     return (this->_mesh_builder)->build(input, comm);
   }
 
   SharedPtr<GRINS::Visualization> SimulationBuilder::build_vis
-    ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm)
+  ( const GetPot& input,
+    const libMesh::Parallel::Communicator &comm)
   {
     return (this->_vis_factory)->build(input, comm);
   }

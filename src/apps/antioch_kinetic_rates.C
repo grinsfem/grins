@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
                 << std::endl;
       libmesh_error();
     }
-    
+
   for( unsigned int s = 0; s < n_species; s++ )
     {
       Y[s] = input( "Conditions/mass_fractions", 0.0, s );
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 
   std::ofstream output;
   output.open( "omega_dot.dat", std::ios::trunc );
-  
+
   output << "# Species names" << std::endl;
   for( unsigned int s = 0; s < n_species; s++ )
     {
@@ -101,19 +101,19 @@ int main(int argc, char* argv[])
   output.close();
 
   while( T < T1 )
-    { 
+    {
       Antioch::TempCache<libMesh::Real> T_cache(T);
 
       libMesh::Real rho = p0/(R_mix*T);
 
       antioch_kinetics.omega_dot( T_cache, rho, Y, omega_dot );
-     
+
       output.open( "omega_dot.dat", std::ios::app );
       output << T << " ";
 
       for( unsigned int i = 0; i < n_species; i++ )
         {
-          output << std::scientific << std::setprecision(16) 
+          output << std::scientific << std::setprecision(16)
                  << omega_dot[i] << " ";
         }
 

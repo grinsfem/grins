@@ -91,7 +91,7 @@ namespace GRINS
   {
     return _transport;
   }
-  
+
 } // end namespace GRINS
 
 #endif // GRINS_GAS_MIXTURE_H

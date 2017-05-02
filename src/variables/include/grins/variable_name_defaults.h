@@ -35,15 +35,15 @@ namespace GRINS
     These are the default string names for all the available physics
     variables. These can be reset by the user, but we provide sane defaults
     here.
-   */
-  /** \todo Should we put the default physics variable names in a 
-            class instead of just GRINS namespace? */
+  */
+  /** \todo Should we put the default physics variable names in a
+      class instead of just GRINS namespace? */
   //! x-velocity
   const std::string u_var_name_default = "u";
-  
+
   //! y-velocity
   const std::string v_var_name_default = "v";
-  
+
   //! z-velocity
   const std::string w_var_name_default = "w";
 
@@ -64,13 +64,13 @@ namespace GRINS
 
   //! fan speed
   const std::string fan_speed_var_name_default = "fan_speed";
-  
+
   //! arbitrary scalar ODE variable name
   const std::string scalar_ode_var_name_default = "scalar_var";
-  
+
   //! Ex field
   const std::string Ex_var_name_default = "Ex";
-  
+
   //! Ey field
   const std::string Ey_var_name_default = "Ey";
 
@@ -79,7 +79,7 @@ namespace GRINS
 
   //! Bx field
   const std::string Bx_var_name_default = "Bx";
-  
+
   //! By field
   const std::string By_var_name_default = "By";
 
@@ -89,7 +89,7 @@ namespace GRINS
   const std::string u_disp_name_default = "u";
   const std::string v_disp_name_default = "v";
   const std::string w_disp_name_default = "w";
-  
+
 }
 
 #endif //VARIABLE_NAME_DEFAULTS_H
