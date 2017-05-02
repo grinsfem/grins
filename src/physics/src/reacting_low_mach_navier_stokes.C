@@ -158,14 +158,16 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_time_derivative( bool compute_jacobian,
-                                                                                AssemblyContext& context,
-                                                                                CachedValues& cache )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context,
+    CachedValues & /*cache*/ )
   {
     if( compute_jacobian )
-      {
-        libmesh_not_implemented();
-      }
+      libmesh_not_implemented();
+
+    const CachedValues & cache = context.get_cached_values();
+
     // Convenience
     const VariableIndex s0_var = this->_species_vars.species(0);
 
@@ -542,8 +544,10 @@ namespace GRINS
 
   template<typename Mixture, typename Evaluator>
   void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( AssemblyContext & context,
-                                                                                              CachedValues & cache )
+                                                                                              CachedValues & /*cache*/ )
   {
+    CachedValues & cache = context.get_cached_values();
+
     Evaluator gas_evaluator( this->_gas_mixture );
 
     const unsigned int n_qpoints = context.get_element_qrule().n_points();
