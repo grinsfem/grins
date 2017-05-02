@@ -307,7 +307,7 @@ namespace GRINS
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
-    CachedValues cache;
+    CachedValues & cache = c.get_cached_values();
 
     // Now compute cache for this element
     for( PhysicsListIter physics_iter = _physics_list.begin();
@@ -335,6 +335,8 @@ namespace GRINS
             ((*(physics_iter->second)).*resfunc)( compute_jacobian, c, cache );
           }
       }
+
+    cache.clear();
 
     // TODO: Need to think about the implications of this because there might be some
     // TODO: jacobian terms we don't want to compute for efficiency reasons
