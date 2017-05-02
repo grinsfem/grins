@@ -29,6 +29,9 @@
 // libMesh
 #include "libmesh/fem_context.h"
 
+// GRINS
+#include "grins/cached_values.h"
+
 namespace GRINS
 {
   class AssemblyContext : public libMesh::FEMContext
@@ -38,7 +41,15 @@ namespace GRINS
     AssemblyContext( const libMesh::System& system );
     ~AssemblyContext();
 
+    CachedValues & get_cached_values()
+    { return _cached_values; }
+
+    const CachedValues & get_cached_values() const
+    { return _cached_values; }
+
   protected:
+
+    CachedValues _cached_values;
 
   };
 
