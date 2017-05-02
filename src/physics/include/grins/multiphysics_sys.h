@@ -222,11 +222,11 @@ namespace GRINS
 
     // Useful typedef for refactoring
     typedef void (GRINS::Physics::*ResFuncType) (bool, AssemblyContext &, CachedValues &);
-    typedef void (GRINS::Physics::*CacheFuncType) (const AssemblyContext&, CachedValues &);
+    typedef void (GRINS::Physics::*CacheFuncType) (AssemblyContext &, CachedValues &);
 
     // Refactored residual evaluation implementation
     bool _general_residual( bool request_jacobian,
-                            libMesh::DiffContext& context,
+                            libMesh::DiffContext & context,
                             ResFuncType resfunc,
                             CacheFuncType cachefunc);
 

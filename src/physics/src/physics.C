@@ -132,60 +132,6 @@ namespace GRINS
     return;
   }
 
-  void Physics::compute_element_time_derivative_cache( const AssemblyContext&,
-                                                       CachedValues& )
-  {
-    return;
-  }
-
-  void Physics::compute_side_time_derivative_cache( const AssemblyContext& /*context*/,
-                                                    CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_nonlocal_time_derivative_cache( const AssemblyContext& /*context*/,
-                                                        CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_element_constraint_cache( const AssemblyContext& /*context*/,
-                                                  CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_side_constraint_cache( const AssemblyContext& /*context*/,
-                                               CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_nonlocal_constraint_cache( const AssemblyContext& /*context*/,
-                                                   CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_damping_residual_cache( const AssemblyContext& /*context*/,
-                                                CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_mass_residual_cache( const AssemblyContext& /*context*/,
-                                             CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_nonlocal_mass_residual_cache( const AssemblyContext& /*context*/,
-                                                      CachedValues& /*cache*/ )
-  {
-    return;
-  }
-
   void Physics::element_time_derivative( bool /*compute_jacobian*/,
                                          AssemblyContext& /*context*/,
                                          CachedValues& /*cache*/ )

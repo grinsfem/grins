@@ -541,8 +541,8 @@ namespace GRINS
   }
 
   template<typename Mixture, typename Evaluator>
-  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( const AssemblyContext& context,
-                                                                                              CachedValues& cache )
+  void ReactingLowMachNavierStokes<Mixture,Evaluator>::compute_element_time_derivative_cache( AssemblyContext & context,
+                                                                                              CachedValues & cache )
   {
     Evaluator gas_evaluator( this->_gas_mixture );
 

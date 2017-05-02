@@ -69,7 +69,7 @@ namespace GRINS
                                 AssemblyContext& context,
                                 CachedValues& cache );
 
-    virtual void compute_element_time_derivative_cache( const AssemblyContext& context,
+    virtual void compute_element_time_derivative_cache( AssemblyContext & context,
                                                         CachedValues& cache );
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,

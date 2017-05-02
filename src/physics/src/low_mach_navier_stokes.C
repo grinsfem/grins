@@ -1017,7 +1017,7 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( const AssemblyContext& context,
+  void LowMachNavierStokes<Mu,SH,TC>::compute_element_time_derivative_cache( AssemblyContext & context,
                                                                              CachedValues& cache )
   {
     const unsigned int n_qpoints = context.get_element_qrule().n_points();
