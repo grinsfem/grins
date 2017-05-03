@@ -32,6 +32,8 @@
 
 namespace GRINS
 {
+  class VelocityVariable;
+
   //! Vorticity QoI
   /*!
     This class implement a vorticity QoI that can be used to both compute
@@ -81,11 +83,7 @@ namespace GRINS
 
   protected:
 
-    //! u-velocity component variable index
-    VariableIndex _u_var;
-
-    //! v-velocity component variable index
-    VariableIndex _v_var;
+    const VelocityVariable * _flow_vars;
 
     //! List of sumdomain ids for which we want to compute this QoI
     std::set<libMesh::subdomain_id_type> _subdomain_ids;
