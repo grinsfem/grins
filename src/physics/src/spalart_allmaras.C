@@ -49,7 +49,7 @@ namespace GRINS
     : TurbulenceModelsBase<Mu>(physics_name, input), // Define class variables
     _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
     _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::press_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
-    _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,physics_name))),
+    _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turb_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
     _spalart_allmaras_helper(input),
     _sa_params(input),
     _no_of_walls(input("Physics/"+PhysicsNaming::spalart_allmaras()+"/no_of_walls", 0)),

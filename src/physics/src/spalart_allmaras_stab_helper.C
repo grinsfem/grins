@@ -47,7 +47,7 @@ namespace GRINS
       _tau_factor( input("Stabilization/tau_factor_vel", input("Stabilization/tau_factor", 0.5 ) ) ),
       _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_variable_name(input,PhysicsNaming::spalart_allmaras(),VariablesParsing::PHYSICS))),
       _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::press_variable_name(input,PhysicsNaming::spalart_allmaras(),VariablesParsing::PHYSICS))),
-      _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,PhysicsNaming::spalart_allmaras()))),
+      _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turb_variable_name(input,PhysicsNaming::spalart_allmaras(),VariablesParsing::PHYSICS))),
       _spalart_allmaras_helper(input),
       _sa_params(input)
   {
