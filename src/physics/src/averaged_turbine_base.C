@@ -46,7 +46,7 @@ namespace GRINS
     chord_function(""),
     area_swept_function(""),
     aoa_function(""),
-    _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<ScalarVariable>(VariablesParsing::physics_scalar_variable_name(input,physics_name)))
+    _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<ScalarVariable>(VariablesParsing::scalar_variable_name(input,physics_name,VariablesParsing::PHYSICS)))
   {
     this->read_input_options(input);
   }
