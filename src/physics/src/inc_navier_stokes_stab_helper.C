@@ -47,7 +47,7 @@ namespace GRINS
     : StabilizationHelper(helper_name),
       _C(1),
       _tau_factor(0.5),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,PhysicsNaming::incompressible_navier_stokes()))),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_variable_name(input,PhysicsNaming::incompressible_navier_stokes(),VariablesParsing::PHYSICS))),
       _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,PhysicsNaming::incompressible_navier_stokes())))
   {
     if (input.have_variable("Stabilization/tau_constant_vel"))

@@ -100,12 +100,13 @@ namespace GRINS
                                                       VariablesParsing::scalar_var_section(),
                                                       section_type); }
 
-    static std::string physics_velocity_variable_name( const GetPot& input, const std::string& physics_name )
+    static std::string velocity_variable_name( const GetPot& input, const std::string& subsection_name,
+                                               const SECTION_TYPE section_type )
     { return VariablesParsing::section_parse_var_name(input,
-                                                      physics_name,
+                                                      subsection_name,
                                                       "velocity_var_name",
                                                       VariablesParsing::velocity_section(),
-                                                      PHYSICS); }
+                                                      section_type); }
 
     static std::string physics_temp_variable_name( const GetPot& input, const std::string& physics_name )
     { return VariablesParsing::section_parse_var_name(input,
