@@ -67,7 +67,7 @@ namespace GRINS
     _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
     if( _enable_thermo_press_calc )
       {
-        _p0_var = &GRINSPrivate::VariableWarehouse::get_variable_subclass<ThermoPressureVariable>(VariablesParsing::physics_thermo_press_variable_name(input,physics_name));
+        _p0_var = &GRINSPrivate::VariableWarehouse::get_variable_subclass<ThermoPressureVariable>(VariablesParsing::thermo_press_variable_name(input,physics_name,VariablesParsing::PHYSICS));
         _p0_var->set_is_constraint_var(true);
       }
 
