@@ -82,7 +82,7 @@ namespace GRINS
     static std::string order_input_name( const std::string& subsection )
     { return VariablesParsing::variables_section()+"/"+subsection+"/order"; }
 
-    enum SECTION_TYPE { PHYSICS = 0 };
+    enum SECTION_TYPE { PHYSICS = 0, QOI };
 
     static std::string single_variable_name( const GetPot& input, const std::string& subsection_name,
                                              const SECTION_TYPE section_type )

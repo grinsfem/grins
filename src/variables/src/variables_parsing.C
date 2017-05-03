@@ -33,19 +33,23 @@ namespace GRINS
                                                         const std::string & default_var_name,
                                                         const SECTION_TYPE section_type )
   {
-    std::string var_name;
+    std::string header;
     switch(section_type)
       {
       case(PHYSICS):
         {
-          var_name = input("Physics/"+input_subsection_name+"/"+input_var_name, default_var_name );
+          header = "Physics";
+          break;
+        }
+      case(QOI):
+        {
+          header = "QoI";
           break;
         }
       default:
         libmesh_error_msg("ERROR: Invalid section value!");
-
       }
 
-    return var_name;
+    return input(header+"/"+input_subsection_name+"/"+input_var_name, default_var_name );
   }
 } // end namespace GRINS
