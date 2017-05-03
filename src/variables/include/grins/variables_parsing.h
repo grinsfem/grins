@@ -140,12 +140,13 @@ namespace GRINS
                                                       VariablesParsing::turbulence_section(),
                                                       section_type); }
 
-    static std::string physics_disp_variable_name( const GetPot& input, const std::string& physics_name )
+    static std::string disp_variable_name( const GetPot& input, const std::string& subsection_name,
+                                           const SECTION_TYPE section_type )
     { return VariablesParsing::section_parse_var_name(input,
-                                                      physics_name,
+                                                      subsection_name,
                                                       "displacement_var_name",
                                                       VariablesParsing::displacement_section(),
-                                                      PHYSICS); }
+                                                      section_type); }
 
     static std::string physics_species_mass_frac_variable_name( const GetPot& input,
                                                                 const std::string& physics_name )
