@@ -82,6 +82,8 @@ namespace GRINS
     static std::string order_input_name( const std::string& subsection )
     { return VariablesParsing::variables_section()+"/"+subsection+"/order"; }
 
+    enum SECTION_TYPE { PHYSICS = 0 };
+
     static std::string physics_single_variable_name( const GetPot& input, const std::string& physics_name )
     { return VariablesParsing::parse_physics_var_name(input,
                                                       physics_name,
@@ -150,6 +152,12 @@ namespace GRINS
                                               const std::string& var_name,
                                               const std::string& default_name )
     { return input( VariablesParsing::physics_var_name_input(physics_name,var_name), default_name ); }
+
+    static std::string section_parse_var_name( const GetPot & input,
+                                               const std::string & input_subsection_name,
+                                               const std::string & input_var_name,
+                                               const std::string & default_var_name,
+                                               const SECTION_TYPE section_type );
   };
 
 } // end namespace GRINS
