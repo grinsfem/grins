@@ -49,7 +49,7 @@ namespace GRINS
       _tau_factor(0.5),
       _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,PhysicsNaming::heat_transfer(),VariablesParsing::PHYSICS))),
       _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_variable_name(input,PhysicsNaming::heat_transfer(),VariablesParsing::PHYSICS))),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,PhysicsNaming::heat_transfer())))
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::press_variable_name(input,PhysicsNaming::heat_transfer(),VariablesParsing::PHYSICS)))
   {
     if (input.have_variable("Stabilization/tau_constant_T"))
       this->set_parameter

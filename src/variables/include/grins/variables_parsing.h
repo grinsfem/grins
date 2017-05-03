@@ -116,12 +116,13 @@ namespace GRINS
                                                       VariablesParsing::temperature_section(),
                                                       section_type); }
 
-    static std::string physics_press_variable_name( const GetPot& input, const std::string& physics_name )
+    static std::string press_variable_name( const GetPot& input, const std::string& subsection_name,
+                                            const SECTION_TYPE section_type )
     { return VariablesParsing::section_parse_var_name(input,
-                                                      physics_name,
+                                                      subsection_name,
                                                       "pressure_var_name",
                                                       VariablesParsing::pressure_section(),
-                                                      PHYSICS); }
+                                                      section_type); }
 
     static std::string physics_thermo_press_variable_name( const GetPot& input, const std::string& physics_name )
     { return VariablesParsing::section_parse_var_name(input,
