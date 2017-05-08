@@ -51,12 +51,10 @@ namespace GRINS
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+                                          AssemblyContext& context );
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext& context,
-                                CachedValues& cache );
+                                AssemblyContext & context );
 
     // Registers all parameters in this physics and in its property
     // classes

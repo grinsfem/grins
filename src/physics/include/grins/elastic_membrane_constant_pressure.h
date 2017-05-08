@@ -41,8 +41,7 @@ namespace GRINS
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+                                          AssemblyContext& context );
 
     void reset_pressure( libMesh::Real pressure_in );
 

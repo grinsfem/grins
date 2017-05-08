@@ -51,14 +51,8 @@ namespace GRINS
        "Physics/"+physics_name+"/Function/value", _value);
   }
 
-  ConstantSourceTerm::~ConstantSourceTerm()
-  {
-    return;
-  }
-
-  void ConstantSourceTerm::element_time_derivative( bool /*compute_jacobian*/,
-                                                    AssemblyContext& context,
-                                                    CachedValues& /*cache*/ )
+  void ConstantSourceTerm::element_time_derivative
+  ( bool /*compute_jacobian*/, AssemblyContext & context )
   {
     for( std::vector<VariableIndex>::const_iterator v_it = _vars.begin();
          v_it != _vars.end(); ++v_it )

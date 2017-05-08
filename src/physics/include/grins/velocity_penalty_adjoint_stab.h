@@ -50,12 +50,10 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+                                          AssemblyContext& context );
 
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext& context,
-                                     CachedValues& cache );
+                                     AssemblyContext & context );
 
   protected:
 

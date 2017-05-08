@@ -54,7 +54,7 @@ namespace GRINS
   }
 
   template<class Mu>
-  void BoussinesqBuoyancyAdjointStabilization<Mu>::init_context( AssemblyContext& context )
+  void BoussinesqBuoyancyAdjointStabilization<Mu>::init_context( AssemblyContext & context )
   {
     context.get_element_fe(this->_press_var.p())->get_dphi();
 
@@ -65,9 +65,8 @@ namespace GRINS
   }
 
   template<class Mu>
-  void BoussinesqBuoyancyAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
-                                                                            AssemblyContext& context,
-                                                                            CachedValues& /*cache*/ )
+  void BoussinesqBuoyancyAdjointStabilization<Mu>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u()).size();
@@ -246,9 +245,8 @@ namespace GRINS
   }
 
   template<class Mu>
-  void BoussinesqBuoyancyAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                       AssemblyContext& context,
-                                                                       CachedValues& /*cache*/ )
+  void BoussinesqBuoyancyAdjointStabilization<Mu>::element_constraint
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(_press_var.p()).size();

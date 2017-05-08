@@ -71,12 +71,12 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     // Element time derivative
-    virtual void element_time_derivative(bool compute_jacobian, AssemblyContext& context, CachedValues& /*cache*/);
+    virtual void element_time_derivative( bool compute_jacobian,
+                                          AssemblyContext & context );
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext& context,
-                                CachedValues& cache );
+                                AssemblyContext & context );
 
     // A distance function to get distances from boundaries to qps
     libMesh::UniquePtr<DistanceFunction> distance_function;

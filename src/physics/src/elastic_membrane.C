@@ -113,9 +113,8 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::element_time_derivative( bool compute_jacobian,
-                                                                  AssemblyContext& context,
-                                                                  CachedValues& /*cache*/ )
+  void ElasticMembrane<StressStrainLaw>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     const unsigned int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
 
@@ -310,9 +309,8 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticMembrane<StressStrainLaw>::element_constraint( bool compute_jacobian,
-                                                             AssemblyContext& context,
-                                                             CachedValues& /*cache*/ )
+  void ElasticMembrane<StressStrainLaw>::element_constraint
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // Only compute the constraint is tracking lambda_sq as an independent variable
     if( this->_is_compressible )

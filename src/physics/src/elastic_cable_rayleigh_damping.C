@@ -62,9 +62,8 @@ namespace GRINS
   }
 
   template<typename StressStrainLaw>
-  void ElasticCableRayleighDamping<StressStrainLaw>::damping_residual( bool compute_jacobian,
-                                                                       AssemblyContext& context,
-                                                                       CachedValues& /*cache*/)
+  void ElasticCableRayleighDamping<StressStrainLaw>::damping_residual
+  ( bool compute_jacobian, AssemblyContext & context)
   {
     // First, do the "mass" contribution
     this->mass_residual_impl(compute_jacobian,

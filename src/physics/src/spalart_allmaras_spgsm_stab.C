@@ -63,9 +63,9 @@ namespace GRINS
   }
 
   template<class Mu>
-  void SpalartAllmarasSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
-                                                                       AssemblyContext& context,
-                                                                       CachedValues& /*cache*/ )
+  void SpalartAllmarasSPGSMStabilization<Mu>::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // Get a pointer to the current element, we need this for computing the distance to wall for the
     // quadrature points
@@ -147,9 +147,8 @@ namespace GRINS
   }
 
   template<class Mu>
-  void SpalartAllmarasSPGSMStabilization<Mu>::mass_residual( bool compute_jacobian,
-                                                             AssemblyContext& context,
-                                                             CachedValues& /*cache*/ )
+  void SpalartAllmarasSPGSMStabilization<Mu>::mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // Get a pointer to the current element, we need this for computing the distance to wall for the
     // quadrature points

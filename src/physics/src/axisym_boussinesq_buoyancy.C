@@ -76,9 +76,9 @@ namespace GRINS
     context.get_element_fe(_temp_vars.T())->get_phi();
   }
 
-  void AxisymmetricBoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,
-                                                                AssemblyContext& context,
-                                                                CachedValues& /*cache*/ )
+  void AxisymmetricBoussinesqBuoyancy::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u()).size();

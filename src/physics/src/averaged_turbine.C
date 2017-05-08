@@ -54,9 +54,8 @@ namespace GRINS
 
 
   template<class Mu>
-  void AveragedTurbine<Mu>::element_time_derivative( bool compute_jacobian,
-                                                     AssemblyContext& context,
-                                                     CachedValues& /* cache */ )
+  void AveragedTurbine<Mu>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // Element Jacobian * quadrature weights for interior integration
     const std::vector<libMesh::Real> &JxW =
@@ -226,9 +225,8 @@ namespace GRINS
 
 
   template<class Mu>
-  void AveragedTurbine<Mu>::nonlocal_time_derivative(bool compute_jacobian,
-                                                     AssemblyContext& context,
-                                                     CachedValues& /* cache */ )
+  void AveragedTurbine<Mu>::nonlocal_time_derivative
+  (bool compute_jacobian, AssemblyContext & context )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
       context.get_elem_jacobian(this->fan_speed_var(), this->fan_speed_var()); // R_{s},{s}
@@ -264,9 +262,8 @@ namespace GRINS
 
 
   template<class Mu>
-  void AveragedTurbine<Mu>::nonlocal_mass_residual( bool compute_jacobian,
-                                                    AssemblyContext& context,
-                                                    CachedValues& /* cache */ )
+  void AveragedTurbine<Mu>::nonlocal_mass_residual
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     libMesh::DenseSubMatrix<libMesh::Number> &Kss =
       context.get_elem_jacobian(this->fan_speed_var(), this->fan_speed_var()); // R_{s},{s}

@@ -42,8 +42,7 @@ namespace GRINS
 
     //! Time dependent part(s) of physics for element interiors
     virtual void damping_residual( bool compute_jacobian,
-                                   AssemblyContext& context,
-                                   CachedValues& /*cache*/ );
+                                   AssemblyContext & context );
 
   protected:
 

@@ -65,8 +65,7 @@ namespace GRINS
   template<class Mu>
   void VelocityDragAdjointStabilization<Mu>::element_time_derivative
   ( bool compute_jacobian,
-    AssemblyContext& context,
-    CachedValues& /* cache */ )
+    AssemblyContext & context )
   {
     libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
@@ -224,9 +223,8 @@ namespace GRINS
   }
 
   template<class Mu>
-  void VelocityDragAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
-                                                                 AssemblyContext& context,
-                                                                 CachedValues& /*cache*/ )
+  void VelocityDragAdjointStabilization<Mu>::element_constraint
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();

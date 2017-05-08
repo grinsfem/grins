@@ -49,9 +49,9 @@ namespace GRINS
     return;
   }
 
-  void BoussinesqBuoyancy::element_time_derivative( bool compute_jacobian,
-                                                    AssemblyContext& context,
-                                                    CachedValues& /*cache*/ )
+  void BoussinesqBuoyancy::element_time_derivative
+  ( bool compute_jacobian,
+    AssemblyContext & context )
   {
     // The number of local degrees of freedom in each variable.
     const unsigned int n_u_dofs = context.get_dof_indices(_flow_vars.u()).size();

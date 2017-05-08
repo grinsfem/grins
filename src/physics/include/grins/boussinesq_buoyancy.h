@@ -58,8 +58,7 @@ namespace GRINS
       the IncompressibleNavierStokes class.
     */
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+                                          AssemblyContext& context );
 
   private:
 

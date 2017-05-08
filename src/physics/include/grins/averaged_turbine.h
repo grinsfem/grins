@@ -57,25 +57,22 @@ namespace GRINS
 
     ~AveragedTurbine(){};
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext & context );
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Constraint part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+                                          AssemblyContext & context );
 
     // Mass residual of the turbine itself
     virtual void nonlocal_mass_residual ( bool compute_jacobian,
-                                          AssemblyContext& context,
-                                          CachedValues& cache );
+                                          AssemblyContext & context );
 
     // External torque powering the fan or loading the turbine
     virtual void nonlocal_time_derivative ( bool compute_jacobian,
-                                            AssemblyContext& context,
-                                            CachedValues& cache );
+                                            AssemblyContext & context );
 
   private:
 
