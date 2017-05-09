@@ -49,6 +49,8 @@ namespace GRINS
       and worry about memory management. */
     virtual CatalycityBase* clone() const;
 
+    virtual void set_parameters(const GetPot & input, const std::string & param_base);
+
   protected:
 
     libMesh::Real _gamma;

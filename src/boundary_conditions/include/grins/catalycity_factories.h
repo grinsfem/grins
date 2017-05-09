@@ -51,13 +51,16 @@ namespace GRINS
     virtual libMesh::UniquePtr<CatalycityBase>
     build_catalycity( const GetPot& input, const std::string& section )
     {
-      std::string gamma_str = section+"/ConstantCatalycity/gamma";
+      std::string param_base = section+"/ConstantCatalycity/";
 
+      std::string gamma_str = param_base+"gamma";
       if( !input.have_variable(gamma_str) )
         libmesh_error_msg("ERROR: Could not find input "+gamma_str+" for ConstantCatalycity!\n");
 
       libMesh::Real gamma = input(gamma_str, std::numeric_limits<libMesh::Real>::max());
-      return libMesh::UniquePtr<CatalycityBase>( new ConstantCatalycity( gamma ) );
+      libMesh::UniquePtr<CatalycityBase> catalycity( new ConstantCatalycity( gamma ) );
+      catalycity->set_parameters(input,param_base);
+      return catalycity;
     }
 
   };
@@ -78,18 +81,22 @@ namespace GRINS
     virtual libMesh::UniquePtr<CatalycityBase>
     build_catalycity( const GetPot& input, const std::string& section )
     {
-      std::string gamma_str = section+"/ArrheniusCatalycity/gamma0";
+      std::string param_base = section+"/ArrheniusCatalycity/";
+
+      std::string gamma_str = param_base+"gamma0";
       if( !input.have_variable(gamma_str) )
         libmesh_error_msg("ERROR: Could not find input "+gamma_str+" for ArrheniusCatalycity!\n");
 
-      std::string Ta_str = section+"/ArrheniusCatalycity/Ta";
+      std::string Ta_str = param_base+"Ta";
       if( !input.have_variable(Ta_str) )
         libmesh_error_msg("ERROR: Could not find input "+Ta_str+" for ArrheniusCatalycity!\n");
 
       libMesh::Real gamma = input(gamma_str, std::numeric_limits<libMesh::Real>::max());
       libMesh::Real Ta = input(Ta_str, std::numeric_limits<libMesh::Real>::max());
 
-      return libMesh::UniquePtr<CatalycityBase>( new ArrheniusCatalycity( gamma, Ta ) );
+      libMesh::UniquePtr<CatalycityBase> catalycity( new ArrheniusCatalycity( gamma, Ta ) );
+      catalycity->set_parameters(input,param_base);
+      return catalycity;
     }
 
   };
@@ -109,15 +116,17 @@ namespace GRINS
     virtual libMesh::UniquePtr<CatalycityBase>
     build_catalycity( const GetPot& input, const std::string& section )
     {
-      std::string gamma_str = section+"/PowerLawCatalycity/gamma0";
+      std::string param_base = section+"/PowerLawCatalycity/";
+
+      std::string gamma_str = param_base+"gamma0";
       if( !input.have_variable(gamma_str) )
         libmesh_error_msg("ERROR: Could not find input "+gamma_str+" for ArrheniusCatalycity!\n");
 
-      std::string Tref_str = section+"/PowerLawCatalycity/Tref";
+      std::string Tref_str = param_base+"Tref";
       if( !input.have_variable(Tref_str) )
         libmesh_error_msg("ERROR: Could not find input "+Tref_str+" for PowerLawCatalycity!\n");
 
-      std::string alpha_str = section+"/PowerLawCatalycity/alpha";
+      std::string alpha_str = param_base+"alpha";
       if( !input.have_variable(alpha_str) )
         libmesh_error_msg("ERROR: Could not find input "+alpha_str+" for PowerLawCatalycity!\n");
 
@@ -125,7 +134,9 @@ namespace GRINS
       libMesh::Real Tref = input(Tref_str, std::numeric_limits<libMesh::Real>::max());
       libMesh::Real alpha = input(alpha_str, std::numeric_limits<libMesh::Real>::max());
 
-      return libMesh::UniquePtr<CatalycityBase>( new PowerLawCatalycity( gamma, Tref, alpha ) );
+      libMesh::UniquePtr<CatalycityBase> catalycity( new PowerLawCatalycity( gamma, Tref, alpha ) );
+      catalycity->set_parameters(input,param_base);
+      return catalycity;
     }
 
   };

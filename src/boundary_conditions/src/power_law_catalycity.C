@@ -73,4 +73,16 @@ namespace GRINS
     return new PowerLawCatalycity( *this );
   }
 
+  void PowerLawCatalycity::set_parameters(const GetPot & input, const std::string & param_base)
+  {
+    std::string gamma0_str = param_base+"gamma0";
+    this->set_parameter(_gamma0,input,gamma0_str,_gamma0);
+
+    std::string Tref_str = param_base+"Tref";
+    this->set_parameter(_Tref,input,Tref_str,_Tref);
+
+    std::string alpha_str = param_base+"alpha";
+    this->set_parameter(_alpha,input,alpha_str,_alpha);
+  }
+
 } // end namespace GRINS

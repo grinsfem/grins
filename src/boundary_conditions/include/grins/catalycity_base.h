@@ -28,12 +28,15 @@
 // C++
 #include <vector>
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/libmesh_common.h"
 
 namespace GRINS
 {
-  class CatalycityBase
+  class CatalycityBase : public ParameterUser
   {
   public:
 
@@ -51,6 +54,9 @@ namespace GRINS
     /*! A raw pointer is returned and it is assumed the user will take ownership
       and worry about memory management. */
     virtual CatalycityBase* clone() const = 0;
+
+    //! Sets parameters for use in sensitivity analysis
+    virtual void set_parameters(const GetPot & input, const std::string & param_base) =0;
 
   };
 
