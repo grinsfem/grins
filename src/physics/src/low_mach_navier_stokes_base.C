@@ -49,9 +49,9 @@ namespace GRINS
                                                              const std::string& core_physics_name,
                                                              const GetPot& input)
     : Physics(physics_name, input),
-      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::physics_velocity_variable_name(input,core_physics_name))),
-      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::physics_press_variable_name(input,core_physics_name))),
-      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::physics_temp_variable_name(input,core_physics_name))),
+      _flow_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<VelocityVariable>(VariablesParsing::velocity_variable_name(input,core_physics_name,VariablesParsing::PHYSICS))),
+      _press_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>(VariablesParsing::press_variable_name(input,core_physics_name,VariablesParsing::PHYSICS))),
+      _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,core_physics_name,VariablesParsing::PHYSICS))),
       _p0_var(NULL),
       _mu(input,MaterialsParsing::material_name(input,core_physics_name)),
       _cp(input,MaterialsParsing::material_name(input,core_physics_name)),
@@ -62,7 +62,7 @@ namespace GRINS
     _enable_thermo_press_calc = input("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/enable_thermo_press_calc", false );
     if( _enable_thermo_press_calc )
       {
-        _p0_var = &GRINSPrivate::VariableWarehouse::get_variable_subclass<ThermoPressureVariable>(VariablesParsing::physics_thermo_press_variable_name(input,core_physics_name));
+        _p0_var = &GRINSPrivate::VariableWarehouse::get_variable_subclass<ThermoPressureVariable>(VariablesParsing::thermo_press_variable_name(input,core_physics_name,VariablesParsing::PHYSICS));
         _p0_var->set_is_constraint_var(true);
       }
 

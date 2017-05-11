@@ -36,7 +36,7 @@ namespace GRINS
   SpalartAllmarasViscosity<Mu>::SpalartAllmarasViscosity( const GetPot& input )
     : ParameterUser("SpalartAllmarasViscosity"),
       _mu(input),
-      _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,PhysicsNaming::spalart_allmaras()))),
+      _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turb_variable_name(input,PhysicsNaming::spalart_allmaras(),VariablesParsing::PHYSICS))),
       _sa_params(input)
   {
     // Warning about this constructor being deprecated
@@ -59,7 +59,7 @@ namespace GRINS
   SpalartAllmarasViscosity<Mu>::SpalartAllmarasViscosity( const GetPot& input, const std::string& material ):
     ParameterUser("SpalartAllmarasViscosity"),
     _mu(input,material),
-    _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::physics_turb_variable_name(input,PhysicsNaming::spalart_allmaras()))),
+    _turbulence_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<TurbulenceFEVariables>(VariablesParsing::turb_variable_name(input,PhysicsNaming::spalart_allmaras(),VariablesParsing::PHYSICS))),
     _sa_params(input)
   {}
 

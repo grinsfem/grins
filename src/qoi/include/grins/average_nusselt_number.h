@@ -32,6 +32,8 @@
 
 namespace GRINS
 {
+  class PrimitiveTempFEVariables;
+
   class AverageNusseltNumber : public QoIBase
   {
   public:
@@ -65,8 +67,7 @@ namespace GRINS
     //! Thermal conductivity
     libMesh::Real _k;
 
-    //! Temperature variable index
-    VariableIndex _T_var;
+    const PrimitiveTempFEVariables * _temp_vars;
 
     //! List of boundary ids for which we want to compute this QoI
     std::set<libMesh::boundary_id_type> _bc_ids;

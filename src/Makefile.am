@@ -224,6 +224,7 @@ libgrins_la_SOURCES += strategies/src/adaptive_time_stepping_options.C
 libgrins_la_SOURCES += strategies/src/mesh_adaptivity_options.C
 
 #src/variables
+libgrins_la_SOURCES += variables/src/variables_parsing.C
 libgrins_la_SOURCES += variables/src/variable_warehouse.C
 libgrins_la_SOURCES += variables/src/variable_factory.C
 libgrins_la_SOURCES += variables/src/variable_builder.C
