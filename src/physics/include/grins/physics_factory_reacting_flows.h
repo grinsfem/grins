@@ -29,6 +29,8 @@
 #include "grins/physics_factory_with_core.h"
 #include "grins/antioch_mixture_averaged_transport_mixture.h"
 #include "grins/antioch_mixture_averaged_transport_evaluator.h"
+#include "grins/antioch_constant_transport_mixture.h"
+#include "grins/antioch_constant_transport_evaluator.h"
 
 namespace GRINS
 {
@@ -58,6 +60,11 @@ namespace GRINS
                                   const std::string & thermo_model, const std::string & diffusivity_model,
                                   const std::string & conductivity_model, const std::string & viscosity_model,
                                   libMesh::UniquePtr<Physics> & new_physics );
+
+    void build_const_physics( const GetPot & input, const std::string & physics_name,
+                              const std::string & thermo_model, const std::string & diffusivity_model,
+                              const std::string & conductivity_model, const std::string & viscosity_model,
+                              libMesh::UniquePtr<Physics> & new_physics );
 
     template<typename KineticsThermo,typename Thermo>
     void build_mix_avged_physics_with_thermo( const GetPot & input, const std::string & physics_name,
@@ -104,12 +111,46 @@ namespace GRINS
       this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model);
     }
 
+    template<typename KineticsThermo,typename Thermo>
+    void build_const_physics_with_thermo( const GetPot & input, const std::string & physics_name,
+                                          const std::string & conductivity_model,
+                                          libMesh::UniquePtr<Physics> & new_physics )
+    {
+      if( conductivity_model == std::string("constant") )
+        {
+          this->build_const_physics_ptr<KineticsThermo,Thermo,ConstantConductivity>
+            (input,physics_name,new_physics);
+        }
+      else if( conductivity_model == std::string("constant_prandtl") )
+        {
+          this->build_const_physics_ptr<KineticsThermo,Thermo,ConstantPrandtlConductivity>
+            (input,physics_name,new_physics);
+        }
+      else
+        {
+          std::string error = "ERROR: Invalid conductivity model for constant transport!\n";
+          error += "       Valid choices are constant\n";
+          error += "                         constant_prandtl\n";
+
+          libmesh_error_msg(error);
+        }
+    }
+
     template<typename KineticsThermo,typename Thermo,typename Viscosity,typename Conductivity,typename Diffusivity>
     void build_mix_avged_physics_ptr( const GetPot& input, const std::string& physics_name,
                                       libMesh::UniquePtr<Physics> & new_physics )
     {
       new_physics.reset(new DerivedPhysics<AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>,
                                            AntiochMixtureAveragedTransportEvaluator<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
+                        (physics_name,input) );
+    }
+
+    template<typename KineticsThermo,typename Thermo,typename Conductivity>
+    void build_const_physics_ptr( const GetPot& input, const std::string& physics_name,
+                                  libMesh::UniquePtr<Physics> & new_physics )
+    {
+      new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<KineticsThermo,Conductivity>,
+                                           AntiochConstantTransportEvaluator<KineticsThermo,Thermo,Conductivity> >
                         (physics_name,input) );
     }
 

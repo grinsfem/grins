@@ -5,8 +5,6 @@
 #include "grins/physics_factory_helper.h"
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_evaluator.h"
-#include "grins/antioch_constant_transport_mixture.h"
-#include "grins/antioch_constant_transport_evaluator.h"
 
 // Antioch
 #ifdef GRINS_HAVE_ANTIOCH
@@ -74,42 +72,8 @@ namespace GRINS
 
         else if( transport_model == std::string("constant") )
           {
-            if( viscosity_model != std::string("constant") )
-              libmesh_error_msg("Error: For constant transport_model, viscosity model must be constant!");
-
-            if( diffusivity_model != std::string("constant_lewis") )
-              libmesh_error_msg("Error: For constant transport_model, diffusivity model must be constant_lewis!");
-
-            if( (thermo_model == std::string("stat_mech")) &&
-                (conductivity_model == std::string("constant")) )
-              {
-                new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,ConstantConductivity>,
-                                                     AntiochConstantTransportEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real>, ConstantConductivity> >
-                                  (physics_name,input) );
-              }
-            else if( (thermo_model == std::string("cea")) &&
-                     (conductivity_model == std::string("constant")) )
-              {
-                new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,ConstantConductivity>,
-                                                     AntiochConstantTransportEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >, ConstantConductivity> >
-                                  (physics_name,input) );
-              }
-            else if( (thermo_model == std::string("stat_mech")) &&
-                     (conductivity_model == std::string("constant_prandtl")) )
-              {
-                new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,ConstantPrandtlConductivity>,
-                                                     AntiochConstantTransportEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real>, ConstantPrandtlConductivity> >
-                                  (physics_name,input) );
-              }
-            else if( (thermo_model == std::string("cea")) &&
-                     (conductivity_model == std::string("constant_prandtl")) )
-              {
-                new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,ConstantPrandtlConductivity>,
-                                                     AntiochConstantTransportEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >, ConstantPrandtlConductivity> >
-                                  (physics_name,input) );
-              }
-            else
-              this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model);
+            this->build_const_physics( input, physics_name, thermo_model, diffusivity_model,
+                                       conductivity_model, viscosity_model, new_physics );
           }
         else // transport_model
           {
@@ -170,6 +134,37 @@ namespace GRINS
         error += "       Valid values are: stat_mech\n";
         error += "       Valid values are: cea\n";
       }
+  }
+
+  template<template<typename,typename> class DerivedPhysics>
+  void PhysicsFactoryReactingFlows<DerivedPhysics>::
+  build_const_physics( const GetPot & input, const std::string & physics_name,
+                       const std::string & thermo_model, const std::string & diffusivity_model,
+                       const std::string & conductivity_model, const std::string & viscosity_model,
+                       libMesh::UniquePtr<Physics> & new_physics )
+  {
+    // First check the things we must have for constant transport models
+    if( viscosity_model != std::string("constant") )
+      libmesh_error_msg("Error: For constant transport_model, viscosity model must be constant!");
+
+    if( diffusivity_model != std::string("constant_lewis") )
+      libmesh_error_msg("Error: For constant transport_model, diffusivity model must be constant_lewis!");
+
+
+    if( thermo_model == std::string("stat_mech") )
+      {
+        this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
+                                              Antioch::StatMechThermodynamics<libMesh::Real> >
+          (input,physics_name,conductivity_model,new_physics);
+      }
+    else if( thermo_model == std::string("cea") )
+      {
+        this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
+                                              Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > >
+          (input,physics_name,conductivity_model,new_physics);
+       }
+    else
+      this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model);
   }
 
   template<template<typename,typename> class DerivedPhysics>
