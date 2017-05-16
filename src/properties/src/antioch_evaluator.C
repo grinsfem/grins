@@ -60,12 +60,33 @@ namespace GRINS
   }
 
   template<>
-  libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::cp( const libMesh::Real& T,
-                                                                             const libMesh::Real /*P*/,
-                                                                             const std::vector<libMesh::Real>& Y )
+  libMesh::Real
+  AntiochEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
+  cp( const libMesh::Real& T,
+      const libMesh::Real /*P*/,
+      const std::vector<libMesh::Real>& Y )
   {
     this->check_and_reset_temp_cache(T);
-    return _thermo->cp( *(_temp_cache.get()), Y );
+    return this->_cea_evaluator->cp( *(_temp_cache.get()), Y );
+  }
+
+  template<>
+  libMesh::Real AntiochEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
+  cv( const libMesh::Real& T,
+      const libMesh::Real /*P*/,
+      const std::vector<libMesh::Real>& Y )
+  {
+    this->check_and_reset_temp_cache(T);
+    return this->_cea_evaluator->cv( *(_temp_cache.get()), Y );
+  }
+
+  template<>
+  libMesh::Real AntiochEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
+  h_s( const libMesh::Real& T, unsigned int species )
+  {
+    this->check_and_reset_temp_cache(T);
+
+    return this->_cea_evaluator->h( *(_temp_cache.get()), species );;
   }
 
   template<>
@@ -73,16 +94,7 @@ namespace GRINS
                                                                                        const libMesh::Real /*P*/,
                                                                                        const std::vector<libMesh::Real>& Y )
   {
-    return _thermo->cp( T, T, Y );
-  }
-
-  template<>
-  libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::cv( const libMesh::Real& T,
-                                                                             const libMesh::Real /*P*/,
-                                                                             const std::vector<libMesh::Real>& Y )
-  {
-    this->check_and_reset_temp_cache(T);
-    return _thermo->cv( *(_temp_cache.get()), Y );
+    return this->_thermo->cp( T, T, Y );
   }
 
   template<>
@@ -90,21 +102,13 @@ namespace GRINS
                                                                                        const libMesh::Real /*P*/,
                                                                                        const std::vector<libMesh::Real>& Y )
   {
-    return _thermo->cv( T, T, Y );
-  }
-
-  template<>
-  libMesh::Real AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> >::h_s( const libMesh::Real& T, unsigned int species )
-  {
-    this->check_and_reset_temp_cache(T);
-
-    return _thermo->h( *(_temp_cache.get()), species );;
+    return this->_thermo->cv( T, T, Y );
   }
 
   template<>
   libMesh::Real AntiochEvaluator<Antioch::StatMechThermodynamics<libMesh::Real> >::h_s( const libMesh::Real& T, unsigned int species )
   {
-    return _thermo->h_tot( species, T ) + _chem.h_stat_mech_ref_correction(species);
+    return this->_thermo->h_tot( species, T ) + _chem.h_stat_mech_ref_correction(species);
   }
 
 } // end namespace GRINS

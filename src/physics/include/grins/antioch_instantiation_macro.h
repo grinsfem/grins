@@ -37,6 +37,14 @@
   template class GRINS::class_name<Antioch::StatMechThermodynamics<libMesh::Real>, \
                                    Antioch::BlottnerViscosity<libMesh::Real>, \
                                    Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >, \
+                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >; \
+  template class GRINS::class_name<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>, \
+                                   Antioch::SutherlandViscosity<libMesh::Real>, \
+                                   Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >, \
+                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >; \
+  template class GRINS::class_name<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>, \
+                                   Antioch::BlottnerViscosity<libMesh::Real>, \
+                                   Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >, \
                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >
 
 
@@ -45,6 +53,10 @@
   template class GRINS::class_name<Antioch::StatMechThermodynamics<libMesh::Real>, \
                                    Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
                                    Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real>, \
+                                   Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >; \
+  template class GRINS::class_name<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>, \
+                                   Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
+                                   Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >,libMesh::Real>, \
                                    Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >
 #endif // ANTIOCH_HAVE_GSL
 

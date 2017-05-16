@@ -42,7 +42,9 @@
 // Antioch
 #include "antioch/vector_utils_decl.h"
 #include "antioch/vector_utils.h"
-#include "antioch/cea_evaluator.h"
+#include "antioch/cea_curve_fit.h"
+#include "antioch/nasa_evaluator.h"
+#include "antioch/ideal_gas_micro_thermo.h"
 #include "antioch/stat_mech_thermo.h"
 #include "antioch/mixture_averaged_transport_mixture.h"
 #include "antioch/mixture_viscosity.h"
@@ -106,6 +108,9 @@ namespace GRINS
 
     libMesh::UniquePtr<Thermo> _thermo;
 
+    //! For some Thermo types, we also need to cache a NASAEvaluator.
+    libMesh::UniquePtr<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > _cea_evaluator;
+
     libMesh::UniquePtr<Antioch::MixtureViscosity<Viscosity,libMesh::Real> > _viscosity;
 
     libMesh::UniquePtr<Antioch::MixtureConductivity<Conductivity,libMesh::Real> > _conductivity;
@@ -137,15 +142,14 @@ namespace GRINS
                                    thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
     {
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( *(this->_antioch_gas.get()) ) );
-      return;
     }
 
     void specialized_build_thermo( const GetPot& /*input*/,
-                                   libMesh::UniquePtr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
-                                   thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
+                                   libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >& thermo,
+                                   thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > )
     {
-      thermo.reset( new Antioch::CEAEvaluator<libMesh::Real>( this->cea_mixture() ) );
-      return;
+      _cea_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >(this->cea_mixture()) );
+      thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>( *_cea_evaluator, *(this->_antioch_gas.get()) ) );
     }
 
     void specialized_build_viscosity( const GetPot& input,

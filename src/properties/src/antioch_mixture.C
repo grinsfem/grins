@@ -40,7 +40,7 @@
 
 // Antioch
 #include "antioch/read_reaction_set_data.h"
-#include "antioch/cea_mixture_ascii_parsing.h"
+#include "antioch/nasa_mixture_parsing.h"
 #include "antioch/stat_mech_thermo.h"
 
 namespace GRINS
@@ -49,7 +49,7 @@ namespace GRINS
                                   const std::string& material )
     : AntiochChemistry(input,material),
       _reaction_set( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) ),
-      _cea_mixture( new Antioch::CEAThermoMixture<libMesh::Real>( (*_antioch_gas.get()) ) ),
+      _cea_mixture( new Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >( (*_antioch_gas.get()) ) ),
       _minimum_T( input( "Materials/"+material+"/GasMixture/Antioch/minimum_T", -std::numeric_limits<libMesh::Real>::max() ) ),
       _clip_negative_rho( input( "Materials/"+material+"/GasMixture/Antioch/clip_negative_rho", false) )
   {
@@ -63,7 +63,7 @@ namespace GRINS
     if( cea_data_filename == std::string("default") )
       cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
 
-    Antioch::read_cea_mixture_data_ascii( *_cea_mixture.get(), cea_data_filename );
+    Antioch::read_nasa_mixture_data( *_cea_mixture.get(), cea_data_filename, Antioch::ASCII, true );
 
     this->build_stat_mech_ref_correction();
   }

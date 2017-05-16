@@ -78,7 +78,7 @@ namespace GRINS
 
     Antioch::KineticsEvaluator<libMesh::Real> _antioch_kinetics;
 
-    Antioch::CEAEvaluator<libMesh::Real> _antioch_cea_thermo;
+    Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > _antioch_cea_thermo;
 
   private:
 

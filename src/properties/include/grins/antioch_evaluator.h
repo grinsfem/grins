@@ -40,6 +40,7 @@
 #include "antioch/temp_cache.h"
 #include "antioch/cea_evaluator.h"
 #include "antioch/stat_mech_thermo.h"
+#include "antioch/ideal_gas_micro_thermo.h"
 
 namespace GRINS
 {
@@ -71,8 +72,8 @@ namespace GRINS
 
     libMesh::Real X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const;
 
-    void X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
-            std::vector<libMesh::Real>& mole_fractions ) const;
+    void X( libMesh::Real M, const std::vector<libMesh::Real> & mass_fractions,
+            std::vector<libMesh::Real> & mole_fractions ) const;
 
     unsigned int species_index( const std::string& species_name ) const;
 
@@ -94,8 +95,11 @@ namespace GRINS
 
     const AntiochMixture& _chem;
 
-    // This is a template type
+    //! Primary thermo object.
     libMesh::UniquePtr<Thermo> _thermo;
+
+    //! For some Thermo types, we also need to cache a NASAEvaluator.
+    libMesh::UniquePtr<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > _cea_evaluator;
 
     libMesh::UniquePtr<AntiochKinetics> _kinetics;
 
@@ -134,11 +138,11 @@ namespace GRINS
     }
 
     void specialized_build_thermo( const AntiochMixture& mixture,
-                                   libMesh::UniquePtr<Antioch::CEAEvaluator<libMesh::Real> >& thermo,
-                                   thermo_type<Antioch::CEAEvaluator<libMesh::Real> > )
+                                   libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >& thermo,
+                                   thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > )
     {
-      thermo.reset( new Antioch::CEAEvaluator<libMesh::Real>( mixture.cea_mixture() ) );
-      return;
+      _cea_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >( mixture.cea_mixture() ) );
+      thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >,libMesh::Real>( *_cea_evaluator, mixture.chemical_mixture() ) );
     }
 
   };

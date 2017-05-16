@@ -117,6 +117,54 @@ namespace GRINS
                 libmesh_error_msg("ERROR: Antioch requires GSL in order to use kinetics theory based models!");
 #endif // ANTIOCH_HAVE_GSL
               }
+            else if( (thermo_model == std::string("cea")) &&
+                     (diffusivity_model == std::string("constant_lewis")) &&
+                     (conductivity_model == std::string("eucken")) &&
+                     (viscosity_model == std::string("sutherland")) )
+              {
+                new_physics.reset(new DerivedPhysics<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,
+                                                                                                   Antioch::SutherlandViscosity<libMesh::Real>,
+                                                                                                   Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real > >,
+                                                                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
+                                                     GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,
+                                                                                                     Antioch::SutherlandViscosity<libMesh::Real>,
+                                                                                                     Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real > >,
+                                                                                                     Antioch::ConstantLewisDiffusivity<libMesh::Real> > >
+                                  (physics_name,input) );
+              }
+            else if( (thermo_model == std::string("cea")) &&
+                     (diffusivity_model == std::string("constant_lewis")) &&
+                     (conductivity_model == std::string("eucken")) &&
+                     (viscosity_model == std::string("blottner")) )
+              {
+                new_physics.reset(new DerivedPhysics<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,
+                                                                                                   Antioch::BlottnerViscosity<libMesh::Real>,
+                                                                                                   Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real > >,
+                                                                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real> >,
+                                                     GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,
+                                                                                                     Antioch::BlottnerViscosity<libMesh::Real>,
+                                                                                                     Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real > >,
+                                                                                                     Antioch::ConstantLewisDiffusivity<libMesh::Real> > >
+                                  (physics_name,input) );
+              }
+            else if( (thermo_model == std::string("cea")) &&
+                     (diffusivity_model == std::string("kinetics_theory")) &&
+                     (conductivity_model == std::string("kinetics_theory")) &&
+                     (viscosity_model == std::string("kinetics_theory")) )
+              {
+#ifdef ANTIOCH_HAVE_GSL
+                new_physics.reset(new DerivedPhysics<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,
+                                                                                                   Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
+                                                                                                   Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>,
+                                                                                                   Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >,
+                                                     GRINS::AntiochMixtureAveragedTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,
+                                                                                                     Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
+                                                                                                     Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real >,libMesh::Real>,
+                                                                                                     Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >(physics_name,input) );
+#else
+                libmesh_error_msg("ERROR: Antioch requires GSL in order to use kinetics theory based models!");
+#endif // ANTIOCH_HAVE_GSL
+              }
             else
               this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model,thermo_model);
           }
@@ -140,7 +188,7 @@ namespace GRINS
                      (conductivity_model == std::string("constant")) )
               {
                 new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>,
-                                  GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantConductivity> >
+                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >, GRINS::ConstantConductivity> >
                                   (physics_name,input) );
               }
             else if( (thermo_model == std::string("stat_mech")) &&
@@ -154,7 +202,7 @@ namespace GRINS
                      (conductivity_model == std::string("constant_prandtl")) )
               {
                 new_physics.reset(new DerivedPhysics<GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>,
-                                  GRINS::AntiochConstantTransportEvaluator<Antioch::CEAEvaluator<libMesh::Real>, GRINS::ConstantPrandtlConductivity> >
+                                                     GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >, GRINS::ConstantPrandtlConductivity> >
                                   (physics_name,input) );
               }
             else

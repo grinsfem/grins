@@ -217,13 +217,13 @@ namespace GRINSTesting
       Y[_O_idx] = 0.2;
       Y[_N_idx] = 0.05;
 
-      this->test_cp_common<GRINS::AntiochMixture,GRINS::AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> > >
+      this->test_cp_common<GRINS::AntiochMixture,GRINS::AntiochEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > >
         ( *_antioch_mixture, Y, TestingUtils::epsilon()*100 );
     }
 
     void test_hs()
     {
-      this->test_h_common<GRINS::AntiochMixture,GRINS::AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> > >
+      this->test_h_common<GRINS::AntiochMixture,GRINS::AntiochEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > >
         ( *_antioch_mixture, TestingUtils::epsilon()*100 );
     }
   };
@@ -262,7 +262,7 @@ namespace GRINSTesting
 
       AirNASA9Thermo thermo;
 
-      this->test_omega_dot_common<GRINS::AntiochMixture,GRINS::AntiochEvaluator<Antioch::CEAEvaluator<libMesh::Real> > >
+      this->test_omega_dot_common<GRINS::AntiochMixture,GRINS::AntiochEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > >
         ( *_antioch_mixture, thermo, Y, TestingUtils::epsilon()*1e3 );
     }
   };
