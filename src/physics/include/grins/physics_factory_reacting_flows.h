@@ -31,6 +31,7 @@
 #include "grins/antioch_mixture_averaged_transport_evaluator.h"
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
+#include "grins/antioch_options_naming.h"
 
 namespace GRINS
 {
@@ -73,9 +74,9 @@ namespace GRINS
                                               const std::string & viscosity_model,
                                               libMesh::UniquePtr<Physics> & new_physics )
     {
-      if( (diffusivity_model == std::string("constant_lewis")) &&
-          (conductivity_model == std::string("eucken")) &&
-          (viscosity_model == std::string("sutherland")) )
+      if( (diffusivity_model == AntiochOptions::constant_lewis_diffusivity_model()) &&
+          (conductivity_model == AntiochOptions::eucken_conductivity_model()) &&
+          (viscosity_model == AntiochOptions::sutherland_viscosity_model()) )
       {
         this->build_mix_avged_physics_ptr<KineticsThermo,
                                           Thermo,
@@ -83,9 +84,9 @@ namespace GRINS
                                           Antioch::EuckenThermalConductivity<Thermo>,
                                           Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input,physics_name,new_physics);
       }
-    else if( (diffusivity_model == std::string("constant_lewis")) &&
-             (conductivity_model == std::string("eucken")) &&
-             (viscosity_model == std::string("blottner")) )
+    else if( (diffusivity_model == AntiochOptions::constant_lewis_diffusivity_model()) &&
+             (conductivity_model == AntiochOptions::eucken_conductivity_model()) &&
+             (viscosity_model == AntiochOptions::blottner_viscosity_model()) )
       {
         this->build_mix_avged_physics_ptr<KineticsThermo,
                                           Thermo,
@@ -93,9 +94,9 @@ namespace GRINS
                                           Antioch::EuckenThermalConductivity<Thermo>,
                                           Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input,physics_name,new_physics);
       }
-    else if( (diffusivity_model == std::string("kinetics_theory")) &&
-             (conductivity_model == std::string("kinetics_theory")) &&
-             (viscosity_model == std::string("kinetics_theory")) )
+    else if( (diffusivity_model == AntiochOptions::kinetic_theory_diffusivity_model()) &&
+             (conductivity_model == AntiochOptions::kinetic_theory_conductivity_model()) &&
+             (viscosity_model == AntiochOptions::kinetic_theory_viscosity_model()) )
       {
 #ifdef ANTIOCH_HAVE_GSL
         this->build_mix_avged_physics_ptr<KineticsThermo,
@@ -116,12 +117,12 @@ namespace GRINS
                                           const std::string & conductivity_model,
                                           libMesh::UniquePtr<Physics> & new_physics )
     {
-      if( conductivity_model == std::string("constant") )
+      if( conductivity_model == AntiochOptions::constant_conductivity_model() )
         {
           this->build_const_physics_ptr<KineticsThermo,Thermo,ConstantConductivity>
             (input,physics_name,new_physics);
         }
-      else if( conductivity_model == std::string("constant_prandtl") )
+      else if( conductivity_model == AntiochOptions::constant_prandtl_conductivity_model() )
         {
           this->build_const_physics_ptr<KineticsThermo,Thermo,ConstantPrandtlConductivity>
             (input,physics_name,new_physics);
@@ -129,8 +130,8 @@ namespace GRINS
       else
         {
           std::string error = "ERROR: Invalid conductivity model for constant transport!\n";
-          error += "       Valid choices are constant\n";
-          error += "                         constant_prandtl\n";
+          error += "       Valid choices are "+AntiochOptions::constant_conductivity_model()+"\n";
+          error += "                         "+AntiochOptions::constant_prandtl_conductivity_model()+"\n";
 
           libmesh_error_msg(error);
         }

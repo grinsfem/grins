@@ -64,13 +64,13 @@ namespace GRINS
                                                     conductivity_model,
                                                     diffusivity_model );
 
-        if( transport_model == std::string("mixture_averaged") )
+        if( transport_model == AntiochOptions::mix_avged_transport_model() )
           {
             this->build_mix_avged_physics( input, physics_name, thermo_model, diffusivity_model,
                                            conductivity_model, viscosity_model, new_physics );
           }
 
-        else if( transport_model == std::string("constant") )
+        else if( transport_model == AntiochOptions::constant_transport_model() )
           {
             this->build_const_physics( input, physics_name, thermo_model, diffusivity_model,
                                        conductivity_model, viscosity_model, new_physics );
@@ -78,8 +78,8 @@ namespace GRINS
         else // transport_model
           {
             std::string error = "Error: Unknown Antioch transport_model "+transport_model+"!\n";
-            error += "       Valid values are: constant\n";
-            error += "                         mixture_averaged\n";
+            error += "       Valid values are: "+AntiochOptions::constant_transport_model()+"\n";
+            error += "                         "+AntiochOptions::mix_avged_transport_model()+"\n";
 
             libmesh_error_msg(error);
           }
@@ -112,7 +112,7 @@ namespace GRINS
                            const std::string & conductivity_model, const std::string & viscosity_model,
                            libMesh::UniquePtr<Physics> & new_physics )
   {
-    if( (thermo_model == std::string("stat_mech")) )
+    if( (thermo_model == AntiochOptions::stat_mech_thermo_model()) )
       {
         this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                                   Antioch::StatMechThermodynamics<libMesh::Real> >
@@ -120,7 +120,7 @@ namespace GRINS
                                                    conductivity_model,viscosity_model,
                                                    new_physics);
       }
-    else if( (thermo_model == std::string("cea")) )
+    else if( (thermo_model == AntiochOptions::cea_nasa_model()) )
       {
         this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                                   Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >
@@ -131,8 +131,8 @@ namespace GRINS
     else
       {
         std::string error = "Error: Unknown Antioch thermo model "+thermo_model+"\n";
-        error += "       Valid values are: stat_mech\n";
-        error += "       Valid values are: cea\n";
+        error += "       Valid values are: "+AntiochOptions::stat_mech_thermo_model()+"\n";
+        error += "       Valid values are: "+AntiochOptions::cea_nasa_model()+"\n";
       }
   }
 
@@ -144,20 +144,20 @@ namespace GRINS
                        libMesh::UniquePtr<Physics> & new_physics )
   {
     // First check the things we must have for constant transport models
-    if( viscosity_model != std::string("constant") )
+    if( viscosity_model != AntiochOptions::constant_viscosity_model() )
       libmesh_error_msg("Error: For constant transport_model, viscosity model must be constant!");
 
-    if( diffusivity_model != std::string("constant_lewis") )
+    if( diffusivity_model != AntiochOptions::constant_lewis_diffusivity_model() )
       libmesh_error_msg("Error: For constant transport_model, diffusivity model must be constant_lewis!");
 
 
-    if( thermo_model == std::string("stat_mech") )
+    if( thermo_model == AntiochOptions::stat_mech_thermo_model() )
       {
         this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                               Antioch::StatMechThermodynamics<libMesh::Real> >
           (input,physics_name,conductivity_model,new_physics);
       }
-    else if( thermo_model == std::string("cea") )
+    else if( thermo_model == AntiochOptions::cea_nasa_model() )
       {
         this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                               Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > >
