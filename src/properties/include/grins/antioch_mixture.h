@@ -67,7 +67,18 @@ namespace GRINS
   {
   public:
 
+    //! Deprecated Constructor
     AntiochMixture( const GetPot& input, const std::string& material );
+
+
+    //! Constructor with user-built objects
+    /*! This constructor expects the user to pass in a ChemicalMixture, ReactionSet, and NASAThermoMixture
+        object already built; this class will take ownership of the pointer. */
+    AntiochMixture( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+                    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+                    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
+                    libMesh::Real min_T = -std::numeric_limits<libMesh::Real>::max(),
+                    bool clip_negative_rho = false );
 
     virtual ~AntiochMixture(){};
 
