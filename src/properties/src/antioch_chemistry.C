@@ -45,6 +45,15 @@ namespace GRINS
                                       const std::string& material )
     : ParameterUser("AntiochChemistry")
   {
+    {
+      std::string warning = "==============================================\n";
+      warning += "WARNING: This AntiochChemistry constructor is DEPREACTED!\n";
+      warning += "         Prefer alternate constructor where parsing\n";
+      warning += "         is done outside this class.\n";
+      warning += "==============================================\n";
+
+      libmesh_warning(warning);
+    }
     std::vector<std::string> species_list;
     MaterialsParsing::parse_chemical_species(input,material,species_list);
 
@@ -70,9 +79,12 @@ namespace GRINS
                                                                      electronic_data_filename ) );
   }
 
-  AntiochChemistry::~AntiochChemistry()
+  AntiochChemistry::AntiochChemistry
+  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture )
+    : ParameterUser("AntiochChemistry")
   {
-    return;
+    /*! \todo Use std::move when we have C++11 */
+    _antioch_gas.reset( chem_mixture.release() );
   }
 
   std::string AntiochChemistry::species_name( unsigned int species_index ) const
