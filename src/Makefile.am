@@ -471,6 +471,7 @@ include_HEADERS += properties/include/grins/mooney_rivlin.h
 include_HEADERS += properties/include/grins/materials_parsing.h
 include_HEADERS += properties/include/grins/viscosity_base.h
 include_HEADERS += properties/include/grins/antioch_thermo_curve_fit_instantiation_macro.h
+include_HEADERS += properties/include/grins/antioch_options_naming.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h
