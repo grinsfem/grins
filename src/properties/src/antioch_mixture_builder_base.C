@@ -34,6 +34,7 @@
 
 // Antioch
 #include "antioch/default_filename.h"
+#include "antioch/read_reaction_set_data.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -67,6 +68,22 @@ namespace GRINS
                                                      species_data_filename,
                                                      vibration_data_filename,
                                                      electronic_data_filename ) );
+  }
+
+  libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> >
+  AntiochMixtureBuilderBase::build_reaction_set( const GetPot & input, const std::string & material,
+                                                 const Antioch::ChemicalMixture<libMesh::Real> & chem_mix )
+  {
+    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> >
+      reaction_set( new Antioch::ReactionSet<libMesh::Real>(chem_mix) );
+
+    std::string kinetics_data_filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
+
+    bool verbose_read = input("screen-options/verbose_kinetics_read", false );
+
+    Antioch::read_reaction_set_data_xml<libMesh::Real>( kinetics_data_filename, verbose_read, *reaction_set );
+
+    return reaction_set;
   }
 
 } // end namespace GRINS

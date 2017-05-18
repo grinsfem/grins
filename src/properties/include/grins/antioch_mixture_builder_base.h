@@ -62,6 +62,10 @@ namespace GRINS
     libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> >
     build_chem_mix( const GetPot & input, const std::string & material );
 
+    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> >
+    build_reaction_set( const GetPot & input, const std::string & material,
+                        const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
+
   };
 } // end namespace GRINS
 
