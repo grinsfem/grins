@@ -36,9 +36,6 @@
 #include "antioch/default_filename.h"
 #include "antioch/read_reaction_set_data.h"
 
-// libMesh
-#include "libmesh/getpot.h"
-
 namespace GRINS
 {
   libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> >

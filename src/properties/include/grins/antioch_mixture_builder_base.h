@@ -37,9 +37,11 @@
 #include "antioch/reaction_set.h"
 #include "antioch/nasa_mixture.h"
 #include "antioch/cea_curve_fit.h"
+#include "antioch/nasa_mixture_parsing.h"
 
 // libMesh
 #include "libmesh/auto_ptr.h" // libMesh::UniquePtr
+#include "libmesh/getpot.h"
 
 // C++
 #include <string>
@@ -66,7 +68,41 @@ namespace GRINS
     build_reaction_set( const GetPot & input, const std::string & material,
                         const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
 
+    template<typename KineticsThermoCurveFit>
+    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> >
+    build_nasa_thermo_mix( const GetPot & input, const std::string & material,
+                           const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
+
+  protected:
+
+    void parse_nasa_data
+    ( Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & nasa_mixture,
+      const GetPot & input, const std::string & material)
+    {
+      std::string cea_data_filename = input( "Materials/"+material+"/GasMixture/Antioch/cea_data", "default" );
+
+      if( cea_data_filename == std::string("default") )
+        cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
+
+      Antioch::read_nasa_mixture_data( nasa_mixture, cea_data_filename, Antioch::ASCII, true );
+    }
+
   };
+
+  template<typename KineticsThermoCurveFit>
+  inline
+  libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> >
+  AntiochMixtureBuilderBase::build_nasa_thermo_mix( const GetPot & input, const std::string & material,
+                                                    const Antioch::ChemicalMixture<libMesh::Real> & chem_mix )
+  {
+    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> >
+      nasa_mixture( new Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit>(chem_mix) );
+
+    this->parse_nasa_data( *nasa_mixture, input, material);
+
+    return nasa_mixture;
+  }
+
 } // end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH
