@@ -44,6 +44,7 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( test_build_chem_mix );
     CPPUNIT_TEST( test_build_reaction_set );
+    CPPUNIT_TEST( test_build_nasa_thermo_mix_cea );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -83,6 +84,20 @@ namespace GRINSTesting
 
       CPPUNIT_ASSERT_EQUAL( 5, (int)reaction_set->n_species() );
       CPPUNIT_ASSERT_EQUAL( 5, (int)reaction_set->n_reactions() );
+    }
+
+    void test_build_nasa_thermo_mix_cea()
+    {
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix
+        = builder.build_chem_mix(*_input, "TestMaterial");
+
+      libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >
+        nasa_mix =
+        builder.build_nasa_thermo_mix<Antioch::CEACurveFit<libMesh::Real> >(*_input, "TestMaterial", *chem_mix);
+
+      CPPUNIT_ASSERT(nasa_mix->check());
     }
 
   private:
