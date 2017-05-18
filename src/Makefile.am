@@ -179,6 +179,7 @@ libgrins_la_SOURCES += properties/src/hyperelasticity_instantiate.C
 libgrins_la_SOURCES += properties/src/mooney_rivlin.C
 libgrins_la_SOURCES += properties/src/materials_parsing.C
 libgrins_la_SOURCES += properties/src/viscosity_base.C
+libgrins_la_SOURCES += properties/src/antioch_mixture_builder_base.C
 
 # src/qoi files
 libgrins_la_SOURCES += qoi/src/average_nusselt_number.C

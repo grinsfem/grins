@@ -38,6 +38,9 @@
 #include "antioch/nasa_mixture.h"
 #include "antioch/cea_curve_fit.h"
 
+// libMesh
+#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
+
 // C++
 #include <string>
 
@@ -55,6 +58,9 @@ namespace GRINS
   public:
     AntiochMixtureBuilderBase(){}
     ~AntiochMixtureBuilderBase(){}
+
+    libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> >
+    build_chem_mix( const GetPot & input, const std::string & material );
 
   };
 } // end namespace GRINS
