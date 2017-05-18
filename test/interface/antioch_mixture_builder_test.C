@@ -43,6 +43,7 @@ namespace GRINSTesting
     CPPUNIT_TEST_SUITE( AntiochMixtureBuilderBaseTest );
 
     CPPUNIT_TEST( test_build_chem_mix );
+    CPPUNIT_TEST( test_build_reaction_set );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -68,6 +69,20 @@ namespace GRINSTesting
         chem_mix->chemical_species();
 
       CPPUNIT_ASSERT_EQUAL( 5, (int)all_species.size() );
+    }
+
+    void test_build_reaction_set()
+    {
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix
+        = builder.build_chem_mix(*_input, "TestMaterial");
+
+      libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > reaction_set
+        = builder.build_reaction_set(*_input, "TestMaterial", *chem_mix);
+
+      CPPUNIT_ASSERT_EQUAL( 5, (int)reaction_set->n_species() );
+      CPPUNIT_ASSERT_EQUAL( 5, (int)reaction_set->n_reactions() );
     }
 
   private:
