@@ -123,7 +123,8 @@ namespace GRINS
     /*! This allows us to insert things like preassembly(). */
     virtual void assembly( bool get_residual,
                            bool get_jacobian,
-                           bool apply_heterogeneous_constraints = false );
+                           bool apply_heterogeneous_constraints = false,
+                           bool apply_no_constraints = false );
 
     //! Override FEMSystem::reinit
     /*! This will allow each Physics to reinit things internally that need it,
