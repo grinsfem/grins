@@ -473,7 +473,7 @@ AC_SUBST(GRINS_TEST_INPUT_FILES)
 #     we need to do the others separately because if add the directory as a whole
 #     to EXTRA_DIST in a Makefile.am, somehow the AC_CONFIG_LINKS parts don't
 #     end up in the dist tarball...
-GRINS_TEST_DATA_FILES=$(find $TOP_SRC_DIR/test/test_data -name "*.xdr" -or -name "*.xda" | grep -v "elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr" | tr "\n" " ")
+GRINS_TEST_DATA_FILES=$(find $TOP_SRC_DIR/test/test_data -name "*.xdr" -or -name "*.xda" -or -name "*.gz" | grep -v "elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr" | tr "\n" " ")
 AC_SUBST(GRINS_TEST_DATA_FILES)
 
 # Must still call AC_OUTPUT() after generating all the files
