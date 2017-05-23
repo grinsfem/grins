@@ -72,8 +72,6 @@ int main(int argc, char* argv[])
       Y[s] = input( "Conditions/mass_fractions", 0.0, s );
     }
 
-  libMesh::Real R_mix = mixture.R_mix(Y);
-
   std::vector<double> omega_dot(n_species,0.0);
 
   libMesh::Real T = T0;

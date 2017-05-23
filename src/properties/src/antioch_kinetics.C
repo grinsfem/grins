@@ -79,10 +79,12 @@ namespace GRINS
     // to check (and potentially clip) each species
     if (!have_density)
       for (unsigned int i=0; i != n_species; ++i)
-        if (molar_densities[i] <= 0)
-          molar_densities[i] = 0;
-        else
-          have_density = true;
+        {
+          if (molar_densities[i] <= 0)
+            molar_densities[i] = 0;
+          else
+            have_density = true;
+        }
 
     if (have_density)
       _antioch_kinetics.compute_mass_sources( temp_cache.T,
