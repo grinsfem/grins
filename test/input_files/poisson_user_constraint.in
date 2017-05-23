@@ -99,7 +99,7 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'poisson_user_constraint'
-   output_format = 'xda.gz ExodusII'
+   output_format = 'xda.gz'
 []
 
 # Options for print info to the screen

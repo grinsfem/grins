@@ -158,7 +158,7 @@
 
 # Visualization options
 [vis-options]
-   output_vis = 'true'
+   output_vis = 'false'
    vis_output_file_prefix = 'output_ozone_constant'
    output_residual = 'false'
    output_format = 'ExodusII xdr'

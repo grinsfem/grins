@@ -26,7 +26,7 @@ verify_analytic_jacobians = 1.e-6
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'parsed_qoi'
-   output_format = 'xdr xda'
+   output_format = 'xda'
 []
 
 [Output]
