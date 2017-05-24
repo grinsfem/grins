@@ -55,7 +55,7 @@ int main( int argc, char* argv[] )
 
   GetPot input( argv[1] );
 
-  GRINS::AntiochMixture antioch(input,"TestMaterial");
+  GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > antioch(input,"TestMaterial");
 
   std::vector<double> mass_fractions( 5, 0.2 );
 

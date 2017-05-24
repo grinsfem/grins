@@ -113,12 +113,12 @@ int test_D<Antioch::StatMechThermodynamics<libMesh::Real>,
   return return_flag;
 }
 
-template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
+template<typename KineticsThermo, typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int test_evaluator( const GetPot& input )
 {
-  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input,"TestMaterial");
+  GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> mixture(input,"TestMaterial");
 
-  GRINS::AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
+  GRINS::AntiochMixtureAveragedTransportEvaluator<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 
   const libMesh::Real T = 1000;
 
@@ -179,7 +179,8 @@ int main( int argc, char* argv[] )
   int return_flag = 0;
 
   std::cout << std::endl <<  "Running StatMesh, Blottner, Eucken, Constant Lewis regression test." << std::endl;
-  return_flag = test_evaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
+  return_flag = test_evaluator<Antioch::CEACurveFit<libMesh::Real>,
+                               Antioch::StatMechThermodynamics<libMesh::Real>,
                                Antioch::BlottnerViscosity<libMesh::Real>,
                                Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
                                Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);

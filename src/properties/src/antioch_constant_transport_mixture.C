@@ -35,23 +35,15 @@
 
 namespace GRINS
 {
-  template<typename Thermo>
-  AntiochConstantTransportMixture<Thermo>::AntiochConstantTransportMixture( const GetPot& input,
-                                                                            const std::string& material )
-    : AntiochMixture(input,material)
+  template<typename KineticsThermoCurveFit,typename Thermo>
+  AntiochConstantTransportMixture<KineticsThermoCurveFit,Thermo>::
+  AntiochConstantTransportMixture( const GetPot& input,const std::string& material )
+    : AntiochMixture<KineticsThermoCurveFit>(input,material)
   {
     libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
     _diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
     _mu.reset( new ConstantViscosity(input,material) );
     this->build_conductivity(input,material);
-
-    return;
-  }
-
-  template<typename Thermo>
-  AntiochConstantTransportMixture<Thermo>::~AntiochConstantTransportMixture()
-  {
-    return;
   }
 
 } // end namespace GRINS

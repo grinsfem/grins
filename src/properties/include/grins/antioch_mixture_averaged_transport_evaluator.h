@@ -49,13 +49,13 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-  */
-  template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
-  class AntiochMixtureAveragedTransportEvaluator : public AntiochEvaluator<Thermo>
+   */
+  template<typename KineticsThermoCurveFit, typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
+  class AntiochMixtureAveragedTransportEvaluator : public AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Thermo>
   {
   public:
 
-    AntiochMixtureAveragedTransportEvaluator( const AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity>& mixture );
+    AntiochMixtureAveragedTransportEvaluator( const AntiochMixtureAveragedTransportMixture<KineticsThermoCurveFit,Thermo,Viscosity,Conductivity,Diffusivity>& mixture );
 
     virtual ~AntiochMixtureAveragedTransportEvaluator(){};
 

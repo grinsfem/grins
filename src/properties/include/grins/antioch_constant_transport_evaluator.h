@@ -49,38 +49,54 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-  */
-  template<typename Thermo, typename Conductivity>
-  class AntiochConstantTransportEvaluator : public AntiochEvaluator<Thermo>
+   */
+  template<typename KineticsThermoCurveFit, typename Thermo, typename Conductivity>
+  class AntiochConstantTransportEvaluator : public AntiochEvaluator<KineticsThermoCurveFit,Thermo>
   {
   public:
 
-    AntiochConstantTransportEvaluator( const AntiochConstantTransportMixture<Conductivity>& mixture );
+    AntiochConstantTransportEvaluator( const AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity>& mixture )
+      : AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Thermo>( mixture ),
+      _mu( mixture.mu() ),
+      _conductivity( mixture.conductivity() ),
+      _diffusivity( mixture.diffusivity() )
+    {}
 
-    virtual ~AntiochConstantTransportEvaluator();
+    virtual ~AntiochConstantTransportEvaluator(){}
 
-    libMesh::Real mu( const libMesh::Real T,
-                      const libMesh::Real P,
-                      const std::vector<libMesh::Real>& Y );
+    libMesh::Real mu( const libMesh::Real /*T*/,
+                      const libMesh::Real /*P*/,
+                      const std::vector<libMesh::Real>& /*Y*/ )
+    { return _mu; }
 
     libMesh::Real k( const libMesh::Real T,
-                     const libMesh::Real P,
-                     const std::vector<libMesh::Real>& Y );
+                     const libMesh::Real /*P*/,
+                     const std::vector<libMesh::Real>& Y )
+    {
+      // Second T is dummy
+      const libMesh::Real cp = this->cp( T, T, Y );
+      return _conductivity( _mu, cp );
+    }
 
-    void mu_and_k_and_D( const libMesh::Real T,
+    void mu_and_k_and_D( const libMesh::Real /*T*/,
                          const libMesh::Real rho,
                          const libMesh::Real cp,
-                         const std::vector<libMesh::Real>& Y,
-                         libMesh::Real& mu, libMesh::Real& k,
-                         std::vector<libMesh::Real>& D );
+                         const std::vector<libMesh::Real>& /*Y*/,
+                         libMesh::Real & mu, libMesh::Real & k,
+                         std::vector<libMesh::Real> & D )
+    {
+      mu = _mu;
+      k = _conductivity( _mu, cp );
+      std::fill( D.begin(), D.end(), _diffusivity.D(rho,cp,k) );
+    }
 
   protected:
 
     const libMesh::Real _mu;
 
-    const Conductivity& _conductivity;
+    const Conductivity & _conductivity;
 
-    const Antioch::ConstantLewisDiffusivity<libMesh::Real>& _diffusivity;
+    const Antioch::ConstantLewisDiffusivity<libMesh::Real> & _diffusivity;
 
   private:
 

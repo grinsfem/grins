@@ -22,40 +22,23 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ANTIOCH_TEST_BASE_H
-#define GRINS_ANTIOCH_TEST_BASE_H
+#ifndef GRINS_ANTIOCH_THERMO_CURVE_FIT_INSTANTIATION_MACRO_H
+#define GRINS_ANTIOCH_THERMO_CURVE_FIT_INSTANTIATION_MACRO_H
 
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-// GRINS
-#include "grins/antioch_mixture.h"
+#define INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT(class_name) \
+  template class GRINS::class_name<Antioch::CEACurveFit<libMesh::Real> >; \
+  template class GRINS::class_name<Antioch::NASA7CurveFit<libMesh::Real> >; \
+  template class GRINS::class_name<Antioch::NASA9CurveFit<libMesh::Real> >
 
-// libMesh
-#include "libmesh/libmesh_common.h"
-#include "libmesh/getpot.h"
-
-namespace GRINSTesting
-{
-  class AntiochTestBase
-  {
-  public:
-
-    void init_antioch(const std::string & input_file, const std::string & material_name)
-    {
-      GetPot input(input_file);
-
-      _antioch_mixture.reset( new GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >(input,material_name) );
-    }
-
-  protected:
-
-    libMesh::UniquePtr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > > _antioch_mixture;
-  };
-
-} // end namespace GRINSTesting
+#define INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT_WITH_CONDUCTIVITY(class_name,conductivity) \
+  template class GRINS::class_name<Antioch::CEACurveFit<libMesh::Real>,GRINS::conductivity>; \
+  template class GRINS::class_name<Antioch::NASA7CurveFit<libMesh::Real>,GRINS::conductivity>; \
+  template class GRINS::class_name<Antioch::NASA9CurveFit<libMesh::Real>,GRINS::conductivity>
 
 #endif // GRINS_HAVE_ANTIOCH
 
-#endif // GRINS_ANTIOCH_TEST_BASE_H
+#endif // GRINS_ANTIOCH_THERMO_CURVE_FIT_INSTANTIATION_MACRO_H

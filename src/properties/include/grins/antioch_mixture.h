@@ -52,12 +52,17 @@ namespace GRINS
 {
   //! Wrapper class for storing state for Antioch thermo and kinetics
   /*!
+    This class handles caching needed state for Antioch kinetics, and the thermodynamics
+    required for the kinetics evaluation. Currently, we only support NASA type curve fits
+    for required thermodynamic evaluations, but we template on the curve fit type.
+
     This class is expected to be constructed *before* threads have been forked and will
     live during the whole program.
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-  */
+   */
+  template <typename KineticsThermoCurveFit>
   class AntiochMixture : public AntiochChemistry
   {
   public:
@@ -75,7 +80,7 @@ namespace GRINS
 
     const Antioch::ReactionSet<libMesh::Real>& reaction_set() const;
 
-    const Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & cea_mixture() const;
+    const Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> & nasa_mixture() const;
 
     libMesh::Real h_stat_mech_ref_correction( unsigned int species ) const;
 
@@ -91,7 +96,7 @@ namespace GRINS
 
     libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
 
-    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > _cea_mixture;
+    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > _nasa_mixture;
 
     std::vector<libMesh::Real> _h_stat_mech_ref_correction;
 
@@ -122,32 +127,40 @@ namespace GRINS
   };
 
   /* ------------------------- Inline Functions -------------------------*/
+  template <typename KineticsThermoCurveFit>
   inline
-  const Antioch::ReactionSet<libMesh::Real>& AntiochMixture::reaction_set() const
+  const Antioch::ReactionSet<libMesh::Real>&
+  AntiochMixture<KineticsThermoCurveFit>::reaction_set() const
   {
     return *_reaction_set.get();
   }
 
+  template <typename KineticsThermoCurveFit>
   inline
-  const Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & AntiochMixture::cea_mixture() const
+  const Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> &
+  AntiochMixture<KineticsThermoCurveFit>::nasa_mixture() const
   {
-    return *_cea_mixture.get();
+    return *_nasa_mixture.get();
   }
 
+  template <typename KineticsThermoCurveFit>
   inline
-  libMesh::Real AntiochMixture::h_stat_mech_ref_correction( unsigned int species ) const
+  libMesh::Real
+  AntiochMixture<KineticsThermoCurveFit>::h_stat_mech_ref_correction( unsigned int species ) const
   {
     return _h_stat_mech_ref_correction[species];
   }
 
+  template <typename KineticsThermoCurveFit>
   inline
-  libMesh::Real AntiochMixture::minimum_T() const
+  libMesh::Real AntiochMixture<KineticsThermoCurveFit>::minimum_T() const
   {
     return _minimum_T;
   }
 
+  template <typename KineticsThermoCurveFit>
   inline
-  bool AntiochMixture::clip_negative_rho() const
+  bool AntiochMixture<KineticsThermoCurveFit>::clip_negative_rho() const
   {
     return _clip_negative_rho;
   }

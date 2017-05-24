@@ -51,13 +51,13 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-  */
-  template<typename Thermo>
+   */
+  template<typename KineticsThermoCurveFit, typename Thermo>
   class AntiochEvaluator
   {
   public:
 
-    AntiochEvaluator( const AntiochMixture& mixture );
+    AntiochEvaluator( const AntiochMixture<KineticsThermoCurveFit>& mixture );
 
     virtual ~AntiochEvaluator(){};
 
@@ -93,15 +93,15 @@ namespace GRINS
 
   protected:
 
-    const AntiochMixture& _chem;
+    const AntiochMixture<KineticsThermoCurveFit> & _chem;
 
     //! Primary thermo object.
     libMesh::UniquePtr<Thermo> _thermo;
 
     //! For some Thermo types, we also need to cache a NASAEvaluator.
-    libMesh::UniquePtr<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > _cea_evaluator;
+    libMesh::UniquePtr<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit> > _nasa_evaluator;
 
-    libMesh::UniquePtr<AntiochKinetics> _kinetics;
+    libMesh::UniquePtr<AntiochKinetics<KineticsThermoCurveFit> > _kinetics;
 
     // Temperature should be clipped to positive values for
     // stability's sake
@@ -122,93 +122,102 @@ namespace GRINS
        This way, we can control how the cached transport objects get constructed
        based on the template type. This is achieved by the dummy types forcing operator
        overloading for each of the specialized types. */
-    void build_thermo( const AntiochMixture& mixture )
+    void build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture )
     { specialized_build_thermo( mixture, _thermo, thermo_type<Thermo>() ); }
 
   private:
 
     AntiochEvaluator();
 
-    void specialized_build_thermo( const AntiochMixture& mixture,
+    void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
                                    libMesh::UniquePtr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
     {
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
-      return;
     }
 
-    void specialized_build_thermo( const AntiochMixture& mixture,
-                                   libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >& thermo,
-                                   thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > )
+    void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
+                                   libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real> > & thermo,
+                                   thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real> > )
     {
-      _cea_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >( mixture.cea_mixture() ) );
-      thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >,libMesh::Real>( *_cea_evaluator, mixture.chemical_mixture() ) );
+      _nasa_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>( mixture.nasa_mixture() ) );
+      thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>,libMesh::Real>( *_nasa_evaluator, mixture.chemical_mixture() ) );
     }
 
   };
 
   /* ------------------------- Inline Functions -------------------------*/
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo>::M( unsigned int species ) const
+  libMesh::Real
+  AntiochEvaluator<KineticsThermoCurveFit,Thermo>::M( unsigned int species ) const
   {
     return _chem.M(species);
   }
 
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo>::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
+  libMesh::Real
+  AntiochEvaluator<KineticsThermoCurveFit,Thermo>::
+  M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     return _chem.M_mix(mass_fractions);
   }
 
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo>::R( unsigned int species ) const
+  libMesh::Real
+  AntiochEvaluator<KineticsThermoCurveFit,Thermo>::R( unsigned int species ) const
   {
     return _chem.R(species);
   }
 
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo>::R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
+  libMesh::Real
+  AntiochEvaluator<KineticsThermoCurveFit,Thermo>::
+  R_mix( const std::vector<libMesh::Real>& mass_fractions ) const
   {
     return _chem.R_mix(mass_fractions);
   }
 
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  libMesh::Real AntiochEvaluator<Thermo>::X( unsigned int species, libMesh::Real M, libMesh::Real mass_fraction ) const
+  libMesh::Real AntiochEvaluator<KineticsThermoCurveFit,Thermo>::X( unsigned int species,
+                                                                    libMesh::Real M,
+                                                                    libMesh::Real mass_fraction ) const
   {
     return _chem.X(species,M,mass_fraction);
   }
 
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  void AntiochEvaluator<Thermo>::X( libMesh::Real M, const std::vector<libMesh::Real>& mass_fractions,
-                                    std::vector<libMesh::Real>& mole_fractions ) const
+  void AntiochEvaluator<KineticsThermoCurveFit,Thermo>::X( libMesh::Real M,
+                                                           const std::vector<libMesh::Real>& mass_fractions,
+                                                           std::vector<libMesh::Real>& mole_fractions ) const
   {
     _chem.X(M,mass_fractions,mole_fractions);
-    return;
   }
 
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  unsigned int AntiochEvaluator<Thermo>::species_index( const std::string& species_name ) const
+  unsigned int
+  AntiochEvaluator<KineticsThermoCurveFit,Thermo>::species_index( const std::string& species_name ) const
   {
     return _chem.species_index(species_name);
   }
 
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  std::string AntiochEvaluator<Thermo>::species_name( unsigned int species_index ) const
+  std::string
+  AntiochEvaluator<KineticsThermoCurveFit,Thermo>::species_name( unsigned int species_index ) const
   {
     return _chem.species_name(species_index);
   }
 
-  template<typename Thermo>
+  template<typename KineticsThermoCurveFit, typename Thermo>
   inline
-  void AntiochEvaluator<Thermo>::check_and_reset_temp_cache( const libMesh::Real& T )
+  void AntiochEvaluator<KineticsThermoCurveFit,Thermo>::check_and_reset_temp_cache( const libMesh::Real& T )
   {
     _clipped_T = std::max(_minimum_T, T);
 

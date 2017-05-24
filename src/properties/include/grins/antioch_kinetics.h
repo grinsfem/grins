@@ -44,6 +44,7 @@
 namespace GRINS
 {
   // GRINS forward declarations
+  template<typename KineticsThermoCurveFit>
   class AntiochMixture;
 
   //! Wrapper class for evaluating chemical kinetics using Antioch
@@ -53,12 +54,13 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-  */
+   */
+  template<typename KineticsThermoCurveFit>
   class AntiochKinetics
   {
   public:
 
-    AntiochKinetics( const AntiochMixture& mixture );
+    AntiochKinetics( const AntiochMixture<KineticsThermoCurveFit> & mixture );
 
     ~AntiochKinetics(){};
 
@@ -74,11 +76,11 @@ namespace GRINS
 
   protected:
 
-    const AntiochMixture& _antioch_mixture;
+    const AntiochMixture<KineticsThermoCurveFit> & _antioch_mixture;
 
     Antioch::KineticsEvaluator<libMesh::Real> _antioch_kinetics;
 
-    Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > _antioch_cea_thermo;
+    Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit> _antioch_nasa_thermo;
 
   private:
 

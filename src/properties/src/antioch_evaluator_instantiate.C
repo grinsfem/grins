@@ -31,14 +31,15 @@
 #include "grins/antioch_evaluator.h"
 
 // Antioch
-#include "antioch/cea_evaluator.h"
+#include "antioch/nasa_evaluator.h"
+#include "antioch/cea_curve_fit.h"
 #include "antioch/stat_mech_thermo.h"
 #include "antioch/ideal_gas_micro_thermo.h"
 
 // This class
 #include "antioch_evaluator.C"
 
-template class GRINS::AntiochEvaluator<Antioch::StatMechThermodynamics<libMesh::Real> >;
-template class GRINS::AntiochEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >;
+template class GRINS::AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >;
+template class GRINS::AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>, Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >;
 
 #endif //GRINS_HAVE_ANTIOCH

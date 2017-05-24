@@ -41,12 +41,12 @@
 #include "grins/materials_parsing.h"
 #include "grins/physics_naming.h"
 
-template<typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
+template<typename KineticsThermo, typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int do_transport_eval( const GetPot& input )
 {
-  GRINS::AntiochMixtureAveragedTransportMixture<Thermo,Viscosity,Conductivity,Diffusivity> mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()));
+  GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> mixture(input,GRINS::MaterialsParsing::material_name(input,GRINS::PhysicsNaming::reacting_low_mach_navier_stokes()));
 
-  GRINS::AntiochMixtureAveragedTransportEvaluator<Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
+  GRINS::AntiochMixtureAveragedTransportEvaluator<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 
   libMesh::Real T0 = input( "Conditions/T0", 300.0 );
   libMesh::Real T1 = input( "Conditions/T1", 300.0 );
@@ -130,55 +130,67 @@ int main(int argc, char* argv[])
   std::string viscosity_model = input( "Physics/Antioch/viscosity_model", "sutherland");
   std::string conductivity_model = input( "Physics/Antioch/conductivity_model", "eucken");
   std::string diffusivity_model = input( "Physics/Antioch/diffusivity_model", "constant_lewis");
+  std::string kinetics_thermo_model = input( "Physics/Antioch/kinetics_thermo_model", "cea");
 
   int return_flag = 0;
 
   if( mixing_model == std::string("wilke") )
     {
-      if( thermo_model == std::string("stat_mech") )
+      if( kinetics_thermo_model == std::string("cea") )
         {
-          if( diffusivity_model == std::string("constant_lewis") )
+          if( thermo_model == std::string("stat_mech") )
             {
-              if( conductivity_model == std::string("eucken") )
+              if( diffusivity_model == std::string("constant_lewis") )
                 {
-                  if( viscosity_model == std::string("sutherland") )
+                  if( conductivity_model == std::string("eucken") )
                     {
-                      return_flag = do_transport_eval<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                      Antioch::SutherlandViscosity<libMesh::Real>,
-                                                      Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                      Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
-                    }
-                  else if( viscosity_model == std::string("blottner") )
-                    {
-                      return_flag = do_transport_eval<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                      Antioch::BlottnerViscosity<libMesh::Real>,
-                                                      Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                                                      Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
+                      if( viscosity_model == std::string("sutherland") )
+                        {
+                          return_flag = do_transport_eval<Antioch::CEACurveFit<libMesh::Real>,
+                                                          Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                          Antioch::SutherlandViscosity<libMesh::Real>,
+                                                          Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                          Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
+                        }
+                      else if( viscosity_model == std::string("blottner") )
+                        {
+                          return_flag = do_transport_eval<Antioch::CEACurveFit<libMesh::Real>,
+                                                          Antioch::StatMechThermodynamics<libMesh::Real>,
+                                                          Antioch::BlottnerViscosity<libMesh::Real>,
+                                                          Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+                                                          Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
+                        }
+                      else
+                        {
+                          std::cerr << "Error: Unknown viscosity_model "
+                                    << viscosity_model << "!"  << std::endl;
+                          return_flag = 1;
+                        }
                     }
                   else
                     {
-                      std::cerr << "Error: Unknown viscosity_model "
-                                << viscosity_model << "!"  << std::endl;
+                      std::cerr << "Error: Unknown conductivity_model "
+                                << conductivity_model << "!"  << std::endl;
                       return_flag = 1;
                     }
                 }
               else
                 {
-                  std::cerr << "Error: Unknown conductivity_model "
-                            << conductivity_model << "!"  << std::endl;
+                  std::cerr << "Error: Unknown diffusivity_model "
+                            << diffusivity_model << "!"  << std::endl;
                   return_flag = 1;
                 }
             }
           else
             {
-              std::cerr << "Error: Unknown diffusivity_model "
-                        << diffusivity_model << "!"  << std::endl;
+              std::cerr << "Error: Unknown thermo_model "
+                        << thermo_model << "!"  << std::endl;
               return_flag = 1;
             }
         }
       else
         {
-          std::cerr << "Error: Unknown thermo_model "
+          std::cerr << "Error: Unknown kinetics_thermo_model "
                     << thermo_model << "!"  << std::endl;
           return_flag = 1;
         }

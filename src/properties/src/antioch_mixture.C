@@ -45,11 +45,12 @@
 
 namespace GRINS
 {
-  AntiochMixture::AntiochMixture( const GetPot& input,
-                                  const std::string& material )
+  template <typename KineticsThermoCurveFit>
+  AntiochMixture<KineticsThermoCurveFit>::AntiochMixture( const GetPot& input,
+                                                          const std::string& material )
     : AntiochChemistry(input,material),
       _reaction_set( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) ),
-      _cea_mixture( new Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >( (*_antioch_gas.get()) ) ),
+      _nasa_mixture( new Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit>( (*_antioch_gas.get()) ) ),
       _minimum_T( input( "Materials/"+material+"/GasMixture/Antioch/minimum_T", -std::numeric_limits<libMesh::Real>::max() ) ),
       _clip_negative_rho( input( "Materials/"+material+"/GasMixture/Antioch/clip_negative_rho", false) )
   {
@@ -63,15 +64,15 @@ namespace GRINS
     if( cea_data_filename == std::string("default") )
       cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
 
-    Antioch::read_nasa_mixture_data( *_cea_mixture.get(), cea_data_filename, Antioch::ASCII, true );
+    Antioch::read_nasa_mixture_data( *_nasa_mixture.get(), cea_data_filename, Antioch::ASCII, true );
 
     this->build_stat_mech_ref_correction();
   }
 
-  void AntiochMixture::register_parameter
-  ( const std::string & param_name,
-    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-    const
+  template <typename KineticsThermoCurveFit>
+  void AntiochMixture<KineticsThermoCurveFit>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const
   {
     // Use common code for any GRINS parameters
     AntiochChemistry::register_parameter(param_name, param_pointer);
@@ -83,8 +84,8 @@ namespace GRINS
          (*this->_reaction_set.get(), param_name));
   }
 
-
-  void AntiochMixture::build_stat_mech_ref_correction()
+  template <typename KineticsThermoCurveFit>
+  void AntiochMixture<KineticsThermoCurveFit>::build_stat_mech_ref_correction()
   {
     Antioch::StatMechThermodynamics<libMesh::Real> thermo( *(this->_antioch_gas.get()) );
 

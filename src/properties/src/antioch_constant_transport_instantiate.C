@@ -30,6 +30,7 @@
 // GRINS
 #include "grins/constant_conductivity.h"
 #include "grins/constant_prandtl_conductivity.h"
+#include "grins/antioch_thermo_curve_fit_instantiation_macro.h"
 
 // Antioch
 #include "antioch/vector_utils_decl.h"
@@ -39,19 +40,8 @@
 
 // These classes
 #include "antioch_constant_transport_mixture.C"
-#include "antioch_constant_transport_evaluator.C"
 
-template class GRINS::AntiochConstantTransportMixture<GRINS::ConstantConductivity>;
-template class GRINS::AntiochConstantTransportMixture<GRINS::ConstantPrandtlConductivity>;
-
-template class GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
-                                                        GRINS::ConstantConductivity>;
-template class GRINS::AntiochConstantTransportEvaluator<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
-                                                        GRINS::ConstantPrandtlConductivity>;
-
-template class GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                        GRINS::ConstantConductivity>;
-template class GRINS::AntiochConstantTransportEvaluator<Antioch::StatMechThermodynamics<libMesh::Real>,
-                                                        GRINS::ConstantPrandtlConductivity>;
+INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT_WITH_CONDUCTIVITY(AntiochConstantTransportMixture,ConstantConductivity);
+INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT_WITH_CONDUCTIVITY(AntiochConstantTransportMixture,ConstantPrandtlConductivity);
 
 #endif // GRINS_HAVE_ANTIOCH
