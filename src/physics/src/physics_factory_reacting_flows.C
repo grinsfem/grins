@@ -105,6 +105,7 @@ namespace GRINS
 
 
 
+#ifdef GRINS_HAVE_ANTIOCH
   template<template<typename,typename> class DerivedPhysics>
   void PhysicsFactoryReactingFlows<DerivedPhysics>::
   build_mix_avged_physics( const GetPot & input, const std::string & physics_name,
@@ -166,6 +167,7 @@ namespace GRINS
     else
       this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model);
   }
+#endif // GRINS_HAVE_ANTIOCH
 
   template<template<typename,typename> class DerivedPhysics>
   void PhysicsFactoryReactingFlows<DerivedPhysics>::grins_antioch_model_error_msg
