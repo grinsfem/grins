@@ -67,6 +67,7 @@ namespace GRINS
                               const std::string & conductivity_model, const std::string & viscosity_model,
                               libMesh::UniquePtr<Physics> & new_physics );
 
+#ifdef GRINS_HAVE_ANTIOCH
     template<typename KineticsThermo,typename Thermo>
     void build_mix_avged_physics_with_thermo( const GetPot & input, const std::string & physics_name,
                                               const std::string & diffusivity_model,
@@ -154,6 +155,7 @@ namespace GRINS
                                            AntiochConstantTransportEvaluator<KineticsThermo,Thermo,Conductivity> >
                         (physics_name,input) );
     }
+#endif // GRINS_HAVE_ANTIOCH
 
   };
 
