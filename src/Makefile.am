@@ -474,6 +474,7 @@ include_HEADERS += properties/include/grins/viscosity_base.h
 include_HEADERS += properties/include/grins/antioch_thermo_curve_fit_instantiation_macro.h
 include_HEADERS += properties/include/grins/antioch_options_naming.h
 include_HEADERS += properties/include/grins/antioch_mixture_builder_base.h
+include_HEADERS += properties/include/grins/antioch_constant_transport_mixture_builder.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h

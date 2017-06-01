@@ -34,6 +34,7 @@
 
 //GRINS
 #include "grins/antioch_mixture_builder_base.h"
+#include "grins/antioch_constant_transport_mixture_builder.h"
 
 namespace GRINSTesting
 {
@@ -191,7 +192,86 @@ namespace GRINSTesting
   };
 
 
+
+  class AntiochConstantTransportMixtureBuilderTest : public CppUnit::TestCase
+  {
+  public:
+    CPPUNIT_TEST_SUITE( AntiochConstantTransportMixtureBuilderTest );
+
+    CPPUNIT_TEST( test_build_cea_constcond_mix );
+    CPPUNIT_TEST( test_build_cea_constpr_mix );
+
+    CPPUNIT_TEST_SUITE_END();
+
+  public:
+
+    void setUp()
+    {
+      std::string input_file = std::string(GRINS_TEST_SRCDIR)+"/input_files/antioch.in";
+      _input.reset( new GetPot(input_file) );
+    }
+
+    void test_build_cea_constcond_mix()
+    {
+      GRINS::AntiochConstantTransportMixtureBuilder builder;
+
+      libMesh::UniquePtr<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
+                                                                GRINS::ConstantConductivity> >
+        mixture = builder.build_mixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::ConstantConductivity>
+        (*_input, "TestMaterial");
+
+      libMesh::Real mu = mixture->mu();
+      libMesh::Real k = (mixture->conductivity())();
+
+      libMesh::Real rho = 1.2;
+      libMesh::Real cp = 2.3;
+
+      libMesh::Real Le = 1.4;
+
+      libMesh::Real D = mixture->diffusivity().D(rho,cp,k);
+
+      libMesh::Real D_exact = k/rho/cp/Le;
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 3.14, mu, std::numeric_limits<libMesh::Real>::epsilon() );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.71, k, std::numeric_limits<libMesh::Real>::epsilon() );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( D_exact, D, std::numeric_limits<libMesh::Real>::epsilon() );
+    }
+
+    void test_build_cea_constpr_mix()
+    {
+      GRINS::AntiochConstantTransportMixtureBuilder builder;
+
+      libMesh::UniquePtr<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
+                                                                GRINS::ConstantPrandtlConductivity> >
+        mixture = builder.build_mixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::ConstantPrandtlConductivity>
+        (*_input, "TestMaterial");
+
+      libMesh::Real mu = mixture->mu();
+      libMesh::Real cp = 2.3;
+      libMesh::Real Pr = 0.7;
+      libMesh::Real k = (mixture->conductivity())(mu, cp);
+      libMesh::Real k_exact = mu*cp/Pr;
+
+      libMesh::Real rho = 1.2;
+
+      libMesh::Real Le = 1.4;
+
+      libMesh::Real D = mixture->diffusivity().D(rho,cp,k);
+
+      libMesh::Real D_exact = k/rho/cp/Le;
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 3.14, mu, std::numeric_limits<libMesh::Real>::epsilon() );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( k_exact, k, std::numeric_limits<libMesh::Real>::epsilon() );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( D_exact, D, std::numeric_limits<libMesh::Real>::epsilon() );
+    }
+
+  private:
+
+    libMesh::UniquePtr<GetPot> _input;
+  };
+
   CPPUNIT_TEST_SUITE_REGISTRATION( AntiochMixtureBuilderBaseTest );
+  CPPUNIT_TEST_SUITE_REGISTRATION( AntiochConstantTransportMixtureBuilderTest );
 
 } // end namespace GRINSTesting
 
