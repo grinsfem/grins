@@ -102,6 +102,17 @@ namespace GRINS
         ( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
     }
 
+    libMesh::Real parse_min_T( const GetPot & input, const std::string & material )
+    {
+      return input( "Materials/"+material+"/GasMixture/Antioch/minimum_T",
+                    -std::numeric_limits<libMesh::Real>::max() );
+    }
+
+    bool parse_clip_negative_rho( const GetPot & input, const std::string & material )
+    {
+      return input( "Materials/"+material+"/GasMixture/Antioch/clip_negative_rho", false);
+    }
+
   protected:
 
     void parse_nasa_data

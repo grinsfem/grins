@@ -49,6 +49,8 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_build_constant_conductivity );
     CPPUNIT_TEST( test_build_constant_prandtl_conductivity );
     CPPUNIT_TEST( test_build_constant_lewis_diff );
+    CPPUNIT_TEST( test_parse_min_T );
+    CPPUNIT_TEST( test_parse_clip_negative_rho );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -161,6 +163,26 @@ namespace GRINSTesting
       libMesh::Real D_exact = k/rho/cp/Le;
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL( D_exact, D, std::numeric_limits<libMesh::Real>::epsilon() );
+    }
+
+    void test_parse_min_T()
+    {
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      libMesh::Real min_T_exact = 114.15;
+      libMesh::Real min_T = builder.parse_min_T( *_input, "TestMaterial" );
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( min_T_exact, min_T, std::numeric_limits<libMesh::Real>::epsilon() );
+    }
+
+    void test_parse_clip_negative_rho()
+    {
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      bool clip_negative_rho_exact = true;
+      bool clip_negative_rho = builder.parse_clip_negative_rho( *_input, "TestMaterial" );
+
+      CPPUNIT_ASSERT_EQUAL( clip_negative_rho_exact, clip_negative_rho );
     }
 
   private:
