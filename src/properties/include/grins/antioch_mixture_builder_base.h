@@ -30,6 +30,13 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
+// GRINS
+#include "grins/materials_parsing.h"
+#include "grins/property_types.h"
+#include "grins/constant_viscosity.h"
+#include "grins/constant_conductivity.h"
+#include "grins/constant_prandtl_conductivity.h"
+
 // Antioch
 #include "antioch/vector_utils_decl.h"
 #include "antioch/vector_utils.h"
@@ -38,6 +45,7 @@
 #include "antioch/nasa_mixture.h"
 #include "antioch/cea_curve_fit.h"
 #include "antioch/nasa_mixture_parsing.h"
+#include "antioch/constant_lewis_diffusivity.h"
 
 // libMesh
 #include "libmesh/auto_ptr.h" // libMesh::UniquePtr
@@ -73,6 +81,27 @@ namespace GRINS
     build_nasa_thermo_mix( const GetPot & input, const std::string & material,
                            const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
 
+    libMesh::UniquePtr<ConstantViscosity>
+    build_constant_viscosity( const GetPot & input, const std::string & material )
+    {
+      return libMesh::UniquePtr<ConstantViscosity>( new ConstantViscosity(input,material) );
+    }
+
+    template<typename Conductivity>
+    libMesh::UniquePtr<Conductivity>
+    build_constant_conductivity( const GetPot & input, const std::string & material )
+    {
+      return specialized_build_conductivity( input, material, conductivity_type<Conductivity>() );
+    }
+
+    libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >
+    build_constant_lewis_diff( const GetPot & input, const std::string & material )
+    {
+      libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
+      return libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >
+        ( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
+    }
+
   protected:
 
     void parse_nasa_data
@@ -85,6 +114,20 @@ namespace GRINS
         cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
 
       Antioch::read_nasa_mixture_data( nasa_mixture, cea_data_filename, Antioch::ASCII, true );
+    }
+
+    libMesh::UniquePtr<ConstantConductivity>
+    specialized_build_conductivity( const GetPot & input, const std::string & material,
+                                    conductivity_type<ConstantConductivity> )
+    {
+      return libMesh::UniquePtr<ConstantConductivity>( new ConstantConductivity(input,material) );
+    }
+
+    libMesh::UniquePtr<ConstantPrandtlConductivity>
+    specialized_build_conductivity( const GetPot & input, const std::string & material,
+                                    conductivity_type<ConstantPrandtlConductivity> )
+    {
+      return libMesh::UniquePtr<ConstantPrandtlConductivity>( new ConstantPrandtlConductivity(input,material) );
     }
 
   };

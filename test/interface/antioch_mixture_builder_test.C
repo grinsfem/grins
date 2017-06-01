@@ -45,6 +45,10 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_build_chem_mix );
     CPPUNIT_TEST( test_build_reaction_set );
     CPPUNIT_TEST( test_build_nasa_thermo_mix_cea );
+    CPPUNIT_TEST( test_build_constant_viscosity );
+    CPPUNIT_TEST( test_build_constant_conductivity );
+    CPPUNIT_TEST( test_build_constant_prandtl_conductivity );
+    CPPUNIT_TEST( test_build_constant_lewis_diff );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -100,10 +104,70 @@ namespace GRINSTesting
       CPPUNIT_ASSERT(nasa_mix->check());
     }
 
+    void test_build_constant_viscosity()
+    {
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      libMesh::UniquePtr<GRINS::ConstantViscosity> visc =
+        builder.build_constant_viscosity( *_input, "TestMaterial" );
+
+      libMesh::Real mu = (*visc)();
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 3.14, mu, std::numeric_limits<libMesh::Real>::epsilon() );
+    }
+
+    void test_build_constant_conductivity()
+    {
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      libMesh::UniquePtr<GRINS::ConstantConductivity> conductivity =
+        builder.build_constant_conductivity<GRINS::ConstantConductivity>( *_input, "TestMaterial" );
+
+      libMesh::Real k = (*conductivity)();
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.71, k, std::numeric_limits<libMesh::Real>::epsilon() );
+    }
+
+    void test_build_constant_prandtl_conductivity()
+    {
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      libMesh::UniquePtr<GRINS::ConstantPrandtlConductivity> conductivity =
+        builder.build_constant_conductivity<GRINS::ConstantPrandtlConductivity>( *_input, "TestMaterial" );
+
+      libMesh::Real mu = 1.2;
+      libMesh::Real cp = 2.3;
+      libMesh::Real Pr = 0.7;
+      libMesh::Real k = (*conductivity)( mu, cp );
+      libMesh::Real k_exact = mu*cp/Pr;
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( k_exact, k, std::numeric_limits<libMesh::Real>::epsilon() );
+    }
+
+    void test_build_constant_lewis_diff()
+    {
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > diff =
+        builder.build_constant_lewis_diff( *_input, "TestMaterial" );
+
+      libMesh::Real rho = 1.2;
+      libMesh::Real cp = 2.3;
+      libMesh::Real k = 3.4;
+      libMesh::Real Le = 1.4;
+
+      libMesh::Real D = diff->D(rho,cp,k);
+
+      libMesh::Real D_exact = k/rho/cp/Le;
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( D_exact, D, std::numeric_limits<libMesh::Real>::epsilon() );
+    }
+
   private:
 
     libMesh::UniquePtr<GetPot> _input;
   };
+
 
   CPPUNIT_TEST_SUITE_REGISTRATION( AntiochMixtureBuilderBaseTest );
 
