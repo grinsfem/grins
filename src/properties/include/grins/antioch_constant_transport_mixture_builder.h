@@ -33,6 +33,13 @@
 // GRINS
 #include "grins/antioch_mixture_builder_base.h"
 #include "grins/antioch_constant_transport_mixture.h"
+#include "grins/property_types.h"
+#include "grins/constant_viscosity.h"
+#include "grins/constant_conductivity.h"
+#include "grins/constant_prandtl_conductivity.h"
+
+// Antioch
+#include "antioch/constant_lewis_diffusivity.h"
 
 namespace GRINS
 {
@@ -46,6 +53,43 @@ namespace GRINS
     template<typename KineticsThermoCurveFit,typename Conductivity>
     libMesh::UniquePtr<AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity> >
     build_mixture( const GetPot & input, const std::string & material );
+
+    libMesh::UniquePtr<ConstantViscosity>
+    build_constant_viscosity( const GetPot & input, const std::string & material )
+    {
+      return libMesh::UniquePtr<ConstantViscosity>( new ConstantViscosity(input,material) );
+    }
+
+    template<typename Conductivity>
+    libMesh::UniquePtr<Conductivity>
+    build_constant_conductivity( const GetPot & input, const std::string & material )
+    {
+      return specialized_build_conductivity( input, material, conductivity_type<Conductivity>() );
+    }
+
+    libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >
+    build_constant_lewis_diff( const GetPot & input, const std::string & material )
+    {
+      libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
+      return libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >
+        ( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
+    }
+
+  private:
+
+    libMesh::UniquePtr<ConstantConductivity>
+    specialized_build_conductivity( const GetPot & input, const std::string & material,
+                                    conductivity_type<ConstantConductivity> )
+    {
+      return libMesh::UniquePtr<ConstantConductivity>( new ConstantConductivity(input,material) );
+    }
+
+    libMesh::UniquePtr<ConstantPrandtlConductivity>
+    specialized_build_conductivity( const GetPot & input, const std::string & material,
+                                    conductivity_type<ConstantPrandtlConductivity> )
+    {
+      return libMesh::UniquePtr<ConstantPrandtlConductivity>( new ConstantPrandtlConductivity(input,material) );
+    }
 
   };
 
