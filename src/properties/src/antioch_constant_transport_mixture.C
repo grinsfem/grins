@@ -35,15 +35,44 @@
 
 namespace GRINS
 {
-  template<typename KineticsThermoCurveFit,typename Thermo>
-  AntiochConstantTransportMixture<KineticsThermoCurveFit,Thermo>::
+  template<typename KineticsThermoCurveFit,typename Conductivity>
+  AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity>::
   AntiochConstantTransportMixture( const GetPot& input,const std::string& material )
     : AntiochMixture<KineticsThermoCurveFit>(input,material)
   {
+    {
+      std::string warning = "==============================================\n";
+      warning += "WARNING: This AntiochConstantTransportMixture constructor is DEPREACTED!\n";
+      warning += "         Prefer alternate constructor where parsing\n";
+      warning += "         is done outside this class.\n";
+      warning += "==============================================\n";
+
+      libmesh_warning(warning);
+    }
+
     libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
     _diffusivity.reset( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
     _mu.reset( new ConstantViscosity(input,material) );
     this->build_conductivity(input,material);
+  }
+
+  template<typename KineticsThermoCurveFit,typename Conductivity>
+  AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity>::
+  AntiochConstantTransportMixture
+  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
+    libMesh::UniquePtr<ConstantViscosity> & visc,
+    libMesh::UniquePtr<Conductivity> & cond,
+    libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > & diff,
+    libMesh::Real min_T,
+    bool clip_negative_rho )
+    : AntiochMixture<KineticsThermoCurveFit>(chem_mixture,reaction_set,nasa_mixture,min_T,clip_negative_rho)
+  {
+    /*! \todo Use std::move() when we have C++11 */
+    _mu.reset( visc.release() );
+    _conductivity.reset( cond.release() );
+    _diffusivity.reset( diff.release() );
   }
 
 } // end namespace GRINS

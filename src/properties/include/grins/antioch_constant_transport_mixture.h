@@ -59,7 +59,18 @@ namespace GRINS
   {
   public:
 
+    //! Deprecated Constructor
     AntiochConstantTransportMixture( const GetPot & input, const std::string & material );
+
+    //! Constructor with user-built objects
+    AntiochConstantTransportMixture( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+                                     libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+                                     libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
+                                     libMesh::UniquePtr<ConstantViscosity> & visc,
+                                     libMesh::UniquePtr<Conductivity> & cond,
+                                     libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > & diff,
+                                     libMesh::Real min_T = -std::numeric_limits<libMesh::Real>::max(),
+                                     bool clip_negative_rho = false );
 
     virtual ~AntiochConstantTransportMixture(){}
 
