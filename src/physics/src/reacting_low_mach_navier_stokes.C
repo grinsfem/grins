@@ -95,7 +95,7 @@ namespace GRINS
 
                 for( unsigned int s = 0; s < this->n_species(); s++ )
                   {
-                    this->_mole_fractions_index[s] = postprocessing.register_quantity( "X_"+this->_gas_mixture.species_name(s) );
+                    this->_mole_fractions_index[s] = postprocessing.register_quantity( "X_"+this->_gas_mixture->species_name(s) );
                   }
               }
             else if( name == std::string("h_s") )
@@ -104,7 +104,7 @@ namespace GRINS
 
                 for( unsigned int s = 0; s < this->n_species(); s++ )
                   {
-                    this->_h_s_index[s] = postprocessing.register_quantity( "h_"+this->_gas_mixture.species_name(s) );
+                    this->_h_s_index[s] = postprocessing.register_quantity( "h_"+this->_gas_mixture->species_name(s) );
                   }
               }
             else if( name == std::string("omega_dot") )
@@ -112,14 +112,14 @@ namespace GRINS
                 this->_omega_dot_index.resize(this->n_species());
 
                 for( unsigned int s = 0; s < this->n_species(); s++ )
-                  this->_omega_dot_index[s] = postprocessing.register_quantity( "omega_dot_"+this->_gas_mixture.species_name(s) );
+                  this->_omega_dot_index[s] = postprocessing.register_quantity( "omega_dot_"+this->_gas_mixture->species_name(s) );
               }
             else if( name == std::string("D_s") )
               {
                 this->_Ds_index.resize(this->n_species());
 
                 for( unsigned int s = 0; s < this->n_species(); s++ )
-                  this->_Ds_index[s] = postprocessing.register_quantity( "D_"+this->_gas_mixture.species_name(s) );
+                  this->_Ds_index[s] = postprocessing.register_quantity( "D_"+this->_gas_mixture->species_name(s) );
               }
             else
               {
@@ -316,7 +316,7 @@ namespace GRINS
         libMesh::Gradient mass_term(0.0,0.0,0.0);
         for(unsigned int s=0; s < this->_n_species; s++ )
           {
-            mass_term += grad_ws[s]/this->_gas_mixture.M(s);
+            mass_term += grad_ws[s]/this->_gas_mixture->M(s);
           }
         mass_term *= M;
 
@@ -478,7 +478,7 @@ namespace GRINS
         for(unsigned int s=0; s < this->_n_species; s++ )
           ws[s] = context.interior_value(this->_species_vars.species(s), qp);
 
-        Evaluator gas_evaluator( this->_gas_mixture );
+        Evaluator gas_evaluator( *(this->_gas_mixture) );
         const libMesh::Real R_mix = gas_evaluator.R_mix(ws);
         const libMesh::Real p0 = this->get_p0_steady(context,qp);
         const libMesh::Real rho = this->rho(T, p0, R_mix);
@@ -507,7 +507,7 @@ namespace GRINS
               F_s(i) -= rho*ws_dot*s_phi[i][qp]*jac;
 
             // Start accumulating M_dot
-            M_dot += ws_dot/this->_gas_mixture.M(s);
+            M_dot += ws_dot/this->_gas_mixture->M(s);
           }
 
         // Continuity residual
@@ -545,7 +545,7 @@ namespace GRINS
   {
     CachedValues & cache = context.get_cached_values();
 
-    Evaluator gas_evaluator( this->_gas_mixture );
+    Evaluator gas_evaluator( *(this->_gas_mixture) );
 
     const unsigned int n_qpoints = context.get_element_qrule().n_points();
 
@@ -682,7 +682,7 @@ namespace GRINS
                                                                                        const libMesh::Point& point,
                                                                                        libMesh::Real& value )
   {
-    Evaluator gas_evaluator( this->_gas_mixture );
+    Evaluator gas_evaluator( *(this->_gas_mixture) );
 
     if( quantity_index == this->_rho_index )
       {

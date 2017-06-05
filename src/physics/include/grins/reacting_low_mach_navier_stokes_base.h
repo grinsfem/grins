@@ -40,7 +40,7 @@ namespace GRINS
     ReactingLowMachNavierStokesBase(const PhysicsName& physics_name,
                                     const GetPot& input)
       : ReactingLowMachNavierStokesAbstract(physics_name,input),
-        _gas_mixture(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes()))
+        _gas_mixture( new Mixture(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes())) )
     {}
 
     virtual ~ReactingLowMachNavierStokesBase(){};
@@ -53,14 +53,14 @@ namespace GRINS
       const
     {
       ParameterUser::register_parameter(param_name, param_pointer);
-      _gas_mixture.register_parameter(param_name, param_pointer);
+      _gas_mixture->register_parameter(param_name, param_pointer);
     }
 
-    const Mixture& gas_mixture() const;
+    const Mixture & gas_mixture() const;
 
   protected:
 
-    Mixture _gas_mixture;
+    libMesh::UniquePtr<Mixture> _gas_mixture;
 
   private:
 
@@ -70,9 +70,9 @@ namespace GRINS
 
   template<typename Mixture>
   inline
-  const Mixture& ReactingLowMachNavierStokesBase<Mixture>::gas_mixture() const
+  const Mixture & ReactingLowMachNavierStokesBase<Mixture>::gas_mixture() const
   {
-    return _gas_mixture;
+    return *_gas_mixture;
   }
 
 } // namespace GRINS
