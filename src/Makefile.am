@@ -180,6 +180,7 @@ libgrins_la_SOURCES += properties/src/mooney_rivlin.C
 libgrins_la_SOURCES += properties/src/materials_parsing.C
 libgrins_la_SOURCES += properties/src/viscosity_base.C
 libgrins_la_SOURCES += properties/src/antioch_mixture_builder_base.C
+libgrins_la_SOURCES += properties/src/antioch_mixture_averaged_transport_mixture_builder.C
 
 # src/qoi files
 libgrins_la_SOURCES += qoi/src/average_nusselt_number.C
@@ -475,6 +476,7 @@ include_HEADERS += properties/include/grins/antioch_thermo_curve_fit_instantiati
 include_HEADERS += properties/include/grins/antioch_options_naming.h
 include_HEADERS += properties/include/grins/antioch_mixture_builder_base.h
 include_HEADERS += properties/include/grins/antioch_constant_transport_mixture_builder.h
+include_HEADERS += properties/include/grins/antioch_mixture_averaged_transport_mixture_builder.h
 
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h
