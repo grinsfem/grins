@@ -34,9 +34,9 @@ namespace GRINS
 {
 
   template<typename Mixture, typename Evaluator>
-  ReactingLowMachNavierStokesStabilizationBase<Mixture,Evaluator>::ReactingLowMachNavierStokesStabilizationBase( const std::string& physics_name,
-                                                                                                                 const GetPot& input )
-    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input),
+  ReactingLowMachNavierStokesStabilizationBase<Mixture,Evaluator>::ReactingLowMachNavierStokesStabilizationBase
+  ( const std::string& physics_name,const GetPot& input,libMesh::UniquePtr<Mixture> & gas_mix )
+    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input,gas_mix),
     _stab_helper( physics_name+"StabHelper", input )
   {}
 

@@ -38,9 +38,10 @@ namespace GRINS
   public:
 
     ReactingLowMachNavierStokesBase(const PhysicsName& physics_name,
-                                    const GetPot& input)
+                                    const GetPot& input,
+                                    libMesh::UniquePtr<Mixture> & gas_mix )
       : ReactingLowMachNavierStokesAbstract(physics_name,input),
-        _gas_mixture( new Mixture(input,MaterialsParsing::material_name(input,PhysicsNaming::reacting_low_mach_navier_stokes())) )
+        _gas_mixture(gas_mix.release()) /*! \todo Use std::move when we mandate C++11 */
     {}
 
     virtual ~ReactingLowMachNavierStokesBase(){};

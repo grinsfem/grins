@@ -36,7 +36,8 @@ namespace GRINS
   {
   public:
 
-    ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input);
+    ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input,
+                                libMesh::UniquePtr<Mixture> & gas_mix);
 
     virtual ~ReactingLowMachNavierStokes(){};
 

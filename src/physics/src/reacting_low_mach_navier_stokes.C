@@ -39,8 +39,10 @@
 namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
-  ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input)
-    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input),
+  ReactingLowMachNavierStokes<Mixture,Evaluator>::ReactingLowMachNavierStokes(const PhysicsName& physics_name,
+                                                                              const GetPot& input,
+                                                                              libMesh::UniquePtr<Mixture> & gas_mix)
+    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input,gas_mix),
     _p_pinning(input,physics_name),
     _rho_index(0),
     _mu_index(0),
