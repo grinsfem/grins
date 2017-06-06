@@ -38,6 +38,7 @@
 #include "grins/hitran.h"
 #include "grins/absorption_coeff.h"
 #include "grins/spectroscopic_absorption.h"
+#include "grins/chemistry_builder.h"
 
 #if GRINS_HAVE_ANTIOCH
 #include "grins/antioch_chemistry.h"
@@ -183,11 +184,19 @@ namespace GRINS
         libMesh::Real nu_max;
         this->get_var_value<libMesh::Real>(input,nu_max,"QoI/SpectroscopicAbsorption/max_wavenumber",0.0);
 
+        ChemistryBuilder chem_builder;
+
 #if GRINS_HAVE_ANTIOCH
-        SharedPtr<AntiochChemistry> chem( new AntiochChemistry(input,material) );
+        libMesh::UniquePtr<AntiochChemistry> chem_ptr;
+        chem_builder.build_chemistry(input,material,chem_ptr);
+        SharedPtr<AntiochChemistry> chem(chem_ptr.release());
+
         absorb = new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure);
 #elif GRINS_HAVE_CANTERA
-        SharedPtr<CanteraMixture> chem( new CanteraMixture(input,material) );
+        libMesh::UniquePtr<CanteraMixture> chem_ptr;
+        chem_builder.build_chemistry(input,material,chem_ptr);
+        SharedPtr<CanteraMixture> chem(chem_ptr.release());
+
         absorb = new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure);
 #else
         libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
