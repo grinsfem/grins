@@ -31,6 +31,7 @@
 #include "grins/variable_warehouse.h"
 #include "grins/physics_naming.h"
 #include "grins/physics_factory_helper.h"
+#include "grins/chemistry_builder.h"
 
 #ifdef GRINS_HAVE_CANTERA
 #include "grins/cantera_mixture.h"
@@ -176,7 +177,11 @@ namespace GRINS
 
     /*! \todo We should have a ChemsitryWarehouse or something to just
       grab this from one place instead of rebuilding. */
-    ChemistryType chem(input,material);
+    ChemistryBuilder chem_builder;
+    libMesh::UniquePtr<ChemistryType> chem_ptr;
+    chem_builder.build_chemistry(input,material,chem_ptr);
+
+    const ChemistryType & chem = *chem_ptr;
 
     const unsigned int n_vars = species_mole_fracs.size();
     // Compute M

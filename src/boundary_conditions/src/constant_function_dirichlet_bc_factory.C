@@ -29,6 +29,7 @@
 #include "grins/string_utils.h"
 #include "grins/multicomponent_variable.h"
 #include "grins/variable_warehouse.h"
+#include "grins/chemistry_builder.h"
 
 #ifdef GRINS_HAVE_CANTERA
 #include "grins/cantera_mixture.h"
@@ -262,7 +263,11 @@ namespace GRINS
     // Now convert to mass frac and add to composite function
     /*! \todo We should have a ChemsitryWarehouse or something to just grab this from one place
       instead of rebuilding. */
-    ChemistryType chem(input,material);
+    ChemistryBuilder chem_builder;
+    libMesh::UniquePtr<ChemistryType> chem_ptr;
+    chem_builder.build_chemistry(input,material,chem_ptr);
+
+    const ChemistryType & chem = *chem_ptr;
 
     libMesh::Real M = 0.0;
     for(unsigned int v = 0; v < n_vars_found; v++ )
