@@ -181,3 +181,9 @@ solver_quiet = false
 print_element_jacobians = 'false'
 
 []
+
+[QoI]
+  forward_sensitivity_parameters = 'BoundaryConditions/Top/SpeciesMassFractions/PowerLawCatalycity/gamma0
+                                    BoundaryConditions/Top/SpeciesMassFractions/PowerLawCatalycity/Tref
+                                    BoundaryConditions/Top/SpeciesMassFractions/PowerLawCatalycity/alpha'
+[]
