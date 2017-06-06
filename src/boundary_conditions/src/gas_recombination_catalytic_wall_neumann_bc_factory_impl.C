@@ -27,6 +27,7 @@
 
 // GRINS
 #include "grins/string_utils.h"
+#include "grins/chemistry_builder.h"
 
 #ifdef GRINS_HAVE_CANTERA
 #include "grins/cantera_mixture.h"
@@ -60,10 +61,18 @@ namespace GRINS
     // Now construct the Neumann BC
     SharedPtr<NeumannBCAbstract> catalytic_wall;
 
+    ChemistryBuilder chem_builder;
+
     if( thermochem_lib == "cantera" )
       {
 #ifdef GRINS_HAVE_CANTERA
-        this->build_wall_ptr<CanteraMixture>(input,material,gamma_ptr,reactant,product,
+        libMesh::UniquePtr<CanteraMixture> chem_uptr;
+        chem_builder.build_chemistry(input,material,chem_uptr);
+
+        /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
+        SharedPtr<CanteraMixture> chem_ptr(chem_uptr.release());
+
+        this->build_wall_ptr<CanteraMixture>(chem_ptr,gamma_ptr,reactant,product,
                                              species_vars,T_var,p0,catalytic_wall);
 #else
         libmesh_error_msg("Error: Cantera not enabled in this configuration. Reconfigure using --with-cantera option.");
@@ -72,7 +81,13 @@ namespace GRINS
     else if( thermochem_lib == "antioch" )
       {
 #ifdef GRINS_HAVE_ANTIOCH
-        this->build_wall_ptr<AntiochChemistry>(input,material,gamma_ptr,reactant,product,
+        libMesh::UniquePtr<AntiochChemistry> chem_uptr;
+        chem_builder.build_chemistry(input,material,chem_uptr);
+
+        /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
+        SharedPtr<AntiochChemistry> chem_ptr(chem_uptr.release());
+
+        this->build_wall_ptr<AntiochChemistry>(chem_ptr,gamma_ptr,reactant,product,
                                                species_vars,T_var,p0,catalytic_wall);
 #else
         libmesh_error_msg("Error: Antioch not enabled in this configuration. Reconfigure using --with-antioch option.");
