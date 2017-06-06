@@ -34,6 +34,7 @@
 #include "grins/antioch_mixture.h"
 #include "grins/materials_parsing.h"
 #include "grins/physics_naming.h"
+#include "grins/antioch_mixture_builder_base.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -55,7 +56,11 @@ int main( int argc, char* argv[] )
 
   GetPot input( argv[1] );
 
-  GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > antioch(input,"TestMaterial");
+  GRINS::AntiochMixtureBuilderBase builder;
+  libMesh::UniquePtr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > >
+    antioch_ptr = builder.build_antioch_mixture<Antioch::CEACurveFit<libMesh::Real> >(input,"TestMaterial");
+
+  const GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & antioch = *antioch_ptr;
 
   std::vector<double> mass_fractions( 5, 0.2 );
 

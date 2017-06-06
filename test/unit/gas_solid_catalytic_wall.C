@@ -34,6 +34,7 @@
 #include "grins/antioch_chemistry.h"
 #include "grins/materials_parsing.h"
 #include "grins/physics_naming.h"
+#include "grins/chemistry_builder.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -202,11 +203,14 @@ int main(int argc, char* argv[])
 
   int return_flag = 0;
 
+  GRINS::ChemistryBuilder chem_builder;
+
   if( test_type == "cantera" )
     {
 #ifdef GRINS_HAVE_CANTERA
-      GRINS::CanteraMixture chem_mixture( input, "CanteraMaterial" );
-      return_flag = test<GRINS::CanteraMixture>( chem_mixture );
+      libMesh::UniquePtr<GRINS::CanteraMixture> chem_uptr;
+      chem_builder.build_chemistry(input,"CanteraMaterial",chem_uptr);
+      return_flag = test<GRINS::CanteraMixture>( *chem_uptr );
 #else
       return_flag = 77;
 #endif
@@ -214,8 +218,9 @@ int main(int argc, char* argv[])
   else if( test_type == "antioch" )
     {
 #ifdef GRINS_HAVE_ANTIOCH
-      GRINS::AntiochChemistry chem_mixture( input, "AntiochMaterial" );
-      return_flag = test<GRINS::AntiochChemistry>( chem_mixture );
+      libMesh::UniquePtr<GRINS::AntiochChemistry> chem_uptr;
+      chem_builder.build_chemistry(input,"AntiochMaterial",chem_uptr);
+      return_flag = test<GRINS::AntiochChemistry>( *chem_uptr );
 #else
       return_flag = 77;
 #endif

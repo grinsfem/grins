@@ -35,6 +35,7 @@
 // libMesh
 #include "libmesh/libmesh_common.h"
 #include "libmesh/getpot.h"
+#include "grins/antioch_mixture_builder_base.h"
 
 namespace GRINSTesting
 {
@@ -46,7 +47,10 @@ namespace GRINSTesting
     {
       GetPot input(input_file);
 
-      _antioch_mixture.reset( new GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> >(input,material_name) );
+      GRINS::AntiochMixtureBuilderBase builder;
+
+      this->_antioch_mixture =
+        builder.build_antioch_mixture<Antioch::CEACurveFit<libMesh::Real> >(input,material_name);
     }
 
   protected:
