@@ -62,4 +62,10 @@ namespace GRINS
     return new ConstantCatalycity( *this );
   }
 
+  void ConstantCatalycity::set_parameters(const GetPot & input, const std::string & param_base)
+  {
+    std::string gamma_str = param_base+"gamma";
+    this->set_parameter(_gamma,input,gamma_str,_gamma);
+  }
+
 } // end namespace GRINS

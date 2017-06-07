@@ -178,3 +178,7 @@ solver_quiet = false
 print_element_jacobians = 'false'
 
 []
+
+[QoI]
+  forward_sensitivity_parameters = 'BoundaryConditions/Top/SpeciesMassFractions/ConstantCatalycity/gamma'
+[]

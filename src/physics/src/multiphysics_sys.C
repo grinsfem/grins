@@ -244,6 +244,9 @@ namespace GRINS
         (physics_iter->second)->register_parameter( param_name,
                                                     param_pointer );
       }
+
+    for (unsigned int bc=0; bc<_neumann_bcs.size(); bc++)
+      _neumann_bcs[bc]->get_func()->register_parameter(param_name, param_pointer);
   }
 
 

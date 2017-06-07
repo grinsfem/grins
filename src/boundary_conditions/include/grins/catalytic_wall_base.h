@@ -83,6 +83,9 @@ namespace GRINS
     libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
     void set_catalycity_params( const std::vector<libMesh::Real>& params );
+    
+    virtual void register_parameter(  const std::string & param_name,
+                                      libMesh::ParameterMultiAccessor< libMesh::Number > & param_pointer) const;
 
   protected:
 

@@ -69,4 +69,13 @@ namespace GRINS
     return new ArrheniusCatalycity( *this );
   }
 
+  void ArrheniusCatalycity::set_parameters(const GetPot & input, const std::string & param_base)
+  {
+    std::string gamma0_str = param_base+"gamma0";
+    this->set_parameter(_gamma0,input,gamma0_str,_gamma0);
+
+    std::string Ta_str = param_base+"Ta";
+    this->set_parameter(_Ta,input,Ta_str,_Ta);
+  }
+
 } // end namespace GRINS

@@ -25,6 +25,9 @@
 #ifndef GRINS_NEUMANN_BC_ABSTRACT_H
 #define GRINS_NEUMANN_BC_ABSTRACT_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/libmesh_common.h"
 #include "libmesh/auto_ptr.h" // libMesh::UniquePtr
@@ -34,11 +37,13 @@ namespace GRINS
   // Forward declarations
   class AssemblyContext;
 
-  class NeumannBCAbstract
+  class NeumannBCAbstract : public ParameterUser
   {
   public:
 
-    NeumannBCAbstract(){}
+    NeumannBCAbstract()
+    : ParameterUser("NeumannBCAbstract")
+    {}
 
     virtual ~NeumannBCAbstract(){};
 

@@ -74,4 +74,10 @@ namespace GRINS
       libmesh_error();
   }
 
+  template<typename Chemistry>
+  void CatalyticWallBase<Chemistry>::register_parameter(const std::string & param_name,
+                                                        libMesh::ParameterMultiAccessor< libMesh::Number > & param_pointer) const
+  {
+    _gamma_ptr->register_parameter(param_name,param_pointer);
+  }
 } // end namespace GRINS
