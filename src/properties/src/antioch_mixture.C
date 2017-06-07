@@ -54,6 +54,16 @@ namespace GRINS
       _minimum_T( input( "Materials/"+material+"/GasMixture/Antioch/minimum_T", -std::numeric_limits<libMesh::Real>::max() ) ),
       _clip_negative_rho( input( "Materials/"+material+"/GasMixture/Antioch/clip_negative_rho", false) )
   {
+    {
+      std::string warning = "==============================================\n";
+      warning += "WARNING: This AntiochMixture constructor is DEPREACTED!\n";
+      warning += "         Prefer alternate constructor where parsing\n";
+      warning += "         is done outside this class.\n";
+      warning += "==============================================\n";
+
+      libmesh_warning(warning);
+    }
+
     std::string kinetics_data_filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
 
     bool verbose_read = input("screen-options/verbose_kinetics_read", false );
@@ -65,6 +75,24 @@ namespace GRINS
       cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
 
     Antioch::read_nasa_mixture_data( *_nasa_mixture.get(), cea_data_filename, Antioch::ASCII, true );
+
+    this->build_stat_mech_ref_correction();
+  }
+
+  template <typename KineticsThermoCurveFit>
+  AntiochMixture<KineticsThermoCurveFit>::AntiochMixture
+  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
+    libMesh::Real min_T,
+    bool clip_negative_rho )
+    : AntiochChemistry(chem_mixture),
+      _minimum_T(min_T),
+      _clip_negative_rho(clip_negative_rho)
+  {
+    /*! \todo Use std::move when we have C++11 */
+    _reaction_set.reset( reaction_set.release() );
+    _nasa_mixture.reset( nasa_mixture.release() );
 
     this->build_stat_mech_ref_correction();
   }

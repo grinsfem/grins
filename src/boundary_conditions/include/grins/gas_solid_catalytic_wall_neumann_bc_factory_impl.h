@@ -60,19 +60,16 @@ namespace GRINS
   protected:
 
     template<typename ChemistryType>
-    void build_wall_ptr( const GetPot& input,
-                         const std::string& material,
-                         SharedPtr<CatalycityBase>& gamma_ptr,
-                         const std::string& gas_reactant,
-                         const std::string& solid_reactant,
-                         const std::string& product,
-                         const std::vector<VariableIndex>& species_vars,
+    void build_wall_ptr( SharedPtr<ChemistryType> & chem_ptr,
+                         SharedPtr<CatalycityBase> & gamma_ptr,
+                         const std::string & gas_reactant,
+                         const std::string & solid_reactant,
+                         const std::string & product,
+                         const std::vector<VariableIndex> & species_vars,
                          VariableIndex T_var,
                          libMesh::Real p0,
-                         SharedPtr<NeumannBCAbstract>& catalytic_wall )
+                         SharedPtr<NeumannBCAbstract> & catalytic_wall )
     {
-      SharedPtr<ChemistryType> chem_ptr( new ChemistryType(input,material) );
-
       catalytic_wall.reset( new GasSolidCatalyticWall<ChemistryType>
                             ( chem_ptr,
                               gamma_ptr,

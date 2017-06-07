@@ -34,8 +34,9 @@
 namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
-  ReactingLowMachNavierStokesSPGSMStabilization<Mixture,Evaluator>::ReactingLowMachNavierStokesSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : ReactingLowMachNavierStokesStabilizationBase<Mixture,Evaluator>(physics_name,input)
+  ReactingLowMachNavierStokesSPGSMStabilization<Mixture,Evaluator>::ReactingLowMachNavierStokesSPGSMStabilization
+  ( const GRINS::PhysicsName& physics_name, const GetPot& input,libMesh::UniquePtr<Mixture> & gas_mix )
+    : ReactingLowMachNavierStokesStabilizationBase<Mixture,Evaluator>(physics_name,input,gas_mix)
   {}
 
   template<typename Mixture, typename Evaluator>
@@ -108,7 +109,7 @@ namespace GRINS
             ws[s] = context.fixed_interior_value(this->_species_vars.species(s), qp);
           }
 
-        Evaluator gas_evaluator( this->_gas_mixture );
+        Evaluator gas_evaluator( *(this->_gas_mixture) );
         const libMesh::Real R_mix = gas_evaluator.R_mix(ws);
         const libMesh::Real p0 = this->get_p0_steady(context,qp);
         libMesh::Real rho = this->rho(T, p0, R_mix);
@@ -256,7 +257,7 @@ namespace GRINS
         for(unsigned int s=0; s < this->_n_species; s++ )
           ws[s] = context.fixed_interior_value(this->_species_vars.species(s), qp);
 
-        Evaluator gas_evaluator( this->_gas_mixture );
+        Evaluator gas_evaluator( *(this->_gas_mixture) );
         const libMesh::Real R_mix = gas_evaluator.R_mix(ws);
         const libMesh::Real p0 = this->get_p0_steady(context,qp);
         libMesh::Real rho = this->rho(T, p0, R_mix);

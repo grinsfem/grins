@@ -7,8 +7,24 @@
         species = 'N2 O2 NO N O'
         kinetics_data = './input_files/air_5sp_test.xml'
 
-      [../LewisNumber]
+        [./Antioch]
+           minimum_T = '114.15'
+           clip_negative_rho = 'true'
+        [../]
+     [../]
+
+     [./LewisNumber]
         value = '1.4'
+     [../]
+     [./Viscosity]
+        value = '3.14'
+     [../]
+     [./ThermalConductivity]
+        value = '2.71'
+     [../]
+     [./PrandtlNumber]
+        value = '0.7'
+     [../]
 []
 
 [screen-options]

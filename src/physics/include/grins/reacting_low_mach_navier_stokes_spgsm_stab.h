@@ -35,7 +35,8 @@ namespace GRINS
   {
   public:
 
-    ReactingLowMachNavierStokesSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    ReactingLowMachNavierStokesSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input,
+                                                   libMesh::UniquePtr<Mixture> & gas_mix);
     virtual ~ReactingLowMachNavierStokesSPGSMStabilization(){};
 
     virtual void element_time_derivative( bool compute_jacobian,

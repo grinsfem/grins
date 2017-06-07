@@ -43,6 +43,16 @@ namespace GRINS
   ( const GetPot& input,const std::string& material )
     : AntiochMixture<KT>(input,material)
   {
+    {
+      std::string warning = "==============================================\n";
+      warning += "WARNING: This AntiochMixtureAveragedTransportMixture constructor is DEPREACTED!\n";
+      warning += "         Prefer alternate constructor where parsing\n";
+      warning += "         is done outside this class.\n";
+      warning += "==============================================\n";
+
+      libmesh_warning(warning);
+    }
+
     std::string transport_data_filename =
       input( "Materials/"+material+"/GasMixture/Antioch/transport_data", "default" );
 
@@ -59,13 +69,36 @@ namespace GRINS
 
     _wilke_mixture.reset( new Antioch::MixtureAveragedTransportMixture<libMesh::Real>(*(_trans_mixture.get()) ) );
 
-    this->build_thermo( input );
+    this->build_thermo();
 
     this->build_viscosity( input, material );
 
-    this->build_conductivity( input );
+    this->build_conductivity( );
 
     this->build_diffusivity( input, material );
+  }
+
+  template<typename KT, typename T, typename V, typename C, typename D>
+  AntiochMixtureAveragedTransportMixture<KT,T,V,C,D>::AntiochMixtureAveragedTransportMixture
+  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KT> > & kinetics_thermo_mix,
+    libMesh::UniquePtr<Antioch::TransportMixture<libMesh::Real> > & trans_mix,
+    libMesh::UniquePtr<Antioch::MixtureAveragedTransportMixture<libMesh::Real> > & wilke_mix,
+    libMesh::UniquePtr<Antioch::MixtureViscosity<V,libMesh::Real> > & visc,
+    libMesh::UniquePtr<Antioch::MixtureDiffusion<D,libMesh::Real> > & diff,
+    libMesh::Real min_T,
+    bool clip_negative_rho )
+  : AntiochMixture<KT>(chem_mixture,reaction_set,kinetics_thermo_mix,min_T,clip_negative_rho)
+  {
+    /*! \todo Use std::move when we have C++11 */
+    _trans_mixture.reset( trans_mix.release() );
+    _wilke_mixture.reset( wilke_mix.release() );
+    _viscosity.reset( visc.release() );
+    _diffusivity.reset( diff.release() );
+
+    this->build_thermo();
+    this->build_conductivity();
   }
 
 } // end namespace GRINS

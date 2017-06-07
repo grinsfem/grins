@@ -29,6 +29,8 @@ namespace GRINS
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 
+    std::string material = MaterialsParsing::material_name(input,core_physics);
+
     std::string thermochem_lib;
     PhysicsFactoryHelper::parse_thermochemistry_model( input,
                                                        core_physics,
@@ -39,7 +41,9 @@ namespace GRINS
     if( thermochem_lib == "cantera" )
       {
 #ifdef GRINS_HAVE_CANTERA
-        new_physics.reset(new DerivedPhysics<CanteraMixture,CanteraEvaluator>(physics_name,input));
+        libMesh::UniquePtr<CanteraMixture> gas_mix( new CanteraMixture(input,material) );
+
+        new_physics.reset(new DerivedPhysics<CanteraMixture,CanteraEvaluator>(physics_name,input,gas_mix));
 #else
         libmesh_error_msg("Error: Cantera not enabled in this configuration. Reconfigure using --with-cantera option.");
 
@@ -66,13 +70,13 @@ namespace GRINS
 
         if( transport_model == AntiochOptions::mix_avged_transport_model() )
           {
-            this->build_mix_avged_physics( input, physics_name, thermo_model, diffusivity_model,
+            this->build_mix_avged_physics( input, physics_name, material, thermo_model, diffusivity_model,
                                            conductivity_model, viscosity_model, new_physics );
           }
 
         else if( transport_model == AntiochOptions::constant_transport_model() )
           {
-            this->build_const_physics( input, physics_name, thermo_model, diffusivity_model,
+            this->build_const_physics( input, physics_name, material, thermo_model, diffusivity_model,
                                        conductivity_model, viscosity_model, new_physics );
           }
         else // transport_model
@@ -108,7 +112,7 @@ namespace GRINS
 #ifdef GRINS_HAVE_ANTIOCH
   template<template<typename,typename> class DerivedPhysics>
   void PhysicsFactoryReactingFlows<DerivedPhysics>::
-  build_mix_avged_physics( const GetPot & input, const std::string & physics_name,
+  build_mix_avged_physics( const GetPot & input, const std::string & physics_name, const std::string & material,
                            const std::string & thermo_model, const std::string & diffusivity_model,
                            const std::string & conductivity_model, const std::string & viscosity_model,
                            libMesh::UniquePtr<Physics> & new_physics )
@@ -117,17 +121,17 @@ namespace GRINS
       {
         this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                                   Antioch::StatMechThermodynamics<libMesh::Real> >
-                                                  (input,physics_name,diffusivity_model,
-                                                   conductivity_model,viscosity_model,
-                                                   new_physics);
+          (input,physics_name,material,diffusivity_model,
+           conductivity_model,viscosity_model,
+           new_physics);
       }
     else if( (thermo_model == AntiochOptions::cea_nasa_model()) )
       {
         this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                                   Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >
-                                                  (input,physics_name,diffusivity_model,
-                                                   conductivity_model,viscosity_model,
-                                                   new_physics);
+          (input,physics_name,material,diffusivity_model,
+           conductivity_model,viscosity_model,
+           new_physics);
       }
     else
       {
@@ -139,7 +143,7 @@ namespace GRINS
 
   template<template<typename,typename> class DerivedPhysics>
   void PhysicsFactoryReactingFlows<DerivedPhysics>::
-  build_const_physics( const GetPot & input, const std::string & physics_name,
+  build_const_physics( const GetPot & input, const std::string & physics_name, const std::string & material,
                        const std::string & thermo_model, const std::string & diffusivity_model,
                        const std::string & conductivity_model, const std::string & viscosity_model,
                        libMesh::UniquePtr<Physics> & new_physics )
@@ -156,13 +160,13 @@ namespace GRINS
       {
         this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                               Antioch::StatMechThermodynamics<libMesh::Real> >
-          (input,physics_name,conductivity_model,new_physics);
+          (input,physics_name,material,conductivity_model,new_physics);
       }
     else if( thermo_model == AntiochOptions::cea_nasa_model() )
       {
         this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                               Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > >
-          (input,physics_name,conductivity_model,new_physics);
+          (input,physics_name,material,conductivity_model,new_physics);
        }
     else
       this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model);

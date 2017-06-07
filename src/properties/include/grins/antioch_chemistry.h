@@ -60,9 +60,13 @@ namespace GRINS
   {
   public:
 
+    //! Deprecated Constructor
     AntiochChemistry( const GetPot& input, const std::string& material );
 
-    virtual ~AntiochChemistry();
+    //! User passes in built ChemicalMixture and this class takes ownership
+    AntiochChemistry( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture );
+
+    virtual ~AntiochChemistry(){}
 
     //! Species molar mass (molecular weight), [kg/mol]
     libMesh::Real M( unsigned int species ) const;

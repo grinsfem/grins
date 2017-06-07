@@ -34,9 +34,9 @@ namespace GRINS
 {
 
   template<typename Mixture, typename Evaluator>
-  ReactingLowMachNavierStokesStabilizationBase<Mixture,Evaluator>::ReactingLowMachNavierStokesStabilizationBase( const std::string& physics_name,
-                                                                                                                 const GetPot& input )
-    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input),
+  ReactingLowMachNavierStokesStabilizationBase<Mixture,Evaluator>::ReactingLowMachNavierStokesStabilizationBase
+  ( const std::string& physics_name,const GetPot& input,libMesh::UniquePtr<Mixture> & gas_mix )
+    : ReactingLowMachNavierStokesBase<Mixture>(physics_name,input,gas_mix),
     _stab_helper( physics_name+"StabHelper", input )
   {}
 
@@ -117,7 +117,7 @@ namespace GRINS
         hess_ws[s] = context.interior_hessian(this->_species_vars.species(s), qp);
       }
 
-    Evaluator gas_evaluator( this->_gas_mixture );
+    Evaluator gas_evaluator( *(this->_gas_mixture) );
     const libMesh::Real R_mix = gas_evaluator.R_mix(ws);
     const libMesh::Real p0 = this->get_p0_steady(context,qp);
     libMesh::Real rho = this->rho(T, p0, R_mix );
@@ -244,7 +244,7 @@ namespace GRINS
 
         /* Accumulate mass term for continuity residual
            mass_term = grad_M/M */
-        mass_term += grad_ws[s]/this->_gas_mixture.M(s);
+        mass_term += grad_ws[s]/this->_gas_mixture->M(s);
 
         libMesh::Real hess_s_term = hess_ws[s](0,0) + hess_ws[s](1,1);
 #if LIBMESH_DIM > 2
@@ -291,7 +291,7 @@ namespace GRINS
         ws[s] = context.interior_value(this->_species_vars.species(s), qp);
       }
 
-    Evaluator gas_evaluator( this->_gas_mixture );
+    Evaluator gas_evaluator( *(this->_gas_mixture) );
     const libMesh::Real R_mix = gas_evaluator.R_mix(ws);
     const libMesh::Real p0 = this->get_p0_transient(context,qp);
     const libMesh::Real rho = this->rho(T, p0, R_mix);
@@ -306,7 +306,7 @@ namespace GRINS
         context.interior_rate(this->_species_vars.species(s), qp, ws_dot[s]);
 
         // Start accumulating M_dot
-        M_dot += ws_dot[s]/this->_gas_mixture.M(s);
+        M_dot += ws_dot[s]/this->_gas_mixture->M(s);
       }
     libMesh::Real M_dot_over_M = M_dot*(-M);
 

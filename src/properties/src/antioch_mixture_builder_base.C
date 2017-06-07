@@ -22,38 +22,25 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
 
 // This class
-#include "grins/antioch_chemistry.h"
+#include "grins/antioch_mixture_builder_base.h"
 
 // GRINS
 #include "grins/materials_parsing.h"
 
 // Antioch
 #include "antioch/default_filename.h"
-
-// libMesh
-#include "libmesh/getpot.h"
+#include "antioch/read_reaction_set_data.h"
 
 namespace GRINS
 {
-  AntiochChemistry::AntiochChemistry( const GetPot& input,
-                                      const std::string& material )
-    : ParameterUser("AntiochChemistry")
+  libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> >
+  AntiochMixtureBuilderBase::build_chem_mix( const GetPot & input, const std::string & material )
   {
-    {
-      std::string warning = "==============================================\n";
-      warning += "WARNING: This AntiochChemistry constructor is DEPREACTED!\n";
-      warning += "         Prefer alternate constructor where parsing\n";
-      warning += "         is done outside this class.\n";
-      warning += "==============================================\n";
-
-      libmesh_warning(warning);
-    }
     std::vector<std::string> species_list;
     MaterialsParsing::parse_chemical_species(input,material,species_list);
 
@@ -72,28 +59,30 @@ namespace GRINS
       electronic_data_filename = Antioch::DefaultInstallFilename::electronic_data();
 
     // By default, Antioch is using its ASCII parser. We haven't added more options yet.
-    _antioch_gas.reset( new Antioch::ChemicalMixture<libMesh::Real>( species_list,
-                                                                     verbose_antioch_read,
-                                                                     species_data_filename,
-                                                                     vibration_data_filename,
-                                                                     electronic_data_filename ) );
+    return libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> >
+      ( new Antioch::ChemicalMixture<libMesh::Real>( species_list,
+                                                     verbose_antioch_read,
+                                                     species_data_filename,
+                                                     vibration_data_filename,
+                                                     electronic_data_filename ) );
   }
 
-  AntiochChemistry::AntiochChemistry
-  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture )
-    : ParameterUser("AntiochChemistry")
+  libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> >
+  AntiochMixtureBuilderBase::build_reaction_set( const GetPot & input, const std::string & material,
+                                                 const Antioch::ChemicalMixture<libMesh::Real> & chem_mix )
   {
-    /*! \todo Use std::move when we have C++11 */
-    _antioch_gas.reset( chem_mixture.release() );
+    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> >
+      reaction_set( new Antioch::ReactionSet<libMesh::Real>(chem_mix) );
+
+    std::string kinetics_data_filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
+
+    bool verbose_read = input("screen-options/verbose_kinetics_read", false );
+
+    Antioch::read_reaction_set_data_xml<libMesh::Real>( kinetics_data_filename, verbose_read, *reaction_set );
+
+    return reaction_set;
   }
 
-  std::string AntiochChemistry::species_name( unsigned int species_index ) const
-  {
-    libmesh_assert_less(species_index, _antioch_gas->n_species());
-
-    return _antioch_gas->species_inverse_name_map().find(species_index)->second;
-  }
-
-}// end namespace GRINS
+} // end namespace GRINS
 
 #endif // GRINS_HAVE_ANTIOCH

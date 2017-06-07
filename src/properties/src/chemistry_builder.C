@@ -22,44 +22,45 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ANTIOCH_TEST_BASE_H
-#define GRINS_ANTIOCH_TEST_BASE_H
+// This class
+#include "grins/chemistry_builder.h"
 
 #include "grins_config.h"
 
-#ifdef GRINS_HAVE_ANTIOCH
-
 // GRINS
-#include "grins/antioch_mixture.h"
-
-// libMesh
-#include "libmesh/libmesh_common.h"
-#include "libmesh/getpot.h"
 #include "grins/antioch_mixture_builder_base.h"
 
-namespace GRINSTesting
+#ifdef GRINS_HAVE_CANTERA
+#include "grins/cantera_mixture.h"
+#endif
+
+#ifdef GRINS_HAVE_ANTIOCH
+#include "grins/antioch_chemistry.h"
+#endif
+
+namespace GRINS
 {
-  class AntiochTestBase
+  #ifdef GRINS_HAVE_CANTERA
+  template<>
+  void ChemistryBuilder::build_chemistry(const GetPot & input,const std::string & material,
+                                         libMesh::UniquePtr<CanteraMixture> & chem_ptr )
   {
-  public:
+    chem_ptr.reset( new CanteraMixture(input,material) );
+  }
+#endif // GRINS_HAVE_CANTERA
 
-    void init_antioch(const std::string & input_file, const std::string & material_name)
-    {
-      GetPot input(input_file);
+#ifdef GRINS_HAVE_ANTIOCH
+  template<>
+  void ChemistryBuilder::build_chemistry(const GetPot & input,const std::string & material,
+                                         libMesh::UniquePtr<AntiochChemistry> & chem_ptr )
+  {
+    AntiochMixtureBuilderBase builder;
 
-      GRINS::AntiochMixtureBuilderBase builder;
+    libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > antioch_chem_mix
+      = builder.build_chem_mix(input,material);
 
-      this->_antioch_mixture =
-        builder.build_antioch_mixture<Antioch::CEACurveFit<libMesh::Real> >(input,material_name);
-    }
-
-  protected:
-
-    libMesh::UniquePtr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > > _antioch_mixture;
-  };
-
-} // end namespace GRINSTesting
-
+    chem_ptr.reset( new AntiochChemistry(antioch_chem_mix) );
+  }
 #endif // GRINS_HAVE_ANTIOCH
 
-#endif // GRINS_ANTIOCH_TEST_BASE_H
+} // end namespace GRINS

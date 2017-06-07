@@ -22,44 +22,30 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ANTIOCH_TEST_BASE_H
-#define GRINS_ANTIOCH_TEST_BASE_H
 
-#include "grins_config.h"
-
-#ifdef GRINS_HAVE_ANTIOCH
-
-// GRINS
-#include "grins/antioch_mixture.h"
+#ifndef GRINS_CHEMISTRY_BUILDER_H
+#define GRINS_CHEMISTRY_BUILDER_H
 
 // libMesh
-#include "libmesh/libmesh_common.h"
+#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
 #include "libmesh/getpot.h"
-#include "grins/antioch_mixture_builder_base.h"
 
-namespace GRINSTesting
+// C++
+#include <string>
+
+namespace GRINS
 {
-  class AntiochTestBase
+  class ChemistryBuilder
   {
   public:
+    ChemistryBuilder(){}
+    ~ChemistryBuilder(){}
 
-    void init_antioch(const std::string & input_file, const std::string & material_name)
-    {
-      GetPot input(input_file);
-
-      GRINS::AntiochMixtureBuilderBase builder;
-
-      this->_antioch_mixture =
-        builder.build_antioch_mixture<Antioch::CEACurveFit<libMesh::Real> >(input,material_name);
-    }
-
-  protected:
-
-    libMesh::UniquePtr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > > _antioch_mixture;
+    template<typename ChemistryType>
+    void build_chemistry( const GetPot & input,const std::string & material,
+                          libMesh::UniquePtr<ChemistryType> & chem_ptr );
   };
 
-} // end namespace GRINSTesting
+} // end namespace GRINS
 
-#endif // GRINS_HAVE_ANTIOCH
-
-#endif // GRINS_ANTIOCH_TEST_BASE_H
+#endif // GRINS_CHEMISTRY_BUILDER_H

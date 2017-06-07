@@ -38,6 +38,7 @@
 #include "grins/cached_values.h"
 #include "grins/materials_parsing.h"
 #include "grins/physics_naming.h"
+#include "grins/antioch_mixture_averaged_transport_mixture_builder.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -116,7 +117,15 @@ int test_D<Antioch::StatMechThermodynamics<libMesh::Real>,
 template<typename KineticsThermo, typename Thermo, typename Viscosity, typename Conductivity, typename Diffusivity>
 int test_evaluator( const GetPot& input )
 {
-  GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> mixture(input,"TestMaterial");
+  GRINS::AntiochMixtureAveragedTransportMixtureBuilder builder;
+
+  libMesh::UniquePtr<GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
+    mixture_ptr = builder.build_mixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>
+    (input,"TestMaterial");
+
+
+  const GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> &
+    mixture = *mixture_ptr;
 
   GRINS::AntiochMixtureAveragedTransportEvaluator<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> evaluator(mixture);
 
