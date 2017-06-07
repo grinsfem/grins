@@ -58,6 +58,49 @@ namespace GRINS
       libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
   }
 
+  RayfireMesh::RayfireMesh(const GetPot & input, const std::string & qoi_string) :
+    _dim(2),
+    _phi(-7.0)
+  {
+    unsigned int rayfire_dim = input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin");
+
+    if (rayfire_dim != 2)
+      libmesh_error_msg("ERROR: Only 2D Rayfires are currently supported");
+
+    if (!input.have_variable("QoI/"+qoi_string+"/Rayfire/origin"))
+      libmesh_error_msg("ERROR: No origin specified for Rayfire");
+
+    if (input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin") != 2)
+      libmesh_error_msg("ERROR: Please specify a 2D point (x,y) for the rayfire origin");
+
+    libMesh::Point origin;
+    _origin(0) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 0);
+    _origin(1) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 1);
+
+    if (input.have_variable("QoI/"+qoi_string+"/Rayfire/theta"))
+        _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
+    else
+        libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
+
+    if (std::abs(_theta) > 2.0*Constants::pi)
+      libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
+
+    if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
+      libmesh_error_msg("ERROR: cannot specify spherical azimuthal angle phi for Rayfire, only 2D is currently supported");
+  }
+
+  RayfireMesh::RayfireMesh(const RayfireMesh & original) :
+    _dim(original._dim),
+    _origin(original._origin),
+    _theta(original._theta),
+    _phi(original._phi)
+  {
+    if (original._mesh.get())
+      this->_mesh.reset( new libMesh::Mesh( *((original._mesh).get()) ) );
+      
+    this->_elem_id_map = original._elem_id_map;
+  }
+
   void RayfireMesh::init(const libMesh::MeshBase& mesh_base)
   {
     // consistency check
@@ -71,7 +114,7 @@ namespace GRINS
         libmesh_error_msg(ss.str());
       }
 
-    _mesh = new libMesh::Mesh(mesh_base.comm(),(unsigned char)1);
+    _mesh.reset( new libMesh::Mesh(mesh_base.comm(),(unsigned char)1) );
 
     libMesh::Point start_point(_origin);
 
@@ -119,7 +162,7 @@ namespace GRINS
           }
 
         // add new rayfire elem to the map
-        _elem_id_map[prev_elem->id()] = elem;
+        _elem_id_map[prev_elem->id()] = elem->id();
 
         start_point = end_point;
         start_node = end_node;
@@ -135,12 +178,12 @@ namespace GRINS
   }
 
 
-  void RayfireMesh::elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector)
+  void RayfireMesh::elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector) const
   {
-    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it = _elem_id_map.begin();
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type>::const_iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
-        if (it->second->active())
+        if (_mesh->elem(it->second)->active())
           id_vector.push_back(it->first);
       }
   }
@@ -160,7 +203,7 @@ namespace GRINS
     // iterate over all main elems along the rayfire and look for
     // refinement: INACTIVE parent with JUST_REFINED children
     // coarsening: JUST_COARSENED parent
-    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it = _elem_id_map.begin();
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
         const libMesh::Elem* main_elem = mesh_base.elem(it->first);
@@ -178,7 +221,7 @@ namespace GRINS
           {
             if (main_elem->has_children())
               if (main_elem->child(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
-                elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,it->second));
+                elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,_mesh->elem(it->second)));
           }
       }
 
@@ -261,11 +304,11 @@ namespace GRINS
     // return value; set if valid rayfire elem is found
     libMesh::Elem* retval = NULL;
 
-    std::map<libMesh::dof_id_type,libMesh::Elem*>::iterator it;
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it;
     it = _elem_id_map.find(elem_id);
     if (it != _elem_id_map.end())
-      if (it->second->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
-        retval = it->second;
+      if (_mesh->elem(it->second)->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
+        retval = _mesh->elem(it->second);
 
     return retval;
   }
@@ -598,7 +641,7 @@ namespace GRINS
         elem->set_parent(rayfire_elem);
 
         // add new rayfire elem to the map
-        _elem_id_map[prev_elem->id()] = elem;
+        _elem_id_map[prev_elem->id()] = elem->id();
         start_point = end_point;
         prev_elem = next_elem;
         prev_node = new_node;
@@ -656,7 +699,7 @@ namespace GRINS
         libmesh_assert_less( (*(elem->get_node(0))-_origin).norm(),  (*(elem->get_node(1))-_origin).norm());
 
         // add new rayfire elem to the map
-        _elem_id_map[parent_elem->id()] = elem;
+        _elem_id_map[parent_elem->id()] = elem->id();
       }
 
   }

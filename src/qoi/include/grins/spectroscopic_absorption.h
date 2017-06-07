@@ -51,9 +51,8 @@ namespace GRINS
 
     /*!
       @param absorb AbsorptionCoeff object
-      @param rayfire Uninitialized RayfireMesh object
     */
-    SpectroscopicAbsorption( const std::string & qoi_name, SharedPtr<libMesh::FEMFunctionBase<libMesh::Real> > absorb, SharedPtr<RayfireMesh> rayfire );
+    SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,SharedPtr<libMesh::FEMFunctionBase<libMesh::Real> > absorb);
 
     virtual QoIBase * clone() const;
 

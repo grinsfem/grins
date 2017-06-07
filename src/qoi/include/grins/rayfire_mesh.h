@@ -85,6 +85,18 @@ namespace GRINS
     */
     RayfireMesh(libMesh::Point& origin, libMesh::Real theta, libMesh::Real phi);
 
+    //! Input File Constructor
+    /*!
+    Creates rayfire from parameters specified in input file section: QoI/'qoi_string'/Rayfire/
+    */
+    RayfireMesh(const GetPot & input, const std::string & qoi_string);
+
+    //! Copy Constructor
+    /*!
+    Required to deep-copy _mesh and _elem_id_map
+    */
+    RayfireMesh(const RayfireMesh & original);
+
     //! Initialization
     /*!
       This function performs the rayfire and assembles the 1D mesh.
@@ -105,7 +117,7 @@ namespace GRINS
     /*!
       Returns a vector of elem IDs that are currently along the rayfire
     */
-    void elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector);
+    void elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector) const;
 
     /*!
       Checks for refined and coarsened main mesh elements along the rayfire path.
@@ -133,10 +145,10 @@ namespace GRINS
     libMesh::Real   _phi;
 
     //! Internal 1D mesh of EDGE2 elements
-    SharedPtr<libMesh::Mesh> _mesh;
+    libMesh::UniquePtr<libMesh::Mesh> _mesh;
 
-    //! Map of main mesh elem_id to rayfire mesh elems
-    std::map<libMesh::dof_id_type,libMesh::Elem*> _elem_id_map;
+    //! Map of main mesh elem_id to rayfire mesh elem_id
+    std::map<libMesh::dof_id_type,libMesh::dof_id_type> _elem_id_map;
 
     //! User should never call the default constructor
     RayfireMesh();
