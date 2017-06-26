@@ -183,7 +183,7 @@ namespace GRINS
     std::map<libMesh::dof_id_type,libMesh::dof_id_type>::const_iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
-        if (_mesh->elem(it->second)->active())
+        if (_mesh->elem_ptr(it->second)->active())
           id_vector.push_back(it->first);
       }
   }
@@ -206,7 +206,7 @@ namespace GRINS
     std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
-        const libMesh::Elem* main_elem = mesh_base.elem(it->first);
+        const libMesh::Elem* main_elem = mesh_base.elem_ptr(it->first);
         libmesh_assert(main_elem);
 
         if (main_elem->parent())
@@ -221,7 +221,7 @@ namespace GRINS
           {
             if (main_elem->has_children())
               if (main_elem->child_ptr(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
-                elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,_mesh->elem(it->second)));
+                elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,_mesh->elem_ptr(it->second)));
           }
       }
 
@@ -307,8 +307,8 @@ namespace GRINS
     std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it;
     it = _elem_id_map.find(elem_id);
     if (it != _elem_id_map.end())
-      if (_mesh->elem(it->second)->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
-        retval = _mesh->elem(it->second);
+      if (_mesh->elem_ptr(it->second)->refinement_flag() != libMesh::Elem::RefinementState::INACTIVE)
+        retval = _mesh->elem_ptr(it->second);
 
     return retval;
   }

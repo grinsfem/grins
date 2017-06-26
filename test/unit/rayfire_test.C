@@ -327,7 +327,7 @@ namespace GRINSTesting
       GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
       rayfire->init(*mesh);
 
-      const libMesh::Elem* original_elem = mesh->elem(exit_elem);
+      const libMesh::Elem* original_elem = mesh->elem_ptr(exit_elem);
 
       const libMesh::Elem* rayfire_elem = rayfire->map_to_rayfire_elem(original_elem->id());
 
