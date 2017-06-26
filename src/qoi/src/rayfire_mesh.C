@@ -257,7 +257,7 @@ namespace GRINS
           continue;
 
         // we found a boundary elem, so make an edge and see if it contains the origin
-        libMesh::UniquePtr<libMesh::Elem> edge_elem = start_elem->build_edge(s);
+        libMesh::UniquePtr<const libMesh::Elem> edge_elem = start_elem->build_edge_ptr(s);
         valid |= edge_elem->contains_point(_origin);
       }
 
@@ -323,7 +323,7 @@ namespace GRINS
     // loop over all sides of the elem and check each one for intersection
     for (unsigned int s=0; s<cur_elem->n_sides(); s++)
       {
-        const libMesh::UniquePtr<libMesh::Elem> edge_elem = cur_elem->build_edge(s);
+        libMesh::UniquePtr<const libMesh::Elem> edge_elem = cur_elem->build_edge_ptr(s);
 
         // Using the default tol can cause a false positive when start_point is near a node,
         // causing this loop to skip over an otherwise valid edge to check
@@ -346,7 +346,7 @@ namespace GRINS
   }
 
 
-  bool RayfireMesh::check_valid_point(libMesh::Point& intersection_point, libMesh::Point& start_point, libMesh::Elem& edge_elem, libMesh::Point& next_point)
+  bool RayfireMesh::check_valid_point(libMesh::Point& intersection_point, libMesh::Point& start_point, const libMesh::Elem& edge_elem, libMesh::Point& next_point)
   {
     bool is_not_start = !(intersection_point.absolute_fuzzy_equals(start_point));
     bool is_on_edge = edge_elem.contains_point(intersection_point);
@@ -407,7 +407,7 @@ namespace GRINS
         // check elem neighbors first
         for (unsigned int s=0; s<cur_elem->n_sides(); s++)
           {
-            libMesh::UniquePtr<libMesh::Elem> side_elem = cur_elem->build_side(s);
+            libMesh::UniquePtr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
             if (side_elem->contains_point(end_point))
               {
                 const libMesh::Elem * neighbor = cur_elem->neighbor_ptr(s);
