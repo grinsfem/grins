@@ -220,7 +220,7 @@ namespace GRINS
         if (state == libMesh::Elem::RefinementState::INACTIVE)
           {
             if (main_elem->has_children())
-              if (main_elem->child(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
+              if (main_elem->child_ptr(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
                 elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,_mesh->elem(it->second)));
           }
       }
@@ -562,13 +562,13 @@ namespace GRINS
     libMesh::dof_id_type start_child = libMesh::invalid_uint;
     for(unsigned int i=0; i<main_elem->n_children(); i++)
       {
-        if ( (main_elem->child(i))->contains_point(*start_node) )
+        if ( (main_elem->child_ptr(i))->contains_point(*start_node) )
           {
             // check if the start point is a vertex
             bool is_vertex = false;
-            for(unsigned int n=0; n<main_elem->child(i)->n_nodes(); n++)
+            for(unsigned int n=0; n<main_elem->child_ptr(i)->n_nodes(); n++)
               {
-                if ((main_elem->child(i)->node_ptr(n))->absolute_fuzzy_equals(*start_node))
+                if ((main_elem->child_ptr(i)->node_ptr(n))->absolute_fuzzy_equals(*start_node))
                   {
                     is_vertex = true;
                     break;
@@ -577,7 +577,7 @@ namespace GRINS
 
             if (is_vertex)
               {
-                if ( this->rayfire_in_elem(*start_node, main_elem->child(i)) )
+                if ( this->rayfire_in_elem(*start_node, main_elem->child_ptr(i)) )
                   {
                     start_child = i;
                     break;
@@ -600,7 +600,7 @@ namespace GRINS
     libMesh::Point end_point;
 
     const libMesh::Elem* next_elem;
-    const libMesh::Elem* prev_elem = main_elem->child(start_child);
+    const libMesh::Elem* prev_elem = main_elem->child_ptr(start_child);
 
     // if prev_elem is INACTIVE, then more than one refinement
     // has taken place between reinit() calls and will
@@ -665,7 +665,7 @@ namespace GRINS
 
         for (unsigned int c=0; c<parent_elem->n_children(); c++)
           {
-            libMesh::Elem* rayfire_child = this->get_rayfire_elem(parent_elem->child(c)->id());
+            libMesh::Elem* rayfire_child = this->get_rayfire_elem(parent_elem->child_ptr(c)->id());
 
             if (rayfire_child)
               {

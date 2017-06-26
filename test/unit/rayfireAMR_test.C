@@ -148,7 +148,7 @@ namespace GRINSTesting
 
       // no children of elem 0 should be in the rayfire
       for (unsigned int i=0; i<4; i++)
-        CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( mesh->elem(0)->child(i)->id() ) ) );
+        CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( mesh->elem(0)->child_ptr(i)->id() ) ) );
     }
 
     //! Test for multiple successive refinements
@@ -193,21 +193,21 @@ namespace GRINSTesting
       mr.uniformly_refine();
       rayfire->reinit(*mesh);
 
-      // refine elem(0)->child(1)->child(1)
-      mesh->elem(0)->child(1)->child(1)->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
-      // coarsen elem(0)->child(0)
-      for (unsigned int c=0; c<mesh->elem(0)->child(0)->n_children(); c++)
-        mesh->elem(0)->child(0)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+      // refine elem(0)->child_ptr(1)->child_ptr(1)
+      mesh->elem(0)->child_ptr(1)->child_ptr(1)->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+      // coarsen elem(0)->child_ptr(0)
+      for (unsigned int c=0; c<mesh->elem(0)->child_ptr(0)->n_children(); c++)
+        mesh->elem(0)->child_ptr(0)->child_ptr(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
 
       mr.refine_and_coarsen_elements();
       rayfire->reinit(*mesh);
 
-      CPPUNIT_ASSERT( mesh->elem(0)->child(0)->active() );
+      CPPUNIT_ASSERT( mesh->elem(0)->child_ptr(0)->active() );
 
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(1)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(1)->child_ptr(1)->id()) );
 
 
     }
@@ -247,17 +247,17 @@ namespace GRINSTesting
       rayfire->reinit(*mesh);
 
       // check post-refinement
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(6)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(9)->child(1)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(8)->child(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(6)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(9)->child_ptr(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(8)->child_ptr(2)->id()) );
 
       // coarsen two of the TRIs
       for (unsigned int c=0; c<mesh->elem(6)->n_children(); c++)
         {
-          mesh->elem(6)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
-          mesh->elem(9)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(6)->child_ptr(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(9)->child_ptr(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
         }
 
       mr.coarsen_elements();
@@ -267,16 +267,16 @@ namespace GRINSTesting
       CPPUNIT_ASSERT( mesh->elem(9)->active() );
 
       // check post-coarsen
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(8)->child(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(8)->child_ptr(2)->id()) );
       CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(6) );
       CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(9) );
 
       for (unsigned int c=0; c<mesh->elem(6)->n_children(); c++)
         {
-          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(6)->child(c)->id())) );
-          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(9)->child(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(6)->child_ptr(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(9)->child_ptr(c)->id())) );
         }
     }
 
@@ -297,20 +297,20 @@ namespace GRINSTesting
       GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
       rayfire->init(*mesh);
 
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->id()) );
 
-      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(0)->child(2)->id())) );
-      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(0)->child(3)->id())) );
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(2)->id())) );
+      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(3)->id())) );
 
       // refine again
       mr.uniformly_refine();
       rayfire->reinit(*mesh);
 
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(1)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->child_ptr(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(1)->id()) );
 
       // uniformly coarsen twice to get back to a single elem
       mr.uniformly_coarsen();
@@ -374,10 +374,10 @@ namespace GRINSTesting
 
       CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem1->id()) );
 
-      CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem0->child(0)->id()) );
-      CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem0->child(1)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem0->child(2)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem0->child(3)->id()) );
+      CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem0->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem0->child_ptr(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem0->child_ptr(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem0->child_ptr(3)->id()) );
     }
 
     //! QUAD4 elem is deformed, rayfire goes within libMesh::TOLERANCE central node
@@ -539,10 +539,10 @@ namespace GRINSTesting
 
       rayfire->reinit(*mesh);
 
-      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child(0)->id() );
+      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child_ptr(0)->id() );
       CPPUNIT_ASSERT(rayfire_elem0);
 
-      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child(1)->id() );
+      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child_ptr(1)->id() );
       CPPUNIT_ASSERT(rayfire_elem1);
 
       CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(0))->absolute_fuzzy_equals(origin) );
@@ -570,10 +570,10 @@ namespace GRINSTesting
 
       rayfire->reinit(*mesh);
 
-      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child(0)->id() );
+      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child_ptr(0)->id() );
       CPPUNIT_ASSERT(rayfire_elem0);
 
-      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child(3)->id() );
+      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child_ptr(3)->id() );
       CPPUNIT_ASSERT(rayfire_elem1);
 
       CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(0))->absolute_fuzzy_equals(origin) );
@@ -601,17 +601,17 @@ namespace GRINSTesting
 
       rayfire->reinit(*mesh);
 
-      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child(0)->id() );
+      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child_ptr(0)->id() );
       CPPUNIT_ASSERT(rayfire_elem0);
 
-      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child(1)->id() );
+      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child_ptr(1)->id() );
       CPPUNIT_ASSERT(rayfire_elem1);
 
-      const libMesh::Elem* rayfire_elem2 = rayfire->map_to_rayfire_elem( elem->child(3)->id() );
+      const libMesh::Elem* rayfire_elem2 = rayfire->map_to_rayfire_elem( elem->child_ptr(3)->id() );
       CPPUNIT_ASSERT(rayfire_elem2);
 
       // not in rayfire
-      const libMesh::Elem* non_rayfire_elem = rayfire->map_to_rayfire_elem( elem->child(2)->id() );
+      const libMesh::Elem* non_rayfire_elem = rayfire->map_to_rayfire_elem( elem->child_ptr(2)->id() );
       CPPUNIT_ASSERT(!non_rayfire_elem);
     }
 
@@ -698,11 +698,11 @@ namespace GRINSTesting
                   if (c==children[index])
                     {
                       index++;
-                      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem( elem->child(c)->id() ) );
+                      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem( elem->child_ptr(c)->id() ) );
                     }
                 }
               else
-                CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( elem->child(c)->id() )) );
+                CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( elem->child_ptr(c)->id() )) );
             }
         }
     }
@@ -726,15 +726,15 @@ namespace GRINSTesting
           rayfire->reinit(*mesh);
         }
 
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(0)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(0)->child(1)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(1)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(0)->child(1)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->child_ptr(0)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->child_ptr(0)->child_ptr(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->child_ptr(1)->child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(0)->child_ptr(1)->child_ptr(1)->id()) );
 
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->child(2)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(0)->child(3)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(2)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(1)->child(1)->child(3)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(0)->child_ptr(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(0)->child_ptr(3)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(1)->child_ptr(2)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(1)->child_ptr(1)->child_ptr(3)->id()) );
 
     }
 
@@ -756,10 +756,10 @@ namespace GRINSTesting
       // coarsen specific elements along the rayfire
       for(unsigned int c=0; c<4; c++)
         {
-          mesh->elem(60)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
-          mesh->elem(25)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
-          mesh->elem(26)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
-          mesh->elem(9)->child(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(60)->child_ptr(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(25)->child_ptr(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(26)->child_ptr(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
+          mesh->elem(9)->child_ptr(c)->set_refinement_flag(libMesh::Elem::RefinementState::COARSEN);
         }
 
       mr.coarsen_elements();
@@ -774,10 +774,10 @@ namespace GRINSTesting
       // and that their children are not
       for(unsigned int c=0; c<4; c++)
         {
-          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(60)->child(c)->id())) );
-          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(25)->child(c)->id())) );
-          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(26)->child(c)->id())) );
-          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(9)->child(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(60)->child_ptr(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(25)->child_ptr(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(26)->child_ptr(c)->id())) );
+          CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem(9)->child_ptr(c)->id())) );
         }
     }
 
@@ -800,10 +800,10 @@ namespace GRINSTesting
       rayfire->reinit(*mesh);
 
       for (unsigned int c=0; c<children_in_rayfire.size(); c++)
-        CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child(children_in_rayfire[c])->id()) );
+        CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(children_in_rayfire[c])->id()) );
 
       for (unsigned int c=0; c<children_not_in_rayfire.size(); c++)
-        CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(mesh->elem(0)->child(children_not_in_rayfire[c])->id()) );
+        CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(mesh->elem(0)->child_ptr(children_not_in_rayfire[c])->id()) );
 
     }
 
