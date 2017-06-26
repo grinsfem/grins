@@ -389,13 +389,13 @@ namespace GRINS
 
     // check if the intersection point is a vertex
     bool is_vertex = false;
-    libMesh::Node * vertex = NULL;
+    const libMesh::Node * vertex = NULL;
     for(unsigned int n=0; n<cur_elem->n_nodes(); n++)
       {
-        if ((cur_elem->get_node(n))->absolute_fuzzy_equals(end_point))
+        if ((cur_elem->node_ptr(n))->absolute_fuzzy_equals(end_point))
           {
             is_vertex = true;
-            vertex = cur_elem->get_node(n);
+            vertex = cur_elem->node_ptr(n);
             break;
           }
       }
@@ -516,10 +516,10 @@ namespace GRINS
 
         for(unsigned int i=0; i<phi.size(); i++)
           {
-            X  += (*(edge_elem->get_node(i)))(0) * phi[i];
-            dX += (*(edge_elem->get_node(i)))(0) * dphi[i];
-            Y  += (*(edge_elem->get_node(i)))(1) * phi[i];
-            dY += (*(edge_elem->get_node(i)))(1) * dphi[i];
+            X  += (*(edge_elem->node_ptr(i)))(0) * phi[i];
+            dX += (*(edge_elem->node_ptr(i)))(0) * dphi[i];
+            Y  += (*(edge_elem->node_ptr(i)))(1) * phi[i];
+            dY += (*(edge_elem->node_ptr(i)))(1) * dphi[i];
           }
 
         libMesh::Real  f = tan_theta*(X-x0) - (Y-y0);
@@ -552,8 +552,8 @@ namespace GRINS
     libmesh_assert_equal_to(main_elem->refinement_flag(),libMesh::Elem::RefinementState::INACTIVE);
 
     // these nodes cannot change
-    libMesh::Node* start_node = rayfire_elem->get_node(0);
-    libMesh::Node* end_node   = rayfire_elem->get_node(1);
+    libMesh::Node* start_node = rayfire_elem->node_ptr(0);
+    libMesh::Node* end_node   = rayfire_elem->node_ptr(1);
 
     // set the rayfire_elem as INACTIVE
     rayfire_elem->set_refinement_flag(libMesh::Elem::RefinementState::INACTIVE);
@@ -568,7 +568,7 @@ namespace GRINS
             bool is_vertex = false;
             for(unsigned int n=0; n<main_elem->child(i)->n_nodes(); n++)
               {
-                if ((main_elem->child(i)->get_node(n))->absolute_fuzzy_equals(*start_node))
+                if ((main_elem->child(i)->node_ptr(n))->absolute_fuzzy_equals(*start_node))
                   {
                     is_vertex = true;
                     break;
@@ -622,7 +622,7 @@ namespace GRINS
         elem->set_node(0) = prev_node;
         elem->set_node(1) = new_node;
 
-        libmesh_assert_less( (*(elem->get_node(0))-_origin).norm(),  (*(elem->get_node(1))-_origin).norm());
+        libmesh_assert_less( (*(elem->node_ptr(0))-_origin).norm(),  (*(elem->node_ptr(1))-_origin).norm());
 
         // warn if rayfire elem is shorter than TOLERANCE
         if ( (start_point-end_point).norm() < libMesh::TOLERANCE)
@@ -671,16 +671,16 @@ namespace GRINS
               {
                 if (!start_node)
                   {
-                    start_node = rayfire_child->get_node(0);
-                    end_node = rayfire_child->get_node(1);
+                    start_node = rayfire_child->node_ptr(0);
+                    end_node = rayfire_child->node_ptr(1);
                   }
                 else
                   {
-                    if ( (this->_origin - *(rayfire_child->get_node(0))).norm() < (this->_origin - *start_node).norm() )
-                      start_node = rayfire_child->get_node(0);
+                    if ( (this->_origin - *(rayfire_child->node_ptr(0))).norm() < (this->_origin - *start_node).norm() )
+                      start_node = rayfire_child->node_ptr(0);
 
-                    if ( (this->_origin - *(rayfire_child->get_node(1))).norm() > (this->_origin - *end_node).norm() )
-                      end_node = rayfire_child->get_node(1);
+                    if ( (this->_origin - *(rayfire_child->node_ptr(1))).norm() > (this->_origin - *end_node).norm() )
+                      end_node = rayfire_child->node_ptr(1);
                   }
 
                 rayfire_child->set_refinement_flag(libMesh::Elem::RefinementState::INACTIVE);
@@ -696,7 +696,7 @@ namespace GRINS
         elem->set_node(0) = _mesh->node_ptr(start_node->id());
         elem->set_node(1) = _mesh->node_ptr(end_node->id());
 
-        libmesh_assert_less( (*(elem->get_node(0))-_origin).norm(),  (*(elem->get_node(1))-_origin).norm());
+        libmesh_assert_less( (*(elem->node_ptr(0))-_origin).norm(),  (*(elem->node_ptr(1))-_origin).norm());
 
         // add new rayfire elem to the map
         _elem_id_map[parent_elem->id()] = elem->id();

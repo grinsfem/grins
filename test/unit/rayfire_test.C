@@ -334,8 +334,8 @@ namespace GRINSTesting
       if (!rayfire_elem)
         libmesh_error_msg("Attempted to map an element that is not in the Rayfire");
 
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(0), (*(rayfire_elem->get_node(1)))(0),libMesh::TOLERANCE);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(1), (*(rayfire_elem->get_node(1)))(1),libMesh::TOLERANCE);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(0), (*(rayfire_elem->node_ptr(1)))(0),libMesh::TOLERANCE);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(1), (*(rayfire_elem->node_ptr(1)))(1),libMesh::TOLERANCE);
     }
 
     GRINS::SharedPtr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input )

@@ -545,10 +545,10 @@ namespace GRINSTesting
       const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child(1)->id() );
       CPPUNIT_ASSERT(rayfire_elem1);
 
-      CPPUNIT_ASSERT( (rayfire_elem0->get_node(0))->absolute_fuzzy_equals(origin) );
-      CPPUNIT_ASSERT( (rayfire_elem0->get_node(1))->absolute_fuzzy_equals(libMesh::Point(0.5,0.15)) );
-      CPPUNIT_ASSERT( (rayfire_elem1->get_node(0))->absolute_fuzzy_equals(libMesh::Point(0.5,0.15)) );
-      CPPUNIT_ASSERT( (rayfire_elem1->get_node(1))->absolute_fuzzy_equals(end_point) );
+      CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(0))->absolute_fuzzy_equals(origin) );
+      CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(1))->absolute_fuzzy_equals(libMesh::Point(0.5,0.15)) );
+      CPPUNIT_ASSERT( (rayfire_elem1->node_ptr(0))->absolute_fuzzy_equals(libMesh::Point(0.5,0.15)) );
+      CPPUNIT_ASSERT( (rayfire_elem1->node_ptr(1))->absolute_fuzzy_equals(end_point) );
     }
 
     void test_through_vertex(GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
@@ -576,10 +576,10 @@ namespace GRINSTesting
       const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child(3)->id() );
       CPPUNIT_ASSERT(rayfire_elem1);
 
-      CPPUNIT_ASSERT( (rayfire_elem0->get_node(0))->absolute_fuzzy_equals(origin) );
-      CPPUNIT_ASSERT( (rayfire_elem0->get_node(1))->absolute_fuzzy_equals(libMesh::Point(0.5,0.5)) );
-      CPPUNIT_ASSERT( (rayfire_elem1->get_node(0))->absolute_fuzzy_equals(libMesh::Point(0.5,0.5)) );
-      CPPUNIT_ASSERT( (rayfire_elem1->get_node(1))->absolute_fuzzy_equals(end_point) );
+      CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(0))->absolute_fuzzy_equals(origin) );
+      CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(1))->absolute_fuzzy_equals(libMesh::Point(0.5,0.5)) );
+      CPPUNIT_ASSERT( (rayfire_elem1->node_ptr(0))->absolute_fuzzy_equals(libMesh::Point(0.5,0.5)) );
+      CPPUNIT_ASSERT( (rayfire_elem1->node_ptr(1))->absolute_fuzzy_equals(end_point) );
     }
 
     void test_near_vertex(GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
