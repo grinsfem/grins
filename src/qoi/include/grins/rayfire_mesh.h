@@ -175,7 +175,7 @@ namespace GRINS
     bool check_valid_point(libMesh::Point& intersection_point, libMesh::Point& start_point, const libMesh::Elem& edge_elem, libMesh::Point& next_point);
 
     //! Knowing the end_point, get the appropraite next elem along the path
-    const libMesh::Elem* get_correct_neighbor(libMesh::Point& end_point, const libMesh::Elem* cur_elem, unsigned int side, bool same_parent);
+    const libMesh::Elem* get_correct_neighbor(libMesh::Point & start_point, libMesh::Point & end_point, const libMesh::Elem * cur_elem, unsigned int side, bool same_parent);
 
     //! Ensure the supplied origin is on a boundary of the mesh
     void check_origin_on_boundary(const libMesh::Elem* start_elem);
@@ -186,6 +186,9 @@ namespace GRINS
       @return Elem* First elem on the rayfire
     */
     const libMesh::Elem* get_start_elem(const libMesh::MeshBase& mesh_base);
+
+    //! Ensures the rayfire doesn't wander into the middle of an elem
+    bool validate_edge(const libMesh::Point & start_point, const libMesh::Point & end_point, const libMesh::Elem * side_elem, const libMesh::Elem * neighbor);
 
     //! Walks a short distance along the rayfire and checks if elem contains that point
     bool rayfire_in_elem(const libMesh::Point& end_point, const libMesh::Elem* elem);
