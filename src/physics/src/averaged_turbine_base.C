@@ -54,7 +54,7 @@ namespace GRINS
   template<class Mu>
   void AveragedTurbineBase<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
-    system->time_evolving(this->fan_speed_var());
+    system->time_evolving(this->fan_speed_var(), 1);
 
     IncompressibleNavierStokesBase<Mu>::set_time_evolving_vars(system);
   }

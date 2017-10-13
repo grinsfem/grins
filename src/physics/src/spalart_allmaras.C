@@ -116,7 +116,7 @@ namespace GRINS
   {
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
-    system->time_evolving(this->_turbulence_vars.nu());
+    system->time_evolving(this->_turbulence_vars.nu(), 1);
   }
 
   template<class Mu>

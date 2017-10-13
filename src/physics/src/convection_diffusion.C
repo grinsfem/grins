@@ -67,7 +67,7 @@ namespace GRINS
 
   void ConvectionDiffusion::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
-    system->time_evolving(_var.var());
+    system->time_evolving(_var.var(), 1);
   }
 
   void ConvectionDiffusion::init_context( AssemblyContext& context )
