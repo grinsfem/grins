@@ -68,7 +68,7 @@ namespace GRINS
     libMesh::NumberVectorValue& F,
     libMesh::NumberTensorValue *dFdU)
   {
-    const libMesh::Number Umag = U.size();
+    const libMesh::Number Umag = U.norm();
 
     const libMesh::Number coeff_val = _coefficient(point, time);
 

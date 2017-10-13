@@ -126,7 +126,7 @@ namespace GRINS
                                          output_vec(1),
                                          output_vec(2));
 
-    const libMesh::Number U_B_size = U_B.size();
+    const libMesh::Number U_B_size = U_B.norm();
 
     // If there's no base velocity there's no fan
     if (!U_B_size)
@@ -151,7 +151,7 @@ namespace GRINS
     // Fan-wing-plane component of local relative velocity
     const libMesh::NumberVectorValue U_P = U - (U*N_R)*N_R - U_B;
 
-    const libMesh::Number U_P_size = U_P.size();
+    const libMesh::Number U_P_size = U_P.norm();
 
     // If there's no flow in the fan's frame of reference, there's no
     // lift or drag.  FIXME - should we account for drag in the
