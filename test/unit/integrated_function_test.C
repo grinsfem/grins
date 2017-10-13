@@ -273,13 +273,13 @@ namespace GRINSTesting
                     libmesh_error_msg("Exceeded maximum iterations");
 
                   for (unsigned int i=0; i<elems_in_rayfire.size(); i++)
-                    system->get_mesh().elem(elems_in_rayfire[i])->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+                    system->get_mesh().elem_ref(elems_in_rayfire[i]).set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
 
                   mr.refine_elements();
 
                   // ensure all elems marked for refinement were actually refined
                   for (unsigned int i=0; i<elems_in_rayfire.size(); i++)
-                    CPPUNIT_ASSERT( !( system->get_mesh().elem(elems_in_rayfire[i])->active() ) );
+                    CPPUNIT_ASSERT( !( system->get_mesh().elem_ref(elems_in_rayfire[i]).active() ) );
 
                   // need to manually reinit the reference rayfire
                   ref_rayfire->reinit(system->get_mesh());
@@ -371,7 +371,7 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_EQUAL((unsigned int)3,num_rayfire_elems);
 
       for (unsigned int i=0; i<elems_in_rayfire.size(); i++)
-        system->get_mesh().elem(elems_in_rayfire[i])->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+        system->get_mesh().elem_ref(elems_in_rayfire[i]).set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
 
       mr.refine_elements();
 
