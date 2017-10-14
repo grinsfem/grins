@@ -57,7 +57,7 @@ namespace GRINS
     _mesh_refinement->node_level_mismatch_limit() = _mesh_adaptivity_options.node_level_mismatch_limit();
     _mesh_refinement->edge_level_mismatch_limit() = _mesh_adaptivity_options.edge_level_mismatch_limit();
     _mesh_refinement->face_level_mismatch_limit() = _mesh_adaptivity_options.face_level_mismatch_limit();
-    _mesh_refinement->set_enforce_mismatch_limit_prior_to_refinement(_mesh_adaptivity_options.enforce_mismatch_limit_prior_to_refinement());
+    _mesh_refinement->enforce_mismatch_limit_prior_to_refinement() = _mesh_adaptivity_options.enforce_mismatch_limit_prior_to_refinement();
     _mesh_refinement->max_h_level() = _mesh_adaptivity_options.max_h_level();
   }
 

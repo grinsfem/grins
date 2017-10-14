@@ -503,7 +503,8 @@ namespace GRINS
     AssemblyContext& assembly_context =
       libMesh::cast_ref<AssemblyContext&>( context );
 
-    std::vector<BoundaryID> ids = assembly_context.side_boundary_ids();
+    std::vector<BoundaryID> ids;
+    assembly_context.side_boundary_ids(ids);
 
     bool compute_jacobian = request_jacobian;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;

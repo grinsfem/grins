@@ -477,7 +477,7 @@ namespace GRINS
 
     for( unsigned int i = 0; i < elem_ids.size(); i++ )
       {
-        const libMesh::Elem* elem_ptr = mesh.elem(elem_ids[i]);
+        const libMesh::Elem* elem_ptr = mesh.elem_ptr(elem_ids[i]);
 
         libMesh::subdomain_id_type subdomain_id = elem_ptr->subdomain_id();
 

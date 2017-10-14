@@ -468,11 +468,11 @@ namespace GRINSTesting
 
       // refine elem 1 before rayfire init
       libMesh::MeshRefinement mr(*mesh);
-      mesh->elem(1)->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+      mesh->elem_ptr(1)->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
       mr.refine_elements();
 
-      CPPUNIT_ASSERT( !(mesh->elem(1)->active()) );
-      CPPUNIT_ASSERT( mesh->elem(1)->has_children() );
+      CPPUNIT_ASSERT( !(mesh->elem_ptr(1)->active()) );
+      CPPUNIT_ASSERT( mesh->elem_ptr(1)->has_children() );
 
       libMesh::Point origin(0.0,0.1);
       libMesh::Real theta = 0.0;
@@ -489,8 +489,8 @@ namespace GRINSTesting
       CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(1)) );
 
       // rayfire should contain children 0,1 of elem 1
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(1)->child(0)->id()) );
-      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem(1)->child(1)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ref(1).child_ptr(0)->id()) );
+      CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ref(1).child_ptr(1)->id()) );
     }
 
   private:
