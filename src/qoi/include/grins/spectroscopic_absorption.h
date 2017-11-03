@@ -61,6 +61,9 @@ namespace GRINS
                               libMesh::Number & sys_qoi,
                               libMesh::Number & local_qoi );
 
+    //! Override DifferentiableQoI's empty implementation to add chain rule (QoI is exponential)
+    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives);
+
   private:
 
     SpectroscopicAbsorption();

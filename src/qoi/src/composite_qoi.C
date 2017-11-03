@@ -203,6 +203,12 @@ namespace GRINS
     return;
   }
 
+  void CompositeQoI::finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t /*qoi_index*/)
+  {
+    for( unsigned int q = 0; q < _qois.size(); q++ )
+      (*_qois[q]).finalize_derivative(derivatives);
+  }
+
   void CompositeQoI::output_qoi( std::ostream& out ) const
   {
     for( std::vector<QoIBase*>::const_iterator qoi = _qois.begin();
