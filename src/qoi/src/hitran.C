@@ -235,7 +235,8 @@ namespace GRINS
 
   int HITRAN::T_index(libMesh::Real T)
   {
-    unsigned int index = std::ceil((T-_Tmin)/_Tstep) + 1;
+    unsigned int index = std::ceil((T-_Tmin)/_Tstep);
+    index = std::max(index,(unsigned int)1);
     return index;
   }
 
