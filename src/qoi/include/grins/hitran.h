@@ -130,10 +130,10 @@ namespace GRINS
     std::vector<std::vector<libMesh::Real>> _qT;
 
     //! Find the index into _T corresponding to the given temperature
-    int _T_index(libMesh::Real T);
+    int T_index(libMesh::Real T);
 
     //! Search through the partition function data to get value for given temperature
-    libMesh::Real search_partition_function(libMesh::Real T, unsigned int iso);
+    libMesh::Real get_partition_function_value(libMesh::Real T, unsigned int iso);
 
     //! Linear interpolation helper function
     libMesh::Real interpolate_values( int index_r, libMesh::Real T_star, const std::vector<libMesh::Real> & y) const;

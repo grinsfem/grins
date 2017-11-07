@@ -145,7 +145,7 @@ namespace GRINS
 
     // cache the partition function values at the referece temperature
     for(unsigned int i=0; i<_qT.size(); i++)
-      _qT0.push_back(this->search_partition_function(_T0,i));
+      _qT0.push_back(this->get_partition_function_value(_T0,i));
 
     return;
   }
@@ -210,16 +210,16 @@ namespace GRINS
     if (T==_T0)
       qt = _qT0[iso];
     else
-      qt = this->search_partition_function(T,iso);
+      qt = this->get_partition_function_value(T,iso);
 
     return qt;
   }
 
-  libMesh::Real HITRAN::search_partition_function(libMesh::Real T, unsigned int iso)
+  libMesh::Real HITRAN::get_partition_function_value(libMesh::Real T, unsigned int iso)
   {
     libMesh::Real retval = -1.0;
 
-    int i = _T_index(T);
+    int i = T_index(T);
 
     if (i >= 0)
       retval = this->interpolate_values(i,T,_qT[iso]);
@@ -233,7 +233,7 @@ namespace GRINS
     return retval;
   }
 
-  int HITRAN::_T_index(libMesh::Real T)
+  int HITRAN::T_index(libMesh::Real T)
   {
     unsigned int index = std::ceil((T-_Tmin)/_Tstep) + 1;
     return index;
