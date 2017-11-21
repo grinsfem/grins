@@ -33,12 +33,12 @@ namespace GRINS
   namespace Constants
   {
     /*!
-     * Universal Gas Constant, R, expressed in J/(kmol-K)
+     * Universal Gas Constant, R, [J/(kmol-K)]
      */
     const libMesh::Real R_universal = 8314.4621;
 
     /*!
-     * Avogadro's number, particles per mole.
+     * Avogadro's number, [particles/mol]
      */
     const libMesh::Real Avogadro = 6.02214179e23;
 
@@ -51,6 +51,20 @@ namespace GRINS
      * Speed of light in a vacuum, [m/s]
      */
     const libMesh::Real c_vacuum = 299792458;
+
+    /*!
+     * 1 atmosphere in Pascals, [Pa/atm]
+     */
+    const libMesh::Real atmosphere_Pa = 101325.0;
+
+    /*!
+     * Second Radiation Constant hc/k, [m K]
+     * 
+     * h = Planck's Constant
+     * c = speed of light in a vacuum
+     * k = Boltzmann Constant
+     */
+    const libMesh::Real second_rad_const = 1.43877736e-2;
 
 
   } // namespace Constants

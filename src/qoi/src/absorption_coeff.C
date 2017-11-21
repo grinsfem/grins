@@ -52,7 +52,7 @@ namespace GRINS
       _Y_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>("SpeciesMassFractions")),
       _T0(296), // [K]
       _Pref(1), // [atm]
-      _rad_coeff(1.43887752) // [cm K]
+      _rad_coeff(Constants::second_rad_const * 100) // [cm K]
   {
     // sanity checks
     if ( (nu_min>nu_max) || (desired_nu>nu_max) || (desired_nu<nu_min) )
@@ -140,7 +140,7 @@ namespace GRINS
     libMesh::Real M_mix = _chemistry->M_mix(Y); // [kg/mol]
     libMesh::Real X = _chemistry->X(_species_idx,M_mix,Y[_species_idx]);
 
-    P /= 101325.0; // convert to [atm]
+    P /= Constants::atmosphere_Pa; // convert to [atm]
 
     return this->kv(P,T,X,M);
 
@@ -196,7 +196,7 @@ namespace GRINS
         libMesh::Real S = sw0 * (QT0/QT) * std::exp(-E*_rad_coeff*( (1.0/T) - (1.0/_T0) )) * ( 1.0-std::exp(-_rad_coeff*nu/T) ) * pow(1.0-std::exp(-_rad_coeff*nu/_T0),-1.0);
 
         // convert linestrength units to [cm^-2 atm^-1]
-        libMesh::Real loschmidt = (101325.0*1.0e-6)/(T*Constants::Boltzmann);
+        libMesh::Real loschmidt = (Constants::atmosphere_Pa*1.0e-6)/(T*Constants::Boltzmann);
         S = S*loschmidt;
 
         // collisional FWHM [cm^-1]
