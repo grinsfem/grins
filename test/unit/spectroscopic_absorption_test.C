@@ -26,6 +26,8 @@
 
 #ifdef GRINS_HAVE_CPPUNIT
 
+#ifdef GRINS_HAVE_ANTIOCH
+
 #include <libmesh/ignore_warnings.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestCase.h>
@@ -34,12 +36,18 @@
 #include "test_comm.h"
 #include "grins_test_paths.h"
 
+#include "absorption_coeff_testing.h"
+
 // GRINS
 #include "grins/math_constants.h"
 #include "grins/grins_enums.h"
 #include "grins/simulation_builder.h"
 #include "grins/simulation.h"
 #include "grins/variable_warehouse.h"
+#include "grins/single_variable.h"
+#include "grins/multicomponent_variable.h"
+#include "grins/chemistry_builder.h"
+#include "grins/antioch_chemistry.h"
 
 // libMesh
 #include "libmesh/parsed_function.h"
@@ -53,10 +61,9 @@ namespace GRINSTesting
   {
   public:
     CPPUNIT_TEST_SUITE( SpectroscopicAbsorptionTest );
-#if GRINS_HAVE_ANTIOCH
     CPPUNIT_TEST( single_elem_mesh );
     CPPUNIT_TEST( multi_elem_mesh );
-#endif
+    CPPUNIT_TEST( param_derivs );
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -83,6 +90,43 @@ namespace GRINSTesting
       libMesh::Real calc_answer = 0.520403290868787; // same physical conditions as single_elem_mesh, so answer should not change
 
       this->run_test(filename,calc_answer);
+    }
+
+    void param_derivs()
+    {
+      const std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/spectroscopic_absorption_qoi.in";
+      this->init_sim(filename);
+
+      std::string material = "TestMaterial";
+      std::string hitran_data = "./test_data/CO2_data.dat";
+      std::string hitran_partition = "./test_data/CO2_partition_function.dat";
+      libMesh::Real T_min = 290.0,
+                    T_max = 310.0,
+                    T_step = 0.01;
+      GRINS::SharedPtr<GRINS::HITRAN> hitran( new GRINS::HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
+
+      std::string species = "CO2";
+      libMesh::Real thermo_pressure = 5066.25;
+      libMesh::Real nu_desired = 3682.7649;
+      libMesh::Real nu_min = 3682.69;
+      libMesh::Real nu_max = 3682.8;
+      GRINS::ChemistryBuilder chem_builder;
+      libMesh::UniquePtr<GRINS::AntiochChemistry> chem_ptr;
+      chem_builder.build_chemistry(*(_input.get()),material,chem_ptr);
+      GRINS::SharedPtr<GRINS::AntiochChemistry> chem(chem_ptr.release());
+      GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> > absorb = new AbsorptionCoeffTesting<GRINS::AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure);
+
+      libMesh::Real T = 300.0;
+      libMesh::Real P = 5066.25;
+
+      std::vector<libMesh::Real> Y = {0.0763662233, 0.9236337767};
+
+      for (unsigned int i=0; i<33; ++i)
+        {
+          this->T_param_derivatives(absorb,T,P,Y,i);
+          this->P_param_derivatives(absorb,T,P,Y,i);
+          this->Y_param_derivatives(absorb,T,P,Y,i);
+        }
     }
 
   private:
@@ -114,10 +158,123 @@ namespace GRINSTesting
                                    *TestCommWorld );
     }
 
+    void T_param_derivatives(GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
+    {
+      libMesh::Real delta = 1.0e-6;
+
+      std::vector<libMesh::Real> T_analytic;
+      T_analytic.push_back(absorb->dS_dT(T,P,i));
+      T_analytic.push_back(absorb->d_nuC_dT(T,P,Y,i));
+      T_analytic.push_back(absorb->d_nuD_dT(T,P,i));
+      T_analytic.push_back(absorb->d_voigt_a_dT(T,P,Y,i));
+      T_analytic.push_back(absorb->d_voigt_w_dT(T,P,i));
+      T_analytic.push_back(absorb->d_voigt_dT(T,P,Y,i));
+      T_analytic.push_back(absorb->d_kv_dT(T,P,Y,i));
+
+      std::vector<libMesh::Real> fd_plus;
+      fd_plus.push_back(absorb->Sw(T+delta,P,i));
+      fd_plus.push_back(absorb->nu_C(T+delta,P,Y,i));
+      fd_plus.push_back(absorb->nu_D(T+delta,P,i));
+      fd_plus.push_back(absorb->voigt_a(T+delta,P,Y,i));
+      fd_plus.push_back(absorb->voigt_w(T+delta,P,i));
+      fd_plus.push_back(absorb->voigt(T+delta,P,Y,i));
+      fd_plus.push_back(absorb->kv(T+delta,P,Y,i));
+
+      std::vector<libMesh::Real> fd_minus;
+      fd_minus.push_back(absorb->Sw(T-delta,P,i));
+      fd_minus.push_back(absorb->nu_C(T-delta,P,Y,i));
+      fd_minus.push_back(absorb->nu_D(T-delta,P,i));
+      fd_minus.push_back(absorb->voigt_a(T-delta,P,Y,i));
+      fd_minus.push_back(absorb->voigt_w(T-delta,P,i));
+      fd_minus.push_back(absorb->voigt(T-delta,P,Y,i));
+      fd_minus.push_back(absorb->kv(T-delta,P,Y,i));
+
+      check_param_derivatives(T_analytic,fd_plus,fd_minus,delta);
+    }
+
+    void P_param_derivatives(GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
+    {
+      libMesh::Real delta = 1.0e-3;
+
+      std::vector<libMesh::Real> P_analytic;
+      P_analytic.push_back(absorb->dS_dP(T,P,i));
+      P_analytic.push_back(absorb->d_nuC_dP(T,Y,i));
+      P_analytic.push_back(absorb->d_nuD_dP(T,i));
+      P_analytic.push_back(absorb->d_voigt_a_dP(T,P,Y,i));
+      P_analytic.push_back(absorb->d_voigt_w_dP(T,P,i));
+      P_analytic.push_back(absorb->d_voigt_dP(T,P,Y,i));
+      P_analytic.push_back(absorb->d_kv_dP(T,P,Y,i));
+
+      std::vector<libMesh::Real> fd_plus;
+      fd_plus.push_back(absorb->Sw(T,P+delta,i));
+      fd_plus.push_back(absorb->nu_C(T,P+delta,Y,i));
+      fd_plus.push_back(absorb->nu_D(T,P+delta,i));
+      fd_plus.push_back(absorb->voigt_a(T,P+delta,Y,i));
+      fd_plus.push_back(absorb->voigt_w(T,P+delta,i));
+      fd_plus.push_back(absorb->voigt(T,P+delta,Y,i));
+      fd_plus.push_back(absorb->kv(T,P+delta,Y,i));
+
+      std::vector<libMesh::Real> fd_minus;
+      fd_minus.push_back(absorb->Sw(T,P-delta,i));
+      fd_minus.push_back(absorb->nu_C(T,P-delta,Y,i));
+      fd_minus.push_back(absorb->nu_D(T,P-delta,i));
+      fd_minus.push_back(absorb->voigt_a(T,P-delta,Y,i));
+      fd_minus.push_back(absorb->voigt_w(T,P-delta,i));
+      fd_minus.push_back(absorb->voigt(T,P-delta,Y,i));
+      fd_minus.push_back(absorb->kv(T,P-delta,Y,i));
+
+      check_param_derivatives(P_analytic,fd_plus,fd_minus,delta);
+    }
+
+    void Y_param_derivatives(GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
+    {
+      libMesh::Real delta = 1.0e-8;
+
+      libMesh::Real y_base = Y[0];
+      std::vector<libMesh::Real> Y_analytic;
+      Y_analytic.push_back(absorb->dX_dY(Y));
+      Y_analytic.push_back(absorb->d_nuC_dY(T,P,Y,i));
+      Y_analytic.push_back(absorb->d_voigt_a_dY(T,P,Y,i));
+      Y_analytic.push_back(absorb->d_voigt_dY(T,P,Y,i));
+      Y_analytic.push_back(absorb->d_kv_dY(T,P,Y,i));
+
+      std::vector<libMesh::Real> fd_plus;
+      Y[0] = y_base + delta;
+      fd_plus.push_back(absorb->_chemistry->X(absorb->_species_idx,absorb->_chemistry->M_mix(Y),Y[absorb->_species_idx]));
+      fd_plus.push_back(absorb->nu_C(T,P,Y,i));
+      fd_plus.push_back(absorb->voigt_a(T,P,Y,i));
+      fd_plus.push_back(absorb->voigt(T,P,Y,i));
+      fd_plus.push_back(absorb->kv(T,P,Y,i));
+
+      std::vector<libMesh::Real> fd_minus;
+      Y[0] = y_base - delta;
+      fd_minus.push_back(absorb->_chemistry->X(absorb->_species_idx,absorb->_chemistry->M_mix(Y),Y[absorb->_species_idx]));
+      fd_minus.push_back(absorb->nu_C(T,P,Y,i));
+      fd_minus.push_back(absorb->voigt_a(T,P,Y,i));
+      fd_minus.push_back(absorb->voigt(T,P,Y,i));
+      fd_minus.push_back(absorb->kv(T,P,Y,i));
+
+      Y[0] = y_base;
+
+      check_param_derivatives(Y_analytic,fd_plus,fd_minus,delta);
+    }
+
+    void check_param_derivatives(std::vector<libMesh::Real> & analytic, std::vector<libMesh::Real> & fd_plus, std::vector<libMesh::Real> & fd_minus, libMesh::Real delta)
+    {
+      for (unsigned int d=0; d<analytic.size(); ++d)
+        {
+          libMesh::Real f_analytic = analytic[d];
+          libMesh::Real fd_approx = (fd_plus[d] - fd_minus[d])/(2.0*delta);
+
+          CPPUNIT_ASSERT_DOUBLES_EQUAL(fd_approx,f_analytic,libMesh::TOLERANCE);
+        }
+    }
+
   };
 
   CPPUNIT_TEST_SUITE_REGISTRATION( SpectroscopicAbsorptionTest );
 
 } // end namespace GRINSTesting
 
+#endif // GRINS_HAVE_ANTIOCH
 #endif // GRINS_HAVE_CPPUNIT
