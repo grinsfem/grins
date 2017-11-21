@@ -114,6 +114,10 @@ namespace GRINS
      */
     virtual void thread_join( libMesh::Number& qoi, const libMesh::Number& other_qoi );
 
+    //! Finalize derivatives that require more than a simple sum.
+    //! Does nothing by default.
+    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives);
+
     /*!
      * Basic output for computed QoI's. If fancier output is desired, override this method.
      */

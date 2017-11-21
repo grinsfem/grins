@@ -166,7 +166,7 @@ namespace GRINS
         std::string species;
         this->get_var_value<std::string>(input,species,"QoI/SpectroscopicAbsorption/species_of_interest","");
 
-        SharedPtr<libMesh::FEMFunctionBase<libMesh::Real> > absorb;
+        SharedPtr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb;
 
         libMesh::Real thermo_pressure = -1.0;
         bool calc_thermo_pressure = input("QoI/SpectroscopicAbsorption/calc_thermo_pressure", false );

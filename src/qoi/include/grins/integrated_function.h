@@ -29,12 +29,12 @@
 // libMesh
 #include "libmesh/quadrature.h"
 #include "libmesh/exact_solution.h"
-#include "libmesh/fem_function_base.h"
 
 // GRINS
 #include "grins/qoi_base.h"
 #include "grins/variable_name_defaults.h"
 #include "grins/rayfire_mesh.h"
+#include "grins/fem_function_and_derivative_base.h"
 
 namespace GRINS
 {
@@ -116,6 +116,11 @@ namespace GRINS
 
     //! Compute the value of a QoI at a QP
     libMesh::Real qoi_value(Function& f,AssemblyContext& context,const libMesh::Point& xyz);
+
+    //! Compute derivatiuves at QP
+    void qoi_derivative( Function & f, AssemblyContext & context,
+                         const libMesh::Point & qp_xyz, const libMesh::Real JxW,
+                         const unsigned int qoi_index);
 
     //! User cannot call empty constructor
     IntegratedFunction();

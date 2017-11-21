@@ -45,14 +45,14 @@ namespace GRINS
 
     Expects all parameters given in standard SI units [m], [K], [Pa]
   */
-  class SpectroscopicAbsorption : public IntegratedFunction<libMesh::FEMFunctionBase<libMesh::Real> >
+  class SpectroscopicAbsorption : public IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >
   {
   public:
 
     /*!
       @param absorb AbsorptionCoeff object
     */
-    SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,SharedPtr<libMesh::FEMFunctionBase<libMesh::Real> > absorb);
+    SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,SharedPtr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb);
 
     virtual QoIBase * clone() const;
 
@@ -60,6 +60,9 @@ namespace GRINS
     virtual void parallel_op( const libMesh::Parallel::Communicator & communicator,
                               libMesh::Number & sys_qoi,
                               libMesh::Number & local_qoi );
+
+    //! Override DifferentiableQoI's empty implementation to add chain rule (QoI is exponential)
+    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives);
 
   private:
 

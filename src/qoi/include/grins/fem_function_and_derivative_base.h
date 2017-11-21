@@ -23,52 +23,32 @@
 //-----------------------------------------------------------------------el-
 
 
-// This class
-#include "grins/qoi_base.h"
+#ifndef GRINS_FEM_FUNCTION_AND_DERIVATIVE_BASE_H
+#define GRINS_FEM_FUNCTION_AND_DERIVATIVE_BASE_H
 
 // libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
+#include "libmesh/fem_function_base.h"
 
 // GRINS
-#include "grins/assembly_context.h"
 
 namespace GRINS
 {
-  QoIBase::QoIBase( const std::string& qoi_name )
-    : ParameterUser(qoi_name),
-      _qoi_name(qoi_name),
-      _qoi_value(0.0)
-  {}
-
-  void QoIBase::parallel_op( const libMesh::Parallel::Communicator& communicator,
-                             libMesh::Number& sys_qoi,
-                             libMesh::Number& local_qoi )
+  /*!
+    Extends libMesh::FEMFunctionBase by adding a function for computing derivatives
+  */
+  template<typename Output>
+  class FEMFunctionAndDerivativeBase : public libMesh::FEMFunctionBase<Output>
   {
-    communicator.sum(local_qoi);
+  public:
 
-    sys_qoi = local_qoi;
+    //! Function Derivative Evaluation
+    virtual void derivatives( libMesh::FEMContext & context,
+                              const libMesh::Point & p,
+                              const libMesh::Real & JxW,
+                              const unsigned int qoi_index,
+                              const libMesh::Real time = 0.) = 0;
 
-    _qoi_value = sys_qoi;
-  }
+  };
 
-  void QoIBase::thread_join( libMesh::Number& qoi, const libMesh::Number& other_qoi )
-  {
-    qoi += other_qoi;
-  }
-
-  void QoIBase::finalize_derivative(libMesh::NumericVector<libMesh::Number> & /*derivatives*/)
-  {
-    // do nothing by default
-  }
-
-  void QoIBase::output_qoi( std::ostream& out ) const
-  {
-    out << _qoi_name+" = "
-        << std::setprecision(16)
-        << std::scientific
-        << _qoi_value << std::endl;
-  }
-
-} // namespace GRINS
+}
+#endif //GRINS_FEM_FUNCTION_AND_DERIVATIVE_BASE_H

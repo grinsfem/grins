@@ -155,6 +155,34 @@ namespace GRINS
     return _data_size;
   }
 
+  libMesh::Real HITRAN::partition_function_derivative(libMesh::Real T, unsigned int iso)
+  {
+    libMesh::Real deriv = -1.0;
+    if (std::abs(T-_Tmin)<libMesh::TOLERANCE) // 1st order forward difference
+      {
+        libMesh::Real QT0 = this->partition_function(_Tmin,iso);
+        libMesh::Real QT1 = this->partition_function(_Tmin+_Tstep,iso);
+
+        deriv  = (QT1-QT0)/_Tstep;
+      }
+    else if (std::abs(T-_Tmax)<libMesh::TOLERANCE) // 1st order backward difference
+      {
+        libMesh::Real QT0 = this->partition_function(_Tmax-_Tstep,iso);
+        libMesh::Real QT1 = this->partition_function(_Tmax,iso);
+
+        deriv = (QT1-QT0)/_Tstep;
+      }
+    else // 2nd order central difference
+      {
+        libMesh::Real QT1 = this->partition_function(T+_Tstep,iso);
+        libMesh::Real QT0 = this->partition_function(T-_Tstep,iso);
+
+        deriv = (QT1-QT0)/(2.0*_Tstep);
+      }
+
+    return deriv;
+  }
+
   unsigned int HITRAN::isotopologue(unsigned int index)
   {
     libmesh_assert_less(index,_isotop.size());

@@ -100,6 +100,9 @@ namespace GRINS
     //! Return the data size
     unsigned int get_data_size();
 
+    //! Finite difference derivative for partition function
+    libMesh::Real partition_function_derivative(libMesh::Real T, unsigned int iso);
+
   protected:
     libMesh::Real _Tmin, _Tmax, _Tstep;
 
