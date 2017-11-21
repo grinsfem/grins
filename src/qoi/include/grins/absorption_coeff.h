@@ -130,13 +130,46 @@ namespace GRINS
     std::vector<std::vector<libMesh::Real> > _voigt_coeffs;
 
     //! Absorption coefficient [cm^-1]
-    libMesh::Real kv(libMesh::Real P,libMesh::Real T, libMesh::Real X, libMesh::Real M);
+    libMesh::Real kv(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Absorption coefficient temperature derivative
+    libMesh::Real d_kv_dT(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Absorption coefficient pressure derivative
+    libMesh::Real d_kv_dP(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Absorption coefficient mass fraction derivative
+    libMesh::Real d_kv_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Linestrength [cm^-2 atm^-1]
+    libMesh::Real Sw(libMesh::Real T, libMesh::Real P, unsigned int i);
+
+    //! Linestrength temperature derivative
+    libMesh::Real dS_dT(libMesh::Real T, libMesh::Real P, unsigned int i);
+
+    //! Linestrength pressure derivative
+    libMesh::Real dS_dP(libMesh::Real T, libMesh::Real P, unsigned int i);
 
     //! Doppler broadening [cm^-1]
-    libMesh::Real nu_D(libMesh::Real nu, libMesh::Real T,libMesh::Real M);
+    libMesh::Real nu_D(libMesh::Real T, libMesh::Real P, unsigned int i);
+
+    //! Doppler broadening temperature derivative
+    libMesh::Real d_nuD_dT(libMesh::Real T, libMesh::Real P, unsigned int i);
+
+    //! Doppler broadening pressure derivative
+    libMesh::Real d_nuD_dP(libMesh::Real T, unsigned int i);
 
     //! Collisional broadening [cm^-1]
-    libMesh::Real nu_C(libMesh::Real T,libMesh::Real X,libMesh::Real P,unsigned int index);
+    libMesh::Real nu_C(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Collisional broadening temperature derivative
+    libMesh::Real d_nuC_dT(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Collisional broadening pressure derivative
+    libMesh::Real d_nuC_dP(libMesh::Real T, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Collisional broadening mass fraction derivative
+    libMesh::Real d_nuC_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
 
     //! Calculate the Voigt profile [cm^-1]
     /*!
@@ -146,10 +179,52 @@ namespace GRINS
       McLean A, Mitchell C, Swanston D\n
       Journal of Electron Spectroscopy and Related Phenomena 1994 vol: 69 (2) pp: 125-132
     */
-    libMesh::Real voigt(libMesh::Real nu_D, libMesh::Real nu_c, libMesh::Real nu);
+    libMesh::Real voigt(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Voigt profile temperature derivative
+    libMesh::Real d_voigt_dT(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Voigt profile pressure derivative
+    libMesh::Real d_voigt_dP(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Voigt profile mass fraction derivative
+    libMesh::Real d_voigt_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
 
     //! Initialize the coeff matrix for calculating the Voigt profile
     void init_voigt();
+
+    //! Voigt a parameter
+    libMesh::Real voigt_a(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Voigt a parameter temperature derivative
+    libMesh::Real d_voigt_a_dT(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Voigt a parameter pressure derivative
+    libMesh::Real d_voigt_a_dP(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Voigt a parameter mass fraction derivative
+    libMesh::Real d_voigt_a_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+
+    //! Voigt w parameter
+    libMesh::Real voigt_w(libMesh::Real T, libMesh::Real P, unsigned int i);
+
+    //! Voigt w parameter temperature derivative
+    libMesh::Real d_voigt_w_dT(libMesh::Real T, libMesh::Real P, unsigned int i);
+
+    //! Voigt w parameter pressure derivative
+    libMesh::Real d_voigt_w_dP(libMesh::Real T, libMesh::Real P, unsigned int i);
+
+    //! Pressure shift of linecenter wavenumber
+    libMesh::Real get_nu(libMesh::Real P, unsigned int i);
+
+    //! Derivative of pressure-shifted linecenter wavenumber
+    libMesh::Real d_nu_dP(unsigned int i);
+
+    //! Mole fraction derivative with respect to mass fraction
+    libMesh::Real dX_dY(std::vector<libMesh::Real> Y);
+
+    //! Partition Function derivative (finite difference)
+    libMesh::Real dQ_dT(libMesh::Real T, unsigned int iso);
 
     //! User should not call empty constructor
     AbsorptionCoeff();
