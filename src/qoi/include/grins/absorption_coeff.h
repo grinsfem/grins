@@ -88,7 +88,7 @@ namespace GRINS
     //! Not used
     virtual libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Real> > clone() const;
 
-  private:
+  protected:
     //! Antioch/Cantera object
     SharedPtr<Chemistry> _chemistry;
 
