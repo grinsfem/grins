@@ -60,13 +60,13 @@ namespace GRINS
     @param rayfire A RayfireMesh object (will be initialized in init()) <b>Ownership will be taken by an internal libMesh::UniquePtr</b>
     @param qoi_name Passed to the QoIBase
     */
-    IntegratedFunction(unsigned int p_level,SharedPtr<Function> f,RayfireMesh * rayfire,const std::string& qoi_name);
+    IntegratedFunction(unsigned int p_level, SharedPtr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name);
 
     //! Constructor
     /*!
     Used by the QoIFactory. Passes GetPot through to RayfireMesh for construction
     */
-    IntegratedFunction(const GetPot & input,unsigned int p_level,SharedPtr<Function> f,const std::string & input_qoi_string,const std::string& qoi_name);
+    IntegratedFunction(const GetPot & input, unsigned int p_level, SharedPtr<Function> f, const std::string & input_qoi_string, const std::string & qoi_name);
 
     //! Copy Constructor
     /*!
@@ -82,18 +82,19 @@ namespace GRINS
     virtual bool assemble_on_sides() const;
 
     //! Compute the qoi value.
-    virtual void element_qoi( AssemblyContext& context,
+    virtual void element_qoi( AssemblyContext & context,
                               const unsigned int qoi_index );
 
     //! Compute the qoi derivative with respect to the solution.
     /*!
       Currently not implemented
     */
-    virtual void element_qoi_derivative( AssemblyContext& context,
+    virtual void element_qoi_derivative( AssemblyContext & context,
                                          const unsigned int qoi_index );
+
     //! Initializes the rayfire with the mesh from system
-    virtual void init( const GetPot& input,
-                       const MultiphysicsSystem& system,
+    virtual void init( const GetPot & input,
+                       const MultiphysicsSystem & system,
                        unsigned int qoi_num );
 
     //! Reinitialize the rayfire
@@ -115,7 +116,7 @@ namespace GRINS
     libMesh::UniquePtr<RayfireMesh> _rayfire;
 
     //! Compute the value of a QoI at a QP
-    libMesh::Real qoi_value(Function& f,AssemblyContext& context,const libMesh::Point& xyz);
+    libMesh::Real qoi_value(Function & f, AssemblyContext & context, const libMesh::Point & xyz);
 
     //! User cannot call empty constructor
     IntegratedFunction();

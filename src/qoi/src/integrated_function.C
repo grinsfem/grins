@@ -45,7 +45,7 @@
 namespace GRINS
 {
   template<typename Function>
-  IntegratedFunction<Function>::IntegratedFunction(unsigned int p_level,SharedPtr<Function> f,RayfireMesh * rayfire,const std::string& qoi_name) :
+  IntegratedFunction<Function>::IntegratedFunction(unsigned int p_level, SharedPtr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name) :
     QoIBase(qoi_name),
     _p_level(p_level),
     _f(f),
@@ -53,7 +53,7 @@ namespace GRINS
   {}
 
   template<typename Function>
-  IntegratedFunction<Function>::IntegratedFunction(const GetPot & input,unsigned int p_level,SharedPtr<Function> f,const std::string & input_qoi_string,const std::string& qoi_name) :
+  IntegratedFunction<Function>::IntegratedFunction(const GetPot & input, unsigned int p_level, SharedPtr<Function> f, const std::string & input_qoi_string, const std::string & qoi_name) :
     QoIBase(qoi_name),
     _p_level(p_level),
     _f(f)
@@ -79,8 +79,8 @@ namespace GRINS
 
   template<typename Function>
   void IntegratedFunction<Function>::init
-  (const GetPot& /*input*/,
-   const MultiphysicsSystem& system,
+  (const GetPot & /*input*/,
+   const MultiphysicsSystem & system,
    unsigned int /*qoi_num*/ )
   {
     _rayfire->init(system.get_mesh());
@@ -93,11 +93,11 @@ namespace GRINS
   }
 
   template<typename Function>
-  void IntegratedFunction<Function>::element_qoi( AssemblyContext& context,
+  void IntegratedFunction<Function>::element_qoi( AssemblyContext & context,
                                                   const unsigned int qoi_index )
   {
-    const libMesh::Elem& original_elem = context.get_elem();
-    const libMesh::Elem* rayfire_elem = _rayfire->map_to_rayfire_elem(original_elem.id());
+    const libMesh::Elem & original_elem = context.get_elem();
+    const libMesh::Elem * rayfire_elem = _rayfire->map_to_rayfire_elem(original_elem.id());
 
     // rayfire_elem will be NULL if the main_elem
     // is not in the rayfire
@@ -111,17 +111,14 @@ namespace GRINS
         libMesh::UniquePtr< libMesh::FEBase > fe = libMesh::FEBase::build(rayfire_elem->dim(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE) );
 
         fe->attach_quadrature_rule( &qbase );
-        fe->get_xyz();
-        fe->get_JxW();
+        const std::vector<libMesh::Real> & JxW = fe->get_JxW();
+        const std::vector<libMesh::Point> & xyz = fe->get_xyz();
 
         fe->reinit(rayfire_elem);
 
-        const std::vector<libMesh::Real>& JxW = fe->get_JxW();
-        const std::vector<libMesh::Point>& xyz = fe->get_xyz();
-
         const unsigned int n_qpoints = fe->n_quadrature_points();
 
-        libMesh::Number& qoi = context.get_qois()[qoi_index];
+        libMesh::Number & qoi = context.get_qois()[qoi_index];
 
         for (unsigned int qp = 0; qp != n_qpoints; ++qp)
           qoi += this->qoi_value((*_f),context,xyz[qp])*JxW[qp];
@@ -130,7 +127,7 @@ namespace GRINS
   }
 
   template<typename Function>
-  void IntegratedFunction<Function>::element_qoi_derivative( AssemblyContext& /*context*/,
+  void IntegratedFunction<Function>::element_qoi_derivative( AssemblyContext & /*context*/,
                                                              const unsigned int /*qoi_index*/ )
   {
     //TODO
@@ -139,13 +136,13 @@ namespace GRINS
 
   // speciaizations of the qoi_value() function
   template<>
-  libMesh::Real IntegratedFunction<libMesh::FEMFunctionBase<libMesh::Real> >::qoi_value(libMesh::FEMFunctionBase<libMesh::Real>& f,AssemblyContext& context,const libMesh::Point& xyz)
+  libMesh::Real IntegratedFunction<libMesh::FEMFunctionBase<libMesh::Real> >::qoi_value(libMesh::FEMFunctionBase<libMesh::Real> & f, AssemblyContext & context, const libMesh::Point & xyz)
   {
     return f(context,xyz);
   }
 
   template<>
-  libMesh::Real IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >::qoi_value(libMesh::FunctionBase<libMesh::Real>& f,AssemblyContext& /*context*/,const libMesh::Point& xyz)
+  libMesh::Real IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >::qoi_value(libMesh::FunctionBase<libMesh::Real> & f, AssemblyContext & /*context*/, const libMesh::Point & xyz)
   {
     return f(xyz);
   }
