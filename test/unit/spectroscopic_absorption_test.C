@@ -64,6 +64,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( single_elem_mesh );
     CPPUNIT_TEST( multi_elem_mesh );
     CPPUNIT_TEST( param_derivs );
+    CPPUNIT_TEST( elem_qoi_derivatives );
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -127,6 +128,30 @@ namespace GRINSTesting
           this->P_param_derivatives(absorb,T,P,Y,i);
           this->Y_param_derivatives(absorb,T,P,Y,i);
         }
+    }
+
+    void elem_qoi_derivatives()
+    {
+      const std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/spectroscopic_absorption_qoi.in";
+
+      // run the Simulation once to ensure everything is initialized and populated
+      this->init_sim(filename);
+      _sim->run();
+
+      GRINS::MultiphysicsSystem * system = _sim->get_multiphysics_system();
+      GRINS::AssemblyContext * context = libMesh::cast_ptr<GRINS::AssemblyContext*>(system->build_context().release());
+      system->init_context(*context);
+      context->pre_fe_reinit(*system,system->get_mesh().elem_ptr(0));
+
+      libMesh::QoISet qs;
+      qs.add_index(0);
+
+      libMesh::DifferentiableQoI * qoi = system->get_qoi();
+      qoi->element_qoi_derivative(*context,qs);
+
+      this->T_elem_derivative(system,context);
+      this->P_elem_derivative(system,context);
+      this->Y_elem_derivative(system,context);
     }
 
   private:
@@ -267,6 +292,61 @@ namespace GRINSTesting
           libMesh::Real fd_approx = (fd_plus[d] - fd_minus[d])/(2.0*delta);
 
           CPPUNIT_ASSERT_DOUBLES_EQUAL(fd_approx,f_analytic,libMesh::TOLERANCE);
+        }
+    }
+
+    void T_elem_derivative(GRINS::MultiphysicsSystem * system, GRINS::AssemblyContext * context)
+    {
+      GRINS::PrimitiveTempFEVariables T_var( GRINS::GRINSPrivate::VariableWarehouse::get_variable_subclass<GRINS::PrimitiveTempFEVariables>("Temperature") );
+      libMesh::Real delta = 1e-6;
+      test_var_elem_derivs(system,context,T_var.T(),delta);
+    }
+
+    void P_elem_derivative(GRINS::MultiphysicsSystem * system, GRINS::AssemblyContext * context)
+    {
+      GRINS::PressureFEVariable P_var( GRINS::GRINSPrivate::VariableWarehouse::get_variable_subclass<GRINS::PressureFEVariable>("Pressure") );
+      libMesh::Real delta = 1e-3;
+      test_var_elem_derivs(system,context,P_var.p(),delta);
+    }
+
+    void Y_elem_derivative(GRINS::MultiphysicsSystem * system, GRINS::AssemblyContext * context)
+    {
+      GRINS::SpeciesMassFractionsVariable Y_var( GRINS::GRINSPrivate::VariableWarehouse::get_variable_subclass<GRINS::SpeciesMassFractionsVariable>("SpeciesMassFractions") );
+      libMesh::Real delta = 1e-8;
+      test_var_elem_derivs(system,context,Y_var.species(0),delta);
+    }
+
+    void test_var_elem_derivs(GRINS::MultiphysicsSystem * system, GRINS::AssemblyContext * context, unsigned int var_index, libMesh::Real delta)
+    {
+      libMesh::DifferentiableQoI * qoi = system->get_qoi();
+      libMesh::Number & qoi_value = context->get_qois()[0];
+      qoi_value = 0.0;
+
+      libMesh::QoISet qs;
+      qs.add_index(0);
+
+      libMesh::DenseSubVector<libMesh::Number> deriv = context->get_qoi_derivatives(0,var_index);      
+      libMesh::DenseSubVector<libMesh::Number> & solution  = context->get_elem_solution(var_index);
+
+      for (unsigned int d=0; d<solution.size(); ++d)
+        {
+          libMesh::Number soln = solution.el(d);
+
+          solution(d) = soln+delta;
+          qoi->element_qoi(*context,qs);
+          libMesh::Number qoi_p1 = qoi_value;
+          qoi_value = 0.0;
+
+          solution(d) = soln-delta;
+          qoi->element_qoi(*context,qs);
+          libMesh::Number qoi_m1= qoi_value;
+          qoi_value = 0.0;
+
+          solution(d) = soln;
+
+          libMesh::Real fd_approx = (qoi_p1 - qoi_m1)/(2.0*delta);
+
+          CPPUNIT_ASSERT_DOUBLES_EQUAL(fd_approx,deriv(d),libMesh::TOLERANCE);
         }
     }
 
