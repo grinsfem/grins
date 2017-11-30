@@ -29,12 +29,12 @@
 // libMesh
 #include "libmesh/quadrature.h"
 #include "libmesh/exact_solution.h"
-#include "libmesh/fem_function_base.h"
 
 // GRINS
 #include "grins/qoi_base.h"
 #include "grins/variable_name_defaults.h"
 #include "grins/rayfire_mesh.h"
+#include "grins/fem_function_and_derivative_base.h"
 
 namespace GRINS
 {

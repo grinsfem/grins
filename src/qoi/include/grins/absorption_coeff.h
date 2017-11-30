@@ -36,6 +36,7 @@
 #include "grins/single_variable.h"
 #include "grins/multicomponent_variable.h"
 #include "grins/variable_warehouse.h"
+#include "grins/fem_function_and_derivative_base.h"
 
 namespace GRINS
 {
@@ -59,7 +60,7 @@ namespace GRINS
     A chemistry library (Antioch or Cantera) is also required.
   */
   template<typename Chemistry>
-  class AbsorptionCoeff : public libMesh::FEMFunctionBase<libMesh::Real>
+  class AbsorptionCoeff : public FEMFunctionAndDerivativeBase<libMesh::Real>
   {
   public:
 
@@ -85,6 +86,13 @@ namespace GRINS
                              const libMesh::Point & p,
                              const libMesh::Real time,
                              libMesh::DenseVector<libMesh::Real> & output);
+
+    //! Calculate the derivative of the absorption coefficient at a QP with respect to all state variables
+    virtual void derivatives( libMesh::FEMContext & context,
+                              const libMesh::Point & qp_xyz,
+                              const libMesh::Real & JxW,
+                              const unsigned int qoi_index,
+                              const libMesh::Real time);
 
     //! Not used
     virtual libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Real> > clone() const;

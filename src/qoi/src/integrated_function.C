@@ -31,6 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/materials_parsing.h"
 #include "grins/rayfire_mesh.h"
+#include "grins/fem_function_and_derivative_base.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -40,7 +41,6 @@
 #include "libmesh/fe.h"
 #include "libmesh/fe_type.h"
 #include "libmesh/function_base.h"
-#include "libmesh/fem_function_base.h"
 
 namespace GRINS
 {
@@ -136,7 +136,7 @@ namespace GRINS
 
   // speciaizations of the qoi_value() function
   template<>
-  libMesh::Real IntegratedFunction<libMesh::FEMFunctionBase<libMesh::Real> >::qoi_value(libMesh::FEMFunctionBase<libMesh::Real> & f, AssemblyContext & context, const libMesh::Point & xyz)
+  libMesh::Real IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >::qoi_value(FEMFunctionAndDerivativeBase<libMesh::Real> & f, AssemblyContext & context, const libMesh::Point & xyz)
   {
     return f(context,xyz);
   }
@@ -148,6 +148,6 @@ namespace GRINS
   }
 
   template class IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >;
-  template class IntegratedFunction<libMesh::FEMFunctionBase<libMesh::Real> >;
+  template class IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >;
 
 } //namespace GRINS
