@@ -137,7 +137,8 @@ interface_driver_SOURCES = interface/interface_driver.C \
                            interface/species_test_base.h \
                            interface/thermochem_test_common.h \
                            interface/air_5sp.C \
-                           interface/antioch_mixture_builder_test.C
+                           interface/antioch_mixture_builder_test.C \
+                           interface/absorption_coeff_testing.h
 
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
 
