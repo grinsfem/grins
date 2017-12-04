@@ -31,6 +31,14 @@
 
 namespace GRINS
 {
+  // According to the standard, we need declarations of all
+  // specializations which precede any automatic instantiations.
+  template<> const GetPot* FactoryWithGetPot<NeumannBCContainer>::_input;
+  template<> MultiphysicsSystem* BCFactoryAbstract<NeumannBCContainer>::_system;
+  template<> const std::set<BoundaryID>* BCFactoryAbstract<NeumannBCContainer>::_bc_ids;
+  template<> const FEVariablesBase* BCFactoryAbstract<NeumannBCContainer>::_fe_var;
+  template<> std::string BCFactoryAbstract<NeumannBCContainer>::_section;
+
   class NeumannBCFactoryAbstract : public BCFactoryAbstract<NeumannBCContainer>
   {
   public:
