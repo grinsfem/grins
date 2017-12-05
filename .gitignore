@@ -15,3 +15,21 @@ examples/Makefile.in
 src/Makefile.in
 test/Makefile.in
 
+.deps
+*.lo
+*.o
+.dirstamp
+Makefile
+config.log
+config.status
+_configs.sed
+examples/*/run.sh
+.license.stamp
+grins_config.h
+grins_config.h.tmp
+libtool
+stamp-h1
+doxygen/txt_common/about_vpath.page
+doxygen/grins.dox
+src/utilities/include/grins/grins_version.h
+test/common/grins_test_paths.h
