@@ -28,8 +28,10 @@
 // C++
 #include <string>
 #include <map>
+#include <sstream>
 
 // libMesh
+#include "libmesh/libmesh_common.h" // libmesh_error_msg()
 #include "libmesh/auto_ptr.h" // libMesh::UniquePtr
 
 namespace GRINS
