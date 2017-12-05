@@ -31,6 +31,11 @@
 
 namespace GRINS
 {
+  // According to the standard, we need a declaration of the
+  // specialization which precedes any automatic instantiation.
+  template<> std::string FactoryWithGetPotPhysicsName<Physics>::_physics_name;
+  template<> const GetPot* FactoryWithGetPot<Physics>::_input;
+
   //! Builds Physics objects, used by PhysicsBuilder
   /*! The user may subclass this class for more building more complex Physics objects.
     Because Physics objects require a GetPot input file object and the physics_name

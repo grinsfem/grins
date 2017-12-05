@@ -31,6 +31,10 @@
 
 namespace GRINS
 {
+  // According to the standard, we need a declaration of the
+  // specialization which precedes any automatic instantiation.
+  template<> const GetPot* FactoryWithGetPot<Solver>::_input;
+
   class SolverFactoryAbstract : public FactoryWithGetPot<Solver>
   {
   public:

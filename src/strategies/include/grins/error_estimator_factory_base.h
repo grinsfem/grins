@@ -35,6 +35,10 @@
 
 namespace GRINS
 {
+  // According to the standard, we need a declaration of the
+  // specialization which precedes any automatic instantiation.
+  template <> const GetPot* FactoryWithGetPot<libMesh::ErrorEstimator>::_input;
+
   //! Builds VariableBase objects
   /*! Most variable classes only require a GetPot object to the constructor, but
     others may require more information. Subclasses can dictate the necessary
