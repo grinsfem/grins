@@ -42,6 +42,7 @@
 // libMesh
 #include "libmesh/fe.h"
 #include "libmesh/elem.h"
+#include "libmesh/fe_interface.h"
 
 namespace GRINS
 {
@@ -161,14 +162,75 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  void AbsorptionCoeff<Chemistry>::derivatives( libMesh::FEMContext & /*context*/,
-                                                const libMesh::Point & /*qp_xyz*/,
-                                                const libMesh::Real & /*JxW*/,
-                                                const unsigned int /*qoi_index*/,
+  void AbsorptionCoeff<Chemistry>::derivatives( libMesh::FEMContext & context,
+                                                const libMesh::Point & qp_xyz,
+                                                const libMesh::Real & JxW,
+                                                const unsigned int qoi_index,
                                                 const libMesh::Real /*time*/)
   {
-    // TODO
-    libmesh_not_implemented();
+    START_LOG("derivatives()","AbsorptionCoeff");
+
+    libMesh::DenseSubVector<libMesh::Number> & dQdT  = context.get_qoi_derivatives(qoi_index, _T_var.T());
+    libMesh::DenseSubVector<libMesh::Number> & dQdP  = context.get_qoi_derivatives(qoi_index, _P_var.p());
+    libMesh::DenseSubVector<libMesh::Number> & dQdYs = context.get_qoi_derivatives(qoi_index, _Y_var.species(_species_idx));
+
+    // need to map the physical coordinates of QP to reference coordinates
+    libMesh::Elem & main_elem = context.get_elem();
+    libMesh::Point qp_ref = libMesh::FEInterface::inverse_map(main_elem.dim(),main_elem.type(),&main_elem,qp_xyz);
+
+    std::vector<libMesh::Point> qp(1);
+    qp[0] = qp_ref;
+
+    libMesh::UniquePtr< libMesh::FEBase > T_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_T_var.T())->get_fe_type() );
+    const std::vector<std::vector<libMesh::Real> > & T_phi =T_fe->get_phi();
+    T_fe->reinit(&(context.get_elem()),&qp);
+
+    libMesh::UniquePtr< libMesh::FEBase > P_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_P_var.p())->get_fe_type() );
+    const std::vector<std::vector<libMesh::Real> > & P_phi = P_fe->get_phi();
+    P_fe->reinit(&(context.get_elem()),&qp);
+ 
+    libMesh::UniquePtr< libMesh::FEBase > Ys_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_Y_var.species(_species_idx))->get_fe_type() );
+    const std::vector<std::vector<libMesh::Real> > & Ys_phi = Ys_fe->get_phi();
+    Ys_fe->reinit(&(context.get_elem()),&qp);
+
+    libMesh::Real T,p,thermo_p; // temperature, hydrostatic pressure, thermodynamic pressure
+    std::vector<libMesh::Real> Y(_chemistry->n_species()); // mass fractions
+
+    context.point_value(_T_var.T(), qp_xyz, T); // [K]
+
+    if (_calc_thermo_pressure) {
+      libmesh_not_implemented();
+    } else {
+      thermo_p = _thermo_pressure;
+    }
+
+    context.point_value(_P_var.p(), qp_xyz, p); // [Pa]
+
+    libMesh::Real P = p + thermo_p; // total pressure [Pa]
+    libmesh_assert_greater(P,0.0);
+
+    // all mass fractions needed to get M_mix
+    for (unsigned int s=0; s<_chemistry->n_species(); s++)
+      context.point_value(_Y_var.species(s), qp_xyz, Y[s]);
+
+    for (unsigned int i=_min_index; i<=_max_index; i++)
+      {
+        // no velocity dependence
+
+        // temperature deriv
+        for (unsigned int j=0; j<dQdT.size(); j++)
+          dQdT(j) += d_kv_dT(T,P,Y,i)*JxW * T_phi[j][0];
+
+        // pressure deriv
+        for (unsigned int j=0; j<dQdP.size(); j++)
+          dQdP(j) += d_kv_dP(T,P,Y,i)*JxW * P_phi[j][0];
+
+        // mass fraction deriv
+        for (unsigned int j=0; j<dQdYs.size(); j++)
+          dQdYs(j) += d_kv_dY(T,P,Y,i)*JxW * Ys_phi[j][0];
+      }
+
+    STOP_LOG("derivatives()","AbsorptionCoeff");
   }
 
   template<typename Chemistry>
