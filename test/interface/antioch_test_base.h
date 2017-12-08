@@ -55,7 +55,7 @@ namespace GRINSTesting
 
   protected:
 
-    libMesh::UniquePtr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > > _antioch_mixture;
+    std::unique_ptr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > > _antioch_mixture;
   };
 
 } // end namespace GRINSTesting

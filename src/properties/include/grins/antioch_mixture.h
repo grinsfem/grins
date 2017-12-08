@@ -74,9 +74,9 @@ namespace GRINS
     //! Constructor with user-built objects
     /*! This constructor expects the user to pass in a ChemicalMixture, ReactionSet, and NASAThermoMixture
         object already built; this class will take ownership of the pointer. */
-    AntiochMixture( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
-                    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
-                    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
+    AntiochMixture( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+                    std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+                    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
                     libMesh::Real min_T = -std::numeric_limits<libMesh::Real>::max(),
                     bool clip_negative_rho = false );
 
@@ -105,9 +105,9 @@ namespace GRINS
 
   protected:
 
-    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
+    std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > _reaction_set;
 
-    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > _nasa_mixture;
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > _nasa_mixture;
 
     std::vector<libMesh::Real> _h_stat_mech_ref_correction;
 

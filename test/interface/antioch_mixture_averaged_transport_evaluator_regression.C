@@ -119,7 +119,7 @@ int test_evaluator( const GetPot& input )
 {
   GRINS::AntiochMixtureAveragedTransportMixtureBuilder builder;
 
-  libMesh::UniquePtr<GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
+  std::unique_ptr<GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
     mixture_ptr = builder.build_mixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>
     (input,"TestMaterial");
 

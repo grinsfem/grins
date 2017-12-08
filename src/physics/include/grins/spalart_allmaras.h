@@ -79,10 +79,10 @@ namespace GRINS
                                 AssemblyContext & context );
 
     // A distance function to get distances from boundaries to qps
-    libMesh::UniquePtr<DistanceFunction> distance_function;
+    std::unique_ptr<DistanceFunction> distance_function;
 
     // Boundary mesh objected that will be updated using the wall ids
-    libMesh::UniquePtr<libMesh::SerialMesh> boundary_mesh;
+    std::unique_ptr<libMesh::SerialMesh> boundary_mesh;
 
     // Registers all parameters in this physics and in its property
     // classes

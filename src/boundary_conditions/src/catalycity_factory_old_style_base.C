@@ -27,7 +27,7 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<CatalycityBase> CatalycityFactoryOldStyleBase::build_catalycity( const GetPot& input,
+  std::unique_ptr<CatalycityBase> CatalycityFactoryOldStyleBase::build_catalycity( const GetPot& input,
                                                                                       const std::string& section )
   {
     // State of _reactant_str, _bc_id_str verified in check_state() call in create()

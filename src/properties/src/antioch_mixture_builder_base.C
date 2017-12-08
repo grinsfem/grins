@@ -38,7 +38,7 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> >
+  std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> >
   AntiochMixtureBuilderBase::build_chem_mix( const GetPot & input, const std::string & material )
   {
     std::vector<std::string> species_list;
@@ -59,7 +59,7 @@ namespace GRINS
       electronic_data_filename = Antioch::DefaultInstallFilename::electronic_data();
 
     // By default, Antioch is using its ASCII parser. We haven't added more options yet.
-    return libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> >
+    return std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> >
       ( new Antioch::ChemicalMixture<libMesh::Real>( species_list,
                                                      verbose_antioch_read,
                                                      species_data_filename,
@@ -67,11 +67,11 @@ namespace GRINS
                                                      electronic_data_filename ) );
   }
 
-  libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> >
+  std::unique_ptr<Antioch::ReactionSet<libMesh::Real> >
   AntiochMixtureBuilderBase::build_reaction_set( const GetPot & input, const std::string & material,
                                                  const Antioch::ChemicalMixture<libMesh::Real> & chem_mix )
   {
-    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> >
+    std::unique_ptr<Antioch::ReactionSet<libMesh::Real> >
       reaction_set( new Antioch::ReactionSet<libMesh::Real>(chem_mix) );
 
     std::string kinetics_data_filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );

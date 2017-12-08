@@ -70,7 +70,7 @@ namespace GRINS
 
     RefinementFlaggingType _refinement_type;
 
-    libMesh::UniquePtr<libMesh::MeshRefinement> _mesh_refinement;
+    std::unique_ptr<libMesh::MeshRefinement> _mesh_refinement;
 
     void build_mesh_refinement( libMesh::MeshBase& mesh );
 

@@ -53,17 +53,17 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
+    virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
                                                        const std::string& physics_name ) =0;
 
   private:
 
-    virtual libMesh::UniquePtr<Physics> create();
+    virtual std::unique_ptr<Physics> create();
 
   };
 
   inline
-  libMesh::UniquePtr<Physics> PhysicsFactoryBase::create()
+  std::unique_ptr<Physics> PhysicsFactoryBase::create()
   {
     // Make sure user set the physics name
     if( _physics_name == std::string("DIE!") )
@@ -72,7 +72,7 @@ namespace GRINS
     if( !_input )
       libmesh_error_msg("ERROR: must call set_getpot() before building Physics!");
 
-    libMesh::UniquePtr<Physics> new_physics = this->build_physics( *_input, _physics_name );
+    std::unique_ptr<Physics> new_physics = this->build_physics( *_input, _physics_name );
 
     // Reset the _physics_name for error checking
     _physics_name = std::string("DIE!");

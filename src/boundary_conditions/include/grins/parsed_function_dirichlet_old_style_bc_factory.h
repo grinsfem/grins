@@ -47,7 +47,7 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<FunctionType>
+    virtual std::unique_ptr<FunctionType>
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,

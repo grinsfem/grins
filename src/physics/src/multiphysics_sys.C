@@ -195,11 +195,11 @@ namespace GRINS
     return;
   }
 
-  libMesh::UniquePtr<libMesh::DiffContext> MultiphysicsSystem::build_context()
+  std::unique_ptr<libMesh::DiffContext> MultiphysicsSystem::build_context()
   {
     AssemblyContext* context = new AssemblyContext(*this);
 
-    libMesh::UniquePtr<libMesh::DiffContext> ap(context);
+    std::unique_ptr<libMesh::DiffContext> ap(context);
 
     libMesh::DifferentiablePhysics* phys = libMesh::FEMSystem::get_physics();
 

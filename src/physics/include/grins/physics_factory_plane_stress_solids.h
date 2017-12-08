@@ -48,14 +48,14 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
+    virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
                                                        const std::string& physics_name );
 
   };
 
   template<template<typename> class DerivedPhysics>
   inline
-  libMesh::UniquePtr<Physics>
+  std::unique_ptr<Physics>
   PhysicsFactoryPlaneStressSolids<DerivedPhysics>::build_physics
   ( const GetPot& input, const std::string& physics_name )
   {
@@ -69,7 +69,7 @@ namespace GRINS
                                                      model,
                                                      strain_energy );
 
-    libMesh::UniquePtr<Physics> new_physics;
+    std::unique_ptr<Physics> new_physics;
 
     if( model == std::string("hookes_law") )
       new_physics.reset( new DerivedPhysics<HookesLaw>

@@ -64,7 +64,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochMixtureBuilderBase builder;
 
-      libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix
+      std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix
         = builder.build_chem_mix(*_input, "TestMaterial");
 
       // Just a couple of basic tests for the parsed ChemicalMixture
@@ -80,10 +80,10 @@ namespace GRINSTesting
     {
       GRINS::AntiochMixtureBuilderBase builder;
 
-      libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix
+      std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix
         = builder.build_chem_mix(*_input, "TestMaterial");
 
-      libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > reaction_set
+      std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > reaction_set
         = builder.build_reaction_set(*_input, "TestMaterial", *chem_mix);
 
       CPPUNIT_ASSERT_EQUAL( 5, (int)reaction_set->n_species() );
@@ -94,10 +94,10 @@ namespace GRINSTesting
     {
       GRINS::AntiochMixtureBuilderBase builder;
 
-      libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix
+      std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix
         = builder.build_chem_mix(*_input, "TestMaterial");
 
-      libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >
+      std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > >
         nasa_mix =
         builder.build_nasa_thermo_mix<Antioch::CEACurveFit<libMesh::Real> >(*_input, "TestMaterial", *chem_mix);
 
@@ -126,7 +126,7 @@ namespace GRINSTesting
 
   private:
 
-    libMesh::UniquePtr<GetPot> _input;
+    std::unique_ptr<GetPot> _input;
   };
 
 
@@ -156,7 +156,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochConstantTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<GRINS::ConstantViscosity> visc =
+      std::unique_ptr<GRINS::ConstantViscosity> visc =
         builder.build_constant_viscosity( *_input, "TestMaterial" );
 
       libMesh::Real mu = (*visc)();
@@ -168,7 +168,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochConstantTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<GRINS::ConstantConductivity> conductivity =
+      std::unique_ptr<GRINS::ConstantConductivity> conductivity =
         builder.build_constant_conductivity<GRINS::ConstantConductivity>( *_input, "TestMaterial" );
 
       libMesh::Real k = (*conductivity)();
@@ -180,7 +180,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochConstantTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<GRINS::ConstantPrandtlConductivity> conductivity =
+      std::unique_ptr<GRINS::ConstantPrandtlConductivity> conductivity =
         builder.build_constant_conductivity<GRINS::ConstantPrandtlConductivity>( *_input, "TestMaterial" );
 
       libMesh::Real mu = 1.2;
@@ -196,7 +196,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochConstantTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > diff =
+      std::unique_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > diff =
         builder.build_constant_lewis_diff( *_input, "TestMaterial" );
 
       libMesh::Real rho = 1.2;
@@ -215,7 +215,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochConstantTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
+      std::unique_ptr<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
                                                                 GRINS::ConstantConductivity> >
         mixture = builder.build_mixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::ConstantConductivity>
         (*_input, "TestMaterial");
@@ -241,7 +241,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochConstantTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
+      std::unique_ptr<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
                                                                 GRINS::ConstantPrandtlConductivity> >
         mixture = builder.build_mixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::ConstantPrandtlConductivity>
         (*_input, "TestMaterial");
@@ -267,7 +267,7 @@ namespace GRINSTesting
 
   private:
 
-    libMesh::UniquePtr<GetPot> _input;
+    std::unique_ptr<GetPot> _input;
   };
 
 
@@ -299,7 +299,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochMixtureAveragedTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
+      std::unique_ptr<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
                                                                        Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
                                                                        Antioch::SutherlandViscosity<libMesh::Real>,
                                                                        Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > ,
@@ -317,7 +317,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochMixtureAveragedTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
+      std::unique_ptr<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
                                                                        Antioch::StatMechThermodynamics<libMesh::Real>,
                                                                        Antioch::SutherlandViscosity<libMesh::Real>,
                                                                        Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
@@ -336,7 +336,7 @@ namespace GRINSTesting
     {
       GRINS::AntiochMixtureAveragedTransportMixtureBuilder builder;
 
-      libMesh::UniquePtr<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
+      std::unique_ptr<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
                                                                        Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
                                                                        Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
                                                                        Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,libMesh::Real>,
@@ -353,7 +353,7 @@ namespace GRINSTesting
 
   private:
 
-    libMesh::UniquePtr<GetPot> _input;
+    std::unique_ptr<GetPot> _input;
   };
 
 

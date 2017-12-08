@@ -145,7 +145,7 @@ namespace GRINS
     libMesh::Real   _phi;
 
     //! Internal 1D mesh of EDGE2 elements
-    libMesh::UniquePtr<libMesh::Mesh> _mesh;
+    std::unique_ptr<libMesh::Mesh> _mesh;
 
     //! Map of main mesh elem_id to rayfire mesh elem_id
     std::map<libMesh::dof_id_type,libMesh::dof_id_type> _elem_id_map;

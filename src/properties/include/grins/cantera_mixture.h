@@ -100,9 +100,9 @@ namespace GRINS
 
   protected:
 
-    libMesh::UniquePtr<Cantera::IdealGasMix> _cantera_gas;
+    std::unique_ptr<Cantera::IdealGasMix> _cantera_gas;
 
-    libMesh::UniquePtr<Cantera::Transport> _cantera_transport;
+    std::unique_ptr<Cantera::Transport> _cantera_transport;
 
     std::string parse_mixture( const GetPot& input, const std::string& material );
 

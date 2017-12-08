@@ -112,7 +112,7 @@ namespace GRINS
 
     std::string catalycity_type = input(catalycity_input_str, "none");
 
-    libMesh::UniquePtr<CatalycityBase> catalycity_ptr = CatalycityFactoryAbstract::build(catalycity_type);
+    std::unique_ptr<CatalycityBase> catalycity_ptr = CatalycityFactoryAbstract::build(catalycity_type);
 
     // We need to return a SharedPtr
     return SharedPtr<CatalycityBase>( catalycity_ptr.release() );

@@ -161,7 +161,7 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Real> > AbsorptionCoeff<Chemistry>::clone() const
+  std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Real> > AbsorptionCoeff<Chemistry>::clone() const
   {
     libmesh_not_implemented();
   }

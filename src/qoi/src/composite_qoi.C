@@ -55,7 +55,7 @@ namespace GRINS
     return;
   }
 
-  libMesh::UniquePtr<libMesh::DifferentiableQoI> CompositeQoI::clone()
+  std::unique_ptr<libMesh::DifferentiableQoI> CompositeQoI::clone()
   {
     CompositeQoI* clone = new CompositeQoI;
 
@@ -64,7 +64,7 @@ namespace GRINS
         clone->add_qoi( this->get_qoi(q) );
       }
 
-    return libMesh::UniquePtr<libMesh::DifferentiableQoI>(clone);
+    return std::unique_ptr<libMesh::DifferentiableQoI>(clone);
   }
 
   void CompositeQoI::add_qoi( const QoIBase& qoi )

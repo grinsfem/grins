@@ -27,12 +27,12 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<FEVariablesBase> VariableFactoryAbstract::create()
+  std::unique_ptr<FEVariablesBase> VariableFactoryAbstract::create()
   {
     // Make sure all necessary state has been setup
     this->check_create_state();
 
-    libMesh::UniquePtr<FEVariablesBase> func;
+    std::unique_ptr<FEVariablesBase> func;
 
     func = this->build_fe_var( *_var_names, *_var_indices, *_subdomain_ids );
 

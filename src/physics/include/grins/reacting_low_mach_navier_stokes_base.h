@@ -39,7 +39,7 @@ namespace GRINS
 
     ReactingLowMachNavierStokesBase(const PhysicsName& physics_name,
                                     const GetPot& input,
-                                    libMesh::UniquePtr<Mixture> & gas_mix )
+                                    std::unique_ptr<Mixture> & gas_mix )
       : ReactingLowMachNavierStokesAbstract(physics_name,input),
         _gas_mixture(gas_mix.release()) /*! \todo Use std::move when we mandate C++11 */
     {}
@@ -61,7 +61,7 @@ namespace GRINS
 
   protected:
 
-    libMesh::UniquePtr<Mixture> _gas_mixture;
+    std::unique_ptr<Mixture> _gas_mixture;
 
   private:
 

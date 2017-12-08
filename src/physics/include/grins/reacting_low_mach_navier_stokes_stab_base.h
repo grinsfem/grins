@@ -40,7 +40,7 @@ namespace GRINS
   public:
 
     ReactingLowMachNavierStokesStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input,
-                                                  libMesh::UniquePtr<Mixture> & gas_mix);
+                                                  std::unique_ptr<Mixture> & gas_mix);
 
     virtual ~ReactingLowMachNavierStokesStabilizationBase(){};
 

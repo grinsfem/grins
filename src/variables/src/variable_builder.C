@@ -89,9 +89,9 @@ namespace GRINS
     VariableFactoryAbstract::set_var_indices(var_indices);
     VariableFactoryAbstract::set_subdomain_ids(subdomain_ids);
 
-    libMesh::UniquePtr<FEVariablesBase> var = VariableFactoryAbstract::build(var_type);
+    std::unique_ptr<FEVariablesBase> var = VariableFactoryAbstract::build(var_type);
 
-    // Need to return a SharedPtr, so release from the UniquePtr we got back
+    // Need to return a SharedPtr, so release from the std::unique_ptr we got back
     return SharedPtr<FEVariablesBase>( var.release() );
   }
 } // end namespace GRINS

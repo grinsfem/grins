@@ -75,10 +75,10 @@ namespace GRINS
 
   protected:
 
-    libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
+    std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
     qoi_functional;
 
-    //! Manual copy constructor due to the UniquePtr
+    //! Manual copy constructor due to the std::unique_ptr
     ParsedInteriorQoI(const ParsedInteriorQoI& original);
 
   private:

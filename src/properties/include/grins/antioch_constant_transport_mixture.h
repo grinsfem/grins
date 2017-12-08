@@ -63,12 +63,12 @@ namespace GRINS
     AntiochConstantTransportMixture( const GetPot & input, const std::string & material );
 
     //! Constructor with user-built objects
-    AntiochConstantTransportMixture( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
-                                     libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
-                                     libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
-                                     libMesh::UniquePtr<ConstantViscosity> & visc,
-                                     libMesh::UniquePtr<Conductivity> & cond,
-                                     libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > & diff,
+    AntiochConstantTransportMixture( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+                                     std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+                                     std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
+                                     std::unique_ptr<ConstantViscosity> & visc,
+                                     std::unique_ptr<Conductivity> & cond,
+                                     std::unique_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > & diff,
                                      libMesh::Real min_T = -std::numeric_limits<libMesh::Real>::max(),
                                      bool clip_negative_rho = false );
 
@@ -88,12 +88,12 @@ namespace GRINS
     /*! \todo Template on viscosity model, as we did for conductivity,
       to support parsed versions. This is going to require we update the
       API for the transport wrappers. */
-    libMesh::UniquePtr<ConstantViscosity> _mu;
+    std::unique_ptr<ConstantViscosity> _mu;
 
     //! Thermal conductivity
-    libMesh::UniquePtr<Conductivity> _conductivity;
+    std::unique_ptr<Conductivity> _conductivity;
 
-    libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > _diffusivity;
+    std::unique_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > _diffusivity;
 
     /* Below we will specialize the specialized_build_* functions to the appropriate type.
        This way, we can control how the cached transport objects get constructed
@@ -107,14 +107,14 @@ namespace GRINS
     AntiochConstantTransportMixture();
 
     void specialized_build_conductivity( const GetPot & input, const std::string & material,
-                                         libMesh::UniquePtr<ConstantConductivity> & conductivity,
+                                         std::unique_ptr<ConstantConductivity> & conductivity,
                                          conductivity_type<ConstantConductivity> )
     {
       conductivity.reset( new ConstantConductivity(input,material) );
     }
 
     void specialized_build_conductivity( const GetPot & input, const std::string & material,
-                                         libMesh::UniquePtr<ConstantPrandtlConductivity> & conductivity,
+                                         std::unique_ptr<ConstantPrandtlConductivity> & conductivity,
                                          conductivity_type<ConstantPrandtlConductivity> )
     {
       conductivity.reset( new ConstantPrandtlConductivity(input,material) );

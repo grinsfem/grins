@@ -46,7 +46,7 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
+    virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
                                                        const std::string& physics_name );
 
     void cond_error_msg( const std::string& physics, const std::string& conductivity ) const;
@@ -55,7 +55,7 @@ namespace GRINS
 
   template<template<typename> class DerivedPhysics>
   inline
-  libMesh::UniquePtr<Physics>
+  std::unique_ptr<Physics>
   PhysicsFactoryHeatTransfer<DerivedPhysics>::build_physics
   ( const GetPot& input, const std::string& physics_name )
   {
@@ -64,7 +64,7 @@ namespace GRINS
     std::string conductivity;
     PhysicsFactoryHelper::parse_conductivity_model(input,core_physics,conductivity);
 
-    libMesh::UniquePtr<Physics> new_physics;
+    std::unique_ptr<Physics> new_physics;
 
     if( conductivity == "constant" )
       new_physics.reset( new DerivedPhysics<ConstantConductivity>(physics_name,input) );
