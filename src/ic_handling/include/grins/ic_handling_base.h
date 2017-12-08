@@ -34,6 +34,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/point.h"
 #include "libmesh/function_base.h"
+#include "libmesh/auto_ptr.h"
 
 // libMesh forward declarations
 namespace libMesh

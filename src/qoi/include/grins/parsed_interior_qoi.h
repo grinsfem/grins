@@ -32,6 +32,7 @@
 
 // libMesh
 #include "libmesh/fem_function_base.h"
+#include "libmesh/auto_ptr.h"
 
 namespace GRINS
 {

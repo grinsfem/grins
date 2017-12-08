@@ -35,6 +35,7 @@
 //libMesh
 #include "libmesh/libmesh.h"
 #include "libmesh/mesh_refinement.h"
+#include "libmesh/auto_ptr.h"
 
 // libMesh forward declarations
 class GetPot;

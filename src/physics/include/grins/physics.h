@@ -44,6 +44,7 @@
 #include "libmesh/fe_base.h"
 #include "libmesh/system.h"
 #include "libmesh/mesh_base.h"
+#include "libmesh/auto_ptr.h"
 
 // libMesh forward declarations
 class GetPot;
