@@ -28,6 +28,7 @@
 
 // libMesh
 #include "libmesh/fem_function_base.h"
+#include "libmesh/auto_ptr.h"
 
 // GRINS
 #include "grins/assembly_context.h"
