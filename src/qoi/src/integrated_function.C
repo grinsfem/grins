@@ -108,7 +108,7 @@ namespace GRINS
         qbase.init(rayfire_elem->type(),libMesh::Order(_p_level));
 
         // need the QP coordinates and JxW
-        libMesh::UniquePtr< libMesh::FEBase > fe = libMesh::FEBase::build(rayfire_elem->dim(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE) );
+        std::unique_ptr< libMesh::FEBase > fe = libMesh::FEBase::build(rayfire_elem->dim(), libMesh::FEType(libMesh::FIRST, libMesh::LAGRANGE) );
 
         fe->attach_quadrature_rule( &qbase );
         fe->get_xyz();

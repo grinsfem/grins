@@ -78,9 +78,9 @@ namespace GRINS
     _origin(1) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 1);
 
     if (input.have_variable("QoI/"+qoi_string+"/Rayfire/theta"))
-        _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
+      _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
     else
-        libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
+      libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
 
     if (std::abs(_theta) > 2.0*Constants::pi)
       libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
@@ -97,7 +97,7 @@ namespace GRINS
   {
     if (original._mesh.get())
       this->_mesh.reset( new libMesh::Mesh( *((original._mesh).get()) ) );
-      
+
     this->_elem_id_map = original._elem_id_map;
   }
 
@@ -263,7 +263,7 @@ namespace GRINS
           continue;
 
         // we found a boundary elem, so make an edge and see if it contains the origin
-        libMesh::UniquePtr<const libMesh::Elem> edge_elem = start_elem->build_edge_ptr(s);
+        std::unique_ptr<const libMesh::Elem> edge_elem = start_elem->build_edge_ptr(s);
         valid |= edge_elem->contains_point(_origin);
       }
 
@@ -276,7 +276,7 @@ namespace GRINS
   {
     const libMesh::Elem* start_elem = NULL;
 
-    libMesh::UniquePtr<libMesh::PointLocatorBase> locator = mesh_base.sub_point_locator();
+    std::unique_ptr<libMesh::PointLocatorBase> locator = mesh_base.sub_point_locator();
     const libMesh::Elem* elem = (*locator)(_origin);
 
     // elem would be NULL if origin is not on mesh
@@ -329,7 +329,7 @@ namespace GRINS
     // loop over all sides of the elem and check each one for intersection
     for (unsigned int s=0; s<cur_elem->n_sides(); s++)
       {
-        libMesh::UniquePtr<const libMesh::Elem> edge_elem = cur_elem->build_edge_ptr(s);
+        std::unique_ptr<const libMesh::Elem> edge_elem = cur_elem->build_edge_ptr(s);
 
         // Using the default tol can cause a false positive when start_point is near a node,
         // causing this loop to skip over an otherwise valid edge to check
@@ -400,7 +400,7 @@ namespace GRINS
 
     for (unsigned int s=0; s<neighbor->n_sides(); s++)
       {
-        libMesh::UniquePtr<const libMesh::Elem> side_elem = neighbor->build_side_ptr(s); 
+        std::unique_ptr<const libMesh::Elem> side_elem = neighbor->build_side_ptr(s);
 
         if ( (side_elem->contains_point(*node0)) && (side_elem->contains_point(*node1)) )
           {
@@ -411,7 +411,7 @@ namespace GRINS
 
     if ( side != libMesh::invalid_uint )
       {
-        libMesh::UniquePtr<const libMesh::Elem> edge_elem = neighbor->build_side_ptr(side);
+        std::unique_ptr<const libMesh::Elem> edge_elem = neighbor->build_side_ptr(side);
 
         bool start_point_on_edge = edge_elem->contains_point(start_point);
         bool end_point_on_edge = edge_elem->contains_point(end_point);
@@ -423,7 +423,7 @@ namespace GRINS
 
             is_valid &= ( l_to_r || r_to_l );
           }
-        }
+      }
 
     return is_valid;
   }
@@ -463,7 +463,7 @@ namespace GRINS
             // check elem neighbors first
             for (unsigned int s=0; s<cur_elem->n_sides(); s++)
               {
-                libMesh::UniquePtr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
+                std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
                 if (side_elem->contains_point(end_point))
                   {
                     const libMesh::Elem * neighbor = cur_elem->neighbor_ptr(s);
@@ -526,7 +526,7 @@ namespace GRINS
         for (unsigned int c=0; c<neighbor->n_children(); c++)
           {
             const libMesh::Elem * child = neighbor->child_ptr(c);
-            
+
             if (child->contains_point(end_point))
               if (this->rayfire_in_elem(end_point,child))
                 return child;

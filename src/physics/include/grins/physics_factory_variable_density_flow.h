@@ -47,8 +47,8 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+    virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
+                                                    const std::string& physics_name );
 
     void prop_error_msg( const std::string& physics,
                          const std::string& conductivity,
@@ -59,8 +59,8 @@ namespace GRINS
 
   template<template<typename,typename,typename> class DerivedPhysics>
   inline
-  libMesh::UniquePtr<Physics> PhysicsFactoryVariableDensityFlow<DerivedPhysics>::build_physics( const GetPot& input,
-                                                                                                const std::string& physics_name )
+  std::unique_ptr<Physics> PhysicsFactoryVariableDensityFlow<DerivedPhysics>::build_physics( const GetPot& input,
+                                                                                             const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 
@@ -73,7 +73,7 @@ namespace GRINS
     std::string specific_heat;
     PhysicsFactoryHelper::parse_specific_heat_model(input,core_physics,specific_heat);
 
-    libMesh::UniquePtr<Physics> new_physics;
+    std::unique_ptr<Physics> new_physics;
 
     if(  conductivity == "constant" && viscosity == "constant" && specific_heat == "constant" )
       new_physics.reset( new DerivedPhysics<ConstantViscosity,ConstantSpecificHeat,ConstantConductivity>

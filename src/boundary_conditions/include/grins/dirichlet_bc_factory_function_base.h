@@ -60,17 +60,17 @@ namespace GRINS
       be to *remove* variables from the list. For example, for some
       symmetry conditions, we only want to enforce zero on certain
       components of the solution while leaving others untouched. */
-    virtual libMesh::UniquePtr<FunctionType>
+    virtual std::unique_ptr<FunctionType>
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
                 const std::string& section ) =0;
 
     //! Dispatch, based on FunctionType, to the correct DirchletBoundary construction
-    libMesh::UniquePtr<libMesh::DirichletBoundary>
+    std::unique_ptr<libMesh::DirichletBoundary>
     make_dirichlet_boundary( const std::set<BoundaryID>& bc_ids,
                              const libMesh::System& system,
-                             libMesh::UniquePtr<FunctionType>& func,
+                             std::unique_ptr<FunctionType>& func,
                              const std::vector<VariableIndex>& var_indices );
 
     //! Helper function that can be overridded in subclasses
@@ -80,7 +80,7 @@ namespace GRINS
 
   private:
 
-    virtual libMesh::UniquePtr<libMesh::DirichletBoundary> create();
+    virtual std::unique_ptr<libMesh::DirichletBoundary> create();
 
   };
 

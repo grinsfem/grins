@@ -87,13 +87,13 @@ namespace GRINS
 
     //! Input File Constructor
     /*!
-    Creates rayfire from parameters specified in input file section: QoI/'qoi_string'/Rayfire/
+      Creates rayfire from parameters specified in input file section: QoI/'qoi_string'/Rayfire/
     */
     RayfireMesh(const GetPot & input, const std::string & qoi_string);
 
     //! Copy Constructor
     /*!
-    Required to deep-copy _mesh and _elem_id_map
+      Required to deep-copy _mesh and _elem_id_map
     */
     RayfireMesh(const RayfireMesh & original);
 
@@ -145,7 +145,7 @@ namespace GRINS
     libMesh::Real   _phi;
 
     //! Internal 1D mesh of EDGE2 elements
-    libMesh::UniquePtr<libMesh::Mesh> _mesh;
+    std::unique_ptr<libMesh::Mesh> _mesh;
 
     //! Map of main mesh elem_id to rayfire mesh elem_id
     std::map<libMesh::dof_id_type,libMesh::dof_id_type> _elem_id_map;

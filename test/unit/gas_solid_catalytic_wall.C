@@ -208,7 +208,7 @@ int main(int argc, char* argv[])
   if( test_type == "cantera" )
     {
 #ifdef GRINS_HAVE_CANTERA
-      libMesh::UniquePtr<GRINS::CanteraMixture> chem_uptr;
+      std::unique_ptr<GRINS::CanteraMixture> chem_uptr;
       chem_builder.build_chemistry(input,"CanteraMaterial",chem_uptr);
       return_flag = test<GRINS::CanteraMixture>( *chem_uptr );
 #else
@@ -218,7 +218,7 @@ int main(int argc, char* argv[])
   else if( test_type == "antioch" )
     {
 #ifdef GRINS_HAVE_ANTIOCH
-      libMesh::UniquePtr<GRINS::AntiochChemistry> chem_uptr;
+      std::unique_ptr<GRINS::AntiochChemistry> chem_uptr;
       chem_builder.build_chemistry(input,"AntiochMaterial",chem_uptr);
       return_flag = test<GRINS::AntiochChemistry>( *chem_uptr );
 #else

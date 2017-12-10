@@ -81,9 +81,9 @@ namespace GRINS
 
   template <typename KineticsThermoCurveFit>
   AntiochMixture<KineticsThermoCurveFit>::AntiochMixture
-  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
-    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
-    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
+  ( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+    std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
     libMesh::Real min_T,
     bool clip_negative_rho )
     : AntiochChemistry(chem_mixture),
@@ -99,8 +99,8 @@ namespace GRINS
 
   template <typename KineticsThermoCurveFit>
   void AntiochMixture<KineticsThermoCurveFit>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const
   {
     // Use common code for any GRINS parameters
     AntiochChemistry::register_parameter(param_name, param_pointer);

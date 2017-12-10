@@ -46,7 +46,7 @@ namespace GRINS
 
     virtual ~ConstraintBuilder(){};
 
-    static libMesh::UniquePtr<libMesh::System::Constraint>
+    static std::unique_ptr<libMesh::System::Constraint>
     build_constraint_object( const GetPot& input,
                              MultiphysicsSystem& system );
   };

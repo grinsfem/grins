@@ -49,7 +49,7 @@ namespace GRINS
 
     ~VariableFactoryAbstract(){};
 
-    virtual libMesh::UniquePtr<FEVariablesBase> create();
+    virtual std::unique_ptr<FEVariablesBase> create();
 
     //! Build the variable names for the FEVariablesBase type (name), returned in the std::vector
     /*! Similarly to build(), this will grab the factory subclass and then
@@ -95,9 +95,9 @@ namespace GRINS
     /*! This function will be called from within create(), which called from
       VariableFactoryAbstract::build. Note the var_names can be built a priori
       using the VariableFactoryAbstract::build_var_names() method. */
-    virtual libMesh::UniquePtr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
-                                                              const std::vector<VariableIndex>& var_indices,
-                                                              const std::set<libMesh::subdomain_id_type>& subdomain_ids ) =0;
+    virtual std::unique_ptr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
+                                                           const std::vector<VariableIndex>& var_indices,
+                                                           const std::set<libMesh::subdomain_id_type>& subdomain_ids ) =0;
 
     // Subclasses implement this to parse the variable component name(s)
     virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section ) =0;
@@ -176,12 +176,12 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<FEVariablesBase>
+    virtual std::unique_ptr<FEVariablesBase>
     build_fe_var( const std::vector<std::string>& var_names,
                   const std::vector<VariableIndex>& var_indices,
                   const std::set<libMesh::subdomain_id_type>& subdomain_ids )
     {
-      return libMesh::UniquePtr<FEVariablesBase>( new VariableType(var_names,var_indices,subdomain_ids) );
+      return std::unique_ptr<FEVariablesBase>( new VariableType(var_names,var_indices,subdomain_ids) );
     }
 
     //! The basic factory implementation looks in [Variables/<VariableName>/names].
@@ -239,10 +239,10 @@ namespace GRINS
       and accordingly build up the variable names. */
     virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section );
 
-    virtual libMesh::UniquePtr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
-                                                              const std::vector<VariableIndex>& var_indices,
-                                                              const std::set<libMesh::subdomain_id_type>& subdomain_ids )
-    { return libMesh::UniquePtr<FEVariablesBase>( new VariableType(var_names,var_indices,_prefix,_material,subdomain_ids) ); }
+    virtual std::unique_ptr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
+                                                           const std::vector<VariableIndex>& var_indices,
+                                                           const std::set<libMesh::subdomain_id_type>& subdomain_ids )
+    { return std::unique_ptr<FEVariablesBase>( new VariableType(var_names,var_indices,_prefix,_material,subdomain_ids) ); }
 
     std::string _prefix;
 

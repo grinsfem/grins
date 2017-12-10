@@ -49,71 +49,71 @@ namespace GRINS
 #else
     SharedPtr<NeumannBCAbstract>
     GasRecombinationCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
-                                                      ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
-                                                        const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
-                                                        VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
+  ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
+    const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
+    VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
 #endif
   {
-    std::string reactant;
-    std::string product;
-    this->parse_reactant_and_product(reaction,reactant,product);
+  std::string reactant;
+  std::string product;
+  this->parse_reactant_and_product(reaction,reactant,product);
 
-    // Now construct the Neumann BC
-    SharedPtr<NeumannBCAbstract> catalytic_wall;
+  // Now construct the Neumann BC
+  SharedPtr<NeumannBCAbstract> catalytic_wall;
 
-    ChemistryBuilder chem_builder;
+  ChemistryBuilder chem_builder;
 
-    if( thermochem_lib == "cantera" )
-      {
+  if( thermochem_lib == "cantera" )
+    {
 #ifdef GRINS_HAVE_CANTERA
-        libMesh::UniquePtr<CanteraMixture> chem_uptr;
-        chem_builder.build_chemistry(input,material,chem_uptr);
+  std::unique_ptr<CanteraMixture> chem_uptr;
+  chem_builder.build_chemistry(input,material,chem_uptr);
 
-        /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
-        SharedPtr<CanteraMixture> chem_ptr(chem_uptr.release());
+  /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
+  SharedPtr<CanteraMixture> chem_ptr(chem_uptr.release());
 
-        this->build_wall_ptr<CanteraMixture>(chem_ptr,gamma_ptr,reactant,product,
-                                             species_vars,T_var,p0,catalytic_wall);
+  this->build_wall_ptr<CanteraMixture>(chem_ptr,gamma_ptr,reactant,product,
+    species_vars,T_var,p0,catalytic_wall);
 #else
-        libmesh_error_msg("Error: Cantera not enabled in this configuration. Reconfigure using --with-cantera option.");
+  libmesh_error_msg("Error: Cantera not enabled in this configuration. Reconfigure using --with-cantera option.");
 #endif
-      }
-    else if( thermochem_lib == "antioch" )
-      {
+}
+  else if( thermochem_lib == "antioch" )
+    {
 #ifdef GRINS_HAVE_ANTIOCH
-        libMesh::UniquePtr<AntiochChemistry> chem_uptr;
-        chem_builder.build_chemistry(input,material,chem_uptr);
+  std::unique_ptr<AntiochChemistry> chem_uptr;
+  chem_builder.build_chemistry(input,material,chem_uptr);
 
-        /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
-        SharedPtr<AntiochChemistry> chem_ptr(chem_uptr.release());
+  /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
+  SharedPtr<AntiochChemistry> chem_ptr(chem_uptr.release());
 
-        this->build_wall_ptr<AntiochChemistry>(chem_ptr,gamma_ptr,reactant,product,
-                                               species_vars,T_var,p0,catalytic_wall);
+  this->build_wall_ptr<AntiochChemistry>(chem_ptr,gamma_ptr,reactant,product,
+    species_vars,T_var,p0,catalytic_wall);
 #else
-        libmesh_error_msg("Error: Antioch not enabled in this configuration. Reconfigure using --with-antioch option.");
+  libmesh_error_msg("Error: Antioch not enabled in this configuration. Reconfigure using --with-antioch option.");
 #endif
-      }
-    else
-      libmesh_error_msg("ERROR: Invalid thermochemistry library "+thermochem_lib+"!");
+}
+  else
+    libmesh_error_msg("ERROR: Invalid thermochemistry library "+thermochem_lib+"!");
 
-    return catalytic_wall;
-  }
+  return catalytic_wall;
+}
 
   void GasRecombinationCatalyticWallNeumannBCFactoryImpl::parse_reactant_and_product( const std::string& reaction,
-                                                                                      std::string& reactant,
-                                                                                      std::string& product ) const
+    std::string& reactant,
+    std::string& product ) const
   {
-    // Split each reaction into reactants and products
-    std::vector<std::string> partners;
-    StringUtilities::split_string(reaction, "->", partners);
+  // Split each reaction into reactants and products
+  std::vector<std::string> partners;
+  StringUtilities::split_string(reaction, "->", partners);
 
-    /*! \todo We currently can only handle reactions of the type R -> P
-      e.g. not R1+R2 -> P, etc. */
-    if( partners.size() != 2 )
-      libmesh_error_msg("ERROR: Must have only one reactant and one product for GasRecombinationCatalyticWall!");
+  /*! \todo We currently can only handle reactions of the type R -> P
+    e.g. not R1+R2 -> P, etc. */
+  if( partners.size() != 2 )
+    libmesh_error_msg("ERROR: Must have only one reactant and one product for GasRecombinationCatalyticWall!");
 
-    reactant = partners[0];
-    product = partners[1];
-  }
+  reactant = partners[0];
+  product = partners[1];
+}
 
 } // end namespace GRINS

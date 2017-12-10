@@ -51,7 +51,7 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-   */
+  */
   template<typename KineticsThermoCurveFit, typename Thermo>
   class AntiochEvaluator
   {
@@ -96,12 +96,12 @@ namespace GRINS
     const AntiochMixture<KineticsThermoCurveFit> & _chem;
 
     //! Primary thermo object.
-    libMesh::UniquePtr<Thermo> _thermo;
+    std::unique_ptr<Thermo> _thermo;
 
     //! For some Thermo types, we also need to cache a NASAEvaluator.
-    libMesh::UniquePtr<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit> > _nasa_evaluator;
+    std::unique_ptr<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit> > _nasa_evaluator;
 
-    libMesh::UniquePtr<AntiochKinetics<KineticsThermoCurveFit> > _kinetics;
+    std::unique_ptr<AntiochKinetics<KineticsThermoCurveFit> > _kinetics;
 
     // Temperature should be clipped to positive values for
     // stability's sake
@@ -111,7 +111,7 @@ namespace GRINS
     // requested.  Some reaction equations give us NaNs at 0K too.
     const libMesh::Real _minimum_T;
 
-    libMesh::UniquePtr<Antioch::TempCache<libMesh::Real> > _temp_cache;
+    std::unique_ptr<Antioch::TempCache<libMesh::Real> > _temp_cache;
 
     //! Helper method for managing _temp_cache
     /*! T *MUST* be pass-by-reference because of the structure
@@ -130,14 +130,14 @@ namespace GRINS
     AntiochEvaluator();
 
     void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
-                                   libMesh::UniquePtr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
+                                   std::unique_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
                                    thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
     {
       thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
     }
 
     void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
-                                   libMesh::UniquePtr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real> > & thermo,
+                                   std::unique_ptr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real> > & thermo,
                                    thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real> > )
     {
       _nasa_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>( mixture.nasa_mixture() ) );

@@ -34,33 +34,33 @@
 namespace GRINS
 {
   template<>
-  libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+  std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
   ParsedFunctionFactoryHelper<libMesh::FunctionBase<libMesh::Number> >::build_parsed_func
   ( const MultiphysicsSystem& /*system*/, const std::string& expression )
   {
-    return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ParsedFunction<libMesh::Number>(expression) );
+    return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ParsedFunction<libMesh::Number>(expression) );
   }
 
   template<>
-  libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
+  std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
   ParsedFunctionFactoryHelper<libMesh::FEMFunctionBase<libMesh::Number> >::build_parsed_func
   ( const MultiphysicsSystem& system, const std::string& expression )
   {
-    return libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >( new libMesh::ParsedFEMFunction<libMesh::Number>(system,expression) );
+    return std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >( new libMesh::ParsedFEMFunction<libMesh::Number>(system,expression) );
   }
 
   template<>
-  libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+  std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
   ParsedFunctionFactoryHelper<libMesh::FunctionBase<libMesh::Number> >::build_composite_func()
   {
-    return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::CompositeFunction<libMesh::Number> );
+    return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::CompositeFunction<libMesh::Number> );
   }
 
   template<>
-  libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
+  std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
   ParsedFunctionFactoryHelper<libMesh::FEMFunctionBase<libMesh::Number> >::build_composite_func()
   {
-    return libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >( new libMesh::CompositeFEMFunction<libMesh::Number> );
+    return std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >( new libMesh::CompositeFEMFunction<libMesh::Number> );
   }
 
 } // end namespace GRINS

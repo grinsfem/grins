@@ -114,7 +114,7 @@ namespace GRINS
       libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
-    virtual libMesh::UniquePtr<libMesh::DiffContext> build_context();
+    virtual std::unique_ptr<libMesh::DiffContext> build_context();
 
     //! Context initialization. Calls each physics implementation of init_context()
     virtual void init_context( libMesh::DiffContext &context );
@@ -214,12 +214,11 @@ namespace GRINS
     //! Neumann boundary conditions
     /*! Store each NeumannBCContainer for each set of BoundaryIDs and Variables,
       as specified in the input file. The container knows what BoundaryIDs and
-      Variables it applies to. We use SharedPtr here because
-      libMesh::UniquePtr may still actually be an AutoPtr. */
+      Variables it applies to. We use SharedPtr here. */
     std::vector<SharedPtr<NeumannBCContainer> > _neumann_bcs;
 
     //! Constraint application object
-    libMesh::UniquePtr<libMesh::System::Constraint> _constraint;
+    std::unique_ptr<libMesh::System::Constraint> _constraint;
 
     // Useful typedef to pointer-to-member functions so we can call all
     // residual and caching functions using a single function (_general_residual)

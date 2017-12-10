@@ -50,8 +50,8 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+    virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
+                                                    const std::string& physics_name );
 
     void grins_antioch_model_error_msg( const std::string& viscosity_model,
                                         const std::string& conductivity_model,
@@ -63,13 +63,13 @@ namespace GRINS
                                   const std::string & material,
                                   const std::string & thermo_model, const std::string & diffusivity_model,
                                   const std::string & conductivity_model, const std::string & viscosity_model,
-                                  libMesh::UniquePtr<Physics> & new_physics );
+                                  std::unique_ptr<Physics> & new_physics );
 
     void build_const_physics( const GetPot & input, const std::string & physics_name,
                               const std::string & material,
                               const std::string & thermo_model, const std::string & diffusivity_model,
                               const std::string & conductivity_model, const std::string & viscosity_model,
-                              libMesh::UniquePtr<Physics> & new_physics );
+                              std::unique_ptr<Physics> & new_physics );
 
 #ifdef GRINS_HAVE_ANTIOCH
     template<typename KineticsThermo,typename Thermo>
@@ -78,50 +78,50 @@ namespace GRINS
                                               const std::string & diffusivity_model,
                                               const std::string & conductivity_model,
                                               const std::string & viscosity_model,
-                                              libMesh::UniquePtr<Physics> & new_physics )
+                                              std::unique_ptr<Physics> & new_physics )
     {
       if( (diffusivity_model == AntiochOptions::constant_lewis_diffusivity_model()) &&
           (conductivity_model == AntiochOptions::eucken_conductivity_model()) &&
           (viscosity_model == AntiochOptions::sutherland_viscosity_model()) )
-      {
-        this->build_mix_avged_physics_ptr<KineticsThermo,
-                                          Thermo,
-                                          Antioch::SutherlandViscosity<libMesh::Real>,
-                                          Antioch::EuckenThermalConductivity<Thermo>,
-                                          Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input,physics_name,material,new_physics);
-      }
-    else if( (diffusivity_model == AntiochOptions::constant_lewis_diffusivity_model()) &&
-             (conductivity_model == AntiochOptions::eucken_conductivity_model()) &&
-             (viscosity_model == AntiochOptions::blottner_viscosity_model()) )
-      {
-        this->build_mix_avged_physics_ptr<KineticsThermo,
-                                          Thermo,
-                                          Antioch::BlottnerViscosity<libMesh::Real>,
-                                          Antioch::EuckenThermalConductivity<Thermo>,
-                                          Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input,physics_name,material,new_physics);
-      }
-    else if( (diffusivity_model == AntiochOptions::kinetic_theory_diffusivity_model()) &&
-             (conductivity_model == AntiochOptions::kinetic_theory_conductivity_model()) &&
-             (viscosity_model == AntiochOptions::kinetic_theory_viscosity_model()) )
-      {
+        {
+          this->build_mix_avged_physics_ptr<KineticsThermo,
+                                            Thermo,
+                                            Antioch::SutherlandViscosity<libMesh::Real>,
+                                            Antioch::EuckenThermalConductivity<Thermo>,
+                                            Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input,physics_name,material,new_physics);
+        }
+      else if( (diffusivity_model == AntiochOptions::constant_lewis_diffusivity_model()) &&
+               (conductivity_model == AntiochOptions::eucken_conductivity_model()) &&
+               (viscosity_model == AntiochOptions::blottner_viscosity_model()) )
+        {
+          this->build_mix_avged_physics_ptr<KineticsThermo,
+                                            Thermo,
+                                            Antioch::BlottnerViscosity<libMesh::Real>,
+                                            Antioch::EuckenThermalConductivity<Thermo>,
+                                            Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input,physics_name,material,new_physics);
+        }
+      else if( (diffusivity_model == AntiochOptions::kinetic_theory_diffusivity_model()) &&
+               (conductivity_model == AntiochOptions::kinetic_theory_conductivity_model()) &&
+               (viscosity_model == AntiochOptions::kinetic_theory_viscosity_model()) )
+        {
 #ifdef ANTIOCH_HAVE_GSL
-        this->build_mix_avged_physics_ptr<KineticsThermo,
-                                          Thermo,
-                                          Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
-                                          Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,
-                                          Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >(input,physics_name,material,new_physics);
+          this->build_mix_avged_physics_ptr<KineticsThermo,
+                                            Thermo,
+                                            Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
+                                            Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,
+                                            Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >(input,physics_name,material,new_physics);
 #else
-        libmesh_error_msg("ERROR: Antioch requires GSL in order to use kinetics theory based models!");
+          libmesh_error_msg("ERROR: Antioch requires GSL in order to use kinetics theory based models!");
 #endif // ANTIOCH_HAVE_GSL
-      }
-    else
-      this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model);
+        }
+      else
+        this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model);
     }
 
     template<typename KineticsThermo,typename Thermo>
     void build_const_physics_with_thermo( const GetPot & input, const std::string & physics_name,
                                           const std::string & material, const std::string & conductivity_model,
-                                          libMesh::UniquePtr<Physics> & new_physics )
+                                          std::unique_ptr<Physics> & new_physics )
     {
       if( conductivity_model == AntiochOptions::constant_conductivity_model() )
         {
@@ -145,29 +145,29 @@ namespace GRINS
 
     template<typename KineticsThermo,typename Thermo,typename Viscosity,typename Conductivity,typename Diffusivity>
     void build_mix_avged_physics_ptr( const GetPot& input, const std::string& physics_name,
-                                      const std::string & material, libMesh::UniquePtr<Physics> & new_physics )
+                                      const std::string & material, std::unique_ptr<Physics> & new_physics )
     {
       AntiochMixtureAveragedTransportMixtureBuilder mix_builder;
 
-      libMesh::UniquePtr<AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
+      std::unique_ptr<AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
         gas_mixture = mix_builder.build_mixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>(input,material);
 
       new_physics.reset(new DerivedPhysics<AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>,
-                                           AntiochMixtureAveragedTransportEvaluator<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
+                        AntiochMixtureAveragedTransportEvaluator<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
                         (physics_name,input,gas_mixture) );
     }
 
     template<typename KineticsThermo,typename Thermo,typename Conductivity>
     void build_const_physics_ptr( const GetPot& input, const std::string& physics_name,
-                                  const std::string & material, libMesh::UniquePtr<Physics> & new_physics )
+                                  const std::string & material, std::unique_ptr<Physics> & new_physics )
     {
       AntiochConstantTransportMixtureBuilder mix_builder;
 
-      libMesh::UniquePtr<GRINS::AntiochConstantTransportMixture<KineticsThermo,Conductivity> >
+      std::unique_ptr<GRINS::AntiochConstantTransportMixture<KineticsThermo,Conductivity> >
         gas_mixture = mix_builder.build_mixture<KineticsThermo,Conductivity>(input,material);
 
       new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<KineticsThermo,Conductivity>,
-                                           AntiochConstantTransportEvaluator<KineticsThermo,Thermo,Conductivity> >
+                        AntiochConstantTransportEvaluator<KineticsThermo,Thermo,Conductivity> >
                         (physics_name,input,gas_mixture) );
     }
 #endif // GRINS_HAVE_ANTIOCH

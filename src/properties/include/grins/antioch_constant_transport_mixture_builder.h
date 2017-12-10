@@ -51,75 +51,75 @@ namespace GRINS
     ~AntiochConstantTransportMixtureBuilder(){}
 
     template<typename KineticsThermoCurveFit,typename Conductivity>
-    libMesh::UniquePtr<AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity> >
+    std::unique_ptr<AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity> >
     build_mixture( const GetPot & input, const std::string & material );
 
-    libMesh::UniquePtr<ConstantViscosity>
+    std::unique_ptr<ConstantViscosity>
     build_constant_viscosity( const GetPot & input, const std::string & material )
     {
-      return libMesh::UniquePtr<ConstantViscosity>( new ConstantViscosity(input,material) );
+      return std::unique_ptr<ConstantViscosity>( new ConstantViscosity(input,material) );
     }
 
     template<typename Conductivity>
-    libMesh::UniquePtr<Conductivity>
+    std::unique_ptr<Conductivity>
     build_constant_conductivity( const GetPot & input, const std::string & material )
     {
       return specialized_build_conductivity( input, material, conductivity_type<Conductivity>() );
     }
 
-    libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >
+    std::unique_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >
     build_constant_lewis_diff( const GetPot & input, const std::string & material )
     {
       libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
-      return libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >
+      return std::unique_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> >
         ( new Antioch::ConstantLewisDiffusivity<libMesh::Real>(Le) );
     }
 
   private:
 
-    libMesh::UniquePtr<ConstantConductivity>
+    std::unique_ptr<ConstantConductivity>
     specialized_build_conductivity( const GetPot & input, const std::string & material,
                                     conductivity_type<ConstantConductivity> )
     {
-      return libMesh::UniquePtr<ConstantConductivity>( new ConstantConductivity(input,material) );
+      return std::unique_ptr<ConstantConductivity>( new ConstantConductivity(input,material) );
     }
 
-    libMesh::UniquePtr<ConstantPrandtlConductivity>
+    std::unique_ptr<ConstantPrandtlConductivity>
     specialized_build_conductivity( const GetPot & input, const std::string & material,
                                     conductivity_type<ConstantPrandtlConductivity> )
     {
-      return libMesh::UniquePtr<ConstantPrandtlConductivity>( new ConstantPrandtlConductivity(input,material) );
+      return std::unique_ptr<ConstantPrandtlConductivity>( new ConstantPrandtlConductivity(input,material) );
     }
 
   };
 
   template<typename KineticsThermoCurveFit,typename Conductivity>
   inline
-  libMesh::UniquePtr<AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity> >
+  std::unique_ptr<AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity> >
   AntiochConstantTransportMixtureBuilder::build_mixture( const GetPot & input, const std::string & material )
   {
-    libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix =
+    std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > chem_mix =
       this->build_chem_mix(input,material);
 
-    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > reaction_set =
+    std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > reaction_set =
       this->build_reaction_set(input,material,*chem_mix);
 
-    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > kinetics_thermo =
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > kinetics_thermo =
       this->build_nasa_thermo_mix<KineticsThermoCurveFit>(input,material,*chem_mix);
 
-    libMesh::UniquePtr<ConstantViscosity> visc =
+    std::unique_ptr<ConstantViscosity> visc =
       this->build_constant_viscosity(input,material);
 
-    libMesh::UniquePtr<Conductivity> cond =
+    std::unique_ptr<Conductivity> cond =
       this->build_constant_conductivity<Conductivity>(input,material);
 
-    libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > diff =
+    std::unique_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > diff =
       this->build_constant_lewis_diff(input,material);
 
     libMesh::Real min_T = this->parse_min_T(input,material);
     bool clip_negative_rho = this->parse_clip_negative_rho(input,material);
 
-    return libMesh::UniquePtr<AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity> >
+    return std::unique_ptr<AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity> >
       ( new AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity>
         (chem_mix, reaction_set, kinetics_thermo, visc, cond, diff, min_T, clip_negative_rho) );
   }

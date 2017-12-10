@@ -66,7 +66,7 @@ namespace GRINS
         std::string physics_name_prefix = PhysicsNaming::extract_physics(physics_name);
 
         // Now build the actual Physics object
-        libMesh::UniquePtr<Physics> physics_ptr = PhysicsFactoryBase::build(physics_name_prefix);
+        std::unique_ptr<Physics> physics_ptr = PhysicsFactoryBase::build(physics_name_prefix);
 
         // Clear out the suffix now that we're done
         PhysicsNaming::clear_suffix();

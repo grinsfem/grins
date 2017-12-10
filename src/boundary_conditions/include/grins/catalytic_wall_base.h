@@ -83,7 +83,7 @@ namespace GRINS
     libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
     void set_catalycity_params( const std::vector<libMesh::Real>& params );
-    
+
     virtual void register_parameter(  const std::string & param_name,
                                       libMesh::ParameterMultiAccessor< libMesh::Number > & param_pointer) const;
 
@@ -103,7 +103,7 @@ namespace GRINS
     SharedPtr<CatalycityBase> _gamma_ptr;
 
     //! Deprecated
-    libMesh::UniquePtr<CatalycityBase> _gamma_s;
+    std::unique_ptr<CatalycityBase> _gamma_s;
 
     //! \f$ \sqrt{ \frac{R_s}{2\pi} } \f$
     const libMesh::Real _C;

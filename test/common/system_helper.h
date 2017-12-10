@@ -59,9 +59,9 @@ namespace GRINSTesting
       _mesh.reset();
     }
 
-    libMesh::UniquePtr<GetPot> _input;
+    std::unique_ptr<GetPot> _input;
     GRINS::SharedPtr<libMesh::UnstructuredMesh> _mesh;
-    libMesh::UniquePtr<libMesh::EquationSystems> _es;
+    std::unique_ptr<libMesh::EquationSystems> _es;
 
     // Needs to be an ordinar pointer since EquationSystems owns this
     GRINS::MultiphysicsSystem* _system;

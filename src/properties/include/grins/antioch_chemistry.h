@@ -64,7 +64,7 @@ namespace GRINS
     AntiochChemistry( const GetPot& input, const std::string& material );
 
     //! User passes in built ChemicalMixture and this class takes ownership
-    AntiochChemistry( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture );
+    AntiochChemistry( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture );
 
     virtual ~AntiochChemistry(){}
 
@@ -112,7 +112,7 @@ namespace GRINS
 
   protected:
 
-    libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > _antioch_gas;
+    std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > _antioch_gas;
 
   private:
 

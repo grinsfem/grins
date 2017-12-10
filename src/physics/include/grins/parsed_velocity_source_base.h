@@ -60,7 +60,7 @@ namespace GRINS
 
   protected:
 
-    libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
+    std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
     velocity_source_function;
 
   private:

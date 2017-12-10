@@ -31,7 +31,7 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<Antioch::TransportMixture<libMesh::Real> >
+  std::unique_ptr<Antioch::TransportMixture<libMesh::Real> >
   AntiochMixtureAveragedTransportMixtureBuilder::
   build_transport_mixture( const GetPot & input, const std::string & material,
                            const Antioch::ChemicalMixture<libMesh::Real> & chem_mix )
@@ -45,7 +45,7 @@ namespace GRINS
     bool verbose_transport_read =
       input( "Materials/"+material+"/GasMixture/Antioch/verbose_transport_read", false );
 
-    return libMesh::UniquePtr<Antioch::TransportMixture<libMesh::Real> >
+    return std::unique_ptr<Antioch::TransportMixture<libMesh::Real> >
       ( new Antioch::TransportMixture<libMesh::Real>( chem_mix,
                                                       transport_data_filename,
                                                       verbose_transport_read,

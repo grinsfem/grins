@@ -119,7 +119,7 @@ int test_evaluator( const GetPot& input )
 {
   GRINS::AntiochMixtureAveragedTransportMixtureBuilder builder;
 
-  libMesh::UniquePtr<GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
+  std::unique_ptr<GRINS::AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
     mixture_ptr = builder.build_mixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>
     (input,"TestMaterial");
 
@@ -189,10 +189,10 @@ int main( int argc, char* argv[] )
 
   std::cout << std::endl <<  "Running StatMesh, Blottner, Eucken, Constant Lewis regression test." << std::endl;
   return_flag = test_evaluator<Antioch::CEACurveFit<libMesh::Real>,
-                               Antioch::StatMechThermodynamics<libMesh::Real>,
-                               Antioch::BlottnerViscosity<libMesh::Real>,
-                               Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
-                               Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
+    Antioch::StatMechThermodynamics<libMesh::Real>,
+    Antioch::BlottnerViscosity<libMesh::Real>,
+    Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >,
+    Antioch::ConstantLewisDiffusivity<libMesh::Real> >(input);
 
   return return_flag;
 }

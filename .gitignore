@@ -33,3 +33,4 @@ doxygen/txt_common/about_vpath.page
 doxygen/grins.dox
 src/utilities/include/grins/grins_version.h
 test/common/grins_test_paths.h
+*~

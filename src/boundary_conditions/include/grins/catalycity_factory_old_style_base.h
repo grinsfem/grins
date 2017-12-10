@@ -48,13 +48,13 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<CatalycityBase> build_catalycity( const GetPot& input,
-                                                                 const std::string& section );
+    virtual std::unique_ptr<CatalycityBase> build_catalycity( const GetPot& input,
+                                                              const std::string& section );
 
-    virtual libMesh::UniquePtr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
-                                                                           const std::string& section,
-                                                                           const std::string& reactant_str,
-                                                                           const std::string& bc_id_string ) =0;
+    virtual std::unique_ptr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
+                                                                        const std::string& section,
+                                                                        const std::string& reactant_str,
+                                                                        const std::string& bc_id_string ) =0;
     virtual void check_state() const;
 
     virtual void reset_state();

@@ -80,7 +80,7 @@ namespace GRINS
   }
 
   AntiochChemistry::AntiochChemistry
-  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture )
+  ( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture )
     : ParameterUser("AntiochChemistry")
   {
     /*! \todo Use std::move when we have C++11 */

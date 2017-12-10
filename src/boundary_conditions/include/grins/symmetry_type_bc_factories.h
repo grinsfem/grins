@@ -53,14 +53,14 @@ namespace GRINS
     virtual void trim_var_names( std::vector<std::string>& var_names ) =0;
 
     //! All the variables are 0, so just return 0 function.
-    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
     build_func( const GetPot& /*input*/,
                 MultiphysicsSystem& /*system*/,
                 std::vector<std::string>& var_names,
                 const std::string& /*section*/ )
     {
       this->trim_var_names(var_names);
-      return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ZeroFunction<libMesh::Number> );
+      return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ZeroFunction<libMesh::Number> );
     }
 
   };

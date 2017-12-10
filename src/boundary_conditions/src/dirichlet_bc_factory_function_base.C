@@ -32,7 +32,7 @@
 namespace GRINS
 {
   template<typename FunctionType>
-  libMesh::UniquePtr<libMesh::DirichletBoundary> DirichletBCFactoryFunctionBase<FunctionType>::create()
+  std::unique_ptr<libMesh::DirichletBoundary> DirichletBCFactoryFunctionBase<FunctionType>::create()
   {
     // Make sure all necessary state has been setup
     this->check_state();
@@ -43,7 +43,7 @@ namespace GRINS
     // variables.
     std::vector<std::string> local_var_names = this->get_var_names();
 
-    libMesh::UniquePtr<FunctionType>
+    std::unique_ptr<FunctionType>
       func = this->build_func( *(this->_input), *(this->_system),
                                local_var_names, this->_section );
 
@@ -52,7 +52,7 @@ namespace GRINS
     std::vector<VariableIndex> local_var_indices;
     this->build_var_indices(*(this->_system), local_var_names, local_var_indices);
 
-    libMesh::UniquePtr<libMesh::DirichletBoundary> new_dbc =
+    std::unique_ptr<libMesh::DirichletBoundary> new_dbc =
       this->make_dirichlet_boundary( *(this->_bc_ids), *(this->_system),
                                      func, local_var_indices );
 
@@ -63,25 +63,25 @@ namespace GRINS
   }
 
   template<>
-  libMesh::UniquePtr<libMesh::DirichletBoundary>
+  std::unique_ptr<libMesh::DirichletBoundary>
   DirichletBCFactoryFunctionBase<libMesh::FunctionBase<libMesh::Number> >::make_dirichlet_boundary
   ( const std::set<BoundaryID>& bc_ids,
     const libMesh::System& /*system*/,
-    libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >& func,
+    std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >& func,
     const std::vector<VariableIndex>& var_indices )
   {
-    return libMesh::UniquePtr<libMesh::DirichletBoundary>(new libMesh::DirichletBoundary(bc_ids, var_indices, func.get()));
+    return std::unique_ptr<libMesh::DirichletBoundary>(new libMesh::DirichletBoundary(bc_ids, var_indices, func.get()));
   }
 
   template<>
-  libMesh::UniquePtr<libMesh::DirichletBoundary>
+  std::unique_ptr<libMesh::DirichletBoundary>
   DirichletBCFactoryFunctionBase<libMesh::FEMFunctionBase<libMesh::Number> >::make_dirichlet_boundary
   ( const std::set<BoundaryID>& bc_ids,
     const libMesh::System& system,
-    libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >& func,
+    std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >& func,
     const std::vector<VariableIndex>& var_indices )
   {
-    return libMesh::UniquePtr<libMesh::DirichletBoundary>( new libMesh::DirichletBoundary(bc_ids, var_indices, system, func.get()) );
+    return std::unique_ptr<libMesh::DirichletBoundary>( new libMesh::DirichletBoundary(bc_ids, var_indices, system, func.get()) );
   }
 }
 

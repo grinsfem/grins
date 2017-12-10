@@ -47,7 +47,7 @@ namespace GRINS
 
     virtual std::string var_input_string() =0;
 
-    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,

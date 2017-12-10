@@ -51,7 +51,7 @@ namespace GRINSTesting
 
   protected:
 
-    libMesh::UniquePtr<GRINS::CanteraMixture> _cantera_mixture;
+    std::unique_ptr<GRINS::CanteraMixture> _cantera_mixture;
   };
 
 } // end namespace GRINSTesting

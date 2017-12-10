@@ -120,8 +120,8 @@ namespace GRINSTesting
     virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
     { return  u_nu_values(0)/21.995539; }
 
-    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-    { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(_turbulent_bc_values)); }
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > clone() const
+    { return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(_turbulent_bc_values)); }
   };
 
   // Class to construct the Dirichlet boundary object and operator for the inlet u velocity and nu profiles
@@ -135,8 +135,8 @@ namespace GRINSTesting
     virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
     { return  u_nu_values(1)/(2.0*21.995539); }
 
-    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > clone() const
-    { return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(_turbulent_bc_values)); }
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > clone() const
+    { return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(_turbulent_bc_values)); }
 
   };
 
@@ -167,7 +167,7 @@ namespace GRINSTesting
 
   protected:
 
-    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
     build_func( const GetPot& /*input*/,
                 GRINS::MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
@@ -177,10 +177,10 @@ namespace GRINSTesting
       libmesh_assert_equal_to(var_names[0], std::string("u"));
       libmesh_assert_equal_to(var_names[1], std::string("v"));
 
-      libMesh::UniquePtr<libMesh::CompositeFunction<libMesh::Number> >
+      std::unique_ptr<libMesh::CompositeFunction<libMesh::Number> >
         composite_func( new libMesh::CompositeFunction<libMesh::Number> );
 
-      libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+      std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
         bound_func(new TurbulentBdyFunctionU(_turbulent_bc_values) );
 
       std::vector<GRINS::VariableIndex> vars(1);
@@ -190,7 +190,7 @@ namespace GRINSTesting
       vars[0] = system.variable_number(var_names[1]);
       composite_func->attach_subfunction(libMesh::ZeroFunction<libMesh::Number>(), vars);
 
-      return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( composite_func.release() );
+      return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( composite_func.release() );
     }
   };
 
@@ -204,7 +204,7 @@ namespace GRINSTesting
 
   protected:
 
-    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
     build_func( const GetPot& /*input*/,
                 GRINS::MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
@@ -213,17 +213,17 @@ namespace GRINSTesting
       libmesh_assert_equal_to(var_names.size(), 1);
       libmesh_assert_equal_to(var_names[0], std::string("nu"));
 
-      libMesh::UniquePtr<libMesh::CompositeFunction<libMesh::Number> >
+      std::unique_ptr<libMesh::CompositeFunction<libMesh::Number> >
         composite_func( new libMesh::CompositeFunction<libMesh::Number> );
 
-      libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+      std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
         bound_func( new TurbulentBdyFunctionNu(_turbulent_bc_values) );
 
       std::vector<GRINS::VariableIndex> vars(1);
       vars[0] = system.variable_number(var_names[0]);
       composite_func->attach_subfunction(*bound_func, vars);
 
-      return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( composite_func.release() );
+      return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( composite_func.release() );
     }
   };
 
@@ -278,9 +278,9 @@ int main(int argc, char* argv[])
   equation_systems.print_info();
 
   // Prepare a global solution and a MeshFunction of the Turbulent system
-  libMesh::UniquePtr<libMesh::MeshFunction> turbulent_bc_values;
+  std::unique_ptr<libMesh::MeshFunction> turbulent_bc_values;
 
-  libMesh::UniquePtr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(equation_systems.comm());
+  std::unique_ptr<libMesh::NumericVector<libMesh::Number> > turbulent_bc_soln = libMesh::NumericVector<libMesh::Number>::build(equation_systems.comm());
 
   std::vector<libMesh::Number> flow_soln;
 
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
   turbulent_bc_system_variables.push_back(0);
   turbulent_bc_system_variables.push_back(1);
 
-  turbulent_bc_values = libMesh::UniquePtr<libMesh::MeshFunction>
+  turbulent_bc_values = std::unique_ptr<libMesh::MeshFunction>
     (new libMesh::MeshFunction(equation_systems,
                                *turbulent_bc_soln,
                                turbulent_bc_system.get_dof_map(),
