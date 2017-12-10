@@ -101,8 +101,8 @@ namespace GRINSTesting
       std::string hitran_data = "./test_data/CO2_data.dat";
       std::string hitran_partition = "./test_data/CO2_partition_function.dat";
       libMesh::Real T_min = 290.0,
-                    T_max = 310.0,
-                    T_step = 0.01;
+        T_max = 310.0,
+        T_step = 0.01;
       GRINS::SharedPtr<GRINS::HITRAN> hitran( new GRINS::HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
 
       std::string species = "CO2";

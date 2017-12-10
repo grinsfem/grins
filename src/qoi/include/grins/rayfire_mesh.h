@@ -87,13 +87,13 @@ namespace GRINS
 
     //! Input File Constructor
     /*!
-    Creates rayfire from parameters specified in input file section: QoI/'qoi_string'/Rayfire/
+      Creates rayfire from parameters specified in input file section: QoI/'qoi_string'/Rayfire/
     */
     RayfireMesh(const GetPot & input, const std::string & qoi_string);
 
     //! Copy Constructor
     /*!
-    Required to deep-copy _mesh and _elem_id_map
+      Required to deep-copy _mesh and _elem_id_map
     */
     RayfireMesh(const RayfireMesh & original);
 

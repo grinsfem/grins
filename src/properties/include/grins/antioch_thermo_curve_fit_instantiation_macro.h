@@ -29,7 +29,7 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-#define INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT(class_name) \
+#define INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT(class_name)                \
   template class GRINS::class_name<Antioch::CEACurveFit<libMesh::Real> >; \
   template class GRINS::class_name<Antioch::NASA7CurveFit<libMesh::Real> >; \
   template class GRINS::class_name<Antioch::NASA9CurveFit<libMesh::Real> >

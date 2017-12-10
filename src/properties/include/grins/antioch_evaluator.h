@@ -51,7 +51,7 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-   */
+  */
   template<typename KineticsThermoCurveFit, typename Thermo>
   class AntiochEvaluator
   {

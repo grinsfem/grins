@@ -28,7 +28,7 @@
 namespace GRINS
 {
   std::unique_ptr<CatalycityBase> CatalycityFactoryOldStyleBase::build_catalycity( const GetPot& input,
-                                                                                      const std::string& section )
+                                                                                   const std::string& section )
   {
     // State of _reactant_str, _bc_id_str verified in check_state() call in create()
     return this->build_catalycity_old_style( input, section, _reactant_str, _bc_id_str );

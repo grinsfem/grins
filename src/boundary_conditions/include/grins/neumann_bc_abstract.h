@@ -42,7 +42,7 @@ namespace GRINS
   public:
 
     NeumannBCAbstract()
-    : ParameterUser("NeumannBCAbstract")
+      : ParameterUser("NeumannBCAbstract")
     {}
 
     virtual ~NeumannBCAbstract(){};

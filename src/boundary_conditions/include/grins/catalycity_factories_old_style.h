@@ -49,9 +49,9 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
-                                                                           const std::string& section,
-                                                                           const std::string& reactant_str,
-                                                                           const std::string& bc_id_string )
+                                                                        const std::string& section,
+                                                                        const std::string& reactant_str,
+                                                                        const std::string& bc_id_string )
     {
       std::string gamma_str = section+"/gamma_"+reactant_str+"_"+bc_id_string;
       if( !input.have_variable(gamma_str) )
@@ -75,9 +75,9 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
-                                                                           const std::string& section,
-                                                                           const std::string& reactant_str,
-                                                                           const std::string& bc_id_string )
+                                                                        const std::string& section,
+                                                                        const std::string& reactant_str,
+                                                                        const std::string& bc_id_string )
     {
       std::string gamma_str = section+"/gamma0_"+reactant_str+"_"+bc_id_string;
       if( !input.have_variable(gamma_str) )
@@ -107,9 +107,9 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
-                                                                           const std::string& section,
-                                                                           const std::string& reactant_str,
-                                                                           const std::string& bc_id_string )
+                                                                        const std::string& section,
+                                                                        const std::string& reactant_str,
+                                                                        const std::string& bc_id_string )
     {
       std::string gamma_str = section+"/gamma0_"+reactant_str+"_"+bc_id_string;
       if( !input.have_variable(gamma_str) )

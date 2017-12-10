@@ -45,7 +45,7 @@ namespace GRINS
   protected:
 
     std::unique_ptr<FunctionType> build_parsed_func( const MultiphysicsSystem& system,
-                                                        const std::string& expression );
+                                                     const std::string& expression );
 
     std::unique_ptr<FunctionType> build_composite_func();
 

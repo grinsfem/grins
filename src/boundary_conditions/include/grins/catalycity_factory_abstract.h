@@ -50,7 +50,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<CatalycityBase> build_catalycity( const GetPot& input,
-                                                                 const std::string& section ) =0;
+                                                              const std::string& section ) =0;
 
     //! Helper function to reduce code duplication
     virtual void check_state() const;

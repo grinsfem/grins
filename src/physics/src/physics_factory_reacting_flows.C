@@ -25,7 +25,7 @@ namespace GRINS
 {
   template<template<typename,typename> class DerivedPhysics>
   std::unique_ptr<Physics> PhysicsFactoryReactingFlows<DerivedPhysics>::build_physics( const GetPot& input,
-                                                                                          const std::string& physics_name )
+                                                                                       const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 
@@ -167,7 +167,7 @@ namespace GRINS
         this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                               Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > >
           (input,physics_name,material,conductivity_model,new_physics);
-       }
+      }
     else
       this->grins_antioch_model_error_msg(viscosity_model,conductivity_model,diffusivity_model);
   }

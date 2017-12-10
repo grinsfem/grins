@@ -99,8 +99,8 @@ namespace GRINS
 
   template <typename KineticsThermoCurveFit>
   void AntiochMixture<KineticsThermoCurveFit>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const
+  ( const std::string & param_name,
+    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const
   {
     // Use common code for any GRINS parameters
     AntiochChemistry::register_parameter(param_name, param_pointer);

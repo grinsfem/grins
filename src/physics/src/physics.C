@@ -141,8 +141,8 @@ namespace GRINS
   }
 
   std::unique_ptr<libMesh::FEGenericBase<libMesh::Real> > Physics::build_new_fe( const libMesh::Elem* elem,
-                                                                                    const libMesh::FEGenericBase<libMesh::Real>* fe,
-                                                                                    const libMesh::Point p )
+                                                                                 const libMesh::FEGenericBase<libMesh::Real>* fe,
+                                                                                 const libMesh::Point p )
   {
     using namespace libMesh;
     FEType fe_type = fe->get_fe_type();

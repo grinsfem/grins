@@ -57,8 +57,8 @@ namespace GRINS
 {
   //! Base class building Antioch mixture wrappers
   /*! This class only worries about building the kinetics
-      and the thermo associated with kinetics. Subclasses
-      will handle thermo and transport. */
+    and the thermo associated with kinetics. Subclasses
+    will handle thermo and transport. */
   class AntiochMixtureBuilderBase
   {
   public:
