@@ -65,6 +65,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( multi_elem_mesh );
     CPPUNIT_TEST( param_derivs );
     CPPUNIT_TEST( elem_qoi_derivatives );
+    CPPUNIT_TEST( test_assemble_qoi_derivatives );
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -153,6 +154,56 @@ namespace GRINSTesting
       this->T_elem_derivative(system,context);
       this->P_elem_derivative(system,context);
       this->Y_elem_derivative(system,context);
+    }
+
+    void test_assemble_qoi_derivatives()
+    {
+      const std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/spectroscopic_absorption_qoi_fine.in";
+
+      // run the Simulation once to ensure everything is initialized and populated
+      this->init_sim(filename);
+      _sim->run();
+
+      GRINS::MultiphysicsSystem * system = _sim->get_multiphysics_system();
+
+      libMesh::UniquePtr<libMesh::NumericVector<libMesh::Number> > & solution = (*system).solution;
+
+      libMesh::QoISet qs;
+      qs.add_index(0);
+
+      system->assemble_qoi_derivative(qs,false,false);
+      libMesh::NumericVector<libMesh::Number> & derivs = system->get_adjoint_rhs();
+
+      libMesh::Real delta = 1.0e-6;
+
+      for (unsigned int dof=0; dof<solution->size(); ++dof)
+        {
+          // analytical derivative
+          libMesh::Real f_analytic = derivs(dof);
+
+          libMesh::Number soln = (*solution)(dof);
+
+          // ref minus delta
+          solution->set(dof,soln-delta);
+          solution->close();
+          system->assemble_qoi(qs);
+          libMesh::Real qoi_m1 = _sim->get_qoi_value(0);
+
+          // ref plus delta
+          solution->set(dof,soln+delta);
+          solution->close();
+          system->assemble_qoi(qs);
+          libMesh::Real qoi_p1 = _sim->get_qoi_value(0);
+
+          // return to ref
+          solution->set(dof,soln);
+          solution->close();
+
+          // central difference
+          libMesh::Real fd_approx = (qoi_p1 - qoi_m1)/(2.0*delta);
+
+          CPPUNIT_ASSERT_DOUBLES_EQUAL(fd_approx,f_analytic,libMesh::TOLERANCE);
+        }
     }
 
   private:

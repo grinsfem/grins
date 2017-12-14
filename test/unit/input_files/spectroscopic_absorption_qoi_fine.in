@@ -102,8 +102,8 @@
 [Mesh]
    [./Generation]
       dimension = '2'
-      n_elems_x = '10'
-      n_elems_y = '10'
+      n_elems_x = '3'
+      n_elems_y = '3'
       x_min = '0.0'
       x_max = '0.10'
       y_min = '0.0'
