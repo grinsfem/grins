@@ -48,13 +48,15 @@ The current required minimum hash for using Antioch is libantioch/antioch@ad7859
 Building GRINS 
 ================
 
-GRINS uses an Autotools build system, so typical GNU build commands are used.
+GRINS uses an Autotools build system, so typical GNU build commands are used. We support, and encourage, out-of-source builds (so-called VPATH builds). However, in-source builds are supported.
 
-1. ./bootstrap (generate configure script)
-2. ./configure --prefix=/path/to/install --with-libmesh=/path/to/libMesh --with-boost=/path/to/boost (for more options, do ./configure --help)
-3. make (note parallel builds are supported)
-4. make check (note parallel-tests are supported)
-5. make install
+1. cd grins-clone
+2. ./bootstrap (generate configure script)
+3. cd ../ & mkdir build & cd build
+4. ../grins-clone/configure --prefix=/path/to/install --with-libmesh=/path/to/libMesh --with-boost=/path/to/boost (for more options, do ../grins-clone/configure --help)
+5. make (note parallel builds are supported)
+6. make check (note parallel-tests are supported)
+7. make install
 
 LD_LIBRARY_PATH
 ---------------
