@@ -258,11 +258,11 @@ namespace GRINSTesting
 
       libMesh::Real y_base = Y[0];
       std::vector<libMesh::Real> Y_analytic;
-      Y_analytic.push_back(absorb->dX_dY(Y));
-      Y_analytic.push_back(absorb->d_nuC_dY(T,P,Y,i));
-      Y_analytic.push_back(absorb->d_voigt_a_dY(T,P,Y,i));
-      Y_analytic.push_back(absorb->d_voigt_dY(T,P,Y,i));
-      Y_analytic.push_back(absorb->d_kv_dY(T,P,Y,i));
+      Y_analytic.push_back(absorb->dX_dY(Y,0));
+      Y_analytic.push_back(absorb->d_nuC_dY(T,P,Y,0,i));
+      Y_analytic.push_back(absorb->d_voigt_a_dY(T,P,Y,0,i));
+      Y_analytic.push_back(absorb->d_voigt_dY(T,P,Y,0,i));
+      Y_analytic.push_back(absorb->d_kv_dY(T,P,Y,0,i));
 
       std::vector<libMesh::Real> fd_plus;
       Y[0] = y_base + delta;
