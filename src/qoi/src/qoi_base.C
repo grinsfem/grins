@@ -58,6 +58,11 @@ namespace GRINS
     qoi += other_qoi;
   }
 
+  void QoIBase::finalize_derivative(libMesh::NumericVector<libMesh::Number> & /*derivatives*/)
+  {
+    // do nothing by default
+  }
+
   void QoIBase::output_qoi( std::ostream& out ) const
   {
     out << _qoi_name+" = "
