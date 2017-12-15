@@ -497,6 +497,7 @@ include_HEADERS += qoi/include/grins/qoi_options.h
 include_HEADERS += qoi/include/grins/hitran.h
 include_HEADERS += qoi/include/grins/absorption_coeff.h
 include_HEADERS += qoi/include/grins/spectroscopic_absorption.h
+include_HEADERS += qoi/include/grins/fem_function_and_derivative_base.h
 
 # src/solver headers
 include_HEADERS += solver/include/grins/solver.h
