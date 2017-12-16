@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -102,8 +102,8 @@ namespace GRINSTesting
       std::string hitran_data = "./test_data/CO2_data.dat";
       std::string hitran_partition = "./test_data/CO2_partition_function.dat";
       libMesh::Real T_min = 290.0,
-                    T_max = 310.0,
-                    T_step = 0.01;
+        T_max = 310.0,
+        T_step = 0.01;
       GRINS::SharedPtr<GRINS::HITRAN> hitran( new GRINS::HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
 
       std::string species = "CO2";
@@ -325,7 +325,7 @@ namespace GRINSTesting
       libMesh::QoISet qs;
       qs.add_index(0);
 
-      libMesh::DenseSubVector<libMesh::Number> deriv = context->get_qoi_derivatives(0,var_index);      
+      libMesh::DenseSubVector<libMesh::Number> deriv = context->get_qoi_derivatives(0,var_index);
       libMesh::DenseSubVector<libMesh::Number> & solution  = context->get_elem_solution(var_index);
 
       for (unsigned int d=0; d<solution.size(); ++d)

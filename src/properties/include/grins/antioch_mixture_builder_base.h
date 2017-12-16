@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -57,8 +57,8 @@ namespace GRINS
 {
   //! Base class building Antioch mixture wrappers
   /*! This class only worries about building the kinetics
-      and the thermo associated with kinetics. Subclasses
-      will handle thermo and transport. */
+    and the thermo associated with kinetics. Subclasses
+    will handle thermo and transport. */
   class AntiochMixtureBuilderBase
   {
   public:

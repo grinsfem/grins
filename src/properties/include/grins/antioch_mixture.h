@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -61,7 +61,7 @@ namespace GRINS
     By default, Antioch is working in SI units. Note that this documentation will always
     be built regardless if Antioch is included in the GRINS build or not. Check configure
     output to confirm that Antioch was included in the build.
-   */
+  */
   template <typename KineticsThermoCurveFit>
   class AntiochMixture : public AntiochChemistry
   {
@@ -73,7 +73,7 @@ namespace GRINS
 
     //! Constructor with user-built objects
     /*! This constructor expects the user to pass in a ChemicalMixture, ReactionSet, and NASAThermoMixture
-        object already built; this class will take ownership of the pointer. */
+      object already built; this class will take ownership of the pointer. */
     AntiochMixture( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
                     libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
                     libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,

@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -97,12 +97,12 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_DOUBLES_EQUAL(563.375898926,hitran.partition_function(290.0,1),tolerance);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(593.800881348,hitran.partition_function(290.0,2),tolerance);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(3461.47846875,hitran.partition_function(290.0,3),tolerance);
-      
+
       CPPUNIT_ASSERT_DOUBLES_EQUAL(304.559997559,hitran.partition_function(310.0,0),tolerance);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(614.489990234,hitran.partition_function(310.0,1),tolerance);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(647.090026855,hitran.partition_function(310.0,2),tolerance);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(3771.39990234,hitran.partition_function(310.0,3),tolerance);
-      
+
 
       // partition function values at the reference temperature T=296K
       CPPUNIT_ASSERT_DOUBLES_EQUAL(286.935573058,hitran.partition_function(296,0),tolerance);

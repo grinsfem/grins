@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -83,7 +83,7 @@ namespace GRINS
     libMesh::Real domega_dot_dT( const libMesh::Real rho_s, const libMesh::Real T ) const;
 
     void set_catalycity_params( const std::vector<libMesh::Real>& params );
-    
+
     virtual void register_parameter(  const std::string & param_name,
                                       libMesh::ParameterMultiAccessor< libMesh::Number > & param_pointer) const;
 

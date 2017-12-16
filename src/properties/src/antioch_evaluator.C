@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -93,16 +93,16 @@ namespace GRINS
 
   template<>
   libMesh::Real AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >::cp( const libMesh::Real& T,
-                                                                                       const libMesh::Real /*P*/,
-                                                                                       const std::vector<libMesh::Real>& Y )
+                                                                                                                           const libMesh::Real /*P*/,
+                                                                                                                           const std::vector<libMesh::Real>& Y )
   {
     return this->_thermo->cp( T, T, Y );
   }
 
   template<>
   libMesh::Real AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >::cv( const libMesh::Real& T,
-                                                                                       const libMesh::Real /*P*/,
-                                                                                       const std::vector<libMesh::Real>& Y )
+                                                                                                                           const libMesh::Real /*P*/,
+                                                                                                                           const std::vector<libMesh::Real>& Y )
   {
     return this->_thermo->cv( T, T, Y );
   }

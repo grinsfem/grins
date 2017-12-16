@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@
 
 namespace GRINS
 {
-  #ifdef GRINS_HAVE_CANTERA
+#ifdef GRINS_HAVE_CANTERA
   template<>
   void ChemistryBuilder::build_chemistry(const GetPot & input,const std::string & material,
                                          libMesh::UniquePtr<CanteraMixture> & chem_ptr )

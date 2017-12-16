@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -67,7 +67,7 @@ namespace GRINS
     libMesh::UniquePtr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > & diff,
     libMesh::Real min_T,
     bool clip_negative_rho )
-    : AntiochMixture<KineticsThermoCurveFit>(chem_mixture,reaction_set,nasa_mixture,min_T,clip_negative_rho)
+  : AntiochMixture<KineticsThermoCurveFit>(chem_mixture,reaction_set,nasa_mixture,min_T,clip_negative_rho)
   {
     /*! \todo Use std::move() when we have C++11 */
     _mu.reset( visc.release() );

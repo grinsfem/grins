@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2016 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@
 
 #ifdef GRINS_HAVE_ANTIOCH
 
-#define INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT(class_name) \
+#define INSTANTIATE_ANTIOCH_THERMO_CURVE_FIT(class_name)                \
   template class GRINS::class_name<Antioch::CEACurveFit<libMesh::Real> >; \
   template class GRINS::class_name<Antioch::NASA7CurveFit<libMesh::Real> >; \
   template class GRINS::class_name<Antioch::NASA9CurveFit<libMesh::Real> >
