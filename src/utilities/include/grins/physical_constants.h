@@ -59,7 +59,7 @@ namespace GRINS
 
     /*!
      * Second Radiation Constant hc/k, [m K]
-     * 
+     *
      * h = Planck's Constant
      * c = speed of light in a vacuum
      * k = Boltzmann Constant

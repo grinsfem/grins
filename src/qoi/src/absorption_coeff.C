@@ -126,7 +126,7 @@ namespace GRINS
     START_LOG("operator()","AbsorptionCoeff");
     libMesh::Real T,p,thermo_p; // temperature, hydrostatic pressure, thermodynamic pressure
     std::vector<libMesh::Real> Y(_chemistry->n_species()); // mass fractions
-    
+
     for (unsigned int s=0; s<_chemistry->n_species(); s++)
       context.point_value(_Y_var.species(s), qp_xyz, Y[s]);
 
@@ -188,7 +188,7 @@ namespace GRINS
     libMesh::UniquePtr< libMesh::FEBase > P_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_P_var.p())->get_fe_type() );
     const std::vector<std::vector<libMesh::Real> > & P_phi = P_fe->get_phi();
     P_fe->reinit(&(context.get_elem()),&qp);
- 
+
     libMesh::UniquePtr< libMesh::FEBase > Ys_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_Y_var.species(_species_idx))->get_fe_type() );
     const std::vector<std::vector<libMesh::Real> > & Ys_phi = Ys_fe->get_phi();
     Ys_fe->reinit(&(context.get_elem()),&qp);
@@ -250,7 +250,7 @@ namespace GRINS
     libMesh::Real phi_V = this->voigt(T,P,Y,i);
 
     libMesh::Real M_mix = _chemistry->M_mix(Y);
-    libMesh::Real X = _chemistry->X(_species_idx,M_mix,Y[_species_idx]); 
+    libMesh::Real X = _chemistry->X(_species_idx,M_mix,Y[_species_idx]);
 
     // absorption coefficient [cm^-1]
     return S*(P/Constants::atmosphere_Pa)*X*phi_V;
@@ -294,7 +294,7 @@ namespace GRINS
     libMesh::Real V = this->voigt(T,P,Y,i);
     libMesh::Real M_mix = _chemistry->M_mix(Y);
     libMesh::Real X = _chemistry->X(_species_idx,M_mix,Y[_species_idx]);
-    
+
     return S*(P/Constants::atmosphere_Pa) * ( X*dV + dX*V );
   }
 
@@ -345,7 +345,7 @@ namespace GRINS
     libMesh::Real QT = _hitran->partition_function(T,iso);
     libMesh::Real dQT = this->dQ_dT(T,iso);
     libMesh::Real nu = this->get_nu(P,i);
-    
+
     libMesh::Real constants = sw * QT0 * std::pow( (1.0-std::exp(-_rad_coeff*nu/_T0)), -1.0) * Constants::atmosphere_Pa/(Constants::Boltzmann*1.0e6);
     libMesh::Real A  = 1.0/T;
     libMesh::Real dA = -1.0/(T*T);
@@ -514,7 +514,7 @@ namespace GRINS
     libMesh::Real da = this->d_voigt_a_dT(T,P,Y,i);
 
     libMesh::Real w  = this->voigt_w(T,P,i);
-    libMesh::Real dw = this->d_voigt_w_dT(T,P,i); 
+    libMesh::Real dw = this->d_voigt_w_dT(T,P,i);
 
     // Voigt coefficient
     libMesh::Real V  = 0.0;
@@ -724,7 +724,7 @@ namespace GRINS
   libMesh::Real AbsorptionCoeff<Chemistry>::d_nu_dP(unsigned int i)
   {
     libMesh::Real d_air = _hitran->delta_air(i);
-    
+
     return d_air/_Pref * 1.0/Constants::atmosphere_Pa;
   }
 

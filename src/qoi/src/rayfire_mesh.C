@@ -78,9 +78,9 @@ namespace GRINS
     _origin(1) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 1);
 
     if (input.have_variable("QoI/"+qoi_string+"/Rayfire/theta"))
-        _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
+      _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
     else
-        libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
+      libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
 
     if (std::abs(_theta) > 2.0*Constants::pi)
       libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
@@ -97,7 +97,7 @@ namespace GRINS
   {
     if (original._mesh.get())
       this->_mesh.reset( new libMesh::Mesh( *((original._mesh).get()) ) );
-      
+
     this->_elem_id_map = original._elem_id_map;
   }
 
@@ -400,7 +400,7 @@ namespace GRINS
 
     for (unsigned int s=0; s<neighbor->n_sides(); s++)
       {
-        libMesh::UniquePtr<const libMesh::Elem> side_elem = neighbor->build_side_ptr(s); 
+        libMesh::UniquePtr<const libMesh::Elem> side_elem = neighbor->build_side_ptr(s);
 
         if ( (side_elem->contains_point(*node0)) && (side_elem->contains_point(*node1)) )
           {
@@ -423,7 +423,7 @@ namespace GRINS
 
             is_valid &= ( l_to_r || r_to_l );
           }
-        }
+      }
 
     return is_valid;
   }
@@ -526,7 +526,7 @@ namespace GRINS
         for (unsigned int c=0; c<neighbor->n_children(); c++)
           {
             const libMesh::Elem * child = neighbor->child_ptr(c);
-            
+
             if (child->contains_point(end_point))
               if (this->rayfire_in_elem(end_point,child))
                 return child;

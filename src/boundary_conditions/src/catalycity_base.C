@@ -29,7 +29,7 @@
 namespace GRINS
 {
   CatalycityBase::CatalycityBase()
-  : ParameterUser("CatalycityBase")
+    : ParameterUser("CatalycityBase")
   {
     return;
   }

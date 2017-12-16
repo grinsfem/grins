@@ -40,7 +40,7 @@
 
 namespace GRINS
 {
-  #ifdef GRINS_HAVE_CANTERA
+#ifdef GRINS_HAVE_CANTERA
   template<>
   void ChemistryBuilder::build_chemistry(const GetPot & input,const std::string & material,
                                          libMesh::UniquePtr<CanteraMixture> & chem_ptr )
