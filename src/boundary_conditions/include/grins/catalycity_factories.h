@@ -48,7 +48,7 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<CatalycityBase>
+    virtual std::unique_ptr<CatalycityBase>
     build_catalycity( const GetPot& input, const std::string& section )
     {
       std::string param_base = section+"/ConstantCatalycity/";
@@ -58,7 +58,7 @@ namespace GRINS
         libmesh_error_msg("ERROR: Could not find input "+gamma_str+" for ConstantCatalycity!\n");
 
       libMesh::Real gamma = input(gamma_str, std::numeric_limits<libMesh::Real>::max());
-      libMesh::UniquePtr<CatalycityBase> catalycity( new ConstantCatalycity( gamma ) );
+      std::unique_ptr<CatalycityBase> catalycity( new ConstantCatalycity( gamma ) );
       catalycity->set_parameters(input,param_base);
       return catalycity;
     }
@@ -78,7 +78,7 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<CatalycityBase>
+    virtual std::unique_ptr<CatalycityBase>
     build_catalycity( const GetPot& input, const std::string& section )
     {
       std::string param_base = section+"/ArrheniusCatalycity/";
@@ -94,7 +94,7 @@ namespace GRINS
       libMesh::Real gamma = input(gamma_str, std::numeric_limits<libMesh::Real>::max());
       libMesh::Real Ta = input(Ta_str, std::numeric_limits<libMesh::Real>::max());
 
-      libMesh::UniquePtr<CatalycityBase> catalycity( new ArrheniusCatalycity( gamma, Ta ) );
+      std::unique_ptr<CatalycityBase> catalycity( new ArrheniusCatalycity( gamma, Ta ) );
       catalycity->set_parameters(input,param_base);
       return catalycity;
     }
@@ -113,7 +113,7 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<CatalycityBase>
+    virtual std::unique_ptr<CatalycityBase>
     build_catalycity( const GetPot& input, const std::string& section )
     {
       std::string param_base = section+"/PowerLawCatalycity/";
@@ -134,7 +134,7 @@ namespace GRINS
       libMesh::Real Tref = input(Tref_str, std::numeric_limits<libMesh::Real>::max());
       libMesh::Real alpha = input(alpha_str, std::numeric_limits<libMesh::Real>::max());
 
-      libMesh::UniquePtr<CatalycityBase> catalycity( new PowerLawCatalycity( gamma, Tref, alpha ) );
+      std::unique_ptr<CatalycityBase> catalycity( new PowerLawCatalycity( gamma, Tref, alpha ) );
       catalycity->set_parameters(input,param_base);
       return catalycity;
     }

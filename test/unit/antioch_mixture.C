@@ -57,7 +57,7 @@ int main( int argc, char* argv[] )
   GetPot input( argv[1] );
 
   GRINS::AntiochMixtureBuilderBase builder;
-  libMesh::UniquePtr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > >
+  std::unique_ptr<GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > >
     antioch_ptr = builder.build_antioch_mixture<Antioch::CEACurveFit<libMesh::Real> >(input,"TestMaterial");
 
   const GRINS::AntiochMixture<Antioch::CEACurveFit<libMesh::Real> > & antioch = *antioch_ptr;

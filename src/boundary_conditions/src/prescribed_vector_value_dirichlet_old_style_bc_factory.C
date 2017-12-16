@@ -47,7 +47,7 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+  std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
   PrescribedVectorValueDirichletOldStyleBCFactory::build_func( const GetPot& input,
                                                                MultiphysicsSystem& system,
                                                                std::vector<std::string>& var_names,
@@ -66,12 +66,12 @@ namespace GRINS
     if( var_names.size() > n_comps )
       libmesh_error_msg("ERROR: Insufficient number of variable components in "+input_string+"!");
 
-    libMesh::UniquePtr<libMesh::CompositeFunction<libMesh::Number> >
+    std::unique_ptr<libMesh::CompositeFunction<libMesh::Number> >
       remapped_func( new libMesh::CompositeFunction<libMesh::Number> );
 
     this->add_funcs(input,system,input_string,var_names,*(remapped_func.get()));
 
-    return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >(remapped_func.release());
+    return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >(remapped_func.release());
   }
 
   void PrescribedVectorValueDirichletOldStyleBCFactory::add_funcs( const GetPot& input,
@@ -178,7 +178,7 @@ namespace GRINS
     /*! \todo We should have a ChemsitryWarehouse or something to just
       grab this from one place instead of rebuilding. */
     ChemistryBuilder chem_builder;
-    libMesh::UniquePtr<ChemistryType> chem_ptr;
+    std::unique_ptr<ChemistryType> chem_ptr;
     chem_builder.build_chemistry(input,material,chem_ptr);
 
     const ChemistryType & chem = *chem_ptr;

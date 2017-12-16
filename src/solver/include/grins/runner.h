@@ -97,11 +97,11 @@ namespace GRINS
 
     GetPot _command_line;
 
-    libMesh::UniquePtr<libMesh::LibMeshInit> _libmesh_init;
+    std::unique_ptr<libMesh::LibMeshInit> _libmesh_init;
 
-    libMesh::UniquePtr<GetPot> _inputfile;
+    std::unique_ptr<GetPot> _inputfile;
 
-    libMesh::UniquePtr<Simulation> _simulation;
+    std::unique_ptr<Simulation> _simulation;
 
   private:
 

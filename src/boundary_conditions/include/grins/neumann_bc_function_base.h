@@ -92,7 +92,7 @@ namespace GRINS
     //! Function object for the actual Neumann flux
     /*! Subclasses should initialize this function appropriately at construction
       time. */
-    libMesh::UniquePtr<FunctionType> _func;
+    std::unique_ptr<FunctionType> _func;
 
   };
 

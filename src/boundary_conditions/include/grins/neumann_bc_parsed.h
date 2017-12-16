@@ -61,7 +61,7 @@ namespace GRINS
     {
       libmesh_assert_equal_to( expressions.size(), vars.size() );
 
-      libMesh::UniquePtr<libMesh::CompositeFunction<FEShape> >
+      std::unique_ptr<libMesh::CompositeFunction<FEShape> >
         composite_func( new libMesh::CompositeFunction<FEShape> );
 
       for( unsigned int i = 0; i < vars.size(); i++ )
@@ -103,7 +103,7 @@ namespace GRINS
     {
       libmesh_assert_equal_to( expressions.size(), vars.size() );
 
-      libMesh::UniquePtr<libMesh::CompositeFEMFunction<FEShape> >
+      std::unique_ptr<libMesh::CompositeFEMFunction<FEShape> >
         composite_func( new libMesh::CompositeFEMFunction<FEShape> );
 
       for( unsigned int i = 0; i < vars.size(); i++ )

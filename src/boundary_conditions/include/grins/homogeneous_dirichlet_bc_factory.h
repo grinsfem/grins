@@ -46,13 +46,13 @@ namespace GRINS
   protected:
 
     //! All the variables are 0, so just return 0 function.
-    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
     build_func( const GetPot& /*input*/,
                 MultiphysicsSystem& /*system*/,
                 std::vector<std::string>& /*var_names*/,
                 const std::string& /*section*/ )
     {
-      return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ZeroFunction<libMesh::Number> );
+      return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ZeroFunction<libMesh::Number> );
     }
 
   };

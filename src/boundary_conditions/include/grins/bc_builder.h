@@ -92,7 +92,7 @@ namespace GRINS
 
     static bool is_new_bc_input_style( const GetPot& input );
 
-    static libMesh::UniquePtr<BCBuilder> build_builder( const GetPot& input );
+    static std::unique_ptr<BCBuilder> build_builder( const GetPot& input );
 
     bool is_dirichlet_bc_type( const std::string& bc_type );
 

@@ -81,9 +81,9 @@ namespace GRINS
 
   template <typename KineticsThermoCurveFit>
   AntiochMixture<KineticsThermoCurveFit>::AntiochMixture
-  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
-    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
-    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
+  ( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+    std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & nasa_mixture,
     libMesh::Real min_T,
     bool clip_negative_rho )
     : AntiochChemistry(chem_mixture),

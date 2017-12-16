@@ -66,7 +66,7 @@ namespace GRINS
     if( thermochem_lib == "cantera" )
       {
 #ifdef GRINS_HAVE_CANTERA
-        libMesh::UniquePtr<CanteraMixture> chem_uptr;
+        std::unique_ptr<CanteraMixture> chem_uptr;
         chem_builder.build_chemistry(input,material,chem_uptr);
 
         /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
@@ -81,7 +81,7 @@ namespace GRINS
     else if( thermochem_lib == "antioch" )
       {
 #ifdef GRINS_HAVE_ANTIOCH
-        libMesh::UniquePtr<AntiochChemistry> chem_uptr;
+        std::unique_ptr<AntiochChemistry> chem_uptr;
         chem_builder.build_chemistry(input,material,chem_uptr);
 
         /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/

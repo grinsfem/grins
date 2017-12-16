@@ -80,13 +80,13 @@ namespace GRINS
 
   template<typename KT, typename T, typename V, typename C, typename D>
   AntiochMixtureAveragedTransportMixture<KT,T,V,C,D>::AntiochMixtureAveragedTransportMixture
-  ( libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
-    libMesh::UniquePtr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
-    libMesh::UniquePtr<Antioch::NASAThermoMixture<libMesh::Real,KT> > & kinetics_thermo_mix,
-    libMesh::UniquePtr<Antioch::TransportMixture<libMesh::Real> > & trans_mix,
-    libMesh::UniquePtr<Antioch::MixtureAveragedTransportMixture<libMesh::Real> > & wilke_mix,
-    libMesh::UniquePtr<Antioch::MixtureViscosity<V,libMesh::Real> > & visc,
-    libMesh::UniquePtr<Antioch::MixtureDiffusion<D,libMesh::Real> > & diff,
+  ( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
+    std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KT> > & kinetics_thermo_mix,
+    std::unique_ptr<Antioch::TransportMixture<libMesh::Real> > & trans_mix,
+    std::unique_ptr<Antioch::MixtureAveragedTransportMixture<libMesh::Real> > & wilke_mix,
+    std::unique_ptr<Antioch::MixtureViscosity<V,libMesh::Real> > & visc,
+    std::unique_ptr<Antioch::MixtureDiffusion<D,libMesh::Real> > & diff,
     libMesh::Real min_T,
     bool clip_negative_rho )
   : AntiochMixture<KT>(chem_mixture,reaction_set,kinetics_thermo_mix,min_T,clip_negative_rho)

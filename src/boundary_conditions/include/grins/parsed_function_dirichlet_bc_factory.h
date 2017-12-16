@@ -54,7 +54,7 @@ namespace GRINS
       the user must've set at least one. The section arguments
       corresponds to the section to parse for the variables in the
       input file, e.g. input(section+"/"+var_names[0]). */
-    virtual libMesh::UniquePtr<FunctionType>
+    virtual std::unique_ptr<FunctionType>
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,

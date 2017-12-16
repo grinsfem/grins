@@ -46,7 +46,7 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
@@ -54,7 +54,7 @@ namespace GRINS
 
   };
 
-  libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+  std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
   inline
   IsothermalDirichletOldStyleBCFactory::build_func( const GetPot& input,
                                                     MultiphysicsSystem& /*system*/,
@@ -73,7 +73,7 @@ namespace GRINS
 
     libMesh::Number value = input(input_var, 0.0);
 
-    return libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ConstFunction<libMesh::Number>(value) );
+    return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ConstFunction<libMesh::Number>(value) );
   }
 
 } // end namespace GRINS

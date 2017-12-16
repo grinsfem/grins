@@ -30,9 +30,9 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<NeumannBCContainer> NeumannBCFactoryAbstract::create()
+  std::unique_ptr<NeumannBCContainer> NeumannBCFactoryAbstract::create()
   {
-    libMesh::UniquePtr<NeumannBCContainer> container;
+    std::unique_ptr<NeumannBCContainer> container;
 
     // Only build the container if the Neumann BC is *not* homogeneous
     // Otherwise, we just return and empty (NULL) UniquePtr.

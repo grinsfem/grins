@@ -165,7 +165,7 @@ namespace GRINS
     unsigned int n_qpoints = context.get_element_qrule().n_points();
 
     // Auto pointer to distance fcn evaluated at quad points
-    libMesh::UniquePtr< libMesh::DenseVector<libMesh::Real> > distance_qp;
+    std::unique_ptr< libMesh::DenseVector<libMesh::Real> > distance_qp;
 
     // Fill the vector of distances to quadrature points
     distance_qp = this->distance_function->interpolate(&elem_pointer, context.get_element_qrule().get_points());

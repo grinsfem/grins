@@ -49,7 +49,7 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<CatalycityBase> build_catalycity( const GetPot& input,
+    virtual std::unique_ptr<CatalycityBase> build_catalycity( const GetPot& input,
                                                                  const std::string& section ) =0;
 
     //! Helper function to reduce code duplication
@@ -62,15 +62,15 @@ namespace GRINS
 
   private:
 
-    virtual libMesh::UniquePtr<CatalycityBase> create();
+    virtual std::unique_ptr<CatalycityBase> create();
   };
 
   inline
-  libMesh::UniquePtr<CatalycityBase> CatalycityFactoryAbstract::create()
+  std::unique_ptr<CatalycityBase> CatalycityFactoryAbstract::create()
   {
     this->check_state();
 
-    libMesh::UniquePtr<CatalycityBase> new_catalycity = this->build_catalycity( *_input, _section );
+    std::unique_ptr<CatalycityBase> new_catalycity = this->build_catalycity( *_input, _section );
 
     this->reset_state();
 

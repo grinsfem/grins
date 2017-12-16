@@ -83,7 +83,7 @@ namespace GRINS {
     /**
      * Interpolate distance function to points qpts (in reference space) for element *elem
      */
-    libMesh::UniquePtr< libMesh::DenseVector<libMesh::Real> > interpolate (const libMesh::Elem* elem, const std::vector<libMesh::Point>& qts) const;
+    std::unique_ptr< libMesh::DenseVector<libMesh::Real> > interpolate (const libMesh::Elem* elem, const std::vector<libMesh::Point>& qts) const;
 
 
 
@@ -107,7 +107,7 @@ namespace GRINS {
      * Currently type is hardcoded to first order, Lagrange
      * (see constructor), but this could be easily changed.
      */
-    libMesh::UniquePtr<libMesh::FEBase> _dist_fe;
+    std::unique_ptr<libMesh::FEBase> _dist_fe;
 
   };
 
@@ -257,7 +257,7 @@ namespace GRINS {
     const unsigned int _dim;
     const libMesh::Point& _p;
 
-    libMesh::UniquePtr<libMesh::FEBase> _fe;
+    std::unique_ptr<libMesh::FEBase> _fe;
     libMesh::FEBase *fe;
 
     // work vectors

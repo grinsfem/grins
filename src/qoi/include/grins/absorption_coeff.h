@@ -95,7 +95,7 @@ namespace GRINS
                               const libMesh::Real time);
 
     //! Not used
-    virtual libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Real> > clone() const;
+    virtual std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Real> > clone() const;
 
   protected:
     //! Antioch/Cantera object

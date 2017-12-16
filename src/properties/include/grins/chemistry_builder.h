@@ -27,7 +27,7 @@
 #define GRINS_CHEMISTRY_BUILDER_H
 
 // libMesh
-#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
+#include "libmesh/auto_ptr.h" // std::unique_ptr
 #include "libmesh/getpot.h"
 
 // C++
@@ -43,7 +43,7 @@ namespace GRINS
 
     template<typename ChemistryType>
     void build_chemistry( const GetPot & input,const std::string & material,
-                          libMesh::UniquePtr<ChemistryType> & chem_ptr );
+                          std::unique_ptr<ChemistryType> & chem_ptr );
   };
 
 } // end namespace GRINS

@@ -30,7 +30,7 @@
 #include "grins/fe_variables_base.h"
 
 // libMesh
-#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
+#include "libmesh/auto_ptr.h" // std::unique_ptr
 
 // libMesh forward declarations
 class GetPot;

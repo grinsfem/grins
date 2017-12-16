@@ -36,7 +36,7 @@
 namespace GRINS
 {
   template<typename FunctionType>
-  libMesh::UniquePtr<FunctionType>
+  std::unique_ptr<FunctionType>
   ParsedFunctionDirichletBCFactory<FunctionType>::build_func( const GetPot& input,
                                                               MultiphysicsSystem& system,
                                                               std::vector<std::string>& var_names,
@@ -45,7 +45,7 @@ namespace GRINS
     libmesh_assert( !var_names.empty() );
 
     //! This is really a "composite" function.
-    libMesh::UniquePtr<FunctionType> all_funcs;
+    std::unique_ptr<FunctionType> all_funcs;
     all_funcs.reset( this->build_composite_func().release() );
 
     typedef typename TypeFrom<FunctionType>::to_composite composite_type;

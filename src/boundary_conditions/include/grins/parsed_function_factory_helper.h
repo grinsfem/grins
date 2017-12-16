@@ -44,10 +44,10 @@ namespace GRINS
 
   protected:
 
-    libMesh::UniquePtr<FunctionType> build_parsed_func( const MultiphysicsSystem& system,
+    std::unique_ptr<FunctionType> build_parsed_func( const MultiphysicsSystem& system,
                                                         const std::string& expression );
 
-    libMesh::UniquePtr<FunctionType> build_composite_func();
+    std::unique_ptr<FunctionType> build_composite_func();
 
   };
 

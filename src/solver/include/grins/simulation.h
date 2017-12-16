@@ -116,7 +116,7 @@ namespace GRINS
 
     SharedPtr<libMesh::EquationSystems> _equation_system;
 
-    libMesh::UniquePtr<GRINS::Solver> _solver;
+    std::unique_ptr<GRINS::Solver> _solver;
 
     //! GRINS::Multiphysics system name
     std::string _system_name;

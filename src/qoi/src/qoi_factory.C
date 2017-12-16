@@ -185,13 +185,13 @@ namespace GRINS
         ChemistryBuilder chem_builder;
 
 #if GRINS_HAVE_ANTIOCH
-        libMesh::UniquePtr<AntiochChemistry> chem_ptr;
+        std::unique_ptr<AntiochChemistry> chem_ptr;
         chem_builder.build_chemistry(input,material,chem_ptr);
         SharedPtr<AntiochChemistry> chem(chem_ptr.release());
 
         absorb = new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure);
 #elif GRINS_HAVE_CANTERA
-        libMesh::UniquePtr<CanteraMixture> chem_ptr;
+        std::unique_ptr<CanteraMixture> chem_ptr;
         chem_builder.build_chemistry(input,material,chem_ptr);
         SharedPtr<CanteraMixture> chem(chem_ptr.release());
 

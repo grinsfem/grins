@@ -74,7 +74,7 @@ namespace GRINS
 
     libMesh::SteadySolver* steady_solver = new libMesh::SteadySolver( *(system) );
 
-    system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(steady_solver);
+    system->time_solver = std::unique_ptr<libMesh::TimeSolver>(steady_solver);
 
     system->assembly( true /*residual*/, false /*jacobian*/ );
     system->rhs->close();
