@@ -1,4 +1,26 @@
-Version 0.8.0 (in progress)
+Version 0.8.0
+   * Minimum libMesh git hash for this release is: 8be0a4e
+   * Substantial internal refactoring of Variables handling
+   * Updated parsing of Variables
+   * Now support subdomain-restricted variables; includes conjugate
+     heat transfer example illustrating usage
+   * Add SPGSM stabilization Physics for reacting low Mach Navier-Stokes
+     Include Ozone flame example illustrating usage
+   * Add RayfireMesh class 
+   * New constraint functionality to supply simple constraints on variables
+     from input file
+   * Can now override input file options from the command line
+   * Added GRINS::Runner and initializer classes to simplify construction
+     of standalone GRINS-based programs
+   * Removed GRVY
+   * Moved CachedValues interface to Physics
+   * Refactor Antioch interface to increase Antioch thermo, transport
+     feature usage 
+   * New QoIs include:
+     - IntegratedFunction
+     - SpectroscopicAbsorption
+       - Specialization of IntegratedFunction. Uses new HITRAN
+         data structures
 
 Version 0.7.0
    * Complete refactoring of material property parsing. Old
