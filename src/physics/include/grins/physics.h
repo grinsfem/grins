@@ -238,8 +238,8 @@ namespace GRINS
 
     /*! \todo This is straight up copied from libMesh. Need to make this available from libMesh. */
     std::unique_ptr<libMesh::FEGenericBase<libMesh::Real> > build_new_fe( const libMesh::Elem* elem,
-                                                                             const libMesh::FEGenericBase<libMesh::Real>* fe,
-                                                                             const libMesh::Point p );
+                                                                          const libMesh::FEGenericBase<libMesh::Real>* fe,
+                                                                          const libMesh::Point p );
 
     void parse_enabled_subdomains( const GetPot& input,
                                    const std::string& physics_name );

@@ -54,7 +54,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name ) =0;
+                                                    const std::string& physics_name ) =0;
 
   private:
 

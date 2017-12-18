@@ -67,7 +67,7 @@ namespace GRINS
     std::unique_ptr<Antioch::ConstantLewisDiffusivity<libMesh::Real> > & diff,
     libMesh::Real min_T,
     bool clip_negative_rho )
-  : AntiochMixture<KineticsThermoCurveFit>(chem_mixture,reaction_set,nasa_mixture,min_T,clip_negative_rho)
+    : AntiochMixture<KineticsThermoCurveFit>(chem_mixture,reaction_set,nasa_mixture,min_T,clip_negative_rho)
   {
     /*! \todo Use std::move() when we have C++11 */
     _mu.reset( visc.release() );

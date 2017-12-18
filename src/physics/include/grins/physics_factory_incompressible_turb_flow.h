@@ -46,7 +46,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+                                                    const std::string& physics_name );
 
     void visc_error_msg( const std::string& physics, const std::string& viscosity ) const;
 
@@ -55,7 +55,7 @@ namespace GRINS
   template<template<typename> class DerivedPhysics>
   inline
   std::unique_ptr<Physics> PhysicsFactoryIncompressibleTurbFlow<DerivedPhysics>::build_physics( const GetPot& input,
-                                                                                                   const std::string& physics_name )
+                                                                                                const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 

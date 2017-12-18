@@ -48,7 +48,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+                                                    const std::string& physics_name );
 
     void prop_error_msg( const std::string& physics,
                          const std::string& conductivity,
@@ -60,7 +60,7 @@ namespace GRINS
   template<template<typename,typename,typename> class DerivedPhysics>
   inline
   std::unique_ptr<Physics> PhysicsFactoryVariableDensityFlow<DerivedPhysics>::build_physics( const GetPot& input,
-                                                                                                const std::string& physics_name )
+                                                                                             const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 

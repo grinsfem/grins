@@ -47,7 +47,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+                                                    const std::string& physics_name );
 
     void cond_error_msg( const std::string& physics, const std::string& conductivity ) const;
 

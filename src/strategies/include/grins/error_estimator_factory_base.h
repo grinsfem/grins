@@ -62,8 +62,8 @@ namespace GRINS
 
     //! Subclasses implement this method for building the ErrorEstimator object.
     virtual std::unique_ptr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
-                                                                               MultiphysicsSystem& system,
-                                                                               const ErrorEstimatorOptions& estimator_options ) =0;
+                                                                            MultiphysicsSystem& system,
+                                                                            const ErrorEstimatorOptions& estimator_options ) =0;
 
     //! Cache pointer to system
     /*! We can't copy this so it must be a pointer. We do *not* own

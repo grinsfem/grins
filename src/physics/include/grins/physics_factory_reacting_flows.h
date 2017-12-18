@@ -51,7 +51,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+                                                    const std::string& physics_name );
 
     void grins_antioch_model_error_msg( const std::string& viscosity_model,
                                         const std::string& conductivity_model,

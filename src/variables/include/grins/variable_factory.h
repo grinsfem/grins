@@ -96,8 +96,8 @@ namespace GRINS
       VariableFactoryAbstract::build. Note the var_names can be built a priori
       using the VariableFactoryAbstract::build_var_names() method. */
     virtual std::unique_ptr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
-                                                              const std::vector<VariableIndex>& var_indices,
-                                                              const std::set<libMesh::subdomain_id_type>& subdomain_ids ) =0;
+                                                           const std::vector<VariableIndex>& var_indices,
+                                                           const std::set<libMesh::subdomain_id_type>& subdomain_ids ) =0;
 
     // Subclasses implement this to parse the variable component name(s)
     virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section ) =0;
@@ -240,8 +240,8 @@ namespace GRINS
     virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section );
 
     virtual std::unique_ptr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
-                                                              const std::vector<VariableIndex>& var_indices,
-                                                              const std::set<libMesh::subdomain_id_type>& subdomain_ids )
+                                                           const std::vector<VariableIndex>& var_indices,
+                                                           const std::set<libMesh::subdomain_id_type>& subdomain_ids )
     { return std::unique_ptr<FEVariablesBase>( new VariableType(var_names,var_indices,_prefix,_material,subdomain_ids) ); }
 
     std::string _prefix;

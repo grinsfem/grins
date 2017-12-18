@@ -25,7 +25,7 @@ namespace GRINS
 {
   template<template<typename,typename> class DerivedPhysics>
   std::unique_ptr<Physics> PhysicsFactoryReactingFlows<DerivedPhysics>::build_physics( const GetPot& input,
-                                                                                          const std::string& physics_name )
+                                                                                       const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 

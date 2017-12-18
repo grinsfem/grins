@@ -42,7 +42,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name )
+                                                    const std::string& physics_name )
     {
       return std::unique_ptr<Physics>( new DerivedPhysics(physics_name,input) );
     }
