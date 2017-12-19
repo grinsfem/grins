@@ -38,7 +38,7 @@ namespace GRINS
     virtual ~DisplacementContinuationSolver();
 
     virtual void initialize( const GetPot& input,
-                             SharedPtr<libMesh::EquationSystems> equation_system,
+                             std::shared_ptr<libMesh::EquationSystems> equation_system,
                              GRINS::MultiphysicsSystem* system );
 
     virtual void solve( SolverContext& context );

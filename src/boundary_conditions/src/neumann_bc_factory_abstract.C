@@ -41,7 +41,7 @@ namespace GRINS
         // Make sure all necessary state has been setup
         this->check_state();
 
-        SharedPtr<NeumannBCAbstract>
+        std::shared_ptr<NeumannBCAbstract>
           func = this->build_neumann_func( *_input, *_system, *_fe_var, this->_section );
 
         libmesh_assert(func);

@@ -45,7 +45,7 @@
 namespace GRINS
 {
   template<typename Function>
-  IntegratedFunction<Function>::IntegratedFunction(unsigned int p_level, SharedPtr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name) :
+  IntegratedFunction<Function>::IntegratedFunction(unsigned int p_level, std::shared_ptr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name) :
     QoIBase(qoi_name),
     _p_level(p_level),
     _f(f),
@@ -53,7 +53,7 @@ namespace GRINS
   {}
 
   template<typename Function>
-  IntegratedFunction<Function>::IntegratedFunction(const GetPot & input, unsigned int p_level, SharedPtr<Function> f, const std::string & input_qoi_string, const std::string & qoi_name) :
+  IntegratedFunction<Function>::IntegratedFunction(const GetPot & input, unsigned int p_level, std::shared_ptr<Function> f, const std::string & input_qoi_string, const std::string & qoi_name) :
     QoIBase(qoi_name),
     _p_level(p_level),
     _f(f)

@@ -52,7 +52,7 @@ namespace GRINS
     /*!
       @param absorb AbsorptionCoeff object
     */
-    SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,SharedPtr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb);
+    SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb);
 
     virtual QoIBase * clone() const;
 

@@ -80,8 +80,8 @@ namespace GRINS
 
     SpeciesMassFractionsVariable& _species_vars;
 
-    /*! \todo When we mandate C++11, switch this to a SharedPtr. Then, in the VariableWarhouse,
-      we can use dynamic_pointer_cast to get a SharedPtr. */
+    /*! \todo When we mandate C++11, switch this to a std::shared_ptr. Then, in the VariableWarhouse,
+      we can use dynamic_pointer_cast to get a std::shared_ptr. */
     ThermoPressureVariable* _p0_var;
 
     //! Number of species

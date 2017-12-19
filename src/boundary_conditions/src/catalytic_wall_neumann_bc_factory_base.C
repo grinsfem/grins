@@ -33,7 +33,7 @@
 namespace GRINS
 {
   template<typename ImplType>
-  SharedPtr<NeumannBCAbstract>
+  std::shared_ptr<NeumannBCAbstract>
   CatalyticWallNeumannBCFactoryBase<ImplType>::build_neumann_func( const GetPot& input,
                                                                    MultiphysicsSystem& /*system*/,
                                                                    const FEVariablesBase& fe_var,
@@ -42,7 +42,7 @@ namespace GRINS
     std::string reaction = this->parse_reaction(input,section);
 
     // Parse and construct the corresponding catalycity
-    SharedPtr<CatalycityBase> gamma_ptr = this->build_catalycity( input, section );
+    std::shared_ptr<CatalycityBase> gamma_ptr = this->build_catalycity( input, section );
 
     std::string material;
     this->extract_material( fe_var, material );
@@ -99,7 +99,7 @@ namespace GRINS
   }
 
   template<typename ImplType>
-  SharedPtr<CatalycityBase>
+  std::shared_ptr<CatalycityBase>
   CatalyticWallNeumannBCFactoryBase<ImplType>::build_catalycity( const GetPot& input,
                                                                  const std::string& section ) const
   {
@@ -114,8 +114,8 @@ namespace GRINS
 
     std::unique_ptr<CatalycityBase> catalycity_ptr = CatalycityFactoryAbstract::build(catalycity_type);
 
-    // We need to return a SharedPtr
-    return SharedPtr<CatalycityBase>( catalycity_ptr.release() );
+    // We need to return a std::shared_ptr
+    return std::shared_ptr<CatalycityBase>( catalycity_ptr.release() );
   }
 
   template class CatalyticWallNeumannBCFactoryBase<GasRecombinationCatalyticWallNeumannBCFactoryImpl>;

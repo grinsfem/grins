@@ -39,48 +39,48 @@ namespace GRINS
       _postprocessing_factory( new PostprocessingFactory )
   {}
 
-  void SimulationBuilder::attach_mesh_builder( SharedPtr<MeshBuilder> mesh_builder )
+  void SimulationBuilder::attach_mesh_builder( std::shared_ptr<MeshBuilder> mesh_builder )
   {
     this->_mesh_builder = mesh_builder;
     return;
   }
 
-  void SimulationBuilder::attach_vis_factory( SharedPtr<VisualizationFactory> vis_factory )
+  void SimulationBuilder::attach_vis_factory( std::shared_ptr<VisualizationFactory> vis_factory )
   {
     this->_vis_factory = vis_factory;
     return;
   }
 
-  void SimulationBuilder::attach_qoi_factory( SharedPtr<QoIFactory> qoi_factory )
+  void SimulationBuilder::attach_qoi_factory( std::shared_ptr<QoIFactory> qoi_factory )
   {
     this->_qoi_factory = qoi_factory;
   }
 
-  void SimulationBuilder::attach_postprocessing_factory( SharedPtr<PostprocessingFactory> postprocessing_factory )
+  void SimulationBuilder::attach_postprocessing_factory( std::shared_ptr<PostprocessingFactory> postprocessing_factory )
   {
     this->_postprocessing_factory = postprocessing_factory;
   }
 
-  SharedPtr<libMesh::UnstructuredMesh> SimulationBuilder::build_mesh
+  std::shared_ptr<libMesh::UnstructuredMesh> SimulationBuilder::build_mesh
   ( const GetPot& input,
     const libMesh::Parallel::Communicator &comm)
   {
     return (this->_mesh_builder)->build(input, comm);
   }
 
-  SharedPtr<GRINS::Visualization> SimulationBuilder::build_vis
+  std::shared_ptr<GRINS::Visualization> SimulationBuilder::build_vis
   ( const GetPot& input,
     const libMesh::Parallel::Communicator &comm)
   {
     return (this->_vis_factory)->build(input, comm);
   }
 
-  SharedPtr<CompositeQoI> SimulationBuilder::build_qoi( const GetPot& input )
+  std::shared_ptr<CompositeQoI> SimulationBuilder::build_qoi( const GetPot& input )
   {
     return (this->_qoi_factory)->build(input);
   }
 
-  SharedPtr<PostProcessedQuantities<libMesh::Real> >
+  std::shared_ptr<PostProcessedQuantities<libMesh::Real> >
   SimulationBuilder::build_postprocessing( const GetPot& input )
   {
     return (this->_postprocessing_factory)->build(input);

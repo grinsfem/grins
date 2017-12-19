@@ -125,7 +125,13 @@ namespace GRINSTesting
           for (unsigned int i=0; i<functions.size(); i++)
             {
               GRINS::RayfireMesh * rayfire = new GRINS::RayfireMesh(origin,theta[t]);
-              GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)2,new libMesh::ParsedFunction<libMesh::Real>(functions[i]),rayfire,"integrated_function");
+
+              std::shared_ptr<libMesh::ParsedFunction<libMesh::Real>>
+                f( new libMesh::ParsedFunction<libMesh::Real>(functions[i]) );
+
+              GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >
+                integ_func((unsigned int)2, f, rayfire, "integrated_function");
+
               comp_qoi.add_qoi(integ_func);
             }
 
@@ -210,7 +216,13 @@ namespace GRINSTesting
           for (unsigned int i=0; i<functions.size(); i++)
             {
               GRINS::RayfireMesh * rayfire = new GRINS::RayfireMesh(origin,theta[t]);
-              GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)3,new libMesh::ParsedFunction<libMesh::Real>(functions[i]),rayfire,"integrated_function");
+
+              std::shared_ptr<libMesh::ParsedFunction<libMesh::Real>>
+                f( new libMesh::ParsedFunction<libMesh::Real>(functions[i]) );
+
+              GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >
+                integ_func((unsigned int)3,f,rayfire,"integrated_function");
+
               comp_qoi.add_qoi(integ_func);
             }
 
@@ -347,7 +359,12 @@ namespace GRINSTesting
       std::string function = "x";
       libMesh::Real calc_answer = 0.5/costheta*3.0*3.0;
 
-      GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)3,new libMesh::ParsedFunction<libMesh::Real>(function),rayfire,"integrated_function");
+      std::shared_ptr<libMesh::ParsedFunction<libMesh::Real>>
+                f( new libMesh::ParsedFunction<libMesh::Real>(function) );
+
+      GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >
+        integ_func((unsigned int)3,f,rayfire,"integrated_function");
+
       comp_qoi.add_qoi(integ_func);
 
       comp_qoi.init(*_input,*system);

@@ -60,12 +60,12 @@ namespace GRINS
       /*! Use this API if you may be attempting to register the same
         variable more than once. */
       static void check_and_register_variable( const std::string& var_name,
-                                               SharedPtr<FEVariablesBase>& variable );
+                                               std::shared_ptr<FEVariablesBase>& variable );
 
       static void register_variable( const std::string& var_name,
-                                     SharedPtr<FEVariablesBase>& variable );
+                                     std::shared_ptr<FEVariablesBase>& variable );
 
-      static SharedPtr<FEVariablesBase> get_variable_ptr( const std::string& var_name );
+      static std::shared_ptr<FEVariablesBase> get_variable_ptr( const std::string& var_name );
 
       static FEVariablesBase& get_variable( const std::string& var_name );
 
@@ -78,7 +78,7 @@ namespace GRINS
 
     protected:
 
-      static std::map<std::string,SharedPtr<FEVariablesBase> >& var_map();
+      static std::map<std::string,std::shared_ptr<FEVariablesBase> >& var_map();
 
     };
 
@@ -91,7 +91,7 @@ namespace GRINS
 
     inline
     void VariableWarehouse::check_and_register_variable( const std::string& var_name,
-                                                         SharedPtr<FEVariablesBase>& variable )
+                                                         std::shared_ptr<FEVariablesBase>& variable )
     {
       if( !VariableWarehouse::is_registered(var_name) )
         VariableWarehouse::register_variable(var_name,variable);
@@ -99,7 +99,7 @@ namespace GRINS
 
     inline
     void VariableWarehouse::register_variable( const std::string& var_name,
-                                               SharedPtr<FEVariablesBase>& variable )
+                                               std::shared_ptr<FEVariablesBase>& variable )
     {
       if( VariableWarehouse::is_registered(var_name) )
         libmesh_error_msg("ERROR: Duplicate FEVariable registration not allowed!");
@@ -110,7 +110,7 @@ namespace GRINS
     inline
     FEVariablesBase& VariableWarehouse::get_variable( const std::string& var_name )
     {
-      SharedPtr<FEVariablesBase> var_ptr = VariableWarehouse::get_variable_ptr(var_name);
+      std::shared_ptr<FEVariablesBase> var_ptr = VariableWarehouse::get_variable_ptr(var_name);
       return *var_ptr;
     }
 

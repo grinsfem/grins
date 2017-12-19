@@ -49,13 +49,13 @@ namespace GRINS
     //! Do nothing.
     /* This should never get called since we should be opt-ing out upstream of this
        function, so we error out if this gets called.*/
-    virtual SharedPtr<NeumannBCAbstract>
+    virtual std::shared_ptr<NeumannBCAbstract>
     build_neumann_func( const GetPot& /*input*/,
                         MultiphysicsSystem& /*system*/,
                         const FEVariablesBase& /*fe_var*/,
                         const std::string& /*section*/ )
     { libmesh_error(); // This should never get called
-      return SharedPtr<NeumannBCAbstract>(); }
+      return std::shared_ptr<NeumannBCAbstract>(); }
 
   };
 

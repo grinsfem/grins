@@ -72,7 +72,7 @@ namespace GRINS
         PhysicsNaming::clear_suffix();
 
         // Now give it to the PhysicsList
-        physics_map[physics_name] = SharedPtr<Physics>( physics_ptr.release() );
+        physics_map[physics_name] = std::shared_ptr<Physics>( physics_ptr.release() );
       }
 
     // Echo Physics to display, if requested

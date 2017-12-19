@@ -57,48 +57,48 @@ namespace GRINS
                    LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
     virtual ~Visualization();
 
-    void output( SharedPtr<libMesh::EquationSystems> equation_system );
-    void output( SharedPtr<libMesh::EquationSystems> equation_system,
+    void output( std::shared_ptr<libMesh::EquationSystems> equation_system );
+    void output( std::shared_ptr<libMesh::EquationSystems> equation_system,
                  const unsigned int time_step, const libMesh::Real time );
 
-    void output_residual( SharedPtr<libMesh::EquationSystems> equation_system,
+    void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
                           GRINS::MultiphysicsSystem* system );
 
-    virtual void output_residual( SharedPtr<libMesh::EquationSystems> equation_system,
+    virtual void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                   GRINS::MultiphysicsSystem* system,
                                   const unsigned int time_step, const libMesh::Real time ) =0;
 
     void output_residual_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
+    (std::shared_ptr<libMesh::EquationSystems> equation_system,
      GRINS::MultiphysicsSystem* system,
      const libMesh::ParameterVector & params);
 
     virtual void output_residual_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
+    (std::shared_ptr<libMesh::EquationSystems> equation_system,
      GRINS::MultiphysicsSystem* system,
      const libMesh::ParameterVector & params,
      const unsigned int time_step, const libMesh::Real time ) =0;
 
-    void output_adjoint( SharedPtr<libMesh::EquationSystems> equation_system,
+    void output_adjoint( std::shared_ptr<libMesh::EquationSystems> equation_system,
                          GRINS::MultiphysicsSystem* system );
 
-    virtual void output_adjoint( SharedPtr<libMesh::EquationSystems> equation_system,
+    virtual void output_adjoint( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                  GRINS::MultiphysicsSystem* system,
                                  const unsigned int time_step,
                                  const libMesh::Real time ) =0;
 
     void output_solution_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
+    (std::shared_ptr<libMesh::EquationSystems> equation_system,
      GRINS::MultiphysicsSystem* system,
      const libMesh::ParameterVector & params);
 
     virtual void output_solution_sensitivities
-    (SharedPtr<libMesh::EquationSystems> equation_system,
+    (std::shared_ptr<libMesh::EquationSystems> equation_system,
      GRINS::MultiphysicsSystem* system,
      const libMesh::ParameterVector & params,
      const unsigned int time_step, const libMesh::Real time ) =0;
 
-    void dump_visualization( SharedPtr<libMesh::EquationSystems> equation_system,
+    void dump_visualization( std::shared_ptr<libMesh::EquationSystems> equation_system,
                              const std::string& filename_prefix, const libMesh::Real time );
 
   protected:

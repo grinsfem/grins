@@ -56,8 +56,8 @@ namespace GRINS
     ~SolverContext(){};
 
     GRINS::MultiphysicsSystem* system;
-    SharedPtr<libMesh::EquationSystems> equation_system;
-    SharedPtr<GRINS::Visualization> vis;
+    std::shared_ptr<libMesh::EquationSystems> equation_system;
+    std::shared_ptr<GRINS::Visualization> vis;
     unsigned int timesteps_per_vis;
     unsigned int timesteps_per_perflog;
     bool output_vis;
@@ -69,11 +69,11 @@ namespace GRINS
     bool print_scalars;
     bool do_adjoint_solve;
 
-    SharedPtr<QoIOutput> qoi_output;
+    std::shared_ptr<QoIOutput> qoi_output;
 
-    SharedPtr<PostProcessedQuantities<libMesh::Real> > postprocessing;
+    std::shared_ptr<PostProcessedQuantities<libMesh::Real> > postprocessing;
 
-    SharedPtr<libMesh::ErrorEstimator> error_estimator;
+    std::shared_ptr<libMesh::ErrorEstimator> error_estimator;
 
     bool have_restart;
 

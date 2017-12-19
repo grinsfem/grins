@@ -34,7 +34,7 @@
 namespace GRINS
 {
   template<typename FunctionType>
-  SharedPtr<NeumannBCAbstract>
+  std::shared_ptr<NeumannBCAbstract>
   ParsedFunctionNeumannBCFactoryHelper<FunctionType>::build_neumman_func_common( const GetPot& input,
                                                                                  MultiphysicsSystem& system,
                                                                                  const FEVariablesBase& fe_var,
@@ -42,7 +42,7 @@ namespace GRINS
   {
     const std::vector<std::string>& var_names = fe_var.active_var_names();
 
-    SharedPtr<NeumannBCAbstract> func;
+    std::shared_ptr<NeumannBCAbstract> func;
 
     // Use "standard" parsed version if there's only one variable
     if( var_names.size() == 1 )
@@ -70,37 +70,37 @@ namespace GRINS
   }
 
   template<>
-  SharedPtr<NeumannBCAbstract>
+  std::shared_ptr<NeumannBCAbstract>
   ParsedFunctionNeumannBCFactoryHelper<libMesh::FunctionBase<libMesh::Number> >::build_parsed_neumann_func
   (MultiphysicsSystem& /*system*/, const std::string& expression, VariableIndex var_idx )
   {
-    return SharedPtr<NeumannBCAbstract>( new ParsedNeumannBC<libMesh::Number>(expression,var_idx) );
+    return std::shared_ptr<NeumannBCAbstract>( new ParsedNeumannBC<libMesh::Number>(expression,var_idx) );
   }
 
   template<>
-  SharedPtr<NeumannBCAbstract>
+  std::shared_ptr<NeumannBCAbstract>
   ParsedFunctionNeumannBCFactoryHelper<libMesh::FEMFunctionBase<libMesh::Number> >::build_parsed_neumann_func
   (MultiphysicsSystem& system, const std::string& expression, VariableIndex var_idx )
   {
-    return SharedPtr<NeumannBCAbstract>( new ParsedFEMNeumannBC<libMesh::Number>(expression,system,var_idx) );
+    return std::shared_ptr<NeumannBCAbstract>( new ParsedFEMNeumannBC<libMesh::Number>(expression,system,var_idx) );
   }
 
   template<>
-  SharedPtr<NeumannBCAbstract>
+  std::shared_ptr<NeumannBCAbstract>
   ParsedFunctionNeumannBCFactoryHelper<libMesh::FunctionBase<libMesh::Number> >::build_composite_parsed_neumann_func
   (MultiphysicsSystem& /*system*/, const std::vector<std::string>& expressions,
    const std::vector<VariableIndex>& var_indices )
   {
-    return SharedPtr<NeumannBCAbstract>( new CompositeParsedNeumannBC<libMesh::Number>(expressions,var_indices) );
+    return std::shared_ptr<NeumannBCAbstract>( new CompositeParsedNeumannBC<libMesh::Number>(expressions,var_indices) );
   }
 
   template<>
-  SharedPtr<NeumannBCAbstract>
+  std::shared_ptr<NeumannBCAbstract>
   ParsedFunctionNeumannBCFactoryHelper<libMesh::FEMFunctionBase<libMesh::Number> >::build_composite_parsed_neumann_func
   (MultiphysicsSystem& system, const std::vector<std::string>& expressions,
    const std::vector<VariableIndex>& var_indices )
   {
-    return SharedPtr<NeumannBCAbstract>( new CompositeParsedFEMNeumannBC<libMesh::Number>(expressions,var_indices,system) );
+    return std::shared_ptr<NeumannBCAbstract>( new CompositeParsedFEMNeumannBC<libMesh::Number>(expressions,var_indices,system) );
   }
 
   // Instantiate

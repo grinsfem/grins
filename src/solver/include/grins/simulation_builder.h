@@ -42,36 +42,36 @@ namespace GRINS
     SimulationBuilder();
     virtual ~SimulationBuilder(){};
 
-    SharedPtr<libMesh::UnstructuredMesh> build_mesh
+    std::shared_ptr<libMesh::UnstructuredMesh> build_mesh
     ( const GetPot& input,
       const libMesh::Parallel::Communicator &comm
       LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
-    SharedPtr<GRINS::Visualization> build_vis
+    std::shared_ptr<GRINS::Visualization> build_vis
     ( const GetPot& input,
       const libMesh::Parallel::Communicator &comm
       LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
-    SharedPtr<CompositeQoI> build_qoi( const GetPot& input );
+    std::shared_ptr<CompositeQoI> build_qoi( const GetPot& input );
 
-    SharedPtr<PostProcessedQuantities<libMesh::Real> > build_postprocessing( const GetPot& input );
+    std::shared_ptr<PostProcessedQuantities<libMesh::Real> > build_postprocessing( const GetPot& input );
 
-    void attach_mesh_builder( SharedPtr<MeshBuilder> mesh_builder );
+    void attach_mesh_builder( std::shared_ptr<MeshBuilder> mesh_builder );
 
-    void attach_vis_factory( SharedPtr<VisualizationFactory> vis_factory );
+    void attach_vis_factory( std::shared_ptr<VisualizationFactory> vis_factory );
 
-    void attach_qoi_factory( SharedPtr<QoIFactory> qoi_factory );
+    void attach_qoi_factory( std::shared_ptr<QoIFactory> qoi_factory );
 
-    void attach_postprocessing_factory( SharedPtr<PostprocessingFactory> postprocessing_factory );
+    void attach_postprocessing_factory( std::shared_ptr<PostprocessingFactory> postprocessing_factory );
 
     const MeshBuilder& mesh_builder() const;
 
   protected:
 
-    SharedPtr<MeshBuilder> _mesh_builder;
-    SharedPtr<VisualizationFactory> _vis_factory;
-    SharedPtr<QoIFactory> _qoi_factory;
-    SharedPtr<PostprocessingFactory> _postprocessing_factory;
+    std::shared_ptr<MeshBuilder> _mesh_builder;
+    std::shared_ptr<VisualizationFactory> _vis_factory;
+    std::shared_ptr<QoIFactory> _qoi_factory;
+    std::shared_ptr<PostprocessingFactory> _postprocessing_factory;
 
   }; //class SimulationBuilder
 } // namespace GRINS

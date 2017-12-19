@@ -42,10 +42,10 @@ namespace GRINS
 
     ~GasSolidCatalyticWallNeumannBCFactoryImpl(){}
 
-    SharedPtr<NeumannBCAbstract>
+    std::shared_ptr<NeumannBCAbstract>
     build_catalytic_wall( const GetPot& input,
                           const std::string& reaction,
-                          SharedPtr<CatalycityBase>& gamma_ptr,
+                          std::shared_ptr<CatalycityBase>& gamma_ptr,
                           const std::vector<VariableIndex>& species_vars,
                           const std::string& material,
                           VariableIndex T_var,
@@ -60,15 +60,15 @@ namespace GRINS
   protected:
 
     template<typename ChemistryType>
-    void build_wall_ptr( SharedPtr<ChemistryType> & chem_ptr,
-                         SharedPtr<CatalycityBase> & gamma_ptr,
+    void build_wall_ptr( std::shared_ptr<ChemistryType> & chem_ptr,
+                         std::shared_ptr<CatalycityBase> & gamma_ptr,
                          const std::string & gas_reactant,
                          const std::string & solid_reactant,
                          const std::string & product,
                          const std::vector<VariableIndex> & species_vars,
                          VariableIndex T_var,
                          libMesh::Real p0,
-                         SharedPtr<NeumannBCAbstract> & catalytic_wall )
+                         std::shared_ptr<NeumannBCAbstract> & catalytic_wall )
     {
       catalytic_wall.reset( new GasSolidCatalyticWall<ChemistryType>
                             ( chem_ptr,

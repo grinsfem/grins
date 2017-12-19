@@ -40,7 +40,7 @@ namespace GRINS
   {
   public:
     NeumannBCContainer( const std::set<BoundaryID>& bc_ids, const FEVariablesBase& fe_var,
-                        SharedPtr<NeumannBCAbstract>& func )
+                        std::shared_ptr<NeumannBCAbstract>& func )
       : _bc_ids(bc_ids),
         _fe_var(fe_var),
         _func(func)
@@ -54,7 +54,7 @@ namespace GRINS
     const FEVariablesBase& get_fe_var()
     { return _fe_var; }
 
-    SharedPtr<NeumannBCAbstract>& get_func()
+    std::shared_ptr<NeumannBCAbstract>& get_func()
     { return _func; }
 
   private:
@@ -63,7 +63,7 @@ namespace GRINS
 
     const FEVariablesBase& _fe_var;
 
-    SharedPtr<NeumannBCAbstract> _func;
+    std::shared_ptr<NeumannBCAbstract> _func;
   };
 
 } // end namespace GRINS

@@ -29,17 +29,17 @@ namespace GRINS
 {
   namespace GRINSPrivate
   {
-    std::map<std::string,SharedPtr<FEVariablesBase> >& VariableWarehouse::var_map()
+    std::map<std::string,std::shared_ptr<FEVariablesBase> >& VariableWarehouse::var_map()
     {
-      static std::map<std::string,SharedPtr<FEVariablesBase> > _var_map;
+      static std::map<std::string,std::shared_ptr<FEVariablesBase> > _var_map;
       return _var_map;
     }
 
-    SharedPtr<FEVariablesBase> VariableWarehouse::get_variable_ptr( const std::string& var_name )
+    std::shared_ptr<FEVariablesBase> VariableWarehouse::get_variable_ptr( const std::string& var_name )
     {
       if( !VariableWarehouse::is_registered(var_name) )
         {
-          const std::map<std::string,SharedPtr<FEVariablesBase> >& map = var_map();
+          const std::map<std::string,std::shared_ptr<FEVariablesBase> >& map = var_map();
 
           std::stringstream error_msg;
           error_msg << "ERROR: Could not find Variable "+var_name+" in the VariableWarehouse!"
@@ -47,7 +47,7 @@ namespace GRINS
                     << "       Variables currently the VariableWarehouse are: "
                     << (map.begin())->first << std::endl;
 
-          std::map<std::string,SharedPtr<FEVariablesBase> >::const_iterator it = map.begin();
+          std::map<std::string,std::shared_ptr<FEVariablesBase> >::const_iterator it = map.begin();
           it++;
           for( ; it != map.end(); ++it )
             error_msg << std::string(54,' ') << it->first << std::endl;
@@ -55,7 +55,7 @@ namespace GRINS
           libmesh_error_msg(error_msg.str());
         }
 
-      SharedPtr<FEVariablesBase> var_ptr = var_map()[var_name];
+      std::shared_ptr<FEVariablesBase> var_ptr = var_map()[var_name];
 
       if( !var_ptr )
         libmesh_error_msg("ERROR: Variable "+var_name+" is an invalid pointer!");

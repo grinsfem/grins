@@ -51,8 +51,8 @@ namespace GRINS
   {
   public:
 
-    CatalyticWallBase( SharedPtr<Chemistry>& chem,
-                       SharedPtr<CatalycityBase>& gamma,
+    CatalyticWallBase( std::shared_ptr<Chemistry>& chem,
+                       std::shared_ptr<CatalycityBase>& gamma,
                        const std::vector<VariableIndex>& species_vars,
                        VariableIndex T_var,
                        libMesh::Real p0,
@@ -95,12 +95,12 @@ namespace GRINS
     //! Temporary helper to deal with intermediate refactoring
     libMesh::Real eval_gamma_dT( libMesh::Real T ) const;
 
-    SharedPtr<Chemistry> _chem_ptr;
+    std::shared_ptr<Chemistry> _chem_ptr;
 
     //! Deprecated
     const Chemistry& _chemistry;
 
-    SharedPtr<CatalycityBase> _gamma_ptr;
+    std::shared_ptr<CatalycityBase> _gamma_ptr;
 
     //! Deprecated
     std::unique_ptr<CatalycityBase> _gamma_s;

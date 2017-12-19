@@ -52,12 +52,12 @@ namespace GRINS
 
   protected:
 
-    SharedPtr<NeumannBCAbstract>
+    std::shared_ptr<NeumannBCAbstract>
     build_catalytic_wall_common( const GetPot& input,
                                  const FEVariablesBase& fe_var,
                                  const std::string& material,
                                  const std::string& reaction,
-                                 SharedPtr<CatalycityBase>& gamma_ptr,
+                                 std::shared_ptr<CatalycityBase>& gamma_ptr,
                                  libMesh::Real p0,
                                  std::string& thermochem_lib );
 

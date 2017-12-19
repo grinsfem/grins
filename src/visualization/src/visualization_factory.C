@@ -46,7 +46,7 @@ namespace GRINS
     return;
   }
 
-  SharedPtr<Visualization> VisualizationFactory::build
+  std::shared_ptr<Visualization> VisualizationFactory::build
   ( const GetPot& input,
     const libMesh::Parallel::Communicator &comm )
   {
@@ -59,7 +59,7 @@ namespace GRINS
     else
       vis = new SteadyVisualization( input, comm );
 
-    return SharedPtr<Visualization>( vis );
+    return std::shared_ptr<Visualization>( vis );
   }
 
 } // namespace GRINS

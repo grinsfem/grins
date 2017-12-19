@@ -46,7 +46,7 @@ namespace GRINS
     var_builder.build_variables_impl(input,system);
   }
 
-  void VariableBuilder::add_variable_to_warehouse( SharedPtr<FEVariablesBase>& fe_var,
+  void VariableBuilder::add_variable_to_warehouse( std::shared_ptr<FEVariablesBase>& fe_var,
                                                    const std::string& var_name )
   {
     GRINSPrivate::VariableWarehouse::register_variable(var_name,fe_var);
@@ -79,7 +79,7 @@ namespace GRINS
                                               &subdomain_ids );
   }
 
-  SharedPtr<FEVariablesBase> VariableBuilder::build_fe_var( const std::string& var_type,
+  std::shared_ptr<FEVariablesBase> VariableBuilder::build_fe_var( const std::string& var_type,
                                                             const std::vector<std::string>& var_names,
                                                             const std::vector<VariableIndex>&  var_indices,
                                                             const std::set<libMesh::subdomain_id_type>& subdomain_ids )
@@ -91,7 +91,7 @@ namespace GRINS
 
     std::unique_ptr<FEVariablesBase> var = VariableFactoryAbstract::build(var_type);
 
-    // Need to return a SharedPtr, so release from the UniquePtr we got back
-    return SharedPtr<FEVariablesBase>( var.release() );
+    // Need to return a std::shared_ptr, so release from the UniquePtr we got back
+    return std::shared_ptr<FEVariablesBase>( var.release() );
   }
 } // end namespace GRINS

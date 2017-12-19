@@ -50,7 +50,7 @@ namespace GRINS
   protected:
 
     virtual void build_bcs( const GetPot& input, MultiphysicsSystem& system,
-                            std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+                            std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs );
 
   private:
 
@@ -71,7 +71,7 @@ namespace GRINS
                                   const std::string& bc_value_str,
                                   const std::string& bc_var_str,
                                   libMesh::DofMap& dof_map,
-                                  std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+                                  std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs );
 
     void build_basic_physics( std::set<std::string>& physics_names );
 

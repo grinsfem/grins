@@ -40,7 +40,7 @@ namespace GRINS
 {
   void BCBuilder::build_boundary_conditions( const GetPot& input,
                                              MultiphysicsSystem& system,
-                                             std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
+                                             std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs )
   {
     std::unique_ptr<BCBuilder>
       bc_builder = BCBuilder::build_builder(input);
@@ -109,7 +109,7 @@ namespace GRINS
                                       const FEVariablesBase& fe_var,
                                       const std::string& section,
                                       const std::string& bc_type,
-                                      std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
+                                      std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs )
   {
     // Give the BC factory access to the System
     NeumannBCFactoryAbstract::set_system( system );
@@ -133,7 +133,7 @@ namespace GRINS
     // Get nothing if it's a homogeneous Neumann BC
     // so only try to add it if something was built.
     if(nbc)
-      neumann_bcs.push_back(nbc.release());
+      neumann_bcs.push_back(std::move(nbc));
   }
 
   bool BCBuilder::is_dirichlet_bc_type( const std::string& bc_type )

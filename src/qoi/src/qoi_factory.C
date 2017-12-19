@@ -63,7 +63,7 @@ namespace GRINS
     return;
   }
 
-  SharedPtr<CompositeQoI> QoIFactory::build(const GetPot& input)
+  std::shared_ptr<CompositeQoI> QoIFactory::build(const GetPot& input)
   {
     std::string qoi_list = input("QoI/enabled_qois", "none" );
 
@@ -74,7 +74,7 @@ namespace GRINS
         StringUtilities::split_string( qoi_list, std::string(" "), qoi_names );
       }
 
-    SharedPtr<CompositeQoI> qois( new CompositeQoI );
+    std::shared_ptr<CompositeQoI> qois( new CompositeQoI );
 
     if( !qoi_names.empty() )
       {
@@ -95,7 +95,7 @@ namespace GRINS
     return qois;
   }
 
-  void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, SharedPtr<CompositeQoI>& qois )
+  void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, std::shared_ptr<CompositeQoI>& qois )
   {
     QoIBase* qoi = NULL;
 
@@ -134,7 +134,8 @@ namespace GRINS
 
         unsigned int p_level = input("QoI/IntegratedFunction/quadrature_level", 2);
 
-        SharedPtr<libMesh::FunctionBase<libMesh::Real> > f = new libMesh::ParsedFunction<libMesh::Real>(function);
+        std::shared_ptr<libMesh::FunctionBase<libMesh::Real> >
+          f( new libMesh::ParsedFunction<libMesh::Real>(function) );
 
         qoi =  new IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >(input,p_level,f,"IntegratedFunction",integrated_function);
       }
@@ -161,12 +162,10 @@ namespace GRINS
         else
           libmesh_error_msg("ERROR: Could not find tenmperature range specification for partition functions: "+partition_temp_var+" 'T_min T_max T_step'");
 
-        SharedPtr<HITRAN> hitran( new HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
+        std::shared_ptr<HITRAN> hitran( new HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
 
         std::string species;
         this->get_var_value<std::string>(input,species,"QoI/SpectroscopicAbsorption/species_of_interest","");
-
-        SharedPtr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb;
 
         libMesh::Real thermo_pressure = -1.0;
         bool calc_thermo_pressure = input("QoI/SpectroscopicAbsorption/calc_thermo_pressure", false );
@@ -184,18 +183,20 @@ namespace GRINS
 
         ChemistryBuilder chem_builder;
 
+        std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb;
+
 #if GRINS_HAVE_ANTIOCH
         std::unique_ptr<AntiochChemistry> chem_ptr;
         chem_builder.build_chemistry(input,material,chem_ptr);
-        SharedPtr<AntiochChemistry> chem(chem_ptr.release());
+        std::shared_ptr<AntiochChemistry> chem(chem_ptr.release());
 
-        absorb = new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure);
+        absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure) );
 #elif GRINS_HAVE_CANTERA
         std::unique_ptr<CanteraMixture> chem_ptr;
         chem_builder.build_chemistry(input,material,chem_ptr);
-        SharedPtr<CanteraMixture> chem(chem_ptr.release());
+        std::shared_ptr<CanteraMixture> chem(chem_ptr.release());
 
-        absorb = new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure);
+        absorb.reset( new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure) );
 #else
         libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
@@ -245,7 +246,7 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::echo_qoi_list( SharedPtr<CompositeQoI>& qois )
+  void QoIFactory::echo_qoi_list( std::shared_ptr<CompositeQoI>& qois )
   {
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
     std::cout << "==========================================================" << std::endl

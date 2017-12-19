@@ -47,7 +47,7 @@ namespace GRINS
 
   protected:
 
-    virtual SharedPtr<NeumannBCAbstract>
+    virtual std::shared_ptr<NeumannBCAbstract>
     build_neumann_func( const GetPot& input,
                         MultiphysicsSystem& system,
                         const FEVariablesBase& fe_var,
@@ -61,7 +61,7 @@ namespace GRINS
     libMesh::Real parse_thermo_pressure( const GetPot& input,
                                          const std::string& material ) const;
 
-    SharedPtr<CatalycityBase>
+    std::shared_ptr<CatalycityBase>
     build_catalycity( const GetPot& input,
                       const std::string& section,
                       const std::string& reactant ) const;

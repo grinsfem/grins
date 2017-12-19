@@ -45,18 +45,18 @@ namespace GRINS
 
     virtual ~QoIFactory();
 
-    virtual SharedPtr<CompositeQoI> build(const GetPot& input);
+    virtual std::shared_ptr<CompositeQoI> build(const GetPot& input);
 
   protected:
 
     virtual void add_qoi( const GetPot& input,
                           const std::string& qoi_name,
-                          SharedPtr<CompositeQoI>& qois );
+                          std::shared_ptr<CompositeQoI>& qois );
 
     virtual void check_qoi_physics_consistency( const GetPot& input,
                                                 const std::string& qoi_name );
 
-    virtual void echo_qoi_list( SharedPtr<CompositeQoI>& qois );
+    virtual void echo_qoi_list( std::shared_ptr<CompositeQoI>& qois );
 
     void consistency_helper( const std::set<std::string>& requested_physics,
                              const std::set<std::string>& required_physics,

@@ -41,15 +41,15 @@ namespace GRINS
 {
   // To avoid compiler warnings without GRINS or Cantera
 #if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
-  SharedPtr<NeumannBCAbstract>
+  std::shared_ptr<NeumannBCAbstract>
   GasSolidCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
-  ( const GetPot& input, const std::string& reaction,SharedPtr<CatalycityBase>& gamma_ptr,
+  ( const GetPot& input, const std::string& reaction,std::shared_ptr<CatalycityBase>& gamma_ptr,
     const std::vector<VariableIndex>& species_vars,const std::string& material,
     VariableIndex T_var,libMesh::Real p0,const std::string& thermochem_lib )
 #else
-    SharedPtr<NeumannBCAbstract>
+    std::shared_ptr<NeumannBCAbstract>
     GasSolidCatalyticWallNeumannBCFactoryImpl::build_catalytic_wall
-                                              ( const GetPot& /*input*/, const std::string& reaction,SharedPtr<CatalycityBase>& /*gamma_ptr*/,
+                                              ( const GetPot& /*input*/, const std::string& reaction,std::shared_ptr<CatalycityBase>& /*gamma_ptr*/,
                                                 const std::vector<VariableIndex>& /*species_vars*/,const std::string& /*material*/,
                                                 VariableIndex /*T_var*/,libMesh::Real /*p0*/,const std::string& thermochem_lib )
 #endif
@@ -60,7 +60,7 @@ namespace GRINS
     this->parse_reactants_and_product(reaction,gas_reactant,solid_reactant,product);
 
     // Now construct the Neumann BC
-    SharedPtr<NeumannBCAbstract> catalytic_wall;
+    std::shared_ptr<NeumannBCAbstract> catalytic_wall;
 
     ChemistryBuilder chem_builder;
 
@@ -71,7 +71,7 @@ namespace GRINS
         chem_builder.build_chemistry(input,material,chem_uptr);
 
         /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
-        SharedPtr<CanteraMixture> chem_ptr(chem_uptr.release());
+        std::shared_ptr<CanteraMixture> chem_ptr(chem_uptr.release());
 
         this->build_wall_ptr<CanteraMixture>(chem_ptr,gamma_ptr,gas_reactant,solid_reactant,
                                              product,species_vars,T_var,p0,catalytic_wall);
@@ -86,7 +86,7 @@ namespace GRINS
         chem_builder.build_chemistry(input,material,chem_uptr);
 
         /*! \todo Update the API for the catalytic walls to take a unique_ptr to avoid this garbage.*/
-        SharedPtr<AntiochChemistry> chem_ptr(chem_uptr.release());
+        std::shared_ptr<AntiochChemistry> chem_ptr(chem_uptr.release());
 
         this->build_wall_ptr<AntiochChemistry>(chem_ptr,gamma_ptr,gas_reactant,solid_reactant,
                                                product,species_vars,T_var,p0,catalytic_wall);

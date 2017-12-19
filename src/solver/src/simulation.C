@@ -178,7 +178,7 @@ namespace GRINS
   void Simulation::init_qois( const GetPot& input, SimulationBuilder& sim_builder )
   {
     // If the user actually asks for a QoI, then we add it.
-    SharedPtr<CompositeQoI> qois = sim_builder.build_qoi( input );
+    std::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
     if( qois->n_qois() > 0 )
       {
         // This *must* be done after equation_system->init in order to get variable indices
@@ -390,7 +390,7 @@ namespace GRINS
     return;
   }
 
-  SharedPtr<libMesh::EquationSystems> Simulation::get_equation_system()
+  std::shared_ptr<libMesh::EquationSystems> Simulation::get_equation_system()
   {
     return _equation_system;
   }
