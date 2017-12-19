@@ -1,4 +1,5 @@
 Version 0.9.0 (in progress)
+   * C++11 compiler now required
 
 Version 0.8.0
    * Minimum libMesh git hash for this release is: 8be0a4e
