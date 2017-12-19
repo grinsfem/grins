@@ -48,17 +48,17 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
-                                                                           const std::string& section,
-                                                                           const std::string& reactant_str,
-                                                                           const std::string& bc_id_string )
+    virtual std::unique_ptr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
+                                                                        const std::string& section,
+                                                                        const std::string& reactant_str,
+                                                                        const std::string& bc_id_string )
     {
       std::string gamma_str = section+"/gamma_"+reactant_str+"_"+bc_id_string;
       if( !input.have_variable(gamma_str) )
         libmesh_error_msg("ERROR: Could not find input "+gamma_str+" for ConstantCatalycity!\n");
 
       libMesh::Real gamma = input(gamma_str, std::numeric_limits<libMesh::Real>::max());
-      return libMesh::UniquePtr<CatalycityBase>( new ConstantCatalycity( gamma ) );
+      return std::unique_ptr<CatalycityBase>( new ConstantCatalycity( gamma ) );
     }
   };
 
@@ -74,10 +74,10 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
-                                                                           const std::string& section,
-                                                                           const std::string& reactant_str,
-                                                                           const std::string& bc_id_string )
+    virtual std::unique_ptr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
+                                                                        const std::string& section,
+                                                                        const std::string& reactant_str,
+                                                                        const std::string& bc_id_string )
     {
       std::string gamma_str = section+"/gamma0_"+reactant_str+"_"+bc_id_string;
       if( !input.have_variable(gamma_str) )
@@ -90,7 +90,7 @@ namespace GRINS
       libMesh::Real gamma = input(gamma_str, std::numeric_limits<libMesh::Real>::max());
       libMesh::Real Ta = input(Ta_str, std::numeric_limits<libMesh::Real>::max());
 
-      return libMesh::UniquePtr<CatalycityBase>( new ArrheniusCatalycity( gamma, Ta ) );
+      return std::unique_ptr<CatalycityBase>( new ArrheniusCatalycity( gamma, Ta ) );
     }
   };
 
@@ -106,10 +106,10 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
-                                                                           const std::string& section,
-                                                                           const std::string& reactant_str,
-                                                                           const std::string& bc_id_string )
+    virtual std::unique_ptr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
+                                                                        const std::string& section,
+                                                                        const std::string& reactant_str,
+                                                                        const std::string& bc_id_string )
     {
       std::string gamma_str = section+"/gamma0_"+reactant_str+"_"+bc_id_string;
       if( !input.have_variable(gamma_str) )
@@ -127,7 +127,7 @@ namespace GRINS
       libMesh::Real Tref = input(Tref_str, std::numeric_limits<libMesh::Real>::max());
       libMesh::Real alpha = input(alpha_str, std::numeric_limits<libMesh::Real>::max());
 
-      return libMesh::UniquePtr<CatalycityBase>( new PowerLawCatalycity( gamma, Tref, alpha ) );
+      return std::unique_ptr<CatalycityBase>( new PowerLawCatalycity( gamma, Tref, alpha ) );
     }
   };
 

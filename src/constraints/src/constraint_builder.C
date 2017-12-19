@@ -34,7 +34,7 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<libMesh::System::Constraint>
+  std::unique_ptr<libMesh::System::Constraint>
   ConstraintBuilder::build_constraint_object( const GetPot& input,
                                               MultiphysicsSystem& system )
   {
@@ -45,7 +45,7 @@ namespace GRINS
     // If we ever want to add more constraint object options, we'll
     // also need a MultiConstraint object to hold them.
 
-    return libMesh::UniquePtr<libMesh::System::Constraint>
+    return std::unique_ptr<libMesh::System::Constraint>
       (new ConstrainedPoints(input, system));
   }
 } // end namespace GRINS

@@ -32,7 +32,7 @@
 
 // libMesh
 #include "libmesh/libmesh_common.h" // libmesh_error_msg()
-#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
+#include "libmesh/auto_ptr.h" // std::unique_ptr
 
 namespace GRINS
 {
@@ -49,10 +49,10 @@ namespace GRINS
     virtual ~FactoryAbstract(){}
 
     //! Use this method to build objects of type Base.
-    static libMesh::UniquePtr<Base> build(const std::string & name);
+    static std::unique_ptr<Base> build(const std::string & name);
 
     //! Subclasses implement the actual construction of the Base object in create().
-    virtual libMesh::UniquePtr<Base> create () = 0;
+    virtual std::unique_ptr<Base> create () = 0;
 
   protected:
 
@@ -83,7 +83,7 @@ namespace GRINS
 
   template <class Base>
   inline
-  libMesh::UniquePtr<Base> FactoryAbstract<Base>::build(const std::string & name)
+  std::unique_ptr<Base> FactoryAbstract<Base>::build(const std::string & name)
   {
     FactoryAbstract<Base>& factory = get_factory(name);
     return factory.create();

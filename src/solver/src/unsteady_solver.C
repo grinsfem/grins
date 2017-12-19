@@ -98,12 +98,12 @@ namespace GRINS
         outer_solver->quiet = false;
 
         outer_solver->core_time_solver =
-          libMesh::UniquePtr<libMesh::UnsteadySolver>(time_solver);
-        system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(outer_solver);
+          std::unique_ptr<libMesh::UnsteadySolver>(time_solver);
+        system->time_solver = std::unique_ptr<libMesh::TimeSolver>(outer_solver);
       }
     else
       {
-        system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(time_solver);
+        system->time_solver = std::unique_ptr<libMesh::TimeSolver>(time_solver);
       }
 
     time_solver->reduce_deltat_on_diffsolver_failure = this->_backtrack_deltat;

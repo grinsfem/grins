@@ -57,13 +57,13 @@ namespace GRINS
       is deferred to subclasses of this factory and should
       be implemented in the build_neumann_func method.
 
-      Note that an empty libMesh::UniquePtr<NeumannBCContainer>
+      Note that an empty std::unique_ptr<NeumannBCContainer>
       may be returned from create() if the parsed boundary condition
       type is a homogeneous one.  This is allowed since we force
       the user to specify boundary conditions for every
       Variable, for every boundary in the hopes of reducing input
       file errors at runtime. */
-    virtual libMesh::UniquePtr<NeumannBCContainer> create();
+    virtual std::unique_ptr<NeumannBCContainer> create();
 
   protected:
 

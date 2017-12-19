@@ -41,7 +41,7 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Solver> build_solver( const GetPot & input );
+    virtual std::unique_ptr<Solver> build_solver( const GetPot & input );
 
   private:
 
@@ -50,10 +50,10 @@ namespace GRINS
 
   template<typename DerivedSolver>
   inline
-  libMesh::UniquePtr<Solver>
+  std::unique_ptr<Solver>
   SolverFactoryBasic<DerivedSolver>::build_solver( const GetPot & input )
   {
-    return libMesh::UniquePtr<Solver>( new DerivedSolver(input) );
+    return std::unique_ptr<Solver>( new DerivedSolver(input) );
   }
 
 } // end namespace GRINS

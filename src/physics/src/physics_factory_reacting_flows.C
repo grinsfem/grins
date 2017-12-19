@@ -24,8 +24,8 @@
 namespace GRINS
 {
   template<template<typename,typename> class DerivedPhysics>
-  libMesh::UniquePtr<Physics> PhysicsFactoryReactingFlows<DerivedPhysics>::build_physics( const GetPot& input,
-                                                                                          const std::string& physics_name )
+  std::unique_ptr<Physics> PhysicsFactoryReactingFlows<DerivedPhysics>::build_physics( const GetPot& input,
+                                                                                       const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 
@@ -36,12 +36,12 @@ namespace GRINS
                                                        core_physics,
                                                        thermochem_lib );
 
-    libMesh::UniquePtr<Physics> new_physics;
+    std::unique_ptr<Physics> new_physics;
 
     if( thermochem_lib == "cantera" )
       {
 #ifdef GRINS_HAVE_CANTERA
-        libMesh::UniquePtr<CanteraMixture> gas_mix( new CanteraMixture(input,material) );
+        std::unique_ptr<CanteraMixture> gas_mix( new CanteraMixture(input,material) );
 
         new_physics.reset(new DerivedPhysics<CanteraMixture,CanteraEvaluator>(physics_name,input,gas_mix));
 #else
@@ -115,7 +115,7 @@ namespace GRINS
   build_mix_avged_physics( const GetPot & input, const std::string & physics_name, const std::string & material,
                            const std::string & thermo_model, const std::string & diffusivity_model,
                            const std::string & conductivity_model, const std::string & viscosity_model,
-                           libMesh::UniquePtr<Physics> & new_physics )
+                           std::unique_ptr<Physics> & new_physics )
   {
     if( (thermo_model == AntiochOptions::stat_mech_thermo_model()) )
       {
@@ -146,7 +146,7 @@ namespace GRINS
   build_const_physics( const GetPot & input, const std::string & physics_name, const std::string & material,
                        const std::string & thermo_model, const std::string & diffusivity_model,
                        const std::string & conductivity_model, const std::string & viscosity_model,
-                       libMesh::UniquePtr<Physics> & new_physics )
+                       std::unique_ptr<Physics> & new_physics )
   {
     // First check the things we must have for constant transport models
     if( viscosity_model != AntiochOptions::constant_viscosity_model() )

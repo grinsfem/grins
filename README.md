@@ -25,7 +25,7 @@ Dependencies
 Requirements
 ------------
 
-In addition to a modern C++ compiler, GRINS requires an up-to-date installation of the [libMesh](https://github.com/libMesh/libmesh.git) finite element library. If your C++ compiler does not support smart pointers, than the Boost C++ library is also required (header only).
+In addition to a C++11 compiler, GRINS requires an up-to-date installation of the [libMesh](https://github.com/libMesh/libmesh.git) finite element library. 
 
 libMesh
 -------

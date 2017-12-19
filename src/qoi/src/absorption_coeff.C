@@ -181,15 +181,15 @@ namespace GRINS
     std::vector<libMesh::Point> qp(1);
     qp[0] = qp_ref;
 
-    libMesh::UniquePtr< libMesh::FEBase > T_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_T_var.T())->get_fe_type() );
+    std::unique_ptr< libMesh::FEBase > T_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_T_var.T())->get_fe_type() );
     const std::vector<std::vector<libMesh::Real> > & T_phi =T_fe->get_phi();
     T_fe->reinit(&(context.get_elem()),&qp);
 
-    libMesh::UniquePtr< libMesh::FEBase > P_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_P_var.p())->get_fe_type() );
+    std::unique_ptr< libMesh::FEBase > P_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_P_var.p())->get_fe_type() );
     const std::vector<std::vector<libMesh::Real> > & P_phi = P_fe->get_phi();
     P_fe->reinit(&(context.get_elem()),&qp);
 
-    libMesh::UniquePtr< libMesh::FEBase > Ys_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_Y_var.species(_species_idx))->get_fe_type() );
+    std::unique_ptr< libMesh::FEBase > Ys_fe = libMesh::FEGenericBase<libMesh::Real>::build(context.get_elem().dim(), context.get_element_fe(_Y_var.species(_species_idx))->get_fe_type() );
     const std::vector<std::vector<libMesh::Real> > & Ys_phi = Ys_fe->get_phi();
     Ys_fe->reinit(&(context.get_elem()),&qp);
 
@@ -234,7 +234,7 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Real> > AbsorptionCoeff<Chemistry>::clone() const
+  std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Real> > AbsorptionCoeff<Chemistry>::clone() const
   {
     libmesh_not_implemented();
   }

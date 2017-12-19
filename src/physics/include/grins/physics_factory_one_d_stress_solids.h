@@ -45,15 +45,15 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+    virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
+                                                    const std::string& physics_name );
 
   };
 
   template<template<typename> class DerivedPhysics>
   inline
-  libMesh::UniquePtr<Physics> PhysicsFactoryOneDStressSolids<DerivedPhysics>::build_physics( const GetPot& input,
-                                                                                             const std::string& physics_name )
+  std::unique_ptr<Physics> PhysicsFactoryOneDStressSolids<DerivedPhysics>::build_physics( const GetPot& input,
+                                                                                          const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
 
@@ -65,7 +65,7 @@ namespace GRINS
                                                      model,
                                                      strain_energy );
 
-    libMesh::UniquePtr<Physics> new_physics;
+    std::unique_ptr<Physics> new_physics;
 
     if( model == std::string("hookes_law") )
       {

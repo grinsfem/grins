@@ -43,7 +43,7 @@ namespace GRINS
 #ifdef GRINS_HAVE_CANTERA
   template<>
   void ChemistryBuilder::build_chemistry(const GetPot & input,const std::string & material,
-                                         libMesh::UniquePtr<CanteraMixture> & chem_ptr )
+                                         std::unique_ptr<CanteraMixture> & chem_ptr )
   {
     chem_ptr.reset( new CanteraMixture(input,material) );
   }
@@ -52,11 +52,11 @@ namespace GRINS
 #ifdef GRINS_HAVE_ANTIOCH
   template<>
   void ChemistryBuilder::build_chemistry(const GetPot & input,const std::string & material,
-                                         libMesh::UniquePtr<AntiochChemistry> & chem_ptr )
+                                         std::unique_ptr<AntiochChemistry> & chem_ptr )
   {
     AntiochMixtureBuilderBase builder;
 
-    libMesh::UniquePtr<Antioch::ChemicalMixture<libMesh::Real> > antioch_chem_mix
+    std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > antioch_chem_mix
       = builder.build_chem_mix(input,material);
 
     chem_ptr.reset( new AntiochChemistry(antioch_chem_mix) );

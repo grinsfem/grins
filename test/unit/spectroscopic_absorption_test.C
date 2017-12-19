@@ -112,7 +112,7 @@ namespace GRINSTesting
       libMesh::Real nu_min = 3682.69;
       libMesh::Real nu_max = 3682.8;
       GRINS::ChemistryBuilder chem_builder;
-      libMesh::UniquePtr<GRINS::AntiochChemistry> chem_ptr;
+      std::unique_ptr<GRINS::AntiochChemistry> chem_ptr;
       chem_builder.build_chemistry(*(_input.get()),material,chem_ptr);
       GRINS::SharedPtr<GRINS::AntiochChemistry> chem(chem_ptr.release());
       GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> > absorb = new AbsorptionCoeffTesting<GRINS::AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure);

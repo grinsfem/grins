@@ -88,11 +88,11 @@ namespace GRINS
     /**
      * Returns a new copy of the accessor.
      */
-    virtual libMesh::UniquePtr<ParameterAccessor<libMesh::Number> > clone() const {
+    virtual std::unique_ptr<ParameterAccessor<libMesh::Number> > clone() const {
       // Default shallow copy works for this class
       ParameterAntiochReset *par = new ParameterAntiochReset(*this);
 
-      return libMesh::UniquePtr<ParameterAccessor<libMesh::Number> >(par);
+      return std::unique_ptr<ParameterAccessor<libMesh::Number> >(par);
     }
 
   private:

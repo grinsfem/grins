@@ -46,7 +46,7 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> >
+  std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >
   ConstantFunctionDirichletBCFactory::build_func( const GetPot& input,
                                                   MultiphysicsSystem& system,
                                                   std::vector<std::string>& var_names,
@@ -55,7 +55,7 @@ namespace GRINS
     libmesh_assert( !var_names.empty() );
 
     //! This is really a "composite" function. We'll cast in the helper functions.
-    libMesh::UniquePtr<libMesh::FunctionBase<libMesh::Number> > all_funcs;
+    std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > all_funcs;
 
     // We're given the active variables in var_names. Let's first check
     // which ones the user actually set in the input file.
@@ -264,7 +264,7 @@ namespace GRINS
     /*! \todo We should have a ChemsitryWarehouse or something to just grab this from one place
       instead of rebuilding. */
     ChemistryBuilder chem_builder;
-    libMesh::UniquePtr<ChemistryType> chem_ptr;
+    std::unique_ptr<ChemistryType> chem_ptr;
     chem_builder.build_chemistry(input,material,chem_ptr);
 
     const ChemistryType & chem = *chem_ptr;

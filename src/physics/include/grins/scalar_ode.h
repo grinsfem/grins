@@ -83,7 +83,7 @@ namespace GRINS
 
     // ParsedFEMFunctions evaluating the mass, time derivative, and
     // constraint components of an ODE.
-    libMesh::UniquePtr<libMesh::FEMFunctionBase<libMesh::Number> >
+    std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
     time_deriv_function,
       constraint_function,
       mass_residual_function;

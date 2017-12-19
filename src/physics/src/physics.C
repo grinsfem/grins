@@ -140,9 +140,9 @@ namespace GRINS
     return;
   }
 
-  libMesh::UniquePtr<libMesh::FEGenericBase<libMesh::Real> > Physics::build_new_fe( const libMesh::Elem* elem,
-                                                                                    const libMesh::FEGenericBase<libMesh::Real>* fe,
-                                                                                    const libMesh::Point p )
+  std::unique_ptr<libMesh::FEGenericBase<libMesh::Real> > Physics::build_new_fe( const libMesh::Elem* elem,
+                                                                                 const libMesh::FEGenericBase<libMesh::Real>* fe,
+                                                                                 const libMesh::Point p )
   {
     using namespace libMesh;
     FEType fe_type = fe->get_fe_type();
@@ -154,7 +154,7 @@ namespace GRINS
 
     unsigned int elem_dim = elem ? elem->dim() : 0;
 
-    UniquePtr<FEGenericBase<libMesh::Real> >
+    std::unique_ptr<FEGenericBase<libMesh::Real> >
       fe_new(FEGenericBase<libMesh::Real>::build(elem_dim, fe_type));
 
     // Map the physical co-ordinates to the master co-ordinates using the inverse_map from fe_interface.h

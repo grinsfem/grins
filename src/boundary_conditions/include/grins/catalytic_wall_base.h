@@ -33,7 +33,7 @@
 
 // libMesh
 #include "libmesh/libmesh_common.h"
-#include "libmesh/auto_ptr.h" // libMesh::UniquePtr
+#include "libmesh/auto_ptr.h" // std::unique_ptr
 
 namespace libMesh
 {
@@ -103,7 +103,7 @@ namespace GRINS
     SharedPtr<CatalycityBase> _gamma_ptr;
 
     //! Deprecated
-    libMesh::UniquePtr<CatalycityBase> _gamma_s;
+    std::unique_ptr<CatalycityBase> _gamma_s;
 
     //! \f$ \sqrt{ \frac{R_s}{2\pi} } \f$
     const libMesh::Real _C;

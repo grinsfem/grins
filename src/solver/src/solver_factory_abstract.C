@@ -27,7 +27,7 @@
 
 namespace GRINS
 {
-  libMesh::UniquePtr<Solver> SolverFactoryAbstract::create()
+  std::unique_ptr<Solver> SolverFactoryAbstract::create()
   {
     if( !this->_input )
       libmesh_error_msg("ERROR: must call set_getpot() before building boundary condition!");

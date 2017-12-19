@@ -61,9 +61,9 @@ namespace GRINS
   protected:
 
     //! Subclasses implement this method for building the ErrorEstimator object.
-    virtual libMesh::UniquePtr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
-                                                                               MultiphysicsSystem& system,
-                                                                               const ErrorEstimatorOptions& estimator_options ) =0;
+    virtual std::unique_ptr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
+                                                                            MultiphysicsSystem& system,
+                                                                            const ErrorEstimatorOptions& estimator_options ) =0;
 
     //! Cache pointer to system
     /*! We can't copy this so it must be a pointer. We do *not* own
@@ -76,12 +76,12 @@ namespace GRINS
 
   private:
 
-    virtual libMesh::UniquePtr<libMesh::ErrorEstimator> create();
+    virtual std::unique_ptr<libMesh::ErrorEstimator> create();
 
   };
 
   inline
-  libMesh::UniquePtr<libMesh::ErrorEstimator> ErrorEstimatorFactoryBase::create()
+  std::unique_ptr<libMesh::ErrorEstimator> ErrorEstimatorFactoryBase::create()
   {
     if( !_input )
       libmesh_error_msg("ERROR: must call set_getpot() before building ErrorEstimator!");
@@ -90,7 +90,7 @@ namespace GRINS
     if( !_estimator_options )
       libmesh_error_msg("ERROR: must call set_estimator_options() before building ErrorEstimator!");
 
-    libMesh::UniquePtr<libMesh::ErrorEstimator>
+    std::unique_ptr<libMesh::ErrorEstimator>
       new_estimator = this->build_error_estimator( *_input, *_system, *_estimator_options );
 
     libmesh_assert(new_estimator);

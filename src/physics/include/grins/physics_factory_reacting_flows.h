@@ -50,8 +50,8 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+    virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
+                                                    const std::string& physics_name );
 
     void grins_antioch_model_error_msg( const std::string& viscosity_model,
                                         const std::string& conductivity_model,
@@ -63,13 +63,13 @@ namespace GRINS
                                   const std::string & material,
                                   const std::string & thermo_model, const std::string & diffusivity_model,
                                   const std::string & conductivity_model, const std::string & viscosity_model,
-                                  libMesh::UniquePtr<Physics> & new_physics );
+                                  std::unique_ptr<Physics> & new_physics );
 
     void build_const_physics( const GetPot & input, const std::string & physics_name,
                               const std::string & material,
                               const std::string & thermo_model, const std::string & diffusivity_model,
                               const std::string & conductivity_model, const std::string & viscosity_model,
-                              libMesh::UniquePtr<Physics> & new_physics );
+                              std::unique_ptr<Physics> & new_physics );
 
 #ifdef GRINS_HAVE_ANTIOCH
     template<typename KineticsThermo,typename Thermo>
@@ -78,7 +78,7 @@ namespace GRINS
                                               const std::string & diffusivity_model,
                                               const std::string & conductivity_model,
                                               const std::string & viscosity_model,
-                                              libMesh::UniquePtr<Physics> & new_physics )
+                                              std::unique_ptr<Physics> & new_physics )
     {
       if( (diffusivity_model == AntiochOptions::constant_lewis_diffusivity_model()) &&
           (conductivity_model == AntiochOptions::eucken_conductivity_model()) &&
@@ -121,7 +121,7 @@ namespace GRINS
     template<typename KineticsThermo,typename Thermo>
     void build_const_physics_with_thermo( const GetPot & input, const std::string & physics_name,
                                           const std::string & material, const std::string & conductivity_model,
-                                          libMesh::UniquePtr<Physics> & new_physics )
+                                          std::unique_ptr<Physics> & new_physics )
     {
       if( conductivity_model == AntiochOptions::constant_conductivity_model() )
         {
@@ -145,11 +145,11 @@ namespace GRINS
 
     template<typename KineticsThermo,typename Thermo,typename Viscosity,typename Conductivity,typename Diffusivity>
     void build_mix_avged_physics_ptr( const GetPot& input, const std::string& physics_name,
-                                      const std::string & material, libMesh::UniquePtr<Physics> & new_physics )
+                                      const std::string & material, std::unique_ptr<Physics> & new_physics )
     {
       AntiochMixtureAveragedTransportMixtureBuilder mix_builder;
 
-      libMesh::UniquePtr<AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
+      std::unique_ptr<AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity> >
         gas_mixture = mix_builder.build_mixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>(input,material);
 
       new_physics.reset(new DerivedPhysics<AntiochMixtureAveragedTransportMixture<KineticsThermo,Thermo,Viscosity,Conductivity,Diffusivity>,
@@ -159,11 +159,11 @@ namespace GRINS
 
     template<typename KineticsThermo,typename Thermo,typename Conductivity>
     void build_const_physics_ptr( const GetPot& input, const std::string& physics_name,
-                                  const std::string & material, libMesh::UniquePtr<Physics> & new_physics )
+                                  const std::string & material, std::unique_ptr<Physics> & new_physics )
     {
       AntiochConstantTransportMixtureBuilder mix_builder;
 
-      libMesh::UniquePtr<GRINS::AntiochConstantTransportMixture<KineticsThermo,Conductivity> >
+      std::unique_ptr<GRINS::AntiochConstantTransportMixture<KineticsThermo,Conductivity> >
         gas_mixture = mix_builder.build_mixture<KineticsThermo,Conductivity>(input,material);
 
       new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<KineticsThermo,Conductivity>,

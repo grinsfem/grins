@@ -34,7 +34,7 @@
 namespace GRINS
 {
   template<typename FunctionType>
-  libMesh::UniquePtr<FunctionType>
+  std::unique_ptr<FunctionType>
   ParsedFunctionDirichletOldStyleBCFactory<FunctionType>::build_func( const GetPot& input,
                                                                       MultiphysicsSystem& system,
                                                                       std::vector<std::string>& var_names,
@@ -47,7 +47,7 @@ namespace GRINS
     std::string section_str = section+"/"+DirichletBCFactoryFunctionOldStyleBase<FunctionType>::_value_var_old_style;
     std::string expression = input(section_str,"DIE!",DirichletBCFactoryFunctionOldStyleBase<FunctionType>::_value_idx_old_style);
 
-    libMesh::UniquePtr<FunctionType> all_funcs = this->build_composite_func();
+    std::unique_ptr<FunctionType> all_funcs = this->build_composite_func();
 
     typedef typename TypeFrom<FunctionType>::to_composite composite_type;
     composite_type * composite_func =

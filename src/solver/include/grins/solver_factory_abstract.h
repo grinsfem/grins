@@ -46,11 +46,11 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Solver> build_solver( const GetPot & input ) =0;
+    virtual std::unique_ptr<Solver> build_solver( const GetPot & input ) =0;
 
   private:
 
-    virtual libMesh::UniquePtr<Solver> create();
+    virtual std::unique_ptr<Solver> create();
 
     SolverFactoryAbstract();
   };

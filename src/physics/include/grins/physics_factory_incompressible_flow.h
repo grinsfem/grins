@@ -47,8 +47,8 @@ namespace GRINS
 
   protected:
 
-    virtual libMesh::UniquePtr<Physics> build_physics( const GetPot& input,
-                                                       const std::string& physics_name );
+    virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
+                                                    const std::string& physics_name );
 
     void visc_error_msg( const std::string& physics, const std::string& viscosity ) const;
 
@@ -56,7 +56,7 @@ namespace GRINS
 
   template<template<typename> class DerivedPhysics>
   inline
-  libMesh::UniquePtr<Physics>
+  std::unique_ptr<Physics>
   PhysicsFactoryIncompressibleFlow<DerivedPhysics>::build_physics
   ( const GetPot& input, const std::string& physics_name )
   {
@@ -65,7 +65,7 @@ namespace GRINS
     std::string viscosity;
     PhysicsFactoryHelper::parse_viscosity_model(input,core_physics,viscosity);
 
-    libMesh::UniquePtr<Physics> new_physics;
+    std::unique_ptr<Physics> new_physics;
 
     if( viscosity == "constant" )
       new_physics.reset( new DerivedPhysics<ConstantViscosity>(physics_name,input) );

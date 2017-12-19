@@ -42,17 +42,17 @@ namespace GRINS
                                              MultiphysicsSystem& system,
                                              std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
   {
-    libMesh::UniquePtr<BCBuilder>
+    std::unique_ptr<BCBuilder>
       bc_builder = BCBuilder::build_builder(input);
 
     bc_builder->build_bcs(input,system,neumann_bcs);
   }
 
-  libMesh::UniquePtr<BCBuilder> BCBuilder::build_builder( const GetPot& input )
+  std::unique_ptr<BCBuilder> BCBuilder::build_builder( const GetPot& input )
   {
     bool is_new_style = BCBuilder::is_new_bc_input_style( input );
 
-    libMesh::UniquePtr<BCBuilder> bc_builder;
+    std::unique_ptr<BCBuilder> bc_builder;
 
     if( is_new_style )
       bc_builder.reset( new DefaultBCBuilder );
@@ -97,7 +97,7 @@ namespace GRINS
     // if it needs to
     DirichletBCFactoryAbstract::set_section( section );
 
-    libMesh::UniquePtr<libMesh::DirichletBoundary>
+    std::unique_ptr<libMesh::DirichletBoundary>
       dbc = DirichletBCFactoryAbstract::build( bc_type );
 
     dof_map.add_dirichlet_boundary( *dbc );
@@ -127,7 +127,7 @@ namespace GRINS
     // if it needs to
     NeumannBCFactoryAbstract::set_section( section );
 
-    libMesh::UniquePtr<NeumannBCContainer>
+    std::unique_ptr<NeumannBCContainer>
       nbc = NeumannBCFactoryAbstract::build(bc_type);
 
     // Get nothing if it's a homogeneous Neumann BC

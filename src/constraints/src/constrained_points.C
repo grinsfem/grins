@@ -148,7 +148,7 @@ namespace GRINS
     libMesh::MeshBase & mesh = _sys.get_mesh();
     const unsigned int sys_num = _sys.number();
 
-    libMesh::UniquePtr<libMesh::PointLocatorBase> locator =
+    std::unique_ptr<libMesh::PointLocatorBase> locator =
       mesh.sub_point_locator();
 
     for (std::vector<ConstrainedPoint>::const_iterator
