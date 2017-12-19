@@ -1,0 +1,11 @@
+<map id="GRINS::QoIBase" name="GRINS::QoIBase">
+<area shape="rect" id="node5" href="$classGRINS_1_1AverageNusseltNumber.html" title="GRINS::AverageNusseltNumber" alt="" coords="415,5,647,35"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1IntegratedFunction.html" title="IntegratedFunction. " alt="" coords="429,58,632,105"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1IntegratedFunction.html" title="GRINS::IntegratedFunction\l\&lt; FEMFunctionAndDerivativeBase\l\&lt; libMesh::Real \&gt; \&gt;" alt="" coords="899,84,1152,148"/>
+<area shape="rect" id="node13" href="$classGRINS_1_1ParsedBoundaryQoI.html" title="Parsed Boundary QoI. " alt="" coords="428,179,633,208"/>
+<area shape="rect" id="node15" href="$classGRINS_1_1ParsedInteriorQoI.html" title="Parsed Interior QoI. " alt="" coords="436,232,625,261"/>
+<area shape="rect" id="node17" href="$classGRINS_1_1Vorticity.html" title="Vorticity QoI. " alt="" coords="465,285,596,315"/>
+<area shape="rect" id="node19" href="$classGRINS_1_1WeightedFluxQoI.html" title="GRINS::WeightedFluxQoI" alt="" coords="437,339,624,368"/>
+<area shape="rect" id="node2" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="5,179,181,208"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1SpectroscopicAbsorption.html" title="QoI class for absorption calculations using the Beer&#45;Lambert Law. " alt="" coords="1203,101,1443,131"/>
+</map>

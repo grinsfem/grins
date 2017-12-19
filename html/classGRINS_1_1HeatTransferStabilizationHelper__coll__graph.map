@@ -1,0 +1,10 @@
+<map id="GRINS::HeatTransferStabilizationHelper" name="GRINS::HeatTransferStabilizationHelper">
+<area shape="rect" id="node2" href="$classGRINS_1_1StabilizationHelper.html" title="GRINS::StabilizationHelper" alt="" coords="541,7,741,36"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="265,5,441,35"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1VelocityVariable.html" title="GRINS::VelocityVariable" alt="" coords="552,64,731,93"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1MultcomponentVectorVariable.html" title="Variables that are effectively vectors. " alt="" coords="240,58,467,105"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1FEVariablesBase.html" title="GRINS::FEVariablesBase" alt="" coords="5,95,189,124"/>
+<area shape="rect" id="node14" href="$classGRINS_1_1SingleVariable.html" title="Variables with a single component. " alt="" coords="271,128,436,157"/>
+<area shape="rect" id="node12" href="$classGRINS_1_1PressureFEVariable.html" title="GRINS::PressureFEVariable" alt="" coords="540,117,743,147"/>
+<area shape="rect" id="node17" href="$classGRINS_1_1PrimitiveTempFEVariables.html" title="GRINS::PrimitiveTempFEVariables" alt="" coords="519,171,764,200"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="GRINS::AveragedFanAdjointStabilization&lt; Viscosity &gt;" name="GRINS::AveragedFanAdjointStabilization&lt; Viscosity &gt;">
+<area shape="rect" id="node2" href="$classGRINS_1_1AveragedFanBase.html" title="GRINS::AveragedFanBase\l\&lt; Viscosity \&gt;" alt="" coords="1432,154,1627,201"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1IncompressibleNavierStokesBase.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="1009,154,1225,201"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1Physics.html" title="Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. " alt="" coords="641,136,764,165"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="265,252,441,281"/>
+<area shape="rect" id="node29" href="$classGRINS_1_1StabilizationHelper.html" title="GRINS::StabilizationHelper" alt="" coords="603,351,803,380"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1ICHandlingBase.html" title="Base class for reading and handling initial conditions for physics classes. " alt="" coords="264,133,443,163"/>
+<area shape="rect" id="node12" href="$classGRINS_1_1VelocityVariable.html" title="GRINS::VelocityVariable" alt="" coords="613,297,792,327"/>
+<area shape="rect" id="node27" href="$classGRINS_1_1IncompressibleNavierStokesStabilizationHelper.html" title="GRINS::IncompressibleNavier\lStokesStabilizationHelper" alt="" coords="1009,274,1225,321"/>
+<area shape="rect" id="node14" href="$classGRINS_1_1MultcomponentVectorVariable.html" title="Variables that are effectively vectors. " alt="" coords="240,305,467,351"/>
+<area shape="rect" id="node16" href="$classGRINS_1_1FEVariablesBase.html" title="GRINS::FEVariablesBase" alt="" coords="5,247,189,276"/>
+<area shape="rect" id="node20" href="$classGRINS_1_1SingleVariable.html" title="Variables with a single component. " alt="" coords="271,199,436,228"/>
+<area shape="rect" id="node18" href="$classGRINS_1_1PressureFEVariable.html" title="GRINS::PressureFEVariable" alt="" coords="601,211,804,240"/>
+<area shape="rect" id="node23" href="$classlibMesh_1_1ParsedFunction.html" title="libMesh::ParsedFunction\l\&lt; libMesh::Number \&gt;" alt="" coords="1025,75,1209,122"/>
+<area shape="rect" id="node25" href="$classlibMesh_1_1ParsedFunction.html" title="libMesh::ParsedFunction\l\&lt; Output, OutputGradient \&gt;" alt="" coords="595,66,811,113"/>
+</map>

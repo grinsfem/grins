@@ -1,0 +1,7 @@
+<map id="src/solver/include/grins/steady_mesh_adaptive_solver.h" name="src/solver/include/grins/steady_mesh_adaptive_solver.h">
+<area shape="rect" id="node3" href="$solver_8h.html" title="grins/solver.h" alt="" coords="295,127,401,156"/>
+<area shape="rect" id="node13" href="$mesh__adaptive__solver__base_8h.html" title="grins/mesh_adaptive\l_solver_base.h" alt="" coords="720,118,880,165"/>
+<area shape="rect" id="node5" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="79,223,217,252"/>
+<area shape="rect" id="node17" href="$mesh__adaptivity__options_8h.html" title="grins/mesh_adaptivity\l_options.h" alt="" coords="716,214,884,261"/>
+<area shape="rect" id="node22" href="$error__estimator__options_8h.html" title="grins/error_estimator\l_options.h" alt="" coords="529,214,692,261"/>
+</map>

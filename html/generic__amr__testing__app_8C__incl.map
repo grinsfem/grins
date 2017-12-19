@@ -1,0 +1,29 @@
+<map id="test/amr/generic_amr_testing_app.C" name="test/amr/generic_amr_testing_app.C">
+<area shape="rect" id="node5" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="2251,101,2403,131"/>
+<area shape="rect" id="node7" href="$mesh__builder_8h.html" title="grins/mesh_builder.h" alt="" coords="2011,284,2165,313"/>
+<area shape="rect" id="node22" href="$simulation_8h.html" title="grins/simulation.h" alt="" coords="991,188,1127,217"/>
+<area shape="rect" id="node71" href="$multiphysics__sys_8h.html" title="grins/multiphysics\l_sys.h" alt="" coords="772,371,911,418"/>
+<area shape="rect" id="node117" href="$simulation__builder_8h.html" title="grins/simulation_builder.h" alt="" coords="2040,101,2227,131"/>
+<area shape="rect" id="node13" href="$common_8h.html" title="grins/common.h" alt="" coords="2405,380,2531,409"/>
+<area shape="rect" id="node17" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="2096,659,2235,688"/>
+<area shape="rect" id="node26" href="$solver_8h.html" title="grins/solver.h" alt="" coords="1051,284,1157,313"/>
+<area shape="rect" id="node31" href="$qoi__base_8h.html" title="grins/qoi_base.h" alt="" coords="2405,476,2531,505"/>
+<area shape="rect" id="node50" href="$visualization_8h.html" title="grins/visualization.h" alt="" coords="1837,284,1987,313"/>
+<area shape="rect" id="node57" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="347,572,520,601"/>
+<area shape="rect" id="node60" href="$parameter__manager_8h.html" title="grins/parameter_manager.h" alt="" coords="1507,284,1712,313"/>
+<area shape="rect" id="node65" href="$postprocessed__quantities_8h.html" title="grins/postprocessed\l_quantities.h" alt="" coords="1251,275,1405,322"/>
+<area shape="rect" id="node107" href="$error__estimator__options_8h.html" title="grins/error_estimator\l_options.h" alt="" coords="393,467,556,514"/>
+<area shape="rect" id="node110" href="$qoi__output_8h.html" title="grins/qoi_output.h" alt="" coords="200,476,341,505"/>
+<area shape="rect" id="node37" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="1349,572,1525,601"/>
+<area shape="rect" id="node46" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="1869,572,2027,601"/>
+<area shape="rect" id="node75" href="$physics_8h.html" title="grins/physics.h" alt="" coords="1085,476,1203,505"/>
+<area shape="rect" id="node101" href="$neumann__bc__container_8h.html" title="grins/neumann_bc_container.h" alt="" coords="1664,476,1888,505"/>
+<area shape="rect" id="node80" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="1120,563,1275,610"/>
+<area shape="rect" id="node85" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="1601,659,1769,688"/>
+<area shape="rect" id="node91" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="1549,572,1744,601"/>
+<area shape="rect" id="node120" href="$visualization__factory_8h.html" title="grins/visualization\l_factory.h" alt="" coords="1835,179,1973,226"/>
+<area shape="rect" id="node123" href="$qoi__factory_8h.html" title="grins/qoi_factory.h" alt="" coords="2325,284,2467,313"/>
+<area shape="rect" id="node138" href="$postprocessing__factory_8h.html" title="grins/postprocessing\l_factory.h" alt="" coords="1653,179,1811,226"/>
+<area shape="rect" id="node126" href="$composite__qoi_8h.html" title="grins/composite_qoi.h" alt="" coords="2605,380,2771,409"/>
+<area shape="rect" id="node132" href="$rayfire__mesh_8h.html" title="grins/rayfire_mesh.h" alt="" coords="2125,380,2280,409"/>
+</map>

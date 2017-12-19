@@ -1,0 +1,7 @@
+<map id="GRINS::AverageNusseltNumber" name="GRINS::AverageNusseltNumber">
+<area shape="rect" id="node2" href="$classGRINS_1_1QoIBase.html" title="GRINS::QoIBase" alt="" coords="28,165,159,195"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="5,85,181,115"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1PrimitiveTempFEVariables.html" title="GRINS::PrimitiveTempFEVariables" alt="" coords="183,165,428,195"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1SingleVariable.html" title="Variables with a single component. " alt="" coords="223,85,388,115"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1FEVariablesBase.html" title="GRINS::FEVariablesBase" alt="" coords="213,5,397,35"/>
+</map>

@@ -1,0 +1,18 @@
+<map id="src/physics/include/grins/inc_navier_stokes.h" name="src/physics/include/grins/inc_navier_stokes.h">
+<area shape="rect" id="node3" href="$inc__navier__stokes__base_8h.html" title="grins/inc_navier_stokes\l_base.h" alt="" coords="1257,102,1433,149"/>
+<area shape="rect" id="node93" href="$pressure__pinning_8h.html" title="grins/pressure_pinning.h" alt="" coords="2375,303,2553,332"/>
+<area shape="rect" id="node5" href="$physics_8h.html" title="grins/physics.h" alt="" coords="1421,207,1539,236"/>
+<area shape="rect" id="node69" href="$multi__component__vector__variable_8h.html" title="grins/multi_component\l_vector_variable.h" alt="" coords="728,198,901,245"/>
+<area shape="rect" id="node90" href="$single__variable_8h.html" title="grins/single_variable.h" alt="" coords="1129,207,1295,236"/>
+<area shape="rect" id="node13" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="788,294,943,341"/>
+<area shape="rect" id="node16" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="1141,389,1299,419"/>
+<area shape="rect" id="node30" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="967,303,1140,332"/>
+<area shape="rect" id="node33" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="1931,389,2099,419"/>
+<area shape="rect" id="node45" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="1528,389,1704,419"/>
+<area shape="rect" id="node53" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="1316,303,1511,332"/>
+<area shape="rect" id="node25" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="1419,476,1557,505"/>
+<area shape="rect" id="node43" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="2029,467,2211,514"/>
+<area shape="rect" id="node71" href="$fe__variables__base_8h.html" title="grins/fe_variables\l_base.h" alt="" coords="577,294,713,341"/>
+<area shape="rect" id="node76" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="24,389,176,419"/>
+<area shape="rect" id="node79" href="$variables__parsing_8h.html" title="grins/variables_parsing.h" alt="" coords="1323,389,1504,419"/>
+</map>

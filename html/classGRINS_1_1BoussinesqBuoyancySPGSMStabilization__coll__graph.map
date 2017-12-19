@@ -1,0 +1,15 @@
+<map id="GRINS::BoussinesqBuoyancySPGSMStabilization&lt; Viscosity &gt;" name="GRINS::BoussinesqBuoyancySPGSMStabilization&lt; Viscosity &gt;">
+<area shape="rect" id="node2" href="$classGRINS_1_1BoussinesqBuoyancyBase.html" title="GRINS::BoussinesqBuoyancyBase" alt="" coords="977,338,1225,368"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1Physics.html" title="Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. " alt="" coords="657,413,780,442"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="265,325,441,354"/>
+<area shape="rect" id="node26" href="$classGRINS_1_1StabilizationHelper.html" title="GRINS::StabilizationHelper" alt="" coords="619,93,819,122"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1ICHandlingBase.html" title="Base class for reading and handling initial conditions for physics classes. " alt="" coords="264,413,443,442"/>
+<area shape="rect" id="node10" href="$classGRINS_1_1VelocityVariable.html" title="GRINS::VelocityVariable" alt="" coords="629,200,808,229"/>
+<area shape="rect" id="node24" href="$classGRINS_1_1IncompressibleNavierStokesStabilizationHelper.html" title="GRINS::IncompressibleNavier\lStokesStabilizationHelper" alt="" coords="993,32,1209,79"/>
+<area shape="rect" id="node31" href="$classGRINS_1_1HeatTransferStabilizationHelper.html" title="GRINS::HeatTransferStabilization\lHelper" alt="" coords="980,162,1223,208"/>
+<area shape="rect" id="node12" href="$classGRINS_1_1MultcomponentVectorVariable.html" title="Variables that are effectively vectors. " alt="" coords="240,184,467,231"/>
+<area shape="rect" id="node14" href="$classGRINS_1_1FEVariablesBase.html" title="GRINS::FEVariablesBase" alt="" coords="5,221,189,250"/>
+<area shape="rect" id="node18" href="$classGRINS_1_1SingleVariable.html" title="Variables with a single component. " alt="" coords="271,254,436,284"/>
+<area shape="rect" id="node16" href="$classGRINS_1_1PressureFEVariable.html" title="GRINS::PressureFEVariable" alt="" coords="617,146,820,176"/>
+<area shape="rect" id="node21" href="$classGRINS_1_1PrimitiveTempFEVariables.html" title="GRINS::PrimitiveTempFEVariables" alt="" coords="596,254,841,284"/>
+</map>

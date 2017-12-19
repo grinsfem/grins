@@ -1,0 +1,25 @@
+<map id="src/physics/src/heat_conduction.C" name="src/physics/src/heat_conduction.C">
+<area shape="rect" id="node3" href="$heat__conduction_8h.html" title="grins/heat_conduction.h" alt="" coords="2556,111,2737,140"/>
+<area shape="rect" id="node30" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="1367,380,1540,409"/>
+<area shape="rect" id="node53" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="3201,380,3396,409"/>
+<area shape="rect" id="node79" href="$variables__parsing_8h.html" title="grins/variables_parsing.h" alt="" coords="564,380,745,409"/>
+<area shape="rect" id="node90" href="$common_8h.html" title="grins/common.h" alt="" coords="3611,111,3736,140"/>
+<area shape="rect" id="node94" href="$generic__ic__handler_8h.html" title="grins/generic_ic_handler.h" alt="" coords="872,197,1064,227"/>
+<area shape="rect" id="node114" href="$heat__transfer__macros_8h.html" title="grins/heat_transfer\l_macros.h" alt="" coords="3207,102,3356,149"/>
+<area shape="rect" id="node136" href="$materials__parsing_8h.html" title="grins/materials_parsing.h" alt="" coords="47,380,233,409"/>
+<area shape="rect" id="node141" href="$variable__warehouse_8h.html" title="grins/variable_warehouse.h" alt="" coords="3545,197,3745,227"/>
+<area shape="rect" id="node5" href="$physics_8h.html" title="grins/physics.h" alt="" coords="1891,284,2008,313"/>
+<area shape="rect" id="node69" href="$single__variable_8h.html" title="grins/single_variable.h" alt="" coords="2564,197,2729,227"/>
+<area shape="rect" id="node13" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="769,371,924,418"/>
+<area shape="rect" id="node16" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="2385,380,2543,409"/>
+<area shape="rect" id="node33" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="2100,467,2268,496"/>
+<area shape="rect" id="node45" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="3471,380,3647,409"/>
+<area shape="rect" id="node25" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="3387,467,3525,496"/>
+<area shape="rect" id="node43" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="2107,545,2288,591"/>
+<area shape="rect" id="node71" href="$fe__variables__base_8h.html" title="grins/fe_variables\l_base.h" alt="" coords="2579,275,2715,322"/>
+<area shape="rect" id="node76" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="2833,380,2985,409"/>
+<area shape="rect" id="node99" href="$ic__handling__base_8h.html" title="grins/ic_handling_base.h" alt="" coords="879,284,1057,313"/>
+<area shape="rect" id="node116" href="$constant__conductivity_8h.html" title="grins/constant_conductivity.h" alt="" coords="3189,284,3408,313"/>
+<area shape="rect" id="node121" href="$parsed__conductivity_8h.html" title="grins/parsed_conductivity.h" alt="" coords="3319,197,3521,227"/>
+<area shape="rect" id="node124" href="$parsed__property__base_8h.html" title="grins/parsed_property\l_base.h" alt="" coords="3432,275,3597,322"/>
+</map>

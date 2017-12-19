@@ -1,0 +1,25 @@
+<map id="src/physics/include/grins/reacting_low_mach_navier_stokes_stab_base.h" name="src/physics/include/grins/reacting_low_mach_navier_stokes_stab_base.h">
+<area shape="rect" id="node3" href="$reacting__low__mach__navier__stokes__base_8h.html" title="grins/reacting_low\l_mach_navier_stokes\l_base.h" alt="" coords="1155,136,1320,200"/>
+<area shape="rect" id="node111" href="$reacting__low__mach__navier__stokes__stab__helper_8h.html" title="grins/reacting_low\l_mach_navier_stokes\l_stab_helper.h" alt="" coords="1923,136,2088,200"/>
+<area shape="rect" id="node5" href="$reacting__low__mach__navier__stokes__abstract_8h.html" title="grins/reacting_low\l_mach_navier_stokes\l_abstract.h" alt="" coords="1155,248,1320,312"/>
+<area shape="rect" id="node107" href="$materials__parsing_8h.html" title="grins/materials_parsing.h" alt="" coords="43,561,229,591"/>
+<area shape="rect" id="node9" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="253,561,405,591"/>
+<area shape="rect" id="node11" href="$physics_8h.html" title="grins/physics.h" alt="" coords="2341,465,2459,495"/>
+<area shape="rect" id="node58" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="3571,561,3765,591"/>
+<area shape="rect" id="node74" href="$pressure__pinning_8h.html" title="grins/pressure_pinning.h" alt="" coords="1413,465,1592,495"/>
+<area shape="rect" id="node82" href="$multi__component__vector__variable_8h.html" title="grins/multi_component\l_vector_variable.h" alt="" coords="863,361,1036,407"/>
+<area shape="rect" id="node101" href="$single__variable_8h.html" title="grins/single_variable.h" alt="" coords="1060,369,1225,399"/>
+<area shape="rect" id="node104" href="$multicomponent__variable_8h.html" title="grins/multicomponent\l_variable.h" alt="" coords="1249,361,1417,407"/>
+<area shape="rect" id="node18" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="1955,553,2109,599"/>
+<area shape="rect" id="node21" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="1424,561,1581,591"/>
+<area shape="rect" id="node35" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="2133,561,2307,591"/>
+<area shape="rect" id="node38" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="2560,648,2728,677"/>
+<area shape="rect" id="node50" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="2552,561,2728,591"/>
+<area shape="rect" id="node30" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="1424,648,1563,677"/>
+<area shape="rect" id="node48" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="2556,726,2737,773"/>
+<area shape="rect" id="node84" href="$fe__variables__base_8h.html" title="grins/fe_variables\l_base.h" alt="" coords="979,457,1115,503"/>
+<area shape="rect" id="node91" href="$variables__parsing_8h.html" title="grins/variables_parsing.h" alt="" coords="480,561,661,591"/>
+<area shape="rect" id="node113" href="$low__mach__navier__stokes__stab__helper_8h.html" title="grins/low_mach_navier\l_stokes_stab_helper.h" alt="" coords="2499,257,2669,303"/>
+<area shape="rect" id="node115" href="$inc__navier__stokes__stab__helper_8h.html" title="grins/inc_navier_stokes\l_stab_helper.h" alt="" coords="3412,361,3588,407"/>
+<area shape="rect" id="node117" href="$stab__helper_8h.html" title="grins/stab_helper.h" alt="" coords="3191,465,3337,495"/>
+</map>

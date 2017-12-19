@@ -1,0 +1,50 @@
+<map id="GRINS::Physics" name="GRINS::Physics">
+<area shape="rect" id="node5" href="$classGRINS_1_1AxisymmetricBoussinesqBuoyancy.html" title="Adds Axisymmetric Boussinesq bouyancy source term. " alt="" coords="409,122,652,169"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1AxisymmetricHeatTransfer.html" title="Physics class for Axisymmetric Heat Transfer. " alt="" coords="404,191,657,238"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1BoussinesqBuoyancyBase.html" title="GRINS::BoussinesqBuoyancyBase" alt="" coords="407,261,655,291"/>
+<area shape="rect" id="node17" href="$classGRINS_1_1ConvectionDiffusion.html" title="GRINS::ConvectionDiffusion" alt="" coords="427,471,635,500"/>
+<area shape="rect" id="node19" href="$classGRINS_1_1HeatConduction.html" title="GRINS::HeatConduction\l\&lt; Conductivity \&gt;" alt="" coords="439,523,623,570"/>
+<area shape="rect" id="node21" href="$classGRINS_1_1HeatTransferBase.html" title="Physics class for Heat Transfer. " alt="" coords="433,593,628,639"/>
+<area shape="rect" id="node31" href="$classGRINS_1_1IncompressibleNavierStokesBase.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="423,662,639,709"/>
+<area shape="rect" id="node69" href="$classGRINS_1_1LowMachNavierStokesBase.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="416,825,645,889"/>
+<area shape="rect" id="node75" href="$classGRINS_1_1ReactingLowMachNavierStokesAbstract.html" title="GRINS::ReactingLowMachNavier\lStokesAbstract" alt="" coords="411,913,651,959"/>
+<area shape="rect" id="node79" href="$classGRINS_1_1ScalarODE.html" title="Physics class for arbitrary scalar&#45;valued ODEs. " alt="" coords="459,983,603,1012"/>
+<area shape="rect" id="node81" href="$classGRINS_1_1SolidMechanicsAbstract.html" title="GRINS::SolidMechanicsAbstract" alt="" coords="413,1139,648,1168"/>
+<area shape="rect" id="node87" href="$classGRINS_1_1SourceTermBase.html" title="Base class for generic source function term, f(x,y,z,t). " alt="" coords="437,1219,624,1248"/>
+<area shape="rect" id="node93" href="$classGRINS_1_1TurbulenceModelsBase.html" title="Physics class for Turbulence Models. " alt="" coords="417,1271,644,1318"/>
+<area shape="rect" id="node97" href="$classGRINS_1_1VariablePinning.html" title="GRINS::VariablePinning" alt="" coords="444,1341,617,1371"/>
+<area shape="rect" id="node2" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="5,739,181,768"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1BoussinesqBuoyancy.html" title="Adds Boussinesq bouyancy source term. " alt="" coords="737,5,951,35"/>
+<area shape="rect" id="node13" href="$classGRINS_1_1BoussinesqBuoyancyAdjointStabilization.html" title="Adds Boussinesq bouyancy adjoint stabilization source term. " alt="" coords="724,58,964,105"/>
+<area shape="rect" id="node15" href="$classGRINS_1_1BoussinesqBuoyancySPGSMStabilization.html" title="Adds Boussinesq bouyancy SPGSM stabilization source term. " alt="" coords="724,127,964,174"/>
+<area shape="rect" id="node23" href="$classGRINS_1_1HeatTransfer.html" title="Physics class for Heat Transfer. " alt="" coords="764,197,924,243"/>
+<area shape="rect" id="node25" href="$classGRINS_1_1HeatTransferStabilizationBase.html" title="GRINS::HeatTransferStabilization\lBase\&lt; Conductivity \&gt;" alt="" coords="723,266,965,313"/>
+<area shape="rect" id="node27" href="$classGRINS_1_1HeatTransferAdjointStabilization.html" title="Adds VMS&#45;based stabilization to LowMachNavierStokes physics class. " alt="" coords="1065,93,1284,139"/>
+<area shape="rect" id="node29" href="$classGRINS_1_1HeatTransferSPGSMStabilization.html" title="Adds VMS&#45;based stabilization to LowMachNavierStokes physics class. " alt="" coords="1029,162,1320,209"/>
+<area shape="rect" id="node33" href="$classGRINS_1_1AveragedFanBase.html" title="GRINS::AveragedFanBase\l\&lt; Viscosity \&gt;" alt="" coords="747,335,941,382"/>
+<area shape="rect" id="node39" href="$classGRINS_1_1AveragedTurbineBase.html" title="GRINS::AveragedTurbineBase\l\&lt; Viscosity \&gt;" alt="" coords="735,405,953,451"/>
+<area shape="rect" id="node45" href="$classGRINS_1_1IncompressibleNavierStokes.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="736,474,952,521"/>
+<area shape="rect" id="node47" href="$classGRINS_1_1IncompressibleNavierStokesStabilizationBase.html" title="GRINS::IncompressibleNavier\lStokesStabilizationBase\l\&lt; Viscosity \&gt;" alt="" coords="736,544,952,608"/>
+<area shape="rect" id="node53" href="$classGRINS_1_1ParsedVelocitySourceBase.html" title="GRINS::ParsedVelocitySource\lBase\&lt; Viscosity \&gt;" alt="" coords="735,631,953,678"/>
+<area shape="rect" id="node59" href="$classGRINS_1_1Stokes.html" title="Physics class for Stokes. " alt="" coords="739,701,949,731"/>
+<area shape="rect" id="node61" href="$classGRINS_1_1VelocityDragBase.html" title="GRINS::VelocityDragBase\l\&lt; Viscosity \&gt;" alt="" coords="747,754,941,801"/>
+<area shape="rect" id="node67" href="$classGRINS_1_1VelocityPenaltyBase.html" title="GRINS::VelocityPenaltyBase\l\&lt; Viscosity \&gt;" alt="" coords="737,823,951,870"/>
+<area shape="rect" id="node35" href="$classGRINS_1_1AveragedFan.html" title="Physics class for spatially&#45;averaged fan. " alt="" coords="1095,231,1255,278"/>
+<area shape="rect" id="node37" href="$classGRINS_1_1AveragedFanAdjointStabilization.html" title="Physics class for spatially&#45;averaged fan. " alt="" coords="1072,301,1277,347"/>
+<area shape="rect" id="node41" href="$classGRINS_1_1AveragedTurbine.html" title="Physics class for spatially&#45;averaged turbine. " alt="" coords="1083,370,1267,417"/>
+<area shape="rect" id="node43" href="$classGRINS_1_1AveragedTurbineAdjointStabilization.html" title="Physics class for spatially&#45;averaged turbine. " alt="" coords="1060,439,1289,486"/>
+<area shape="rect" id="node49" href="$classGRINS_1_1IncompressibleNavierStokesAdjointStabilization.html" title="Adds VMS&#45;based stabilization to LowMachNavierStokes physics class. " alt="" coords="1067,509,1283,573"/>
+<area shape="rect" id="node51" href="$classGRINS_1_1IncompressibleNavierStokesSPGSMStabilization.html" title="Adds VMS&#45;based stabilization to LowMachNavierStokes physics class. " alt="" coords="1067,597,1283,661"/>
+<area shape="rect" id="node55" href="$classGRINS_1_1ParsedVelocitySource.html" title="Physics class for Velocity Penalty. " alt="" coords="1065,685,1284,731"/>
+<area shape="rect" id="node57" href="$classGRINS_1_1ParsedVelocitySourceAdjointStabilization.html" title="Adds Velocity penalty adjoint stabilization source term. " alt="" coords="1055,754,1295,801"/>
+<area shape="rect" id="node63" href="$classGRINS_1_1VelocityDrag.html" title="Physics class for Velocity Drag. " alt="" coords="1095,823,1255,870"/>
+<area shape="rect" id="node65" href="$classGRINS_1_1VelocityDragAdjointStabilization.html" title="Physics class for Velocity Drag. " alt="" coords="1072,893,1277,939"/>
+<area shape="rect" id="node71" href="$classGRINS_1_1LowMachNavierStokes.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="731,893,957,957"/>
+<area shape="rect" id="node73" href="$classGRINS_1_1LowMachNavierStokesStabilizationBase.html" title="Adds VMS&#45;based stabilization to LowMachNavierStokes physics class. " alt="" coords="707,981,981,1045"/>
+<area shape="rect" id="node77" href="$classGRINS_1_1ReactingLowMachNavierStokesBase.html" title="GRINS::ReactingLowMachNavier\lStokesBase\&lt; Mixture \&gt;" alt="" coords="724,1069,964,1115"/>
+<area shape="rect" id="node83" href="$classGRINS_1_1ElasticCableAbstract.html" title="GRINS::ElasticCableAbstract" alt="" coords="736,1139,952,1168"/>
+<area shape="rect" id="node85" href="$classGRINS_1_1ElasticMembraneAbstract.html" title="GRINS::ElasticMembraneAbstract" alt="" coords="719,1192,969,1221"/>
+<area shape="rect" id="node89" href="$classGRINS_1_1ConstantSourceTerm.html" title="GRINS::ConstantSourceTerm" alt="" coords="736,1245,952,1275"/>
+<area shape="rect" id="node91" href="$classGRINS_1_1ParsedSourceTerm.html" title="GRINS::ParsedSourceTerm" alt="" coords="745,1299,943,1328"/>
+<area shape="rect" id="node95" href="$classGRINS_1_1SpalartAllmaras.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="756,1351,932,1398"/>
+</map>

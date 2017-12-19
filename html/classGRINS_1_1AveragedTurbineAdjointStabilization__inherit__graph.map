@@ -1,0 +1,6 @@
+<map id="GRINS::AveragedTurbineAdjointStabilization&lt; Viscosity &gt;" name="GRINS::AveragedTurbineAdjointStabilization&lt; Viscosity &gt;">
+<area shape="rect" id="node2" href="$classGRINS_1_1AveragedTurbineBase.html" title="GRINS::AveragedTurbineBase\l\&lt; Viscosity \&gt;" alt="" coords="11,257,229,303"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1IncompressibleNavierStokesBase.html" title="Physics class for Incompressible Navier&#45;Stokes. " alt="" coords="12,161,228,207"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1Physics.html" title="Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. " alt="" coords="59,83,181,112"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="32,5,208,35"/>
+</map>

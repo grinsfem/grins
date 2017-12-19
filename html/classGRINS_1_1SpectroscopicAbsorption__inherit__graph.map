@@ -1,0 +1,6 @@
+<map id="GRINS::SpectroscopicAbsorption" name="GRINS::SpectroscopicAbsorption">
+<area shape="rect" id="node2" href="$classGRINS_1_1IntegratedFunction.html" title="GRINS::IntegratedFunction\l\&lt; FEMFunctionAndDerivativeBase\l\&lt; libMesh::Real \&gt; \&gt;" alt="" coords="5,296,259,360"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1QoIBase.html" title="GRINS::QoIBase" alt="" coords="37,85,168,115"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1IntegratedFunction.html" title="IntegratedFunction. " alt="" coords="124,166,327,213"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="15,5,191,35"/>
+</map>

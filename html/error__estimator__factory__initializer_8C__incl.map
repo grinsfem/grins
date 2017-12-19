@@ -1,0 +1,25 @@
+<map id="src/strategies/src/error_estimator_factory_initializer.C" name="src/strategies/src/error_estimator_factory_initializer.C">
+<area shape="rect" id="node3" href="$error__estimator__factory__initializer_8h.html" title="grins/error_estimator\l_factory_initializer.h" alt="" coords="1500,118,1663,165"/>
+<area shape="rect" id="node5" href="$error__estimator__factory__basic_8h.html" title="grins/error_estimator\l_factory_basic.h" alt="" coords="1737,118,1900,165"/>
+<area shape="rect" id="node120" href="$adjoint__error__estimator__factories_8h.html" title="grins/adjoint_error\l_estimator_factories.h" alt="" coords="1924,118,2097,165"/>
+<area shape="rect" id="node129" href="$strategies__parsing_8h.html" title="grins/strategies_parsing.h" alt="" coords="569,319,761,348"/>
+<area shape="rect" id="node7" href="$error__estimator__factory__base_8h.html" title="grins/error_estimator\l_factory_base.h" alt="" coords="1745,214,1908,261"/>
+<area shape="rect" id="node9" href="$factory__with__getpot_8h.html" title="grins/factory_with\l_getpot.h" alt="" coords="2708,406,2849,453"/>
+<area shape="rect" id="node25" href="$multiphysics__sys_8h.html" title="grins/multiphysics\l_sys.h" alt="" coords="889,310,1028,357"/>
+<area shape="rect" id="node115" href="$error__estimator__options_8h.html" title="grins/error_estimator\l_options.h" alt="" coords="1745,310,1908,357"/>
+<area shape="rect" id="node11" href="$factory__abstract_8h.html" title="grins/factory_abstract.h" alt="" coords="1923,511,2104,540"/>
+<area shape="rect" id="node30" href="$physics_8h.html" title="grins/physics.h" alt="" coords="816,415,933,444"/>
+<area shape="rect" id="node90" href="$neumann__bc__container_8h.html" title="grins/neumann_bc_container.h" alt="" coords="1880,415,2104,444"/>
+<area shape="rect" id="node36" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="1113,598,1268,645"/>
+<area shape="rect" id="node39" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="2273,607,2431,636"/>
+<area shape="rect" id="node52" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="616,511,789,540"/>
+<area shape="rect" id="node55" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="195,607,363,636"/>
+<area shape="rect" id="node67" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="589,607,765,636"/>
+<area shape="rect" id="node75" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="245,511,440,540"/>
+<area shape="rect" id="node47" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="2455,703,2593,732"/>
+<area shape="rect" id="node65" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="163,694,344,741"/>
+<area shape="rect" id="node93" href="$neumann__bc__abstract_8h.html" title="grins/neumann_bc_abstract.h" alt="" coords="1680,511,1899,540"/>
+<area shape="rect" id="node99" href="$fe__variables__base_8h.html" title="grins/fe_variables\l_base.h" alt="" coords="2128,502,2264,549"/>
+<area shape="rect" id="node104" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="1996,607,2148,636"/>
+<area shape="rect" id="node107" href="$variables__parsing_8h.html" title="grins/variables_parsing.h" alt="" coords="2455,607,2636,636"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="GRINS::ErrorEstimatorFactoryBase" name="GRINS::ErrorEstimatorFactoryBase">
+<area shape="rect" id="node2" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; libMesh::ErrorEstimator \&gt;" alt="" coords="893,74,1104,121"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1FactoryAbstract.html" title="GRINS::FactoryAbstract\l\&lt; libMesh::ErrorEstimator \&gt;" alt="" coords="432,5,643,51"/>
+<area shape="rect" id="node6" href="$classGRINS_1_1FactoryAbstract.html" title="Abstract factory. " alt="" coords="5,37,189,83"/>
+<area shape="rect" id="node8" href="$classGRINS_1_1FactoryWithGetPot.html" title="Abstract factory that provides availability of GetPot. " alt="" coords="435,74,640,121"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1MultiphysicsSystem.html" title="Interface with libMesh for solving Multiphysics problems. " alt="" coords="895,144,1103,173"/>
+<area shape="rect" id="node15" href="$classGRINS_1_1ErrorEstimatorOptions.html" title="Container for ErrorEstimator options. " alt="" coords="887,197,1111,227"/>
+</map>

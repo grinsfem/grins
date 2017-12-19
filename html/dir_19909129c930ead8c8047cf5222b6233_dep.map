@@ -1,0 +1,23 @@
+<map id="src/qoi/include" name="src/qoi/include">
+<area shape="rect" id="node4" href="dir_e0883a5acb7523b1101b1a87a561d219.html" title="grins" alt="" coords="43,113,115,161"/>
+<area shape="rect" id="node5" href="dir_8052234684538018186f177f12cce33e.html" title="physics" alt="" coords="233,5,305,53"/>
+<area shape="rect" id="edge4" href="dir_000037_000027.html" title="2" alt="" coords="209,20,218,37"/>
+<area shape="rect" id="node6" href="dir_d5b9f5065816354b1fce8cfe30de5088.html" title="utilities" alt="" coords="166,305,238,353"/>
+<area shape="rect" id="edge6" href="dir_000037_000047.html" title="2" alt="" coords="179,277,189,294"/>
+<area shape="rect" id="node7" href="dir_25c8809aa744cb4695d3341164285062.html" title="solver" alt="" coords="318,113,390,161"/>
+<area shape="rect" id="edge8" href="dir_000037_000039.html" title="1" alt="" coords="338,84,347,102"/>
+<area shape="rect" id="node8" href="dir_d1a40d776293e1f0c8c91b64df971e4b.html" title="variables" alt="" coords="229,209,309,257"/>
+<area shape="rect" id="edge10" href="dir_000037_000051.html" title="11" alt="" coords="205,202,222,219"/>
+<area shape="rect" id="edge12" href="dir_000027_000037.html" title="1" alt="" coords="112,93,121,111"/>
+<area shape="rect" id="edge14" href="dir_000027_000047.html" title="27" alt="" coords="146,287,163,304"/>
+<area shape="rect" id="edge16" href="dir_000027_000039.html" title="5" alt="" coords="317,85,326,102"/>
+<area shape="rect" id="edge18" href="dir_000027_000051.html" title="66" alt="" coords="261,182,278,199"/>
+<area shape="rect" id="edge20" href="dir_000039_000037.html" title="6" alt="" coords="102,93,112,110"/>
+<area shape="rect" id="edge22" href="dir_000039_000027.html" title="11" alt="" coords="299,64,316,81"/>
+<area shape="rect" id="edge24" href="dir_000039_000047.html" title="8" alt="" coords="254,307,263,325"/>
+<area shape="rect" id="edge26" href="dir_000039_000051.html" title="2" alt="" coords="304,192,314,210"/>
+<area shape="rect" id="edge28" href="dir_000051_000027.html" title="3" alt="" coords="263,64,273,81"/>
+<area shape="rect" id="edge30" href="dir_000051_000047.html" title="2" alt="" coords="232,286,241,303"/>
+<area shape="rect" id="graph3" href="dir_19909129c930ead8c8047cf5222b6233.html" alt="" coords="33,103,222,172"/>
+<area shape="rect" id="graph2" href="dir_168b7a916d67fdc01012f71201e6f4d0.html" title="qoi" alt="" coords="22,64,233,183"/>
+</map>

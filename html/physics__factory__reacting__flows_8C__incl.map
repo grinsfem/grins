@@ -1,0 +1,26 @@
+<map id="src/physics/src/physics_factory_reacting_flows.C" name="src/physics/src/physics_factory_reacting_flows.C">
+<area shape="rect" id="node3" href="$physics__factory__reacting__flows_8h.html" title="grins/physics_factory\l_reacting_flows.h" alt="" coords="2676,110,2839,157"/>
+<area shape="rect" id="node90" href="$physics__factory__helper_8h.html" title="grins/physics_factory\l_helper.h" alt="" coords="5188,110,5351,157"/>
+<area shape="rect" id="node93" href="$cantera__mixture_8h.html" title="grins/cantera_mixture.h" alt="" coords="855,343,1036,372"/>
+<area shape="rect" id="node113" href="$cantera__evaluator_8h.html" title="grins/cantera_evaluator.h" alt="" coords="1596,231,1788,260"/>
+<area shape="rect" id="node137" href="$reacting__low__mach__navier__stokes_8h.html" title="grins/reacting_low\l_mach_navier_stokes.h" alt="" coords="4796,110,4975,157"/>
+<area shape="rect" id="node142" href="$reacting__low__mach__navier__stokes__spgsm__stab_8h.html" title="grins/reacting_low\l_mach_navier_stokes\l_spgsm_stab.h" alt="" coords="4999,101,5164,165"/>
+<area shape="rect" id="node5" href="$physics__factory__with__core_8h.html" title="grins/physics_factory\l_with_core.h" alt="" coords="1243,222,1405,269"/>
+<area shape="rect" id="node11" href="$antioch__mixture__averaged__transport__mixture_8h.html" title="grins/antioch_mixture\l_averaged_transport_mixture.h" alt="" coords="3656,334,3891,381"/>
+<area shape="rect" id="node60" href="$antioch__mixture__averaged__transport__evaluator_8h.html" title="grins/antioch_mixture\l_averaged_transport_evaluator.h" alt="" coords="2636,222,2879,269"/>
+<area shape="rect" id="node65" href="$antioch__constant__transport__mixture_8h.html" title="grins/antioch_constant\l_transport_mixture.h" alt="" coords="2589,334,2763,381"/>
+<area shape="rect" id="node73" href="$antioch__constant__transport__evaluator_8h.html" title="grins/antioch_constant\l_transport_evaluator.h" alt="" coords="2953,222,3127,269"/>
+<area shape="rect" id="node78" href="$antioch__options__naming_8h.html" title="grins/antioch_options\l_naming.h" alt="" coords="2212,222,2375,269"/>
+<area shape="rect" id="node80" href="$antioch__constant__transport__mixture__builder_8h.html" title="grins/antioch_constant\l_transport_mixture_builder.h" alt="" coords="2399,222,2612,269"/>
+<area shape="rect" id="node86" href="$antioch__mixture__averaged__transport__mixture__builder_8h.html" title="grins/antioch_mixture\l_averaged_transport_mixture\l_builder.h" alt="" coords="1967,213,2188,277"/>
+<area shape="rect" id="node7" href="$physics__factory__base_8h.html" title="physics_factory_base.h" alt="" coords="1235,343,1413,372"/>
+<area shape="rect" id="node15" href="$antioch__mixture_8h.html" title="grins/antioch_mixture.h" alt="" coords="2944,447,3123,476"/>
+<area shape="rect" id="node18" href="$property__types_8h.html" title="grins/property_types.h" alt="" coords="2864,543,3037,572"/>
+<area shape="rect" id="node29" href="$materials__parsing_8h.html" title="grins/materials_parsing.h" alt="" coords="5333,447,5520,476"/>
+<area shape="rect" id="node108" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="1211,447,1387,476"/>
+<area shape="rect" id="node117" href="$cantera__thermo_8h.html" title="grins/cantera_thermo.h" alt="" coords="1819,447,1997,476"/>
+<area shape="rect" id="node121" href="$cantera__transport_8h.html" title="grins/cantera_transport.h" alt="" coords="2072,447,2264,476"/>
+<area shape="rect" id="node125" href="$cantera__kinetics_8h.html" title="grins/cantera_kinetics.h" alt="" coords="1512,447,1693,476"/>
+<area shape="rect" id="node139" href="$reacting__low__mach__navier__stokes__base_8h.html" title="grins/reacting_low\l_mach_navier_stokes\l_base.h" alt="" coords="4999,325,5164,389"/>
+<area shape="rect" id="node144" href="$reacting__low__mach__navier__stokes__stab__base_8h.html" title="grins/reacting_low\l_mach_navier_stokes\l_stab_base.h" alt="" coords="4999,213,5164,277"/>
+</map>

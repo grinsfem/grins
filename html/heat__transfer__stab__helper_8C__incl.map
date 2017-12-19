@@ -1,0 +1,17 @@
+<map id="src/physics/src/heat_transfer_stab_helper.C" name="src/physics/src/heat_transfer_stab_helper.C">
+<area shape="rect" id="node3" href="$heat__transfer__stab__helper_8h.html" title="grins/heat_transfer\l_stab_helper.h" alt="" coords="517,102,667,149"/>
+<area shape="rect" id="node45" href="$variables__parsing_8h.html" title="grins/variables_parsing.h" alt="" coords="1243,293,1424,323"/>
+<area shape="rect" id="node50" href="$variable__warehouse_8h.html" title="grins/variable_warehouse.h" alt="" coords="1808,111,2008,140"/>
+<area shape="rect" id="node80" href="$multi__component__vector__variable_8h.html" title="grins/multi_component\l_vector_variable.h" alt="" coords="1611,102,1784,149"/>
+<area shape="rect" id="node83" href="$single__variable_8h.html" title="grins/single_variable.h" alt="" coords="1421,111,1587,140"/>
+<area shape="rect" id="node86" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="1373,207,1547,236"/>
+<area shape="rect" id="node5" href="$stab__helper_8h.html" title="grins/stab_helper.h" alt="" coords="519,207,665,236"/>
+<area shape="rect" id="node21" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="5,293,200,323"/>
+<area shape="rect" id="node7" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="829,293,1005,323"/>
+<area shape="rect" id="node25" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="823,371,991,400"/>
+<area shape="rect" id="node33" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="816,449,997,495"/>
+<area shape="rect" id="node52" href="$fe__variables__base_8h.html" title="grins/fe_variables\l_base.h" alt="" coords="1804,198,1940,245"/>
+<area shape="rect" id="node58" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="2008,293,2160,323"/>
+<area shape="rect" id="node60" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="2184,293,2341,323"/>
+<area shape="rect" id="node67" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="1912,371,2051,400"/>
+</map>

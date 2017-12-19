@@ -1,0 +1,8 @@
+<map id="GRINS::HeatTransferBase&lt; Conductivity &gt;" name="GRINS::HeatTransferBase&lt; Conductivity &gt;">
+<area shape="rect" id="node7" href="$classGRINS_1_1HeatTransfer.html" title="Physics class for Heat Transfer. " alt="" coords="687,5,847,51"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1HeatTransferStabilizationBase.html" title="GRINS::HeatTransferStabilization\lBase\&lt; Conductivity \&gt;" alt="" coords="645,74,888,121"/>
+<area shape="rect" id="node2" href="$classGRINS_1_1Physics.html" title="Physics abstract base class. Defines API for physics to be added to MultiphysicsSystem. " alt="" coords="231,48,353,77"/>
+<area shape="rect" id="node4" href="$classGRINS_1_1ParameterUser.html" title="ParameterUser base class. Utility methods for subclasses. " alt="" coords="5,48,181,77"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1HeatTransferAdjointStabilization.html" title="Adds VMS&#45;based stabilization to LowMachNavierStokes physics class. " alt="" coords="972,39,1191,86"/>
+<area shape="rect" id="node13" href="$classGRINS_1_1HeatTransferSPGSMStabilization.html" title="Adds VMS&#45;based stabilization to LowMachNavierStokes physics class. " alt="" coords="936,109,1227,155"/>
+</map>

@@ -1,0 +1,50 @@
+<map id="GRINS::FactoryWithGetPot&lt; Base &gt;" name="GRINS::FactoryWithGetPot&lt; Base &gt;">
+<area shape="rect" id="node5" href="$classGRINS_1_1BCFactoryAbstract.html" title="GRINS::BCFactoryAbstract\l\&lt; Base \&gt;" alt="" coords="727,406,929,453"/>
+<area shape="rect" id="node37" href="$classGRINS_1_1FactoryWithGetPotPhysicsName.html" title="Abstract factory that provides availability of GetPot and a physics_name. " alt="" coords="725,545,931,591"/>
+<area shape="rect" id="node47" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; libMesh::DirichletBoundary \&gt;" alt="" coords="712,329,944,375"/>
+<area shape="rect" id="node50" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; Solver \&gt;" alt="" coords="725,683,931,730"/>
+<area shape="rect" id="node56" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; Physics \&gt;" alt="" coords="725,614,931,661"/>
+<area shape="rect" id="node59" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; libMesh::ErrorEstimator \&gt;" alt="" coords="723,777,933,823"/>
+<area shape="rect" id="node77" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; CatalycityBase \&gt;" alt="" coords="725,942,931,989"/>
+<area shape="rect" id="node95" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; FEVariablesBase \&gt;" alt="" coords="725,1174,931,1221"/>
+<area shape="rect" id="node105" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; NeumannBCContainer \&gt;" alt="" coords="725,475,931,522"/>
+<area shape="rect" id="node2" href="$classGRINS_1_1FactoryAbstract.html" title="Abstract factory. " alt="" coords="5,614,189,661"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1BCFactoryAbstract.html" title="GRINS::BCFactoryAbstract\l\&lt; libMesh::DirichletBoundary \&gt;" alt="" coords="1221,325,1453,371"/>
+<area shape="rect" id="node19" href="$classGRINS_1_1BCFactoryAbstract.html" title="GRINS::BCFactoryAbstract\l\&lt; NeumannBCContainer \&gt;" alt="" coords="1236,410,1439,457"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1DirichletBCFactoryAbstract.html" title="GRINS::DirichletBCFactory\lAbstract" alt="" coords="1551,122,1753,169"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1DirichletBCFactoryFunctionBase.html" title="GRINS::DirichletBCFactory\lFunctionBase\&lt; libMesh::\lFEMFunctionBase\&lt; libMesh\l::Number \&gt; \&gt;" alt="" coords="2668,5,2873,86"/>
+<area shape="rect" id="node13" href="$classGRINS_1_1DirichletBCFactoryFunctionBase.html" title="GRINS::DirichletBCFactory\lFunctionBase\&lt; libMesh::\lFunctionBase\&lt; libMesh::Number \&gt; \&gt;" alt="" coords="2636,123,2905,187"/>
+<area shape="rect" id="node15" href="$classGRINS_1_1DirichletBCFactoryFunctionBase.html" title="GRINS::DirichletBCFactory\lFunctionBase\&lt; FunctionType \&gt;" alt="" coords="2083,86,2312,133"/>
+<area shape="rect" id="node21" href="$classGRINS_1_1NeumannBCFactoryAbstract.html" title="GRINS::NeumannBCFactoryAbstract" alt="" coords="1519,415,1785,444"/>
+<area shape="rect" id="node23" href="$classGRINS_1_1CatalyticWallNeumannBCFactoryBase.html" title="GRINS::CatalyticWallNeumann\lBCFactoryBase\&lt; GasRecombination\lCatalyticWallNeumannBCFactoryImpl \&gt;" alt="" coords="2627,347,2915,411"/>
+<area shape="rect" id="node25" href="$classGRINS_1_1CatalyticWallNeumannBCFactoryBase.html" title="GRINS::CatalyticWallNeumann\lBCFactoryBase\&lt; GasSolidCatalytic\lWallNeumannBCFactoryImpl \&gt;" alt="" coords="2641,463,2900,527"/>
+<area shape="rect" id="node27" href="$classGRINS_1_1CatalyticWallNeumannBCFactoryBase.html" title="GRINS::CatalyticWallNeumann\lBCFactoryBase\&lt; ImplType \&gt;" alt="" coords="2084,406,2311,453"/>
+<area shape="rect" id="node31" href="$classGRINS_1_1HomogeneousNeumannBCFactory.html" title="Generic factory for homogeneous Neumann boundary conditions. " alt="" coords="2080,547,2315,594"/>
+<area shape="rect" id="node33" href="$classGRINS_1_1NeumannBCOldStyleFactoryAbstract.html" title="GRINS::NeumannBCOldStyle\lFactoryAbstract" alt="" coords="2091,206,2304,253"/>
+<area shape="rect" id="node35" href="$classGRINS_1_1ParsedFunctionNeumannBCFactory.html" title="GRINS::ParsedFunctionNeumann\lBCFactory\&lt; FunctionType \&gt;" alt="" coords="2077,275,2317,322"/>
+<area shape="rect" id="node39" href="$classGRINS_1_1FactoryWithGetPotPhysicsName.html" title="GRINS::FactoryWithGetPot\lPhysicsName\&lt; Physics \&gt;" alt="" coords="1235,594,1440,641"/>
+<area shape="rect" id="node41" href="$classGRINS_1_1PhysicsFactoryBase.html" title="Builds Physics objects, used by PhysicsBuilder. " alt="" coords="1548,603,1756,632"/>
+<area shape="rect" id="node43" href="$classGRINS_1_1PhysicsFactoryBasic.html" title="GRINS::PhysicsFactoryBasic\l\&lt; DerivedPhysics \&gt;" alt="" coords="2092,617,2303,663"/>
+<area shape="rect" id="node45" href="$classGRINS_1_1PhysicsFactoryWithCore.html" title="PhysicsFactory base class for Physics that may have a related &quot;core&quot; Physics. " alt="" coords="2079,687,2316,716"/>
+<area shape="rect" id="node52" href="$classGRINS_1_1SolverFactoryAbstract.html" title="GRINS::SolverFactoryAbstract" alt="" coords="1225,669,1449,699"/>
+<area shape="rect" id="node54" href="$classGRINS_1_1SolverFactoryBasic.html" title="GRINS::SolverFactoryBasic\l\&lt; DerivedSolver \&gt;" alt="" coords="1551,655,1753,702"/>
+<area shape="rect" id="node61" href="$classGRINS_1_1ErrorEstimatorFactoryBase.html" title="Builds VariableBase objects. " alt="" coords="1208,793,1467,823"/>
+<area shape="rect" id="node63" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; libMesh::AdjointRefinement\lEstimator \&gt;" alt="" coords="2043,803,2352,867"/>
+<area shape="rect" id="node67" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; libMesh::AdjointResidual\lErrorEstimator \&gt;" alt="" coords="2056,917,2339,981"/>
+<area shape="rect" id="node71" href="$classGRINS_1_1AdjointErrorEstimatorFactoryBase.html" title="GRINS::AdjointErrorEstimator\lFactoryBase\&lt; EstimatorType \&gt;" alt="" coords="1535,845,1769,891"/>
+<area shape="rect" id="node75" href="$classGRINS_1_1ErrorEstimatorFactoryBasic.html" title="GRINS::ErrorEstimatorFactory\lBasic\&lt; EstimatorType \&gt;" alt="" coords="1540,725,1764,771"/>
+<area shape="rect" id="node65" href="$classGRINS_1_1AdjointRefinementErrorEstimatorFactory.html" title="GRINS::AdjointRefinement\lErrorEstimatorFactory" alt="" coords="2671,811,2871,858"/>
+<area shape="rect" id="node69" href="$classGRINS_1_1AdjointResidualErrorEstimatorFactory.html" title="GRINS::AdjointResidualError\lEstimatorFactory" alt="" coords="2667,926,2875,973"/>
+<area shape="rect" id="node79" href="$classGRINS_1_1CatalycityFactoryAbstract.html" title="GRINS::CatalycityFactory\lAbstract" alt="" coords="1240,1078,1435,1125"/>
+<area shape="rect" id="node81" href="$classGRINS_1_1ArrheniusCatalycityFactory.html" title="GRINS::ArrheniusCatalycity\lFactory" alt="" coords="1549,1078,1755,1125"/>
+<area shape="rect" id="node83" href="$classGRINS_1_1CatalycityFactoryOldStyleBase.html" title="GRINS::CatalycityFactory\lOldStyleBase" alt="" coords="1555,1147,1749,1194"/>
+<area shape="rect" id="node91" href="$classGRINS_1_1ConstantCatalycityFactory.html" title="GRINS::ConstantCatalycity\lFactory" alt="" coords="1549,1217,1755,1263"/>
+<area shape="rect" id="node93" href="$classGRINS_1_1PowerLawCatalycityFactory.html" title="GRINS::PowerLawCatalycity\lFactory" alt="" coords="1545,1009,1759,1055"/>
+<area shape="rect" id="node85" href="$classGRINS_1_1ArrheniusCatalycityFactoryOldStyle.html" title="GRINS::ArrheniusCatalycity\lFactoryOldStyle" alt="" coords="2095,1213,2300,1259"/>
+<area shape="rect" id="node87" href="$classGRINS_1_1ConstantCatalycityFactoryOldStyle.html" title="GRINS::ConstantCatalycity\lFactoryOldStyle" alt="" coords="2095,1074,2300,1121"/>
+<area shape="rect" id="node89" href="$classGRINS_1_1PowerLawCatalycityFactoryOldStyle.html" title="GRINS::PowerLawCatalycity\lFactoryOldStyle" alt="" coords="2091,1143,2304,1190"/>
+<area shape="rect" id="node97" href="$classGRINS_1_1VariableFactoryAbstract.html" title="GRINS::VariableFactoryAbstract" alt="" coords="1220,1259,1455,1288"/>
+<area shape="rect" id="node99" href="$classGRINS_1_1VariableFactoryBase.html" title="Common implementations. " alt="" coords="1547,1291,1757,1320"/>
+<area shape="rect" id="node101" href="$classGRINS_1_1SpeciesVariableFactory.html" title="Factory to build FEVariablesBase classes that use species names as variables. " alt="" coords="2083,1282,2312,1329"/>
+<area shape="rect" id="node103" href="$classGRINS_1_1VariableFactoryBasic.html" title="Factory to build &quot;standard&quot; FEVariablesBase classes. " alt="" coords="2091,1351,2304,1398"/>
+</map>

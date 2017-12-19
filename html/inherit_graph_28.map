@@ -1,0 +1,12 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classGRINS_1_1FactoryAbstract.html" title="GRINS::FactoryAbstract\l\&lt; CatalycityBase \&gt;" alt="" coords="5,109,189,155"/>
+<area shape="rect" id="node3" href="$classGRINS_1_1FactoryWithGetPot.html" title="GRINS::FactoryWithGetPot\l\&lt; CatalycityBase \&gt;" alt="" coords="239,109,444,155"/>
+<area shape="rect" id="node5" href="$classGRINS_1_1CatalycityFactoryAbstract.html" title="GRINS::CatalycityFactory\lAbstract" alt="" coords="493,109,688,155"/>
+<area shape="rect" id="node7" href="$classGRINS_1_1ArrheniusCatalycityFactory.html" title="GRINS::ArrheniusCatalycity\lFactory" alt="" coords="740,5,945,51"/>
+<area shape="rect" id="node9" href="$classGRINS_1_1CatalycityFactoryOldStyleBase.html" title="GRINS::CatalycityFactory\lOldStyleBase" alt="" coords="745,74,940,121"/>
+<area shape="rect" id="node17" href="$classGRINS_1_1ConstantCatalycityFactory.html" title="GRINS::ConstantCatalycity\lFactory" alt="" coords="740,143,945,190"/>
+<area shape="rect" id="node19" href="$classGRINS_1_1PowerLawCatalycityFactory.html" title="GRINS::PowerLawCatalycity\lFactory" alt="" coords="736,213,949,259"/>
+<area shape="rect" id="node11" href="$classGRINS_1_1ArrheniusCatalycityFactoryOldStyle.html" title="GRINS::ArrheniusCatalycity\lFactoryOldStyle" alt="" coords="1001,5,1207,51"/>
+<area shape="rect" id="node13" href="$classGRINS_1_1ConstantCatalycityFactoryOldStyle.html" title="GRINS::ConstantCatalycity\lFactoryOldStyle" alt="" coords="1001,74,1207,121"/>
+<area shape="rect" id="node15" href="$classGRINS_1_1PowerLawCatalycityFactoryOldStyle.html" title="GRINS::PowerLawCatalycity\lFactoryOldStyle" alt="" coords="997,143,1211,190"/>
+</map>

@@ -1,0 +1,19 @@
+<map id="src/physics/include/grins/boussinesq_buoyancy_adjoint_stab.h" name="src/physics/include/grins/boussinesq_buoyancy_adjoint_stab.h">
+<area shape="rect" id="node3" href="$boussinesq__buoyancy__base_8h.html" title="grins/boussinesq_buoyancy\l_base.h" alt="" coords="1601,118,1801,165"/>
+<area shape="rect" id="node94" href="$inc__navier__stokes__stab__helper_8h.html" title="grins/inc_navier_stokes\l_stab_helper.h" alt="" coords="2429,118,2605,165"/>
+<area shape="rect" id="node5" href="$physics_8h.html" title="grins/physics.h" alt="" coords="1643,223,1760,252"/>
+<area shape="rect" id="node69" href="$multi__component__vector__variable_8h.html" title="grins/multi_component\l_vector_variable.h" alt="" coords="851,214,1024,261"/>
+<area shape="rect" id="node90" href="$single__variable_8h.html" title="grins/single_variable.h" alt="" coords="1183,223,1348,252"/>
+<area shape="rect" id="node13" href="$variable__name__defaults_8h.html" title="grins/variable_name\l_defaults.h" alt="" coords="1176,406,1331,453"/>
+<area shape="rect" id="node16" href="$var__typedefs_8h.html" title="grins/var_typedefs.h" alt="" coords="1405,415,1563,444"/>
+<area shape="rect" id="node30" href="$physics__naming_8h.html" title="grins/physics_naming.h" alt="" coords="1303,319,1476,348"/>
+<area shape="rect" id="node33" href="$cached__values_8h.html" title="grins/cached_values.h" alt="" coords="1939,415,2107,444"/>
+<area shape="rect" id="node45" href="$parameter__user_8h.html" title="grins/parameter_user.h" alt="" coords="1739,415,1915,444"/>
+<area shape="rect" id="node53" href="$assembly__context_8h.html" title="grins/assembly_context.h" alt="" coords="2555,319,2749,348"/>
+<area shape="rect" id="node25" href="$shared__ptr_8h.html" title="grins/shared_ptr.h" alt="" coords="1253,511,1392,540"/>
+<area shape="rect" id="node43" href="$cached__quantities__enum_8h.html" title="grins/cached_quantities\l_enum.h" alt="" coords="2085,502,2267,549"/>
+<area shape="rect" id="node71" href="$fe__variables__base_8h.html" title="grins/fe_variables\l_base.h" alt="" coords="733,310,869,357"/>
+<area shape="rect" id="node76" href="$grins__enums_8h.html" title="grins/grins_enums.h" alt="" coords="261,415,413,444"/>
+<area shape="rect" id="node79" href="$variables__parsing_8h.html" title="grins/variables_parsing.h" alt="" coords="5,415,187,444"/>
+<area shape="rect" id="node96" href="$stab__helper_8h.html" title="grins/stab_helper.h" alt="" coords="2444,223,2591,252"/>
+</map>
