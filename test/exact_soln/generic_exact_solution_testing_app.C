@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
   const libMesh::LibMeshInit & libmesh_init = grins.get_libmesh_init();
 
   GRINS::MeshBuilder mesh_builder;
-  GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = mesh_builder.build(inputfile,libmesh_init.comm());
+  std::shared_ptr<libMesh::UnstructuredMesh> mesh = mesh_builder.build(inputfile,libmesh_init.comm());
 
   libMesh::EquationSystems es(*mesh);
 

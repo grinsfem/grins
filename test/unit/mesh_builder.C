@@ -63,7 +63,7 @@ namespace GRINSTesting
     {
       std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_build_1d.in";
       GetPot input(filename);
-      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
       CPPUNIT_ASSERT_EQUAL((libMesh::dof_id_type)22,mesh->n_elem());
       this->test_elem_type(*mesh,GRINSEnums::EDGE2);
     }
@@ -72,7 +72,7 @@ namespace GRINSTesting
     {
       std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_build_2d.in";
       GetPot input(filename);
-      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
       CPPUNIT_ASSERT_EQUAL((libMesh::dof_id_type)100,mesh->n_elem());
       this->test_elem_type(*mesh,GRINSEnums::QUAD9);
 
@@ -82,14 +82,14 @@ namespace GRINSTesting
     {
       std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_build_3d.in";
       GetPot input(filename);
-      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
       CPPUNIT_ASSERT_EQUAL((libMesh::dof_id_type)125,mesh->n_elem());
       this->test_elem_type(*mesh,GRINSEnums::HEX8);
     }
 
   private:
 
-    GRINS::SharedPtr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input )
+    std::shared_ptr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input )
     {
       GRINS::MeshBuilder mesh_builder;
       return mesh_builder.build( input, *TestCommWorld );

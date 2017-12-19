@@ -73,7 +73,7 @@ namespace GRINS
       @param species The string representing the species of interest (much match species given in input file)
       @param termo_pressure The thermodynamic pressure (in [Pa]), or -1.0 if non-constant
     */
-    AbsorptionCoeff(SharedPtr<Chemistry> & chem, SharedPtr<HITRAN> & hitran,
+    AbsorptionCoeff(std::shared_ptr<Chemistry> & chem, std::shared_ptr<HITRAN> & hitran,
                     libMesh::Real nu_min, libMesh::Real nu_max,
                     libMesh::Real desired_nu, const std::string & species,
                     libMesh::Real thermo_pressure);
@@ -99,10 +99,10 @@ namespace GRINS
 
   protected:
     //! Antioch/Cantera object
-    SharedPtr<Chemistry> _chemistry;
+    std::shared_ptr<Chemistry> _chemistry;
 
     //! HITRAN
-    SharedPtr<HITRAN> _hitran;
+    std::shared_ptr<HITRAN> _hitran;
 
     //! Desired wavenumber [cm^-1]
     libMesh::Real _nu;

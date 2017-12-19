@@ -38,7 +38,7 @@ namespace GRINSTesting
     /*!
       This class is intended solely for use in unit testing the AbsorptionCoeff class.
     */
-    AbsorptionCoeffTesting( GRINS::SharedPtr<Chemistry> & chem, GRINS::SharedPtr<GRINS::HITRAN> & hitran,
+    AbsorptionCoeffTesting( std::shared_ptr<Chemistry> & chem, std::shared_ptr<GRINS::HITRAN> & hitran,
                             libMesh::Real nu_min, libMesh::Real nu_max,
                             libMesh::Real desired_nu, const std::string & species,
                             libMesh::Real thermo_pressure);
@@ -47,7 +47,8 @@ namespace GRINSTesting
   };
 
   template<typename Chemistry>
-  AbsorptionCoeffTesting<Chemistry>::AbsorptionCoeffTesting(GRINS::SharedPtr<Chemistry> & chem, GRINS::SharedPtr<GRINS::HITRAN> & hitran,
+  AbsorptionCoeffTesting<Chemistry>::AbsorptionCoeffTesting(std::shared_ptr<Chemistry> & chem,
+                                                            std::shared_ptr<GRINS::HITRAN> & hitran,
                                                             libMesh::Real nu_min, libMesh::Real nu_max,
                                                             libMesh::Real desired_nu, const std::string & species,
                                                             libMesh::Real thermo_pressure)
