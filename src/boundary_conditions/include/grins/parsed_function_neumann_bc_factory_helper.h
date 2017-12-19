@@ -31,7 +31,7 @@
 
 // GRINS
 #include "grins/var_typedefs.h"
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/neumann_bc_abstract.h"
 #include "grins/string_utils.h"
 #include "grins/fe_variables_base.h"

@@ -26,7 +26,7 @@
 #include "grins/physics_builder.h"
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/physics_naming.h"
 #include "grins/physics_factory_base.h"
 

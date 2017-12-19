@@ -27,11 +27,11 @@
 #define GRINS_SIMULATION_H
 
 // C++
-#include "grins/shared_ptr.h"
+#include <memory>
 
 // GRINS
 #include "grins_config.h"
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/solver.h"
 #include "grins/qoi_base.h"
 #include "grins/visualization.h"

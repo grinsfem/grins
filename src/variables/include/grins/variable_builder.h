@@ -26,7 +26,7 @@
 #define GRINS_VARIABLE_BUILDER_H
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/fe_variables_base.h"
 
 // libMesh

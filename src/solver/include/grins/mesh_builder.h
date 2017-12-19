@@ -33,7 +33,7 @@
 
 // GRINS
 #include "grins/common.h"
-#include "grins/shared_ptr.h"
+#include <memory>
 
 namespace GRINS
 {

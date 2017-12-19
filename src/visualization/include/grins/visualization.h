@@ -34,7 +34,7 @@
 #include "libmesh/equation_systems.h"
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 
 // libMesh forward declarations
 class GetPot;

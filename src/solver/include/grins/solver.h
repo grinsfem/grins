@@ -27,7 +27,7 @@
 #define GRINS_SOLVER_H
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 
 // libMesh
 #include "libmesh/equation_systems.h"

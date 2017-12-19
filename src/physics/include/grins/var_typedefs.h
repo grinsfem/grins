@@ -34,7 +34,7 @@
 #include "libmesh/id_types.h"
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 
 namespace GRINS
 {

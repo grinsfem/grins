@@ -26,10 +26,10 @@
 #ifndef GRINS_SOLVER_CONTEXT_H
 #define GRINS_SOLVER_CONTEXT_H
 
-#include "grins/shared_ptr.h"
+#include <memory>
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/visualization.h"
 #include "grins/postprocessed_quantities.h"
 #include "grins/qoi_output.h"

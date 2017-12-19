@@ -31,7 +31,7 @@
 #include "grins/visualization_factory.h"
 #include "grins/qoi_factory.h"
 #include "grins/postprocessing_factory.h"
-#include "grins/shared_ptr.h"
+#include <memory>
 
 namespace GRINS
 {

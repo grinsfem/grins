@@ -33,7 +33,7 @@
 #include "grins/rayfire_mesh.h"
 
 // shared_ptr
-#include "grins/shared_ptr.h"
+#include <memory>
 
 namespace GRINS
 {

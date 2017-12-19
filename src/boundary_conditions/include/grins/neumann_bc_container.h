@@ -28,7 +28,7 @@
 // GRINS
 #include "grins/var_typedefs.h"
 #include "grins/neumann_bc_abstract.h"
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/fe_variables_base.h"
 
 // libMesh

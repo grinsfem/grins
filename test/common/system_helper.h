@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/multiphysics_sys.h"
 #include "grins/mesh_builder.h"
 

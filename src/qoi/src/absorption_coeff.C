@@ -23,6 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
+#include "grins_config.h"
+
 // This class
 #include "grins/absorption_coeff.h"
 
