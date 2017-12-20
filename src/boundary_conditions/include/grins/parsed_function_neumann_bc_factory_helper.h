@@ -31,7 +31,7 @@
 
 // GRINS
 #include "grins/var_typedefs.h"
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/neumann_bc_abstract.h"
 #include "grins/string_utils.h"
 #include "grins/fe_variables_base.h"
@@ -57,18 +57,18 @@ namespace GRINS
 
     //! Helper function containing common code
     /*! This way, it's easy to add a new flux variable name to be parsed from input. */
-    SharedPtr<NeumannBCAbstract> build_neumman_func_common( const GetPot& input,
+    std::shared_ptr<NeumannBCAbstract> build_neumman_func_common( const GetPot& input,
                                                             MultiphysicsSystem& system,
                                                             const FEVariablesBase& fe_var,
                                                             const std::string& flux_input );
 
     //! Helper function that builds the right BC object depending on the FunctionType
-    SharedPtr<NeumannBCAbstract> build_parsed_neumann_func(MultiphysicsSystem& system,
+    std::shared_ptr<NeumannBCAbstract> build_parsed_neumann_func(MultiphysicsSystem& system,
                                                            const std::string& expression,
                                                            VariableIndex var_idx );
 
     //! Helper function that builds the right CompositeBC object depending on the FunctionType
-    SharedPtr<NeumannBCAbstract>
+    std::shared_ptr<NeumannBCAbstract>
     build_composite_parsed_neumann_func(MultiphysicsSystem& system,
                                         const std::vector<std::string>& expressions,
                                         const std::vector<VariableIndex>& var_indices );

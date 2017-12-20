@@ -83,7 +83,7 @@ namespace GRINS
       Note that for Variables with more than one component, the flux
       input should be a vector the size of the var_names object, even
       if one of the components is zero. */
-    virtual SharedPtr<NeumannBCAbstract>
+    virtual std::shared_ptr<NeumannBCAbstract>
     build_neumann_func( const GetPot& input,
                         MultiphysicsSystem& system,
                         const FEVariablesBase& fe_var,

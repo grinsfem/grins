@@ -47,7 +47,7 @@
 namespace GRINS
 {
   void OldStyleBCBuilder::build_bcs( const GetPot& input, MultiphysicsSystem& system,
-                                     std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
+                                     std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs )
   {
     // Warn about deprecation of this horrid style
     {
@@ -184,7 +184,7 @@ namespace GRINS
                                                    const std::string& bc_value_str,
                                                    const std::string& bc_var_str,
                                                    libMesh::DofMap& dof_map,
-                                                   std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
+                                                   std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs )
   {
     unsigned int num_ids = input.vector_variable_size(section_name+"/"+bc_id_str);
     unsigned int num_types = input.vector_variable_size(section_name+"/"+bc_type_str);

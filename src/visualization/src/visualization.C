@@ -95,7 +95,7 @@ namespace GRINS
     return;
   }
 
-  void Visualization::output( SharedPtr<libMesh::EquationSystems> equation_system )
+  void Visualization::output( std::shared_ptr<libMesh::EquationSystems> equation_system )
   {
     this->dump_visualization( equation_system, _vis_output_file_prefix, 0.0 );
 
@@ -103,7 +103,7 @@ namespace GRINS
   }
 
   void Visualization::output
-  ( SharedPtr<libMesh::EquationSystems> equation_system,
+  ( std::shared_ptr<libMesh::EquationSystems> equation_system,
     const unsigned int time_step,
     const libMesh::Real time )
   {
@@ -119,7 +119,7 @@ namespace GRINS
     return;
   }
 
-  void Visualization::output_residual( SharedPtr<libMesh::EquationSystems> equation_system,
+  void Visualization::output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                        MultiphysicsSystem* system )
   {
     this->output_residual( equation_system, system, 0, 0.0 );
@@ -127,7 +127,7 @@ namespace GRINS
   }
 
   void Visualization::output_residual_sensitivities
-  (SharedPtr<libMesh::EquationSystems> equation_system,
+  (std::shared_ptr<libMesh::EquationSystems> equation_system,
    MultiphysicsSystem* system,
    const libMesh::ParameterVector & params)
   {
@@ -135,14 +135,14 @@ namespace GRINS
       ( equation_system, system, params, 0, 0.0 );
   }
 
-  void Visualization::output_adjoint( SharedPtr<libMesh::EquationSystems> equation_system,
+  void Visualization::output_adjoint( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                       MultiphysicsSystem* system )
   {
     this->output_adjoint( equation_system, system, 0, 0.0 );
   }
 
   void Visualization::output_solution_sensitivities
-  (SharedPtr<libMesh::EquationSystems> equation_system,
+  (std::shared_ptr<libMesh::EquationSystems> equation_system,
    MultiphysicsSystem* system,
    const libMesh::ParameterVector & params)
   {
@@ -151,7 +151,7 @@ namespace GRINS
   }
 
   void Visualization::dump_visualization
-  ( SharedPtr<libMesh::EquationSystems> equation_system,
+  ( std::shared_ptr<libMesh::EquationSystems> equation_system,
     const std::string& filename_prefix,
     const libMesh::Real time )
   {

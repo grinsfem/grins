@@ -26,7 +26,7 @@
 #define GRINS_VARIABLE_BUILDER_H
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/fe_variables_base.h"
 
 // libMesh
@@ -61,7 +61,7 @@ namespace GRINS
   protected:
 
     //! Adds/registers the fe_var to VariableWarehouse
-    void add_variable_to_warehouse( SharedPtr<FEVariablesBase>& fe_var,
+    void add_variable_to_warehouse( std::shared_ptr<FEVariablesBase>& fe_var,
                                     const std::string& var_name );
 
     //! Given the names, family, and order, this adds the variables to the system and populates var_indices
@@ -76,7 +76,7 @@ namespace GRINS
 
 
     //! Sets appropriate data in the VariableFactoryAbstract and calls VariableFactoryAbstract::build()
-    SharedPtr<FEVariablesBase> build_fe_var( const std::string& var_type,
+    std::shared_ptr<FEVariablesBase> build_fe_var( const std::string& var_type,
                                              const std::vector<std::string>& var_names,
                                              const std::vector<VariableIndex>&  var_indices,
                                              const std::set<libMesh::subdomain_id_type>& subdomain_ids );

@@ -159,28 +159,6 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ])
 CPPFLAGS=$grins_save_CPPFLAGS
 
-dnl----------------------------------------------------------
-dnl Check for boost, only if libMesh didn't detect shared_ptr
-dnl----------------------------------------------------------
-if test "x$libmesh_have_cxx11_shared_ptr" != xyes; then
-   AC_MSG_WARN([libMesh did not detect std::shared_ptr, now searching for Boost for shared_ptr support!])
-   BOOST_REQUIRE([1.39.0])
-   BOOST_FIND_HEADER([boost/shared_ptr.hpp])
-
-   dnl If we made it this far, we found boost
-   dnl But the boost.m4 doesn't AC_SUBST(HAVE_BOOST)
-   dnl so we do it here so we can report in config_summary.m4
-   AC_SUBST(HAVE_BOOST,[1])
-else
-   dnl We didn't need Boost so we're not using it
-   AC_SUBST(HAVE_BOOST,[0])
-fi
-
-dnl-------------------------------------
-dnl Check for GNU Linear Programming kit
-dnl-------------------------------------
-dnl###AX_PATH_GLPK(4.35,,AC_MSG_ERROR([Could not find required GLPK error]))
-dnl AC_CACHE_SAVE
 
 dnl-----------------------
 dnl Check for Cantera 2.0+

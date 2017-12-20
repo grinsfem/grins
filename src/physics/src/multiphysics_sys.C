@@ -447,7 +447,7 @@ namespace GRINS
        &GRINS::Physics::compute_nonlocal_mass_residual_cache);
   }
 
-  SharedPtr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name )
+  std::shared_ptr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name )
   {
     if( _physics_list.find( physics_name ) == _physics_list.end() )
       {
@@ -487,11 +487,11 @@ namespace GRINS
   }
 
   void MultiphysicsSystem::get_active_neumann_bcs( BoundaryID bc_id,
-                                                   const std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs,
-                                                   std::vector<SharedPtr<NeumannBCContainer> >& active_neumann_bcs )
+                                                   const std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs,
+                                                   std::vector<std::shared_ptr<NeumannBCContainer> >& active_neumann_bcs )
   {
     // Manually writing the loop since std::copy_if is C++11 only
-    for( std::vector<SharedPtr<NeumannBCContainer> >::const_iterator it = neumann_bcs.begin();
+    for( std::vector<std::shared_ptr<NeumannBCContainer> >::const_iterator it = neumann_bcs.begin();
          it < neumann_bcs.end(); ++it )
       if( (*it)->has_bc_id( bc_id ) )
         active_neumann_bcs.push_back( *it );
@@ -517,16 +517,16 @@ namespace GRINS
         libmesh_assert_not_equal_to(bc_id, libMesh::BoundaryInfo::invalid_id);
 
         // Retreive the NeumannBCContainers that are active on the current bc_id
-        std::vector<SharedPtr<NeumannBCContainer> > active_neumann_bcs;
+        std::vector<std::shared_ptr<NeumannBCContainer> > active_neumann_bcs;
         this->get_active_neumann_bcs( bc_id, _neumann_bcs, active_neumann_bcs );
 
         if( !active_neumann_bcs.empty() )
           {
-            typedef std::vector<SharedPtr<NeumannBCContainer> >::iterator BCIt;
+            typedef std::vector<std::shared_ptr<NeumannBCContainer> >::iterator BCIt;
 
             for( BCIt container = active_neumann_bcs.begin(); container < active_neumann_bcs.end(); ++container )
               {
-                SharedPtr<NeumannBCAbstract>& func = (*container)->get_func();
+                std::shared_ptr<NeumannBCAbstract>& func = (*container)->get_func();
 
                 const FEVariablesBase& var = (*container)->get_fe_var();
 

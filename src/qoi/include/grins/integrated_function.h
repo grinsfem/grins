@@ -60,13 +60,13 @@ namespace GRINS
       @param rayfire A RayfireMesh object (will be initialized in init()) <b>Ownership will be taken by an internal std::unique_ptr</b>
       @param qoi_name Passed to the QoIBase
     */
-    IntegratedFunction(unsigned int p_level, SharedPtr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name);
+    IntegratedFunction(unsigned int p_level, std::shared_ptr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name);
 
     //! Constructor
     /*!
       Used by the QoIFactory. Passes GetPot through to RayfireMesh for construction
     */
-    IntegratedFunction(const GetPot & input, unsigned int p_level, SharedPtr<Function> f, const std::string & input_qoi_string, const std::string & qoi_name);
+    IntegratedFunction(const GetPot & input, unsigned int p_level, std::shared_ptr<Function> f, const std::string & input_qoi_string, const std::string & qoi_name);
 
     //! Copy Constructor
     /*!
@@ -110,7 +110,7 @@ namespace GRINS
     unsigned int _p_level;
 
     //! Pointer to the template class used for function evaluation
-    SharedPtr<Function> _f;
+    std::shared_ptr<Function> _f;
 
     //! Pointer to RayfireMesh object
     std::unique_ptr<RayfireMesh> _rayfire;

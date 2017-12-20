@@ -42,7 +42,7 @@
 
 namespace GRINS
 {
-  SharedPtr<libMesh::UnstructuredMesh> MeshBuilder::build
+  std::shared_ptr<libMesh::UnstructuredMesh> MeshBuilder::build
   (const GetPot& input,
    const libMesh::Parallel::Communicator &comm)
   {
@@ -167,7 +167,7 @@ namespace GRINS
         this->do_mesh_refinement_from_input( input, comm, *mesh );
       }
 
-    return SharedPtr<libMesh::UnstructuredMesh>(mesh);
+    return std::shared_ptr<libMesh::UnstructuredMesh>(mesh);
   }
 
   void MeshBuilder::generate_mesh( const std::string& mesh_build_type, const GetPot& input,

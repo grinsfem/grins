@@ -125,7 +125,13 @@ namespace GRINSTesting
           for (unsigned int i=0; i<functions.size(); i++)
             {
               GRINS::RayfireMesh * rayfire = new GRINS::RayfireMesh(origin,theta[t]);
-              GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)2,new libMesh::ParsedFunction<libMesh::Real>(functions[i]),rayfire,"integrated_function");
+
+              std::shared_ptr<libMesh::ParsedFunction<libMesh::Real>>
+                f( new libMesh::ParsedFunction<libMesh::Real>(functions[i]) );
+
+              GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >
+                integ_func((unsigned int)2, f, rayfire, "integrated_function");
+
               comp_qoi.add_qoi(integ_func);
             }
 
@@ -193,7 +199,7 @@ namespace GRINSTesting
           std::vector<std::vector<libMesh::Real> > h_vals(functions.size());
 
           GRINS::MultiphysicsSystem* system = _sim->get_multiphysics_system();
-          GRINS::SharedPtr<libMesh::EquationSystems> es = _sim->get_equation_system();
+          std::shared_ptr<libMesh::EquationSystems> es = _sim->get_equation_system();
 
           CPPUNIT_ASSERT_EQUAL(functions.size(), calc_answers.size());
 
@@ -204,13 +210,19 @@ namespace GRINSTesting
           // instead of trying to access each of them directly, we create a reference rayfire that
           // can be used for checking the number of rayfire elements and
           // finding the longest rayfire element for calculating convergence
-          GRINS::SharedPtr<GRINS::RayfireMesh> ref_rayfire(new GRINS::RayfireMesh(origin,theta[t]));
+          std::shared_ptr<GRINS::RayfireMesh> ref_rayfire(new GRINS::RayfireMesh(origin,theta[t]));
           ref_rayfire->init( system->get_mesh() );
 
           for (unsigned int i=0; i<functions.size(); i++)
             {
               GRINS::RayfireMesh * rayfire = new GRINS::RayfireMesh(origin,theta[t]);
-              GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)3,new libMesh::ParsedFunction<libMesh::Real>(functions[i]),rayfire,"integrated_function");
+
+              std::shared_ptr<libMesh::ParsedFunction<libMesh::Real>>
+                f( new libMesh::ParsedFunction<libMesh::Real>(functions[i]) );
+
+              GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >
+                integ_func((unsigned int)3,f,rayfire,"integrated_function");
+
               comp_qoi.add_qoi(integ_func);
             }
 
@@ -331,7 +343,7 @@ namespace GRINSTesting
       libMesh::Real theta = 0.0;
 
       GRINS::MultiphysicsSystem* system = _sim->get_multiphysics_system();
-      GRINS::SharedPtr<libMesh::EquationSystems> es = _sim->get_equation_system();
+      std::shared_ptr<libMesh::EquationSystems> es = _sim->get_equation_system();
 
       libMesh::MeshRefinement mr(system->get_mesh());
 
@@ -347,7 +359,12 @@ namespace GRINSTesting
       std::string function = "x";
       libMesh::Real calc_answer = 0.5/costheta*3.0*3.0;
 
-      GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> > integ_func((unsigned int)3,new libMesh::ParsedFunction<libMesh::Real>(function),rayfire,"integrated_function");
+      std::shared_ptr<libMesh::ParsedFunction<libMesh::Real>>
+                f( new libMesh::ParsedFunction<libMesh::Real>(function) );
+
+      GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >
+        integ_func((unsigned int)3,f,rayfire,"integrated_function");
+
       comp_qoi.add_qoi(integ_func);
 
       comp_qoi.init(*_input,*system);
@@ -392,8 +409,8 @@ namespace GRINSTesting
 
 
   private:
-    GRINS::SharedPtr<GRINS::Simulation> _sim;
-    GRINS::SharedPtr<GetPot> _input;
+    std::shared_ptr<GRINS::Simulation> _sim;
+    std::shared_ptr<GetPot> _input;
 
     //! Initialize the GetPot and Simulation class objects
     void init_sim(const std::string& filename)
@@ -404,10 +421,10 @@ namespace GRINSTesting
       GetPot empty_command_line( (const int)1,&argv );
       GRINS::SimulationBuilder sim_builder;
 
-      _sim = new GRINS::Simulation(*_input,
-                                   empty_command_line,
-                                   sim_builder,
-                                   *TestCommWorld );
+      _sim.reset( new GRINS::Simulation(*_input,
+                                        empty_command_line,
+                                        sim_builder,
+                                        *TestCommWorld ) );
     }
 
   };

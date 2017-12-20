@@ -59,7 +59,7 @@ namespace GRINS
   protected:
 
     virtual void build_bcs( const GetPot& input, MultiphysicsSystem& system,
-                            std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+                            std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs );
 
     //! Helper function to build boundary conditions specified by a single type
     /*! Examples include axisymmetric and periodic. */
@@ -69,7 +69,7 @@ namespace GRINS
                                libMesh::DofMap& dof_map,
                                const std::string& type_input_section,
                                std::set<std::string>& var_sections,
-                               std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+                               std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs );
 
     void build_axisymmetric_bcs( const GetPot& input,
                                  MultiphysicsSystem& system,
@@ -77,7 +77,7 @@ namespace GRINS
                                  libMesh::DofMap& dof_map,
                                  const std::string& bc_type,
                                  std::set<std::string>& var_sections,
-                                 std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+                                 std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs );
 
     //! Helper function to build boundary conditions using Variable sections
     /*! This is the "standard" part. We parse for each Variable section that
@@ -90,7 +90,7 @@ namespace GRINS
                                   libMesh::DofMap& dof_map,
                                   std::set<std::string>& var_sections,
                                   const std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map,
-                                  std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs);
+                                  std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs);
 
     void parse_and_build_bc_id_map( const GetPot& input,
                                     std::map<std::string,std::set<BoundaryID> >& bc_id_map );

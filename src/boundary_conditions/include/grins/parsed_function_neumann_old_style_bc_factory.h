@@ -48,7 +48,7 @@ namespace GRINS
 
   protected:
 
-    virtual SharedPtr<NeumannBCAbstract>
+    virtual std::shared_ptr<NeumannBCAbstract>
     build_neumann_func( const GetPot& input,
                         MultiphysicsSystem& system,
                         const FEVariablesBase& fe_var,
@@ -60,7 +60,7 @@ namespace GRINS
 
   template<typename FunctionType>
   inline
-  SharedPtr<NeumannBCAbstract>
+  std::shared_ptr<NeumannBCAbstract>
   ParsedFunctionNeumannOldStyleBCFactory<FunctionType>::build_neumann_func( const GetPot& input,
                                                                             MultiphysicsSystem& system,
                                                                             const FEVariablesBase& fe_var,

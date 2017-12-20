@@ -174,19 +174,19 @@ namespace GRINS
     //! Query to check if a particular physics has been enabled
     bool has_physics( const std::string physics_name ) const;
 
-    SharedPtr<GRINS::Physics> get_physics( const std::string physics_name );
+    std::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
 
-    SharedPtr<GRINS::Physics> get_physics( const std::string physics_name ) const;
+    std::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name ) const;
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
 
-    std::vector<SharedPtr<NeumannBCContainer> >& get_neumann_bcs()
+    std::vector<std::shared_ptr<NeumannBCContainer> >& get_neumann_bcs()
     { return _neumann_bcs; }
 
-    const std::vector<SharedPtr<NeumannBCContainer> >& get_neumann_bcs() const
+    const std::vector<std::shared_ptr<NeumannBCContainer> >& get_neumann_bcs() const
     { return _neumann_bcs; }
 
   private:
@@ -214,9 +214,9 @@ namespace GRINS
     //! Neumann boundary conditions
     /*! Store each NeumannBCContainer for each set of BoundaryIDs and Variables,
       as specified in the input file. The container knows what BoundaryIDs and
-      Variables it applies to. We use SharedPtr here because
+      Variables it applies to. We use std::shared_ptr here because
       std::unique_ptr may still actually be an AutoPtr. */
-    std::vector<SharedPtr<NeumannBCContainer> > _neumann_bcs;
+    std::vector<std::shared_ptr<NeumannBCContainer> > _neumann_bcs;
 
     //! Constraint application object
     std::unique_ptr<libMesh::System::Constraint> _constraint;
@@ -234,8 +234,8 @@ namespace GRINS
 
     //! Extract the bcs from neumann_bcs that are active on bc_id and return them in active_neumann_bcs
     void get_active_neumann_bcs( BoundaryID bc_id,
-                                 const std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs,
-                                 std::vector<SharedPtr<NeumannBCContainer> >& active_neumann_bcs );
+                                 const std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs,
+                                 std::vector<std::shared_ptr<NeumannBCContainer> >& active_neumann_bcs );
 
     //! Applies the subset of _neumann_bcs that are active on the current element side
     bool apply_neumann_bcs( bool request_jacobian,
@@ -243,7 +243,7 @@ namespace GRINS
   };
 
   inline
-  SharedPtr<GRINS::Physics> MultiphysicsSystem::get_physics( const std::string physics_name ) const
+  std::shared_ptr<GRINS::Physics> MultiphysicsSystem::get_physics( const std::string physics_name ) const
   {
     libmesh_assert(_physics_list.find( physics_name ) != _physics_list.end());
 

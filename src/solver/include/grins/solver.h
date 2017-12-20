@@ -27,7 +27,7 @@
 #define GRINS_SOLVER_H
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 
 // libMesh
 #include "libmesh/equation_systems.h"
@@ -55,7 +55,7 @@ namespace GRINS
     virtual ~Solver();
 
     virtual void initialize( const GetPot& input,
-                             SharedPtr<libMesh::EquationSystems> equation_system,
+                             std::shared_ptr<libMesh::EquationSystems> equation_system,
                              GRINS::MultiphysicsSystem* system );
 
     virtual void solve( SolverContext& context )=0;

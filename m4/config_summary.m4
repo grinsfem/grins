@@ -53,12 +53,6 @@ else
 fi
 echo
 echo Optional Features:
-if test "x$HAVE_BOOST" = "x1"; then
-  echo '   'Boost......................... : yes
-  echo '     'BOOST_CPPFLAGS.............. : $BOOST_CPPFLAGS
-else
-  echo '   'Boost......................... : no
-fi
 if test "x$HAVE_ANTIOCH" = "x1"; then
   echo '   'Antioch....................... : yes
   echo '     'ANTIOCH_CPPFLAGS............ : $ANTIOCH_CPPFLAGS

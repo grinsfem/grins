@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // GRINS
-#include "grins/shared_ptr.h"
+#include <memory>
 #include "grins/multiphysics_sys.h"
 #include "grins/mesh_builder.h"
 
@@ -60,7 +60,7 @@ namespace GRINSTesting
     }
 
     std::unique_ptr<GetPot> _input;
-    GRINS::SharedPtr<libMesh::UnstructuredMesh> _mesh;
+    std::shared_ptr<libMesh::UnstructuredMesh> _mesh;
     std::unique_ptr<libMesh::EquationSystems> _es;
 
     // Needs to be an ordinar pointer since EquationSystems owns this

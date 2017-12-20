@@ -44,7 +44,7 @@ namespace GRINS
 {
 
   void DefaultBCBuilder::build_bcs( const GetPot& input, MultiphysicsSystem& system,
-                                    std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
+                                    std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs )
   {
     libMesh::DofMap& dof_map = system.get_dof_map();
 
@@ -108,7 +108,7 @@ namespace GRINS
                                                libMesh::DofMap& dof_map,
                                                const std::string& type_input_section,
                                                std::set<std::string>& var_sections,
-                                               std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs)
+                                               std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs)
   {
     std::string type_input = type_input_section+"/type";
     std::string bc_type = input( type_input, std::string("DIE!") );
@@ -145,7 +145,7 @@ namespace GRINS
                                                  libMesh::DofMap& dof_map,
                                                  const std::string& bc_type,
                                                  std::set<std::string>& var_sections,
-                                                 std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs )
+                                                 std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs )
   {
     // Axisymmetric depends on the variable type.
     // So, we loop over all the Variable names and prepend the type
@@ -199,7 +199,7 @@ namespace GRINS
                                                   libMesh::DofMap& dof_map,
                                                   std::set<std::string>& var_sections,
                                                   const std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map,
-                                                  std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs)
+                                                  std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs)
   {
     for( std::set<std::string>::const_iterator vars = var_sections.begin();
          vars != var_sections.end(); ++vars )

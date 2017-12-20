@@ -37,8 +37,8 @@ namespace GRINS
   {
   public:
 
-    GasRecombinationCatalyticWall( SharedPtr<Chemistry>& chem,
-                                   SharedPtr<CatalycityBase>& gamma,
+    GasRecombinationCatalyticWall( std::shared_ptr<Chemistry>& chem,
+                                   std::shared_ptr<CatalycityBase>& gamma,
                                    const std::vector<VariableIndex>& species_vars,
                                    VariableIndex T_var,
                                    libMesh::Real p0,

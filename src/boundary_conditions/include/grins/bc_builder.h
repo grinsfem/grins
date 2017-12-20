@@ -67,12 +67,12 @@ namespace GRINS
 
     static void build_boundary_conditions( const GetPot& input,
                                            MultiphysicsSystem& system,
-                                           std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+                                           std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs );
 
   protected:
 
     virtual void build_bcs( const GetPot& input, MultiphysicsSystem& system,
-                            std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs ) =0;
+                            std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs ) =0;
 
     void construct_dbc_core( const GetPot& input,
                              MultiphysicsSystem& system,
@@ -88,7 +88,7 @@ namespace GRINS
                              const FEVariablesBase& fe_var,
                              const std::string& section,
                              const std::string& bc_type,
-                             std::vector<SharedPtr<NeumannBCContainer> >& neumann_bcs );
+                             std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs );
 
     static bool is_new_bc_input_style( const GetPot& input );
 

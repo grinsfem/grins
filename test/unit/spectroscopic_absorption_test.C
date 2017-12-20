@@ -104,7 +104,7 @@ namespace GRINSTesting
       libMesh::Real T_min = 290.0,
         T_max = 310.0,
         T_step = 0.01;
-      GRINS::SharedPtr<GRINS::HITRAN> hitran( new GRINS::HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
+      std::shared_ptr<GRINS::HITRAN> hitran( new GRINS::HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
 
       std::string species = "CO2";
       libMesh::Real thermo_pressure = 5066.25;
@@ -114,8 +114,9 @@ namespace GRINSTesting
       GRINS::ChemistryBuilder chem_builder;
       std::unique_ptr<GRINS::AntiochChemistry> chem_ptr;
       chem_builder.build_chemistry(*(_input.get()),material,chem_ptr);
-      GRINS::SharedPtr<GRINS::AntiochChemistry> chem(chem_ptr.release());
-      GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> > absorb = new AbsorptionCoeffTesting<GRINS::AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure);
+      std::shared_ptr<GRINS::AntiochChemistry> chem(chem_ptr.release());
+      std::shared_ptr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >
+        absorb( new AbsorptionCoeffTesting<GRINS::AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure) );
 
       libMesh::Real T = 300.0;
       libMesh::Real P = 5066.25;
@@ -155,8 +156,8 @@ namespace GRINSTesting
     }
 
   private:
-    GRINS::SharedPtr<GRINS::Simulation> _sim;
-    GRINS::SharedPtr<GetPot> _input;
+    std::shared_ptr<GRINS::Simulation> _sim;
+    std::shared_ptr<GetPot> _input;
 
     //! Run the test on a given input file and calculated answer
     void run_test(const std::string filename, libMesh::Real calc_answer)
@@ -177,13 +178,13 @@ namespace GRINSTesting
       GetPot empty_command_line( (const int)1,&argv );
       GRINS::SimulationBuilder sim_builder;
 
-      _sim = new GRINS::Simulation(*_input,
-                                   empty_command_line,
-                                   sim_builder,
-                                   *TestCommWorld );
+      _sim.reset( new GRINS::Simulation(*_input,
+                                        empty_command_line,
+                                        sim_builder,
+                                        *TestCommWorld ) );
     }
 
-    void T_param_derivatives(GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
+    void T_param_derivatives(std::shared_ptr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
     {
       libMesh::Real delta = 1.0e-6;
 
@@ -217,7 +218,7 @@ namespace GRINSTesting
       check_param_derivatives(T_analytic,fd_plus,fd_minus,delta);
     }
 
-    void P_param_derivatives(GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
+    void P_param_derivatives(std::shared_ptr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
     {
       libMesh::Real delta = 1.0e-3;
 
@@ -251,7 +252,7 @@ namespace GRINSTesting
       check_param_derivatives(P_analytic,fd_plus,fd_minus,delta);
     }
 
-    void Y_param_derivatives(GRINS::SharedPtr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
+    void Y_param_derivatives(std::shared_ptr<AbsorptionCoeffTesting<GRINS::AntiochChemistry> >absorb, libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> & Y, unsigned int i)
     {
       libMesh::Real delta = 1.0e-8;
 

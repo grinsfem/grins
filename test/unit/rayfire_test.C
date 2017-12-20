@@ -83,7 +83,7 @@ namespace GRINSTesting
       pts[3] = libMesh::Point(0.321046307967165,1.0);
 
       // create the mesh (single square QUAD4 element)
-      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = new libMesh::SerialMesh(*TestCommWorld);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
 
       mesh->set_mesh_dimension(2);
 
@@ -112,7 +112,7 @@ namespace GRINSTesting
       pts[3] = libMesh::Point(0.321046307967165,1.0);
 
       // create a non-rectangular QUAD9
-      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = new libMesh::SerialMesh(*TestCommWorld);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
 
       mesh->set_mesh_dimension(2);
 
@@ -146,7 +146,7 @@ namespace GRINSTesting
       pts[3] = libMesh::Point(-0.1,0.1);
 
       // create the mesh (single trapezoidal QUAD4 element)
-      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = new libMesh::SerialMesh(*TestCommWorld);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
 
       mesh->set_mesh_dimension(2);
 
@@ -168,7 +168,7 @@ namespace GRINSTesting
     void test_vertical_fire()
     {
       // create the mesh (single square QUAD4 element)
-      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = new libMesh::SerialMesh(*TestCommWorld);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
 
       mesh->set_mesh_dimension(2);
 
@@ -289,7 +289,7 @@ namespace GRINSTesting
     {
       std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_"+elem_type+"_"+std::to_string(n_elem)+"elem_"+std::to_string(dim)+"D.in";
       GetPot input(filename);
-      GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
 
       // ensure the mesh has the desired number of elements
       CPPUNIT_ASSERT_EQUAL(n_elem,mesh->n_elem());
@@ -297,7 +297,7 @@ namespace GRINSTesting
       run_test_with_mesh(mesh,origin,theta,calc_end_node,exit_elem);
     }
 
-    void run_test_on_all_point_combinations(std::vector<libMesh::Point> pts, GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh)
+    void run_test_on_all_point_combinations(std::vector<libMesh::Point> pts, std::shared_ptr<libMesh::UnstructuredMesh> mesh)
     {
       // iterate over the starting points
       for(unsigned int i=0; i<pts.size(); i++)
@@ -322,9 +322,9 @@ namespace GRINSTesting
 
     }
 
-    void run_test_with_mesh(GRINS::SharedPtr<libMesh::UnstructuredMesh> mesh, libMesh::Point& origin, libMesh::Real theta, libMesh::Point& calc_end_point, unsigned int exit_elem)
+    void run_test_with_mesh(std::shared_ptr<libMesh::UnstructuredMesh> mesh, libMesh::Point& origin, libMesh::Real theta, libMesh::Point& calc_end_point, unsigned int exit_elem)
     {
-      GRINS::SharedPtr<GRINS::RayfireMesh> rayfire = new GRINS::RayfireMesh(origin,theta);
+      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
       rayfire->init(*mesh);
 
       const libMesh::Elem* original_elem = mesh->elem_ptr(exit_elem);
@@ -338,7 +338,7 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(1), (*(rayfire_elem->node_ptr(1)))(1),libMesh::TOLERANCE);
     }
 
-    GRINS::SharedPtr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input )
+    std::shared_ptr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input )
     {
       GRINS::MeshBuilder mesh_builder;
       return mesh_builder.build( input, *TestCommWorld );

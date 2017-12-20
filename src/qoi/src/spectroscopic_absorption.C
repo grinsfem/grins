@@ -42,7 +42,7 @@
 
 namespace GRINS
 {
-  SpectroscopicAbsorption::SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,SharedPtr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb)
+  SpectroscopicAbsorption::SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb)
     : IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >(input,2 /* QGauss order */,absorb,"SpectroscopicAbsorption",qoi_name)
   {}
 

@@ -23,6 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
+#include "grins_config.h"
+
 // This class
 #include "grins/absorption_coeff.h"
 
@@ -47,7 +49,7 @@
 namespace GRINS
 {
   template<typename Chemistry>
-  AbsorptionCoeff<Chemistry>::AbsorptionCoeff(SharedPtr<Chemistry> & chem, SharedPtr<HITRAN> & hitran,
+  AbsorptionCoeff<Chemistry>::AbsorptionCoeff(std::shared_ptr<Chemistry> & chem, std::shared_ptr<HITRAN> & hitran,
                                               libMesh::Real nu_min, libMesh::Real nu_max,
                                               libMesh::Real desired_nu, const std::string & species,
                                               libMesh::Real thermo_pressure)

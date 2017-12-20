@@ -33,7 +33,7 @@
 
 // GRINS
 #include "grins/common.h"
-#include "grins/shared_ptr.h"
+#include <memory>
 
 namespace GRINS
 {
@@ -49,7 +49,7 @@ namespace GRINS
     ~MeshBuilder(){};
 
     //! Builds the libMesh::Mesh according to input options.
-    SharedPtr<libMesh::UnstructuredMesh> build
+    std::shared_ptr<libMesh::UnstructuredMesh> build
     ( const GetPot& input,
       const libMesh::Parallel::Communicator &comm
       LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
