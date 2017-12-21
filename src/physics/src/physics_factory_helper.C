@@ -35,29 +35,6 @@
 
 namespace GRINS
 {
-  void PhysicsFactoryHelper::parse_viscosity_model( const GetPot& input,
-                                                    const std::string& physics,
-                                                    std::string& model )
-  {
-    // Newer, preferred version
-    bool have_material = MaterialsParsing::have_material(input,physics);
-
-    // Old deprecated version
-    bool have_viscosity_model = input.have_variable("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model");
-
-    PhysicsFactoryHelper::deprecated_visc_model_parsing(  have_viscosity_model,
-                                                          have_material,
-                                                          input,
-                                                          physics,
-                                                          model );
-
-    if( have_material )
-      {
-        std::string material = MaterialsParsing::material_name( input, physics );
-        MaterialsParsing::viscosity_model( input, physics, material, model );
-      }
-  }
-
   void PhysicsFactoryHelper::parse_conductivity_model( const GetPot& input,
                                                        const std::string& physics,
                                                        std::string& model )

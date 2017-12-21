@@ -51,9 +51,9 @@ namespace GRINS
     //! Get the name of the material in the Physics/physics section
     static std::string material_name( const GetPot& input, const std::string& physics );
 
-    //! Parse the viscosity model for the given material
-    static void viscosity_model( const GetPot& input, const std::string& physics,
-                                 const std::string& material, std::string& model );
+    //! Parse the viscosity model for the given Physics
+    static void viscosity_model( const GetPot & input, const std::string & physics,
+                                 std::string & model );
 
     //! Parse the conductivity model for the given material
     static void thermal_conductivity_model( const GetPot& input, const std::string& physics,

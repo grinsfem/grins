@@ -32,19 +32,16 @@
 
 namespace GRINS
 {
-  void MaterialsParsing::viscosity_model( const GetPot& input,
-                                          const std::string& /*physics*/,
-                                          const std::string& material,
-                                          std::string& model )
+  void MaterialsParsing::viscosity_model( const GetPot & input,
+                                          const std::string & physics,
+                                          std::string & model )
   {
-    if( !input.have_variable("Materials/"+material+"/Viscosity/model") )
-      {
-        libmesh_error_msg("Error: Could not find Materials/"+material+"/Viscosity/model in input file.");
-      }
+    std::string material = MaterialsParsing::material_name( input, physics );
+    std::string visc_option("Materials/"+material+"/Viscosity/model");
 
-    model = input( "Materials/"+material+"/Viscosity/model", "DIE!" );
+    MaterialsParsing::check_for_input_option(input,visc_option);
 
-    return;
+    model = input( visc_option, "DIE!" );
   }
 
   void MaterialsParsing::thermal_conductivity_model( const GetPot& input,

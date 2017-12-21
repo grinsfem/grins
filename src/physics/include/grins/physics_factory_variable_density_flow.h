@@ -26,6 +26,7 @@
 #define GRINS_PHYSICS_FACTORY_VARIABLE_DENSITY_FLOW_H
 
 // GRINS
+#include "grins/materials_parsing.h"
 #include "grins/physics_factory_with_core.h"
 #include "grins/physics_factory_helper.h"
 #include "grins/constant_viscosity.h"
@@ -68,7 +69,7 @@ namespace GRINS
     PhysicsFactoryHelper::parse_conductivity_model(input,core_physics,conductivity);
 
     std::string viscosity;
-    PhysicsFactoryHelper::parse_viscosity_model(input,core_physics,viscosity);
+    MaterialsParsing::viscosity_model(input,core_physics,viscosity);
 
     std::string specific_heat;
     PhysicsFactoryHelper::parse_specific_heat_model(input,core_physics,specific_heat);
