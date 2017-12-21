@@ -70,8 +70,7 @@ namespace GRINS
 
     //! Parse the stress-strain model for the given material
     static void stress_strain_model( const GetPot & input,
-                                     const std::string & /*physics*/,
-                                     const std::string & material,
+                                     const std::string & physics,
                                      std::string & model,
                                      std::string & strain_energy );
 

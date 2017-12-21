@@ -41,12 +41,6 @@ namespace GRINS
     PhysicsFactoryHelper(){};
     ~PhysicsFactoryHelper(){};
 
-    //! Determine stress-strain law used by solid mechanics classes
-    static void parse_stress_strain_model( const GetPot& input,
-                                           const std::string& physics,
-                                           std::string& model,
-                                           std::string& strain_energy );
-
     //! Determine thermochemistry model type
     static void parse_thermochemistry_model( const GetPot& input,
                                              const std::string& physics,

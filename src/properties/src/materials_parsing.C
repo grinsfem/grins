@@ -81,38 +81,18 @@ namespace GRINS
   }
 
   void MaterialsParsing::stress_strain_model( const GetPot & input,
-                                              const std::string & /*physics*/,
-                                              const std::string & material,
+                                              const std::string & physics,
                                               std::string & model,
                                               std::string & strain_energy )
   {
-    if( !input.have_variable("Materials/"+material+"/StressStrainLaw/model") )
-      {
-        libmesh_error_msg("Error: Could not find Materials/"+material+"/StressStrainLaw/model in input file!");
-      }
+    std::string material = MaterialsParsing::material_name( input, physics );
+    std::string ss_option("Materials/"+material+"/StressStrainLaw/model");
 
-    model = input("Materials/"+material+"/StressStrainLaw/model", "DIE!");
+    MaterialsParsing::check_for_input_option(input,ss_option);
+
+    model = input(ss_option, "DIE!");
+
     strain_energy = input("Materials/"+material+"/StressStrainLaw/strain_energy", "none");
-    // These options are deprecated
-    if( model == std::string( "HookesLaw" ) )
-      {
-        std::string warning = "WARNING: Detected model HookesLaw. This is DEPRECATED!\n";
-        warning += "         Please update to use hookes_law.\n";
-        grins_warning(warning);
-
-        model = std::string("hookes_law");
-      }
-
-    if( model == std::string( "MooneyRivlin" ) )
-      {
-        std::string warning = "WARNING: Detected model MooneyRivlin. This is DEPRECATED!\n";
-        warning += "         Please update model to use incompressible_hyperelasticity and\n";
-        warning += "         set strain_energy to mooney_rivlin.\n";
-        grins_warning(warning);
-
-        model = std::string("incompressible_hyperelasticity");
-        strain_energy = std::string("mooney_rivlin");
-      }
   }
 
   void MaterialsParsing::read_density( const std::string & core_physics_name,
