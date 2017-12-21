@@ -41,11 +41,6 @@ namespace GRINS
     PhysicsFactoryHelper(){};
     ~PhysicsFactoryHelper(){};
 
-    //! Determine conductivity model based on given physics name
-    static void parse_conductivity_model( const GetPot& input,
-                                          const std::string& physics,
-                                          std::string& model );
-
     //! Determine specific heat model based on given physics name
     static void parse_specific_heat_model( const GetPot& input,
                                            const std::string& physics,

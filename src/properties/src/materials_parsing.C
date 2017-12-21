@@ -44,19 +44,16 @@ namespace GRINS
     model = input( visc_option, "DIE!" );
   }
 
-  void MaterialsParsing::thermal_conductivity_model( const GetPot& input,
-                                                     const std::string& /*physics*/,
-                                                     const std::string& material,
-                                                     std::string& model )
+  void MaterialsParsing::thermal_conductivity_model( const GetPot & input,
+                                                     const std::string & physics,
+                                                     std::string & model )
   {
-    if( !input.have_variable("Materials/"+material+"/ThermalConductivity/model") )
-      {
-        libmesh_error_msg("Error: Could not find Materials/"+material+"/ThermalConductivity/model in input file.");
-      }
+    std::string material = MaterialsParsing::material_name( input, physics );
+    std::string cond_option("Materials/"+material+"/ThermalConductivity/model");
 
-    model = input( "Materials/"+material+"/ThermalConductivity/model", "DIE!" );
+    MaterialsParsing::check_for_input_option(input,cond_option);
 
-    return;
+    model = input( cond_option, "DIE!" );
   }
 
   void MaterialsParsing::specific_heat_model( const GetPot& input,

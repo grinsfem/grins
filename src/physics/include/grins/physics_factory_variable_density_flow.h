@@ -66,7 +66,7 @@ namespace GRINS
     std::string core_physics = this->find_core_physics_name(physics_name);
 
     std::string conductivity;
-    PhysicsFactoryHelper::parse_conductivity_model(input,core_physics,conductivity);
+    MaterialsParsing::thermal_conductivity_model(input,core_physics,conductivity);
 
     std::string viscosity;
     MaterialsParsing::viscosity_model(input,core_physics,viscosity);

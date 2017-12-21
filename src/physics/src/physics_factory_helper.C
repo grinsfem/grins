@@ -35,68 +35,6 @@
 
 namespace GRINS
 {
-  void PhysicsFactoryHelper::parse_conductivity_model( const GetPot& input,
-                                                       const std::string& physics,
-                                                       std::string& model )
-  {
-    // Newer, preferred version
-    bool have_material = MaterialsParsing::have_material(input,physics);
-
-    // Old deprecated versions
-    bool have_ht_conductivity_model = input.have_variable("Physics/"+PhysicsNaming::heat_transfer()+"/conductivity_model");
-
-    bool have_conductivity_model = input.have_variable("Physics/"+physics+"/conductivity_model");
-
-    if( (have_material && have_conductivity_model) ||
-        (have_material && have_ht_conductivity_model) )
-      {
-        libmesh_error_msg("Error: Cannot specify both conductivity_model and material.");
-      }
-
-    /* If the user hasn't specified the material or the conductivity_model,
-       we're assuming they're using the old version.
-       This is deprecated.*/
-    if( !have_conductivity_model && !have_material && !have_ht_conductivity_model )
-      {
-        std::string warning = "Warning: Neither conductivity_model nor material were specified.\n";
-        warning += "      We are assuming a constant conductivity model.\n";
-        warning += "      This case is DEPRECATED.\n";
-        warning += "      Please update and specify Physics/"+physics+"/material.\n";
-        grins_warning(warning);
-
-        model = "constant";
-      }
-
-    // Deprecated
-    if( have_ht_conductivity_model )
-      {
-        std::string warning = "Warning: Option Physics/"+PhysicsNaming::heat_transfer()+"/conductivity_model is DEPRECATED.\n";
-        warning += "         Please update to use Physics/"+physics+"/material.\n";
-        grins_warning(warning);
-
-        model = input( "Physics/"+PhysicsNaming::heat_transfer()+"/conductivity_model", "constant" );
-      }
-
-    // Deprecated
-    if( have_conductivity_model )
-      {
-        std::string warning = "Warning: Option Physics/"+physics+"/conductivity_model is DEPRECATED.\n";
-        warning += "         Please update to use Physics/"+physics+"/material.\n";
-        grins_warning(warning);
-
-        model = input( "Physics/"+physics+"/conductivity_model", "constant" );
-      }
-
-    // Preferred
-    if( have_material )
-      {
-        std::string material = MaterialsParsing::material_name( input, physics );
-        MaterialsParsing::thermal_conductivity_model( input, physics, material, model );
-      }
-
-    return;
-  }
-
   void PhysicsFactoryHelper::parse_specific_heat_model( const GetPot& input,
                                                         const std::string& physics,
                                                         std::string& model )
