@@ -119,6 +119,32 @@ namespace GRINS
       }
   }
 
+  void MaterialsParsing::antioch_models( const GetPot& input,
+                                         const std::string& physics,
+                                         std::string& transport_model,
+                                         std::string& thermo_model,
+                                         std::string& viscosity_model,
+                                         std::string& conductivity_model,
+                                         std::string& diffusivity_model )
+  {
+    // Newer, preferred version
+    std::string material = MaterialsParsing::material_name( input, physics );
+
+    MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/transport_model");
+    transport_model = input("Materials/"+material+"/GasMixture/Antioch/transport_model", "DIE!");
+
+    // Now parse the remaining models
+    MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/thermo_model");
+    MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/viscosity_model");
+    MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/thermal_conductivity_model");
+    MaterialsParsing::check_for_input_option(input,"Materials/"+material+"/GasMixture/Antioch/mass_diffusivity_model");
+
+    thermo_model = input( "Materials/"+material+"/GasMixture/Antioch/thermo_model", "DIE!");
+    viscosity_model = input( "Materials/"+material+"/GasMixture/Antioch/viscosity_model", "DIE!");
+    conductivity_model = input( "Materials/"+material+"/GasMixture/Antioch/thermal_conductivity_model", "DIE!");
+    diffusivity_model = input( "Materials/"+material+"/GasMixture/Antioch/mass_diffusivity_model", "DIE!");
+  }
+
   void MaterialsParsing::read_density( const std::string & core_physics_name,
                                        const GetPot & input,
                                        ParameterUser& params,

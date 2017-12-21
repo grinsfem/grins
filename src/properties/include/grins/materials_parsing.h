@@ -78,6 +78,14 @@ namespace GRINS
                                        const std::string& physics,
                                        std::string& model );
 
+    static void antioch_models( const GetPot& input,
+                                const std::string& physics,
+                                std::string& transport_model,
+                                std::string& thermo_model,
+                                std::string& viscosity_model,
+                                std::string& conductivity_model,
+                                std::string& diffusivity_model );
+
     //! Helper function to reading density from input
     /*! In particular, we want to handle backward compatibility before
       the introduction of material names in the input. */

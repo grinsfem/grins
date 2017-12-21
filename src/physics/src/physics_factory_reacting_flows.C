@@ -3,7 +3,6 @@
 
 // GRINS
 #include "grins/materials_parsing.h"
-#include "grins/physics_factory_helper.h"
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_evaluator.h"
 
@@ -59,13 +58,13 @@ namespace GRINS
         std::string conductivity_model;
         std::string diffusivity_model;
 
-        PhysicsFactoryHelper::parse_antioch_models( input,
-                                                    core_physics,
-                                                    transport_model,
-                                                    thermo_model,
-                                                    viscosity_model,
-                                                    conductivity_model,
-                                                    diffusivity_model );
+        MaterialsParsing::antioch_models( input,
+                                          core_physics,
+                                          transport_model,
+                                          thermo_model,
+                                          viscosity_model,
+                                          conductivity_model,
+                                          diffusivity_model );
 
         if( transport_model == AntiochOptions::mix_avged_transport_model() )
           {
