@@ -31,7 +31,6 @@
 #include "grins/multicomponent_variable.h"
 #include "grins/variable_warehouse.h"
 #include "grins/physics_naming.h"
-#include "grins/physics_factory_helper.h"
 #include "grins/chemistry_builder.h"
 
 #ifdef GRINS_HAVE_CANTERA

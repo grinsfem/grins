@@ -31,7 +31,6 @@
 #include "grins/gas_recombination_catalytic_wall_neumann_bc_factory_impl.h"
 #include "grins/gas_solid_catalytic_wall_neumann_bc_factory_impl.h"
 #include "grins/string_utils.h"
-#include "grins/physics_factory_helper.h"
 
 namespace GRINS
 {

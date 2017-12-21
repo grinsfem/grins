@@ -28,7 +28,6 @@
 // GRINS
 #include "grins/materials_parsing.h"
 #include "grins/physics_factory_with_core.h"
-#include "grins/physics_factory_helper.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 #include "grins/spalart_allmaras_viscosity.h"
