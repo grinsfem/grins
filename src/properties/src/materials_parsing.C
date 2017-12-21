@@ -169,77 +169,18 @@ namespace GRINS
   {
     std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
 
-    // Error if both material/SpecificHeat and Cp are specified
-    MaterialsParsing::duplicate_input_test(input,
-                                           "Physics/"+core_physics_name+"/Cp",
-                                           "Materials/"+material+"/SpecificHeat/value" );
+    std::string cp_option("Materials/"+material+"/SpecificHeat/value");
+    MaterialsParsing::check_for_input_option(input,cp_option);
 
-    // It's deprecated to have nothing and default to 1.0
-    if( !input.have_variable("Physics/"+core_physics_name+"/Cp") &&
-        ( !input.have_variable("Physics/"+core_physics_name+"/material") ||
-          !input.have_variable("Materials/"+material+"/SpecificHeat/value") ) )
-      {
-        // For some insane reason, we'd originally tied Cp specifically
-        // to PhysicsNaming::heat_transfer(), so we'll check for that first.
-        if( input.have_variable("Physics/"+PhysicsNaming::heat_transfer()+"/Cp") )
-          {
-            std::string warning = "WARNING: neither Physics/"+core_physics_name+"/Cp nor\n";
-            warning += "         Physics/"+core_physics_name+"/material options were detected.\n";
-            warning += "         But we found Physics/"+PhysicsNaming::heat_transfer()+"/Cp so we using that.\n";
-            warning += "        This behavior is DEPRECATED.\n";
-            warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
-            grins_warning(warning);
+    // This function only supports reading a constant
+    if( input("Materials/"+material+"/SpecificHeat/model", "DIE!") != std::string("constant") )
+      libmesh_error_msg("ERROR: Only constant SpecificHeat model supported!");
 
-            params.set_parameter
-              (cp, input,
-               "Physics/"+PhysicsNaming::heat_transfer()+"/Cp", 1.0 /*default*/);
-          }
-        // Otherwise, the insanity continued and we defaulted to 1.0
-        else
-          {
-            std::string warning = "WARNING: neither Physics/"+core_physics_name+"/Cp nor\n";
-            warning += "         Physics/"+core_physics_name+"/material  nor\n";
-            warning += "         Physics/"+PhysicsNaming::heat_transfer()+"/Cp options were detected.\n";
-            warning += "         We are assuming a specific heat value of 1.0. This is DEPRECATED.\n";
-            warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
-            grins_warning(warning);
+    params.set_parameter(cp, input, cp_option, 0.0 /*default*/);
 
-            params.set_parameter
-              (cp, input,
-               "Physics/"+core_physics_name+"/Cp", 1.0 /*default*/);
-          }
-      }
-
-    // It's deprecated to use Cp as the specific heat input
-    if( input.have_variable("Physics/"+core_physics_name+"/Cp") )
-      {
-        MaterialsParsing::dep_input_warning( "Physics/"+core_physics_name+"/Cp",
-                                             "SpecificHeat/value" );
-
-        params.set_parameter
-          (cp, input,
-           "Physics/"+core_physics_name+"/Cp", 1.0 /*default*/);
-      }
-
-    // This is the preferred version
-    if( input.have_variable("Physics/"+core_physics_name+"/material") &&
-        input.have_variable("Materials/"+material+"/SpecificHeat/value") )
-      {
-        // This function only supports reading a constant
-        if( input("Materials/"+material+"/SpecificHeat/model", "DIE!") !=
-            std::string("constant") )
-          libmesh_error_msg("ERROR: Only constant SpecificHeat model supported!");
-
-        params.set_parameter
-          (cp, input,
-           "Materials/"+material+"/SpecificHeat/value", 0.0 /*default*/);
-      }
-
-    // Let's make sure we actually got a valid density value
+    // Let's make sure we actually got a valid cp value
     if( cp <= 0.0 )
-      {
-        libmesh_error_msg("ERROR: Detected non-positive value of cp!");
-      }
+      libmesh_error_msg("ERROR: Detected non-positive value of cp!");
   }
 
   void MaterialsParsing::read_property( const GetPot & input,
