@@ -41,11 +41,6 @@ namespace GRINS
     PhysicsFactoryHelper(){};
     ~PhysicsFactoryHelper(){};
 
-    //! Determine thermochemistry model type
-    static void parse_thermochemistry_model( const GetPot& input,
-                                             const std::string& physics,
-                                             std::string& model );
-
     static void parse_antioch_models( const GetPot& input,
                                       const std::string& physics,
                                       std::string& transport_model,

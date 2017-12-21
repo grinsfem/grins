@@ -74,6 +74,10 @@ namespace GRINS
                                      std::string & model,
                                      std::string & strain_energy );
 
+    static void thermochemistry_model( const GetPot& input,
+                                       const std::string& physics,
+                                       std::string& model );
+
     //! Helper function to reading density from input
     /*! In particular, we want to handle backward compatibility before
       the introduction of material names in the input. */

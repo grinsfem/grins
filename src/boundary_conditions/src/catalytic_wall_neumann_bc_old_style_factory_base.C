@@ -26,6 +26,7 @@
 #include "grins/catalytic_wall_neumann_bc_old_style_factory_base.h"
 
 // GRINS
+#include "grins/materials_parsing.h"
 #include "grins/catalycity_factory_old_style_base.h"
 #include "grins/gas_recombination_catalytic_wall_neumann_bc_factory_impl.h"
 #include "grins/gas_solid_catalytic_wall_neumann_bc_factory_impl.h"
@@ -54,7 +55,10 @@ namespace GRINS
     /*! \todo We're assuming constant thermodynamic pressure */
     libMesh::Real p0 = this->parse_thermo_pressure(input,material);
 
-    std::string thermochem_lib = this->parse_thermochem_model(input);
+    std::string thermochem_lib;
+    MaterialsParsing::thermochemistry_model( input,
+                                             PhysicsNaming::reacting_low_mach_navier_stokes(),
+                                             thermochem_lib );
 
     return this->build_catalytic_wall_common(input,fe_var,material,reaction,gamma_ptr,p0,thermochem_lib);
   }
@@ -108,17 +112,6 @@ namespace GRINS
       libmesh_error_msg("ERROR: Could not valid input for thermodynamic pressure!");
 
     return p0;
-  }
-
-  template<typename ImplType>
-  std::string CatalyticWallNeumannBCOldStyleFactoryBase<ImplType>::parse_thermochem_model( const GetPot& input ) const
-  {
-    std::string thermochem_lib;
-    PhysicsFactoryHelper::parse_thermochemistry_model( input,
-                                                       PhysicsNaming::reacting_low_mach_navier_stokes(),
-                                                       thermochem_lib );
-
-    return thermochem_lib;
   }
 
   template<typename ImplType>

@@ -2,6 +2,7 @@
 #include "grins/physics_factory_reacting_flows.h"
 
 // GRINS
+#include "grins/materials_parsing.h"
 #include "grins/physics_factory_helper.h"
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_evaluator.h"
@@ -32,9 +33,7 @@ namespace GRINS
     std::string material = MaterialsParsing::material_name(input,core_physics);
 
     std::string thermochem_lib;
-    PhysicsFactoryHelper::parse_thermochemistry_model( input,
-                                                       core_physics,
-                                                       thermochem_lib );
+    MaterialsParsing::thermochemistry_model( input, core_physics, thermochem_lib );
 
     std::unique_ptr<Physics> new_physics;
 

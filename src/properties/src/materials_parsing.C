@@ -95,6 +95,30 @@ namespace GRINS
     strain_energy = input("Materials/"+material+"/StressStrainLaw/strain_energy", "none");
   }
 
+  void MaterialsParsing::thermochemistry_model( const GetPot & input,
+                                                const std::string & physics,
+                                                std::string & thermochem_lib )
+  {
+    std::string material = MaterialsParsing::material_name( input, physics );
+
+    std::string thermochem_lib_option("Materials/"+material+"/GasMixture/thermochemistry_library");
+
+    MaterialsParsing::check_for_input_option(input,thermochem_lib_option);
+
+    thermochem_lib = input(thermochem_lib_option, "DIE!");
+
+    // Make sure we have a valid model
+    if( thermochem_lib != std::string("antioch") &&
+        thermochem_lib != std::string("cantera") )
+      {
+        std::string error = "ERROR! Invalid thermochemistry library value "+thermochem_lib+"!\n";
+        error += "       Valid selections are: antioch\n";
+        error += "                             cantera\n";
+
+        libmesh_error_msg(error);
+      }
+  }
+
   void MaterialsParsing::read_density( const std::string & core_physics_name,
                                        const GetPot & input,
                                        ParameterUser& params,

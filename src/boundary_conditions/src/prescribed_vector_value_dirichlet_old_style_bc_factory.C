@@ -26,6 +26,7 @@
 #include "grins/prescribed_vector_value_dirichlet_old_style_bc_factory.h"
 
 // GRINS
+#include "grins/materials_parsing.h"
 #include "grins/string_utils.h"
 #include "grins/multicomponent_variable.h"
 #include "grins/variable_warehouse.h"
@@ -136,9 +137,9 @@ namespace GRINS
 #endif
 
     std::string thermochem_lib;
-    PhysicsFactoryHelper::parse_thermochemistry_model( input,
-                                                       PhysicsNaming::reacting_low_mach_navier_stokes(),
-                                                       thermochem_lib );
+    MaterialsParsing::thermochemistry_model( input,
+                                             PhysicsNaming::reacting_low_mach_navier_stokes(),
+                                             thermochem_lib );
 
     if( thermochem_lib == "cantera" )
       {
