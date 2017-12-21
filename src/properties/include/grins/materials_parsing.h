@@ -61,7 +61,7 @@ namespace GRINS
 
     //! Parse the specific heat model for the given material
     static void specific_heat_model( const GetPot & input, const std::string & physics,
-                                     const std::string & material, std::string & model );
+                                     std::string & model );
 
     //! Parse the turbulence viscosity model for the given material
     static void turb_viscosity_model( const GetPot & input,

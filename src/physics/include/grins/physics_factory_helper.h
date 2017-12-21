@@ -41,11 +41,6 @@ namespace GRINS
     PhysicsFactoryHelper(){};
     ~PhysicsFactoryHelper(){};
 
-    //! Determine specific heat model based on given physics name
-    static void parse_specific_heat_model( const GetPot& input,
-                                           const std::string& physics,
-                                           std::string& model );
-
     //! Determine viscosity model used by turblence classes
     static void parse_turb_viscosity_model( const GetPot& input,
                                             const std::string& physics,

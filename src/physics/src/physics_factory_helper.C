@@ -35,38 +35,6 @@
 
 namespace GRINS
 {
-  void PhysicsFactoryHelper::parse_specific_heat_model( const GetPot & input,
-                                                        const std::string & physics,
-                                                        std::string & model )
-  {
-    // Newer, preferred version
-    bool have_material = MaterialsParsing::have_material(input,physics);
-
-    bool have_lmns_specific_heat_model = input.have_variable("Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/specific_heat_model");
-
-    if( have_material && have_lmns_specific_heat_model )
-      {
-        libmesh_error_msg("ERROR: Cannot specify both a material and Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/specific_heat_model!");
-      }
-
-    // Deprecated
-    if( have_lmns_specific_heat_model )
-      {
-        std::string warning = "Warning: Option Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/specific_heat_model is DEPRECATED.\n";
-        warning += "         Please update to use Physics/"+physics+"/material.\n";
-        grins_warning(warning);
-
-        model = input( "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/specific_heat_model", "constant" );
-      }
-
-    // Preferred
-    if( have_material )
-      {
-        std::string material = MaterialsParsing::material_name( input, physics );
-        MaterialsParsing::specific_heat_model( input, physics, material, model );
-      }
-  }
-
   void PhysicsFactoryHelper::parse_turb_viscosity_model( const GetPot & input,
                                                          const std::string & physics,
                                                          std::string & model )

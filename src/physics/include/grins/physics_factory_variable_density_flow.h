@@ -72,7 +72,7 @@ namespace GRINS
     MaterialsParsing::viscosity_model(input,core_physics,viscosity);
 
     std::string specific_heat;
-    PhysicsFactoryHelper::parse_specific_heat_model(input,core_physics,specific_heat);
+    MaterialsParsing::specific_heat_model(input,core_physics,specific_heat);
 
     std::unique_ptr<Physics> new_physics;
 
