@@ -65,7 +65,8 @@ namespace GRINS
   IntegratedFunction<Function>::IntegratedFunction(const IntegratedFunction & original) :
     QoIBase(original),
     _p_level(original._p_level),
-    _f(original._f)
+    _f(original._f),
+    _multiphysics_system(original._multiphysics_system)
   {
     // call RayfireMesh copy constructor
     this->_rayfire.reset(new RayfireMesh( *((original._rayfire).get())) );
@@ -83,6 +84,7 @@ namespace GRINS
    const MultiphysicsSystem & system,
    unsigned int /*qoi_num*/ )
   {
+    _multiphysics_system = &( const_cast<MultiphysicsSystem &>(system) );
     _rayfire->init(system.get_mesh());
   }
 

@@ -147,8 +147,8 @@ namespace GRINS
     //! Absorption coefficient pressure derivative
     libMesh::Real d_kv_dP(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
 
-    //! Absorption coefficient mass fraction derivative
-    libMesh::Real d_kv_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+    //! Absorption coefficient  derivative with respect to mass fraction of species species_index
+    libMesh::Real d_kv_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int species_index, unsigned int i);
 
     //! Linestrength [cm^-2 atm^-1]
     libMesh::Real Sw(libMesh::Real T, libMesh::Real P, unsigned int i);
@@ -177,8 +177,8 @@ namespace GRINS
     //! Collisional broadening pressure derivative
     libMesh::Real d_nuC_dP(libMesh::Real T, std::vector<libMesh::Real> Y, unsigned int i);
 
-    //! Collisional broadening mass fraction derivative
-    libMesh::Real d_nuC_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+    //! Collisional broadening derivative with respect to mass fraction of species species_index
+    libMesh::Real d_nuC_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int species_index, unsigned int i);
 
     //! Calculate the Voigt profile [cm^-1]
     /*!
@@ -196,8 +196,8 @@ namespace GRINS
     //! Voigt profile pressure derivative
     libMesh::Real d_voigt_dP(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
 
-    //! Voigt profile mass fraction derivative
-    libMesh::Real d_voigt_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+    //! Voigt profile  derivative with respect to mass fraction of species species_index
+    libMesh::Real d_voigt_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int species_index, unsigned int i);
 
     //! Initialize the coeff matrix for calculating the Voigt profile
     void init_voigt();
@@ -211,8 +211,8 @@ namespace GRINS
     //! Voigt a parameter pressure derivative
     libMesh::Real d_voigt_a_dP(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
 
-    //! Voigt a parameter mass fraction derivative
-    libMesh::Real d_voigt_a_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i);
+    //! Voigt a parameter  derivative with respect to mass fraction of species species_index
+    libMesh::Real d_voigt_a_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int species_index, unsigned int i);
 
     //! Voigt w parameter
     libMesh::Real voigt_w(libMesh::Real T, libMesh::Real P, unsigned int i);
@@ -229,8 +229,8 @@ namespace GRINS
     //! Derivative of pressure-shifted linecenter wavenumber
     libMesh::Real d_nu_dP(unsigned int i);
 
-    //! Mole fraction derivative with respect to mass fraction
-    libMesh::Real dX_dY(std::vector<libMesh::Real> Y);
+    //! Derivative of the mole fraction of the species of interest with respect to species_index
+    libMesh::Real dX_dY(std::vector<libMesh::Real> Y, unsigned int species_index);
 
     //! Partition Function derivative (finite difference)
     libMesh::Real dQ_dT(libMesh::Real T, unsigned int iso);

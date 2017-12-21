@@ -124,6 +124,9 @@ namespace GRINS
                               const std::vector<libMesh::Number>& other_qoi,
                               const libMesh::QoISet& qoi_indices );
 
+    // Calls each QoI's finalize_derivative function
+    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index);
+
     //! Basic output for computed QoI's.
     void output_qoi( std::ostream& out ) const;
 

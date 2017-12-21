@@ -174,7 +174,6 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> & dQdT  = context.get_qoi_derivatives(qoi_index, _T_var.T());
     libMesh::DenseSubVector<libMesh::Number> & dQdP  = context.get_qoi_derivatives(qoi_index, _P_var.p());
-    libMesh::DenseSubVector<libMesh::Number> & dQdYs = context.get_qoi_derivatives(qoi_index, _Y_var.species(_species_idx));
 
     // need to map the physical coordinates of QP to reference coordinates
     libMesh::Elem & main_elem = context.get_elem();
@@ -227,9 +226,13 @@ namespace GRINS
         for (unsigned int j=0; j<dQdP.size(); j++)
           dQdP(j) += d_kv_dP(T,P,Y,i)*JxW * P_phi[j][0];
 
-        // mass fraction deriv
-        for (unsigned int j=0; j<dQdYs.size(); j++)
-          dQdYs(j) += d_kv_dY(T,P,Y,i)*JxW * Ys_phi[j][0];
+        // mass fraction deriv for all species
+        for (unsigned int s=0; s<Y.size(); ++s)
+          {
+            libMesh::DenseSubVector<libMesh::Number> & dQdYi = context.get_qoi_derivatives(qoi_index,_Y_var.species(s));
+            for (unsigned int j=0; j<dQdYi.size(); j++)
+              dQdYi(j) += d_kv_dY(T,P,Y,s,i)*JxW * Ys_phi[j][0];
+          }
       }
 
     STOP_LOG("derivatives()","AbsorptionCoeff");
@@ -287,10 +290,10 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real AbsorptionCoeff<Chemistry>::d_kv_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i)
+  libMesh::Real AbsorptionCoeff<Chemistry>::d_kv_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int species_index, unsigned int i)
   {
-    libMesh::Real dX = dX_dY(Y);
-    libMesh::Real dV = d_voigt_dY(T,P,Y,i);
+    libMesh::Real dX = dX_dY(Y,species_index);
+    libMesh::Real dV = d_voigt_dY(T,P,Y,species_index,i);
 
     libMesh::Real S = this->Sw(T,P,i);
     libMesh::Real V = this->voigt(T,P,Y,i);
@@ -464,12 +467,12 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real AbsorptionCoeff<Chemistry>::d_nuC_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i)
+  libMesh::Real AbsorptionCoeff<Chemistry>::d_nuC_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int species_index, unsigned int i)
   {
     libMesh::Real g_self = _hitran->gamma_self(i);
     libMesh::Real g_air = _hitran->gamma_air(i);
     libMesh::Real n = _hitran->n_air(i);
-    libMesh::Real dX = dX_dY(Y);
+    libMesh::Real dX = dX_dY(Y,species_index);
 
     return 2.0*(P/Constants::atmosphere_Pa)*std::pow(_T0/T,n)*( dX*g_self - dX*g_air );
   }
@@ -587,12 +590,12 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real AbsorptionCoeff<Chemistry>::d_voigt_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i)
+  libMesh::Real AbsorptionCoeff<Chemistry>::d_voigt_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int species_index, unsigned int i)
   {
     libMesh::Real nu_D = this->nu_D(T,P,i);
 
     libMesh::Real a  = this->voigt_a(T,P,Y,i);
-    libMesh::Real da = this->d_voigt_a_dY(T,P,Y,i);
+    libMesh::Real da = this->d_voigt_a_dY(T,P,Y,species_index,i);
 
     libMesh::Real w  = this->voigt_w(T,P,i);
 
@@ -675,10 +678,10 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real AbsorptionCoeff<Chemistry>::d_voigt_a_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int i)
+  libMesh::Real AbsorptionCoeff<Chemistry>::d_voigt_a_dY(libMesh::Real T, libMesh::Real P, std::vector<libMesh::Real> Y, unsigned int species_index, unsigned int i)
   {
     libMesh::Real nu_D = this->nu_D(T,P,i);
-    libMesh::Real dnu_c = d_nuC_dY(T,P,Y,i);
+    libMesh::Real dnu_c = d_nuC_dY(T,P,Y,species_index,i);
 
     return std::sqrt(std::log(2.0))/nu_D * dnu_c;
   }
@@ -731,14 +734,19 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real AbsorptionCoeff<Chemistry>::dX_dY(std::vector<libMesh::Real> Y)
+  libMesh::Real AbsorptionCoeff<Chemistry>::dX_dY(std::vector<libMesh::Real> Y, unsigned int species_index)
   {
-    libMesh::Real MW = _chemistry->M(_species_idx);
+    libMesh::Real Ys = Y[_species_idx];
+    libMesh::Real MWi = _chemistry->M(species_index);
+    libMesh::Real MWs = _chemistry->M(_species_idx); // species of interest
     libMesh::Real MW_mix = _chemistry->M_mix(Y);
 
-    libMesh::Real Ys = Y[_species_idx];
+    libMesh::Real dMWmix_dYi = -(MW_mix*MW_mix)/MWi;
+    libMesh::Real dYs_dYi = 0.0;
+    if (species_index == _species_idx)
+      dYs_dYi = 1.0;
 
-    return 1.0/MW * ( MW_mix - Ys*(MW_mix*MW_mix)/MW );
+    return 1.0/MWs * ( dYs_dYi*MW_mix + Ys*dMWmix_dYi );
   }
 
 
