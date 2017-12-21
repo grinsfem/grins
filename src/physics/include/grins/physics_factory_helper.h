@@ -41,11 +41,6 @@ namespace GRINS
     PhysicsFactoryHelper(){};
     ~PhysicsFactoryHelper(){};
 
-    //! Determine viscosity model used by turblence classes
-    static void parse_turb_viscosity_model( const GetPot& input,
-                                            const std::string& physics,
-                                            std::string& model );
-
     //! Determine stress-strain law used by solid mechanics classes
     static void parse_stress_strain_model( const GetPot& input,
                                            const std::string& physics,

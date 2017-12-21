@@ -69,16 +69,15 @@ namespace GRINS
   }
 
   void MaterialsParsing::turb_viscosity_model( const GetPot & input,
-                                               const std::string & /*physics*/,
-                                               const std::string & material,
+                                               const std::string & physics,
                                                std::string & model )
   {
-    if( !input.have_variable("Materials/"+material+"/Viscosity/turb_visc_model") )
-      {
-        libmesh_error_msg("Error: Could not find Materials/"+material+"/Viscosity/turb_visc_model in input file.");
-      }
+    std::string material = MaterialsParsing::material_name( input, physics );
+    std::string visc_option("Materials/"+material+"/Viscosity/turb_visc_model");
 
-    model = input( "Materials/"+material+"/Viscosity/turb_visc_model", "DIE!" );
+    MaterialsParsing::check_for_input_option(input,visc_option);
+
+    model = input( visc_option, "DIE!" );
   }
 
   void MaterialsParsing::stress_strain_model( const GetPot & input,

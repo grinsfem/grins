@@ -78,7 +78,7 @@ namespace GRINS
     else if( viscosity == "spalartallmaras" )
       {
         std::string turb_viscosity;
-        PhysicsFactoryHelper::parse_turb_viscosity_model(input,core_physics,turb_viscosity);
+        MaterialsParsing::turb_viscosity_model(input,core_physics,turb_viscosity);
         if( turb_viscosity == "constant" )
           new_physics.reset(new DerivedPhysics<SpalartAllmarasViscosity<ConstantViscosity> >(physics_name,input) );
         else

@@ -35,46 +35,6 @@
 
 namespace GRINS
 {
-  void PhysicsFactoryHelper::parse_turb_viscosity_model( const GetPot & input,
-                                                         const std::string & physics,
-                                                         std::string & model )
-  {
-    // Newer, preferred version
-    bool have_material = MaterialsParsing::have_material(input,physics);
-
-    // Old deprecated version
-    bool have_viscosity_model = input.have_variable("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model");
-
-    PhysicsFactoryHelper::deprecated_visc_model_parsing(  have_viscosity_model,
-                                                          have_material,
-                                                          input,
-                                                          physics,
-                                                          model );
-
-    // Additionally, we need to check if the turbulence Physics didn't
-    // set the viscosity model, but the *non* turbulent viscosity_model
-    // is set to spallartallmaras. In that case, the physical viscosity
-    // model is 'constant'.
-    if( !have_material &&
-        input.have_variable( "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model") )
-      {
-        // If we got here, have_viscosity_model is true and might
-        // be set to spallartallmaras
-        if( input("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/viscosity_model", "DIE!") == std::string("spalartallmaras") )
-          {
-            model = "constant";
-          }
-      }
-
-    if( have_material )
-      {
-        std::string material = MaterialsParsing::material_name( input, physics );
-        MaterialsParsing::turb_viscosity_model( input, physics, material, model );
-      }
-
-    return;
-  }
-
   void PhysicsFactoryHelper::parse_stress_strain_model( const GetPot & input,
                                                         const std::string & physics,
                                                         std::string & model,
