@@ -52,7 +52,7 @@ namespace GRINS
                                      (*this),
                                      _h0 );
 
-    MaterialsParsing::read_density( physics_name,
+    MaterialsParsing::read_density( PhysicsNaming::elastic_membrane(),
                                     input,
                                     (*this),
                                     _rho );
