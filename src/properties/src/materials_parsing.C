@@ -147,82 +147,19 @@ namespace GRINS
 
   void MaterialsParsing::read_density( const std::string & core_physics_name,
                                        const GetPot & input,
-                                       ParameterUser& params,
-                                       libMesh::Real& rho )
+                                       ParameterUser & params,
+                                       libMesh::Real & rho )
   {
-    bool have_material = MaterialsParsing::have_material(input,core_physics_name);
-
     std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
 
-    // Error if both material/Density and rho are specified
-    MaterialsParsing::duplicate_input_test(input,
-                                           "Physics/"+core_physics_name+"/rho",
-                                           "Materials/"+material+"/Density/value" );
+    std::string rho_option("Materials/"+material+"/Density/value");
+    MaterialsParsing::check_for_input_option(input,rho_option);
 
-    // It's deprecated to have nothing and default to 1.0
-    if( !input.have_variable("Physics/"+core_physics_name+"/rho") &&
-        !have_material )
-      {
-        // For some insane reason, we'd originally tied density specifically
-        // to PhysicsNaming::incompressible_navier_stokes(), so we'll check for that first.
-        if( input.have_variable("Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho") )
-          {
-            std::string warning = "WARNING: neither Physics/"+core_physics_name+"/rho nor\n";
-            warning += "         Physics/"+core_physics_name+"/material options were detected.\n";
-            warning += "         But we found Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho so we using that.\n";
-            warning += "        This behavior is DEPRECATED.\n";
-            warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
-            grins_warning(warning);
-
-            params.set_parameter
-              (rho, input,
-               "Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho", 1.0 /*default*/);
-          }
-        // Otherwise, the insanity continued and we defaulted to 1.0
-        else
-          {
-            std::string warning = "WARNING: neither Physics/"+core_physics_name+"/rho nor\n";
-            warning += "         Physics/"+core_physics_name+"/material  nor\n";
-            warning += "         Physics/"+PhysicsNaming::incompressible_navier_stokes()+"/rho options were detected.\n";
-            warning += "         We are assuming a density value of 1.0. This is DEPRECATED.\n";
-            warning += "         Please update and use Physics/"+core_physics_name+"/material.\n";
-            grins_warning(warning);
-
-            params.set_parameter
-              (rho, input,
-               "Physics/"+core_physics_name+"/rho", 1.0 /*default*/);
-          }
-      }
-    // It's deprecated to use rho as the density input
-    else if( input.have_variable("Physics/"+core_physics_name+"/rho") )
-      {
-        MaterialsParsing::dep_input_warning( "Physics/"+core_physics_name+"/rho",
-                                             "Density/value" );
-
-        params.set_parameter
-          (rho, input,
-           "Physics/"+core_physics_name+"/rho", 1.0 /*default*/);
-      }
-
-    // This is the preferred version
-    else if( have_material )
-      {
-        if( !input.have_variable("Materials/"+material+"/Density/value") )
-          libmesh_error_msg("ERROR: Could not find Materials/"+material+"/Density/value in input!");
-
-        params.set_parameter
-          (rho, input,
-           "Materials/"+material+"/Density/value", 0.0 /*default*/);
-      }
-    // Wat?
-    else
-      libmesh_error();
+    params.set_parameter(rho, input, rho_option, 0.0 /*default*/);
 
     // Let's make sure we actually got a valid density value
     if( rho <= 0.0 )
-      {
-        libmesh_error_msg("ERROR: Detected non-positive value of density!");
-      }
+      libmesh_error_msg("ERROR: Detected non-positive value of density!");
   }
 
   void MaterialsParsing::read_specific_heat( const std::string & core_physics_name,
