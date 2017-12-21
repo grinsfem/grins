@@ -56,10 +56,10 @@ namespace GRINS
     model = input( cond_option, "DIE!" );
   }
 
-  void MaterialsParsing::specific_heat_model( const GetPot& input,
-                                              const std::string& /*physics*/,
-                                              const std::string& material,
-                                              std::string& model )
+  void MaterialsParsing::specific_heat_model( const GetPot & input,
+                                              const std::string & /*physics*/,
+                                              const std::string & material,
+                                              std::string & model )
   {
     if( !input.have_variable("Materials/"+material+"/SpecificHeat/model") )
       {
@@ -69,10 +69,10 @@ namespace GRINS
     model = input( "Materials/"+material+"/SpecificHeat/model", "DIE!" );
   }
 
-  void MaterialsParsing::turb_viscosity_model( const GetPot& input,
-                                               const std::string& /*physics*/,
-                                               const std::string& material,
-                                               std::string& model )
+  void MaterialsParsing::turb_viscosity_model( const GetPot & input,
+                                               const std::string & /*physics*/,
+                                               const std::string & material,
+                                               std::string & model )
   {
     if( !input.have_variable("Materials/"+material+"/Viscosity/turb_visc_model") )
       {
@@ -82,11 +82,11 @@ namespace GRINS
     model = input( "Materials/"+material+"/Viscosity/turb_visc_model", "DIE!" );
   }
 
-  void MaterialsParsing::stress_strain_model( const GetPot& input,
-                                              const std::string& /*physics*/,
-                                              const std::string& material,
-                                              std::string& model,
-                                              std::string& strain_energy )
+  void MaterialsParsing::stress_strain_model( const GetPot & input,
+                                              const std::string & /*physics*/,
+                                              const std::string & material,
+                                              std::string & model,
+                                              std::string & strain_energy )
   {
     if( !input.have_variable("Materials/"+material+"/StressStrainLaw/model") )
       {
@@ -117,8 +117,8 @@ namespace GRINS
       }
   }
 
-  void MaterialsParsing::read_density( const std::string& core_physics_name,
-                                       const GetPot& input,
+  void MaterialsParsing::read_density( const std::string & core_physics_name,
+                                       const GetPot & input,
                                        ParameterUser& params,
                                        libMesh::Real& rho )
   {
@@ -197,8 +197,8 @@ namespace GRINS
       }
   }
 
-  void MaterialsParsing::read_specific_heat( const std::string& core_physics_name,
-                                             const GetPot& input,
+  void MaterialsParsing::read_specific_heat( const std::string & core_physics_name,
+                                             const GetPot & input,
                                              ParameterUser& params,
                                              libMesh::Real& cp )
   {
@@ -277,10 +277,10 @@ namespace GRINS
       }
   }
 
-  void MaterialsParsing::read_property( const GetPot& input,
-                                        const std::string& old_option,
-                                        const std::string& property,
-                                        const std::string& core_physics,
+  void MaterialsParsing::read_property( const GetPot & input,
+                                        const std::string & old_option,
+                                        const std::string & property,
+                                        const std::string & core_physics,
                                         ParameterUser& param_user,
                                         libMesh::Real& value )
   {
@@ -317,8 +317,8 @@ namespace GRINS
       }
   }
 
-  void MaterialsParsing::parse_chemical_species( const GetPot& input,
-                                                 const std::string& material,
+  void MaterialsParsing::parse_chemical_species( const GetPot & input,
+                                                 const std::string & material,
                                                  std::vector<std::string>& species_names )
   {
     // Clear out anything the user might've put in there.
@@ -355,9 +355,9 @@ namespace GRINS
       }
   }
 
-  void MaterialsParsing::parse_species_varnames( const GetPot& input,
-                                                 const std::string& material,
-                                                 const std::string& prefix,
+  void MaterialsParsing::parse_species_varnames( const GetPot & input,
+                                                 const std::string & material,
+                                                 const std::string & prefix,
                                                  std::vector<std::string>& species_varnames )
   {
     std::vector<std::string> species_names;
@@ -372,8 +372,8 @@ namespace GRINS
       }
   }
 
-  libMesh::Real MaterialsParsing::parse_lewis_number( const GetPot& input,
-                                                      const std::string& material )
+  libMesh::Real MaterialsParsing::parse_lewis_number( const GetPot & input,
+                                                      const std::string & material )
   {
 
     // Can't specify both old_option and property
@@ -399,8 +399,8 @@ namespace GRINS
     return Le;
   }
 
-  std::string MaterialsParsing::parse_chemical_kinetics_datafile_name( const GetPot& input,
-                                                                       const std::string& material )
+  std::string MaterialsParsing::parse_chemical_kinetics_datafile_name( const GetPot & input,
+                                                                       const std::string & material )
   {
     // Can't specify both old_option and property
     MaterialsParsing::duplicate_input_test(input,
@@ -427,17 +427,17 @@ namespace GRINS
     return filename;
   }
 
-  void MaterialsParsing::dep_input_warning( const std::string& old_option,
-                                            const std::string& property )
+  void MaterialsParsing::dep_input_warning( const std::string & old_option,
+                                            const std::string & property )
   {
     std::string warning = "WARNING: Input option "+old_option+" is DEPRECATED!\n";
     warning += "         Please update to use Materials/MATERIAL_NAME/"+property+"\n";
     grins_warning(warning);
   }
 
-  void MaterialsParsing::duplicate_input_test( const GetPot& input,
-                                               const std::string& option1,
-                                               const std::string& option2 )
+  void MaterialsParsing::duplicate_input_test( const GetPot & input,
+                                               const std::string & option1,
+                                               const std::string & option2 )
   {
     if( input.have_variable(option1) &&
         input.have_variable(option2) )

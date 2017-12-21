@@ -35,9 +35,9 @@
 
 namespace GRINS
 {
-  void PhysicsFactoryHelper::parse_specific_heat_model( const GetPot& input,
-                                                        const std::string& physics,
-                                                        std::string& model )
+  void PhysicsFactoryHelper::parse_specific_heat_model( const GetPot & input,
+                                                        const std::string & physics,
+                                                        std::string & model )
   {
     // Newer, preferred version
     bool have_material = MaterialsParsing::have_material(input,physics);
@@ -67,9 +67,9 @@ namespace GRINS
       }
   }
 
-  void PhysicsFactoryHelper::parse_turb_viscosity_model( const GetPot& input,
-                                                         const std::string& physics,
-                                                         std::string& model )
+  void PhysicsFactoryHelper::parse_turb_viscosity_model( const GetPot & input,
+                                                         const std::string & physics,
+                                                         std::string & model )
   {
     // Newer, preferred version
     bool have_material = MaterialsParsing::have_material(input,physics);
@@ -107,10 +107,10 @@ namespace GRINS
     return;
   }
 
-  void PhysicsFactoryHelper::parse_stress_strain_model( const GetPot& input,
-                                                        const std::string& physics,
-                                                        std::string& model,
-                                                        std::string& strain_energy )
+  void PhysicsFactoryHelper::parse_stress_strain_model( const GetPot & input,
+                                                        const std::string & physics,
+                                                        std::string & model,
+                                                        std::string & strain_energy )
   {
     // Newer, preferred version
     std::string material = MaterialsParsing::material_name( input, physics );
@@ -164,9 +164,9 @@ namespace GRINS
       }
   }
 
-  void PhysicsFactoryHelper::parse_thermochemistry_model( const GetPot& input,
-                                                          const std::string& physics,
-                                                          std::string& model )
+  void PhysicsFactoryHelper::parse_thermochemistry_model( const GetPot & input,
+                                                          const std::string & physics,
+                                                          std::string & thermochem_lib )
   {
     // Newer, preferred version
     std::string material = MaterialsParsing::material_name( input, physics );
