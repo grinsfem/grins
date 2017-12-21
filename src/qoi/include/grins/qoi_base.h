@@ -116,7 +116,7 @@ namespace GRINS
 
     //! Finalize derivatives that require more than a simple sum.
     //! Does nothing by default.
-    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives);
+    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index);
 
     /*!
      * Basic output for computed QoI's. If fancier output is desired, override this method.

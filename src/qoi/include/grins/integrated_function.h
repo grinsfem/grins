@@ -125,6 +125,10 @@ namespace GRINS
     //! User cannot call empty constructor
     IntegratedFunction();
 
+  protected:
+    //! Cache a non-const pointer to the MultiphysicsSystem object
+    MultiphysicsSystem * _multiphysics_system;
+
   };
 
   template<typename Function>
