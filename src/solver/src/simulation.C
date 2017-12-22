@@ -47,53 +47,6 @@
 
 namespace GRINS
 {
-
-  Simulation::Simulation( const GetPot& input,
-                          SimulationBuilder& sim_builder,
-                          const libMesh::Parallel::Communicator &comm )
-    :  _mesh( sim_builder.build_mesh(input, comm) ),
-       _equation_system( new libMesh::EquationSystems( *_mesh ) ),
-       _system_name( input("screen-options/system_name", "GRINS" ) ),
-       _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
-       _vis( sim_builder.build_vis(input, comm) ),
-       _postprocessing( sim_builder.build_postprocessing(input) ),
-       _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
-       _print_log_info( input("screen-options/print_log_info", false ) ),
-       _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
-       _print_constraint_info( input("screen-options/print_constraint_info", false ) ),
-       _print_scalars( input("screen-options/print_scalars", false ) ),
-       _qoi_output( new QoIOutput(input) ),
-       _output_vis( input("vis-options/output_vis", false ) ),
-       _output_adjoint( input("vis-options/output_adjoint", false ) ),
-       _output_residual( input( "vis-options/output_residual", false ) ),
-       _output_residual_sensitivities( input( "vis-options/output_residual_sensitivities", false ) ),
-       _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
-       _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
-       _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
-       _error_estimator_options(input),
-       _error_estimator(), // effectively NULL
-       _do_adjoint_solve(false), // Helper function will set final value
-       _have_restart(false)
-  {
-    libmesh_deprecated();
-
-    this->build_solver(input);
-
-    this->init_multiphysics_system(input);
-
-    this->init_qois(input,sim_builder);
-
-    this->init_params(input,sim_builder);
-
-    this->init_adjoint_solve(input,_output_adjoint);
-
-    // Must be called after setting QoI on the MultiphysicsSystem
-    this->build_error_estimator(input);
-
-    if( SimulationParsing::have_restart(input) )
-      this->init_restart(input,sim_builder,comm);
-  }
-
   Simulation::Simulation( const GetPot& input,
                           GetPot& /*command_line*/,
                           SimulationBuilder& sim_builder,

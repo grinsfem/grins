@@ -60,11 +60,6 @@ namespace GRINS
   public:
 
     Simulation( const GetPot& input,
-                SimulationBuilder& sim_builder,
-                const libMesh::Parallel::Communicator &comm
-                LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
-
-    Simulation( const GetPot& input,
                 GetPot& command_line, /* Has to be non-const for search() */
                 SimulationBuilder& sim_builder,
                 const libMesh::Parallel::Communicator &comm
