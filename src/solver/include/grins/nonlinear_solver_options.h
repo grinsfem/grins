@@ -78,6 +78,25 @@ namespace GRINS
     bool require_residual_reduction() const
     { return _input(_prefix+"/require_residual_reduction",true); }
 
+    inline
+    libMesh::Real verify_analytic_jacobians() const
+    { return _input(_prefix+"/verify_analytic_jacobians",0.0); }
+
+    inline
+    bool use_numerical_jacobians_only() const
+    { return _input(_prefix+"/use_numerical_jacobians_only",false); }
+
+    inline
+    libMesh::Real numerical_jacobian_h() const
+    { return _input(_prefix+"/numerical_jacobian_h",libMesh::TOLERANCE); }
+
+    //! Populate numerical-Jacobian-h values and variable names
+    /*! The user is allowed to provide a list of variables and a corresponding
+        numerical_jacobian_h value for that variable. This function will populate
+        the variables and values vector, respectively, with that info. */
+    void numerical_jacobian_h_vars_and_vals( std::vector<std::string> & variables,
+                                             std::vector<libMesh::Real> & values ) const;
+
   protected:
 
     const GetPot & _input;
