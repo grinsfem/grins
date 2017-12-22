@@ -207,35 +207,15 @@ namespace GRINS
     // Clear out anything the user might've put in there.
     species_names.clear();
 
-    MaterialsParsing::duplicate_input_test( input,
-                                            "Physics/Chemistry/species",
-                                            "Materials/"+material+"/GasMixture/species");
-
-    std::string species_input;
-    if( input.have_variable("Physics/Chemistry/species") )
-      {
-        MaterialsParsing::dep_input_warning("Physics/Chemistry/species","GasMixture/species");
-        species_input = "Physics/Chemistry/species";
-      }
-    else if( input.have_variable("Materials/"+material+"/GasMixture/species") )
-      {
-        species_input = "Materials/"+material+"/GasMixture/species";
-      }
-    else
-      {
-        libmesh_error_msg("ERROR: Valid input for species not found!");
-      }
+    std::string option("Materials/"+material+"/GasMixture/species");
+    MaterialsParsing::check_for_input_option(input,option);
 
     // Read variable naming info
-    unsigned int n_species = input.vector_variable_size(species_input);
+    unsigned int n_species = input.vector_variable_size(option);
 
     species_names.reserve(n_species);
     for( unsigned int i = 0; i < n_species; i++ )
-      {
-        /*! \todo Make this prefix string an input option */
-
-        species_names.push_back( input( species_input, "DIE!", i ) );
-      }
+      species_names.push_back( input( option, "DIE!", i ) );
   }
 
   void MaterialsParsing::parse_species_varnames( const GetPot & input,
