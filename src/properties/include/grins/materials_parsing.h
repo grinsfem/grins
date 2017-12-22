@@ -45,10 +45,8 @@ namespace GRINS
     MaterialsParsing(){};
     ~MaterialsParsing(){};
 
-    //! Check if Physics/physics section has a material variable
-    static bool have_material( const GetPot & input, const std::string & physics );
-
     //! Get the name of the material in the Physics/physics section
+    /*! Will error is the material key is not found in GetPot input. */
     static std::string material_name( const GetPot & input, const std::string & physics );
 
     //! Parse the viscosity model for the given Physics
@@ -135,18 +133,12 @@ namespace GRINS
   };
 
   inline
-  bool MaterialsParsing::have_material( const GetPot & input, const std::string & physics )
-  {
-    return input.have_variable("Physics/"+physics+"/material");
-  }
-
-  inline
   std::string MaterialsParsing::material_name( const GetPot & input, const std::string & physics )
   {
-    if( !MaterialsParsing::have_material(input,physics) )
-      libmesh_error_msg("ERROR: Could not find Physics/"+physics+"/material value!");
+    std::string option("Physics/"+physics+"/material");
+    MaterialsParsing::check_for_input_option(input,option);
 
-    return input("Physics/"+physics+"/material", "DIE!");
+    return input(option, "DIE!");
   }
 
   inline
