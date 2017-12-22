@@ -46,28 +46,13 @@ namespace GRINS
 {
 
   Solver::Solver( const GetPot& input )
-    : _max_nonlinear_iterations( input("linear-nonlinear-solver/max_nonlinear_iterations", 10 ) ),
-      _relative_step_tolerance( input("linear-nonlinear-solver/relative_step_tolerance", 1.e-6 ) ),
-      _absolute_step_tolerance( input("linear-nonlinear-solver/absolute_step_tolerance", 0.0 ) ),
-      _relative_residual_tolerance( input("linear-nonlinear-solver/relative_residual_tolerance", 1.e-15 ) ),
-      _absolute_residual_tolerance( input("linear-nonlinear-solver/absolute_residual_tolerance", 0.0 ) ),
+    : _nonlinear_solver_options(input),
       _initial_linear_tolerance( input("linear-nonlinear-solver/initial_linear_tolerance", 1.e-3 ) ),
       _minimum_linear_tolerance( input("linear-nonlinear-solver/minimum_linear_tolerance", 1.e-3 ) ),
       _max_linear_iterations( input("linear-nonlinear-solver/max_linear_iterations", 500 ) ),
-      _continue_after_backtrack_failure( input("linear-nonlinear-solver/continue_after_backtrack_failure", false ) ),
-      _continue_after_max_iterations( input("linear-nonlinear-solver/continue_after_max_iterations", false ) ),
-      _require_residual_reduction( input("linear-nonlinear-solver/require_residual_reduction", true ) ),
       _solver_quiet( input("screen-options/solver_quiet", false ) ),
       _solver_verbose( input("screen-options/solver_verbose", false ) )
-  {
-    return;
-  }
-
-
-  Solver::~Solver()
-  {
-    return;
-  }
+  {}
 
   void Solver::initialize( const GetPot& /*input*/,
                            std::shared_ptr<libMesh::EquationSystems> equation_system,
@@ -85,39 +70,36 @@ namespace GRINS
 
     // Set linear/nonlinear solver options
     this->set_solver_options( solver );
-
-    return;
   }
 
   void Solver::set_solver_options( libMesh::DiffSolver& solver  )
   {
+    solver.max_nonlinear_iterations    = _nonlinear_solver_options.max_nonlinear_iterations();
+    solver.relative_step_tolerance     = _nonlinear_solver_options.relative_step_tolerance();
+    solver.absolute_step_tolerance     = _nonlinear_solver_options.absolute_step_tolerance();
+    solver.relative_residual_tolerance = _nonlinear_solver_options.relative_residual_tolerance();
+    solver.absolute_residual_tolerance = _nonlinear_solver_options.absolute_residual_tolerance();
+    solver.continue_after_backtrack_failure = _nonlinear_solver_options.continue_after_backtrack_failure();
+    solver.continue_after_max_iterations    = _nonlinear_solver_options.continue_after_max_iterations();
+
     solver.quiet                       = this->_solver_quiet;
     solver.verbose                     = this->_solver_verbose;
-    solver.max_nonlinear_iterations    = this->_max_nonlinear_iterations;
-    solver.relative_step_tolerance     = this->_relative_step_tolerance;
-    solver.absolute_step_tolerance     = this->_absolute_step_tolerance;
-    solver.relative_residual_tolerance = this->_relative_residual_tolerance;
-    solver.absolute_residual_tolerance = this->_absolute_residual_tolerance;
     solver.max_linear_iterations       = this->_max_linear_iterations;
-    solver.continue_after_backtrack_failure = this->_continue_after_backtrack_failure;
     solver.initial_linear_tolerance    = this->_initial_linear_tolerance;
     solver.minimum_linear_tolerance    = this->_minimum_linear_tolerance;
-    solver.continue_after_max_iterations    = this->_continue_after_max_iterations;
+
     if(dynamic_cast<libMesh::NewtonSolver*>(&solver))
       {
-        dynamic_cast<libMesh::NewtonSolver&>(solver).require_residual_reduction = this->_require_residual_reduction;
+        dynamic_cast<libMesh::NewtonSolver&>(solver).require_residual_reduction
+          = _nonlinear_solver_options.require_residual_reduction();
       }
     else
       {
         // If the user tried to set require_residual_reduction flag to false
         // despite not having a NewtonSolver spit out a warning
-        if(this->_require_residual_reduction == false)
-          {
-            libmesh_warning("GRINS can't change require_residual_reduction when not using NewtonSolver!");
-          }
+        if(_nonlinear_solver_options.require_residual_reduction() == false)
+          libmesh_warning("GRINS can't change require_residual_reduction when not using NewtonSolver!");
       }
-
-    return;
   }
 
   void Solver::steady_adjoint_solve( SolverContext& context )

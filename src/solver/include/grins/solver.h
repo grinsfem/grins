@@ -26,8 +26,11 @@
 #ifndef GRINS_SOLVER_H
 #define GRINS_SOLVER_H
 
-// GRINS
+// C++
 #include <memory>
+
+// GRINS
+#include "grins/nonlinear_solver_options.h"
 
 // libMesh
 #include "libmesh/equation_systems.h"
@@ -52,7 +55,7 @@ namespace GRINS
   {
   public:
     Solver( const GetPot& input );
-    virtual ~Solver();
+    virtual ~Solver(){};
 
     virtual void initialize( const GetPot& input,
                              std::shared_ptr<libMesh::EquationSystems> equation_system,
@@ -87,23 +90,11 @@ namespace GRINS
 
   protected:
 
-    // Linear/Nonlinear solver options
-    unsigned int _max_nonlinear_iterations;
-    double _relative_step_tolerance;
-    double _absolute_step_tolerance;
+    NonlinearSolverOptions _nonlinear_solver_options;
 
-    // _relative_residual_tolerance applies to both one of the
-    // stopping criteria for (nonlinear) forward solves and *the*
-    // stopping criterion for (linear) adjoint solves.
-    double _relative_residual_tolerance;
-
-    double _absolute_residual_tolerance;
     double _initial_linear_tolerance;
     double _minimum_linear_tolerance;
     unsigned int _max_linear_iterations;
-    bool _continue_after_backtrack_failure;
-    bool _continue_after_max_iterations;
-    bool _require_residual_reduction;
 
     // Screen display options
     bool _solver_quiet;
