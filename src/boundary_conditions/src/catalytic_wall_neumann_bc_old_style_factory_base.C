@@ -55,7 +55,7 @@ namespace GRINS
     libMesh::Real p0 = this->parse_thermo_pressure(input,material);
 
     std::string thermochem_lib;
-    MaterialsParsing::thermochemistry_model( input,
+    MaterialsParsing::thermochemistry_lib( input,
                                              PhysicsNaming::reacting_low_mach_navier_stokes(),
                                              thermochem_lib );
 

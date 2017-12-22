@@ -74,7 +74,7 @@ namespace GRINS
                                      std::string & model,
                                      std::string & strain_energy );
 
-    static void thermochemistry_model( const GetPot& input,
+    static void thermochemistry_lib( const GetPot& input,
                                        const std::string& physics,
                                        std::string& model );
 

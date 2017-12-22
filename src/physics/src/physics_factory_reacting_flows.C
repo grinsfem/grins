@@ -32,7 +32,7 @@ namespace GRINS
     std::string material = MaterialsParsing::material_name(input,core_physics);
 
     std::string thermochem_lib;
-    MaterialsParsing::thermochemistry_model( input, core_physics, thermochem_lib );
+    MaterialsParsing::thermochemistry_lib( input, core_physics, thermochem_lib );
 
     std::unique_ptr<Physics> new_physics;
 

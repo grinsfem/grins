@@ -95,7 +95,7 @@ namespace GRINS
     strain_energy = input("Materials/"+material+"/StressStrainLaw/strain_energy", "none");
   }
 
-  void MaterialsParsing::thermochemistry_model( const GetPot & input,
+  void MaterialsParsing::thermochemistry_lib( const GetPot & input,
                                                 const std::string & physics,
                                                 std::string & thermochem_lib )
   {
