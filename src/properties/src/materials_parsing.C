@@ -255,27 +255,10 @@ namespace GRINS
   std::string MaterialsParsing::parse_chemical_kinetics_datafile_name( const GetPot & input,
                                                                        const std::string & material )
   {
-    // Can't specify both old_option and property
-    MaterialsParsing::duplicate_input_test(input,
-                                           "Physics/Chemistry/chem_file",
-                                           "Materials/"+material+"/GasMixture/kinetics_data");
+    std::string option("Materials/"+material+"/GasMixture/kinetics_data");
+    MaterialsParsing::check_for_input_option(input,option);
 
-    std::string filename;
-    if( input.have_variable("Physics/Chemistry/chem_file") )
-      {
-        MaterialsParsing::dep_input_warning("Physics/Chemistry/chem_file",
-                                            "GasMixture/kinetics_data" );
-
-        filename = input("Physics/Chemistry/chem_file","DIE!");
-      }
-    else if( input.have_variable("Materials/"+material+"/GasMixture/kinetics_data") )
-      {
-        filename = input("Materials/"+material+"/GasMixture/kinetics_data", "DIE!");
-      }
-    else
-      {
-        libmesh_error_msg("ERROR: Could not find valid input for kinetics_data!");
-      }
+    std::string filename = input(option, "DIE!");
 
     return filename;
   }
