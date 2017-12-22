@@ -78,21 +78,18 @@ namespace GRINS
   {
     // Read thermodynamic state info
     MaterialsParsing::read_property( input,
-                                     "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/p0",
                                      "ThermodynamicPressure",
                                      PhysicsNaming::low_mach_navier_stokes(),
                                      (*this),
                                      _p0 );
 
     MaterialsParsing::read_property( input,
-                                     "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/T0",
                                      "ReferenceTemperature",
                                      PhysicsNaming::low_mach_navier_stokes(),
                                      (*this),
                                      _T0 );
 
     MaterialsParsing::read_property( input,
-                                     "Physics/"+PhysicsNaming::low_mach_navier_stokes()+"/R",
                                      "GasConstant",
                                      PhysicsNaming::low_mach_navier_stokes(),
                                      (*this),

@@ -46,18 +46,6 @@ namespace GRINS
 
   protected:
 
-    //! Helper function for parsing/maintaing backward compatibility
-    void read_property( const GetPot& input,
-                        const std::string& old_option,
-                        const std::string& property,
-                        libMesh::Real& value );
-
-    //! Helper function for parsing/maintaing backward compatibility
-    void no_input_warning( const GetPot& input,
-                           const std::string& old_option,
-                           const std::string& material,
-                           const std::string& property );
-
     const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
     const PrimitiveTempFEVariables& _temp_vars;

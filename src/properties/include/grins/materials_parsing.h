@@ -108,7 +108,6 @@ namespace GRINS
       should'nt be used. This also assumes that the property value should
       be positive and will error out if it's not.*/
     static void read_property( const GetPot & input,
-                               const std::string & old_option,
                                const std::string & property,
                                const std::string & core_physics,
                                ParameterUser& param_user,

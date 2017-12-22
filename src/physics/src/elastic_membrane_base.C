@@ -46,7 +46,6 @@ namespace GRINS
       _h0(0.0)
   {
     MaterialsParsing::read_property( input,
-                                     "Physics/"+physics_name+"/h0",
                                      "MembraneThickness",
                                      PhysicsNaming::elastic_membrane(),
                                      (*this),

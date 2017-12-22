@@ -83,7 +83,6 @@ namespace GRINS
   {
     // Read thermodynamic pressure info
     MaterialsParsing::read_property( input,
-                                     "Physics/"+PhysicsNaming::reacting_low_mach_navier_stokes()+"/p0",
                                      "ThermodynamicPressure",
                                      PhysicsNaming::reacting_low_mach_navier_stokes(),
                                      (*this),
