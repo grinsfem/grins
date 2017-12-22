@@ -86,26 +86,8 @@ namespace GRINS
                                 std::string& conductivity_model,
                                 std::string& diffusivity_model );
 
-    //! Helper function to reading density from input
-    /*! In particular, we want to handle backward compatibility before
-      the introduction of material names in the input. */
-    static void read_density( const std::string & core_physics_name,
-                              const GetPot & input,
-                              ParameterUser& params,
-                              libMesh::Real& rho );
-
-    //! Helper function to reading scalar specific heat from input
-    /*! In particular, we want to handle backward compatibility before
-      the introduction of material names in the input. */
-    static void read_specific_heat( const std::string & core_physics_name,
-                                    const GetPot & input,
-                                    ParameterUser& params,
-                                    libMesh::Real& cp );
-
-    //! Helper function for parsing/maintaing backward compatibility
-    /*! This function assumes that one of the old_option or the material-based
-      property input must be specified. If that's not the case, this function
-      should'nt be used. This also assumes that the property value should
+    //! Helper function for parsin
+    /*! This  assumes that the property value should
       be positive and will error out if it's not.*/
     static void read_property( const GetPot & input,
                                const std::string & property,

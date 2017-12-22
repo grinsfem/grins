@@ -145,44 +145,6 @@ namespace GRINS
     diffusivity_model = input( "Materials/"+material+"/GasMixture/Antioch/mass_diffusivity_model", "DIE!");
   }
 
-  void MaterialsParsing::read_density( const std::string & core_physics_name,
-                                       const GetPot & input,
-                                       ParameterUser & params,
-                                       libMesh::Real & rho )
-  {
-    std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
-
-    std::string rho_option("Materials/"+material+"/Density/value");
-    MaterialsParsing::check_for_input_option(input,rho_option);
-
-    params.set_parameter(rho, input, rho_option, 0.0 /*default*/);
-
-    // Let's make sure we actually got a valid density value
-    if( rho <= 0.0 )
-      libmesh_error_msg("ERROR: Detected non-positive value of density!");
-  }
-
-  void MaterialsParsing::read_specific_heat( const std::string & core_physics_name,
-                                             const GetPot & input,
-                                             ParameterUser& params,
-                                             libMesh::Real& cp )
-  {
-    std::string material = input("Physics/"+core_physics_name+"/material", "DIE!");
-
-    std::string cp_option("Materials/"+material+"/SpecificHeat/value");
-    MaterialsParsing::check_for_input_option(input,cp_option);
-
-    // This function only supports reading a constant
-    if( input("Materials/"+material+"/SpecificHeat/model", "DIE!") != std::string("constant") )
-      libmesh_error_msg("ERROR: Only constant SpecificHeat model supported!");
-
-    params.set_parameter(cp, input, cp_option, 0.0 /*default*/);
-
-    // Let's make sure we actually got a valid cp value
-    if( cp <= 0.0 )
-      libmesh_error_msg("ERROR: Detected non-positive value of cp!");
-  }
-
   void MaterialsParsing::read_property( const GetPot & input,
                                         const std::string & property,
                                         const std::string & core_physics,

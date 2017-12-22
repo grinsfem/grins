@@ -51,10 +51,11 @@ namespace GRINS
                                      (*this),
                                      _h0 );
 
-    MaterialsParsing::read_density( PhysicsNaming::elastic_membrane(),
-                                    input,
-                                    (*this),
-                                    _rho );
+    MaterialsParsing::read_property( input,
+                                     "Density",
+                                     PhysicsNaming::elastic_membrane(),
+                                     (*this),
+                                     _rho );
 
     if( this->_disp_vars.dim() < 2 )
       libmesh_error_msg("ERROR: ElasticMembraneBase subclasses only valid for two or three dimensions! Make sure you have at least two components in your Displacement type variable.");

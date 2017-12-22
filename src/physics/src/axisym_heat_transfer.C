@@ -62,9 +62,8 @@ namespace GRINS
   template< class Conductivity>
   void AxisymmetricHeatTransfer<Conductivity>::read_input_options( const GetPot& input )
   {
-    MaterialsParsing::read_density( PhysicsNaming::axisymmetric_heat_transfer(), input, (*this), this->_rho );
-
-    MaterialsParsing::read_specific_heat( PhysicsNaming::axisymmetric_heat_transfer(), input, (*this), this->_Cp );
+    MaterialsParsing::read_property( input, "Density", PhysicsNaming::axisymmetric_heat_transfer(),  (*this), this->_rho );
+    MaterialsParsing::read_property( input, "SpecificHeat", PhysicsNaming::axisymmetric_heat_transfer(),  (*this), this->_Cp );
   }
 
   template< class Conductivity>
