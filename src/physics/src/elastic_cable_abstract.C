@@ -43,14 +43,12 @@ namespace GRINS
       _rho(0.0)
   {
     MaterialsParsing::read_property( input,
-                                     "Physics/"+physics_name+"/A",
                                      "CrossSectionalArea",
                                      PhysicsNaming::elastic_cable(),
                                      (*this),
                                      _A );
 
     MaterialsParsing::read_property( input,
-                                     "Physics/"+physics_name+"/rho",
                                      "Density",
                                      PhysicsNaming::elastic_cable(),
                                      (*this),

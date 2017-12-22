@@ -26,8 +26,8 @@
 #define GRINS_PHYSICS_FACTORY_HEAT_TRANSFER_H
 
 // GRINS
+#include "grins/materials_parsing.h"
 #include "grins/physics_factory_with_core.h"
-#include "grins/physics_factory_helper.h"
 #include "grins/constant_conductivity.h"
 #include "grins/parsed_conductivity.h"
 
@@ -62,7 +62,7 @@ namespace GRINS
     std::string core_physics = this->find_core_physics_name(physics_name);
 
     std::string conductivity;
-    PhysicsFactoryHelper::parse_conductivity_model(input,core_physics,conductivity);
+    MaterialsParsing::thermal_conductivity_model(input,core_physics,conductivity);
 
     std::unique_ptr<Physics> new_physics;
 

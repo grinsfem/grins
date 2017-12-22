@@ -51,9 +51,8 @@ namespace GRINS
       _Cp(0.0),
       _k(input,MaterialsParsing::material_name(input,PhysicsNaming::heat_conduction()))
   {
-    MaterialsParsing::read_density( PhysicsNaming::heat_conduction(), input, (*this), this->_rho );
-
-    MaterialsParsing::read_specific_heat( PhysicsNaming::heat_conduction(), input, (*this), this->_Cp );
+    MaterialsParsing::read_property( input, "Density", PhysicsNaming::heat_conduction(),  (*this), this->_rho );
+    MaterialsParsing::read_property( input, "SpecificHeat", PhysicsNaming::heat_conduction(),  (*this), this->_Cp );
 
     // This is deleted in the base class
     this->_ic_handler = new GenericICHandler( physics_name, input );

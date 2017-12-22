@@ -26,8 +26,8 @@
 #define GRINS_PHYSICS_FACTORY_INCOMPRESSIBLE_FLOW_H
 
 // GRINS
+#include "grins/materials_parsing.h"
 #include "grins/physics_factory_with_core.h"
-#include "grins/physics_factory_helper.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
 #include "grins/spalart_allmaras_viscosity.h"
@@ -63,7 +63,7 @@ namespace GRINS
     std::string core_physics = this->find_core_physics_name(physics_name);
 
     std::string viscosity;
-    PhysicsFactoryHelper::parse_viscosity_model(input,core_physics,viscosity);
+    MaterialsParsing::viscosity_model(input,core_physics,viscosity);
 
     std::unique_ptr<Physics> new_physics;
 
@@ -77,7 +77,7 @@ namespace GRINS
     else if( viscosity == "spalartallmaras" )
       {
         std::string turb_viscosity;
-        PhysicsFactoryHelper::parse_turb_viscosity_model(input,core_physics,turb_viscosity);
+        MaterialsParsing::turb_viscosity_model(input,core_physics,turb_viscosity);
         if( turb_viscosity == "constant" )
           new_physics.reset(new DerivedPhysics<SpalartAllmarasViscosity<ConstantViscosity> >(physics_name,input) );
         else

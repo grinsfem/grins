@@ -26,8 +26,8 @@
 #define GRINS_PHYSICS_FACTORY_PLANE_STRESS_SOLIDS_H
 
 // GRINS
+#include "grins/materials_parsing.h"
 #include "grins/physics_factory_with_core.h"
-#include "grins/physics_factory_helper.h"
 #include "grins/hookes_law.h"
 #include "grins/hookes_law_1d.h"
 #include "grins/incompressible_plane_stress_hyperelasticity.h"
@@ -64,10 +64,7 @@ namespace GRINS
     std::string model = "none";
     std::string strain_energy = "none";
 
-    PhysicsFactoryHelper::parse_stress_strain_model( input,
-                                                     core_physics,
-                                                     model,
-                                                     strain_energy );
+    MaterialsParsing::stress_strain_model( input, core_physics, model, strain_energy );
 
     std::unique_ptr<Physics> new_physics;
 

@@ -55,9 +55,9 @@ namespace GRINS
       _Cp(0.0),
       _k(input,MaterialsParsing::material_name(input,core_physics_name))
   {
-    MaterialsParsing::read_density( core_physics_name, input, (*this), this->_rho );
+    MaterialsParsing::read_property( input, "Density", core_physics_name,  (*this), this->_rho );
 
-    MaterialsParsing::read_specific_heat( core_physics_name, input, (*this), this->_Cp );
+    MaterialsParsing::read_property( input, "SpecificHeat", core_physics_name,  (*this), this->_Cp );
 
     this->check_var_subdomain_consistency(_flow_vars);
     this->check_var_subdomain_consistency(_press_var);

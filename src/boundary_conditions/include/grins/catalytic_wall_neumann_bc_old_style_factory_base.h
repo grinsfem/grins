@@ -56,8 +56,6 @@ namespace GRINS
     //! Parse the reaction.
     std::string parse_reaction( const GetPot& input, const std::string& section ) const;
 
-    std::string parse_thermochem_model( const GetPot& input ) const;
-
     libMesh::Real parse_thermo_pressure( const GetPot& input,
                                          const std::string& material ) const;
 
