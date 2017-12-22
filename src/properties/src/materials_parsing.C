@@ -244,20 +244,10 @@ namespace GRINS
                                            "Physics/Antioch/Le",
                                            "Materials/"+material+"/LewisNumber/value");
 
-    libMesh::Real Le = 0.0;
-    if( input.have_variable("Physics/Antioch/Le") )
-      {
-        MaterialsParsing::dep_input_warning("Physics/Antioch/Le", "LewisNumber/value" );
-        Le = input("Physics/Antioch/Le", 0.0);
-      }
-    else if( input.have_variable("Materials/"+material+"/LewisNumber/value") )
-      {
-        Le = input("Materials/"+material+"/LewisNumber/value", 0.0);
-      }
-    else
-      {
-        libmesh_error_msg("ERROR: Could not find value input for LewisNumber!");
-      }
+    std::string option("Materials/"+material+"/LewisNumber/value");
+    MaterialsParsing::check_for_input_option(input,option);
+
+    libMesh::Real Le = input(option, 0.0);
 
     return Le;
   }
