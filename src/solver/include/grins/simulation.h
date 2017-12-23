@@ -55,14 +55,12 @@ namespace GRINS
   class SimulationBuilder;
   class MultiphysicsSystem;
 
+  //! Manage construction of multiphysics simulation
+  /*! Manager class to handle the construction and running of all the various aspects of
+   of the multiphysics computation/simulation/whatever-you-want-to-call it. */
   class Simulation
   {
   public:
-
-    Simulation( const GetPot& input,
-                SimulationBuilder& sim_builder,
-                const libMesh::Parallel::Communicator &comm
-                LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
     Simulation( const GetPot& input,
                 GetPot& command_line, /* Has to be non-const for search() */
@@ -77,6 +75,7 @@ namespace GRINS
     void print_sim_info();
 
     std::shared_ptr<libMesh::EquationSystems> get_equation_system();
+
     MultiphysicsSystem* get_multiphysics_system();
 
     const MultiphysicsSystem* get_multiphysics_system() const;
