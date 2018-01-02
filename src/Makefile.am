@@ -521,6 +521,8 @@ include_HEADERS += solver/include/grins/unsteady_mesh_adaptive_solver.h
 include_HEADERS += solver/include/grins/simulation_initializer.h
 include_HEADERS += solver/include/grins/runner.h
 include_HEADERS += solver/include/grins/nonlinear_solver_options.h
+include_HEADERS += solver/include/grins/diff_solver_names.h
+
 
 # src/strategies headers
 include_HEADERS += strategies/include/grins/strategies_parsing.h
