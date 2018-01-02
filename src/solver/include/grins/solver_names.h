@@ -22,6 +22,9 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_SOLVER_NAMES_H
+#define GRINS_SOLVER_NAMES_H
+
 // C++
 #include <string>
 
@@ -54,3 +57,5 @@ namespace GRINS
 
   };
 } // end namespace GRINS
+
+#endif // GRINS_SOLVER_NAMES_H
