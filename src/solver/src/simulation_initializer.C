@@ -31,6 +31,7 @@
 #include "grins/boundary_condition_factory_initializer.h"
 #include "grins/variable_factory_initializer.h"
 #include "grins/solver_factory_initializer.h"
+#include "grins/diff_solver_factory_initializer.h"
 
 namespace GRINS
 {
@@ -45,6 +46,7 @@ namespace GRINS
         BoundaryConditionFactoryInitializer bc_init;
         VariableFactoryInitializer var_init;
         SolverFactoryInitializer solver_init;
+        DiffSolverFactoryInitializer diff_solver_init;
 
         _is_initialized = true;
       }
