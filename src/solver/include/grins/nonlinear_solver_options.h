@@ -28,6 +28,9 @@
 // C++
 #include <string>
 
+// GRINS
+#include "grins/diff_solver_names.h"
+
 // libMesh
 #include "libmesh/libmesh.h"
 #include "libmesh/getpot.h"
@@ -41,6 +44,10 @@ namespace GRINS
 
     NonlinearSolverOptions( const GetPot & input );
     ~NonlinearSolverOptions(){};
+
+    inline
+    std::string type() const
+    { return _input(_prefix+"/type",DiffSolverNames::newton_solver()); }
 
     inline
     unsigned int max_nonlinear_iterations() const
