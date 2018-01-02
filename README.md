@@ -53,7 +53,7 @@ GRINS uses an Autotools build system, so typical GNU build commands are used. We
 1. cd grins-clone
 2. ./bootstrap (generate configure script)
 3. cd ../ & mkdir build & cd build
-4. ../grins-clone/configure --prefix=/path/to/install --with-libmesh=/path/to/libMesh --with-boost=/path/to/boost (for more options, do ../grins-clone/configure --help)
+4. ../grins-clone/configure --prefix=/path/to/install --with-libmesh=/path/to/libMesh (for more options, do ../grins-clone/configure --help)
 5. make (note parallel builds are supported)
 6. make check (note parallel-tests are supported)
 7. make install
