@@ -33,6 +33,7 @@
 #include "grins/bc_builder.h"
 #include "grins/constraint_builder.h"
 #include "grins/composite_qoi.h"
+#include "grins/nonlinear_solver_options.h"
 
 // libMesh
 #include "libmesh/composite_function.h"
@@ -59,8 +60,10 @@ namespace GRINS
     // Cache this for building boundary condition later
     _input = &input;
 
+    NonlinearSolverOptions nonlinear_solver_options(input);
+
     // Read options for MultiphysicsSystem first
-    this->verify_analytic_jacobians = input("linear-nonlinear-solver/verify_analytic_jacobians", 0.0 );
+    this->verify_analytic_jacobians = nonlinear_solver_options.verify_analytic_jacobians();
     this->print_solution_norms = input("screen-options/print_solution_norms", false );
     this->print_solutions = input("screen-options/print_solutions", false );
     this->print_residual_norms = input("screen-options/print_residual_norms", false );
@@ -78,40 +81,13 @@ namespace GRINS
     this->print_element_residuals = input("screen-options/print_element_residuals", false );
     this->print_element_jacobians = input("screen-options/print_element_jacobians", false );
 
-    _use_numerical_jacobians_only = input("linear-nonlinear-solver/use_numerical_jacobians_only", false );
+    _use_numerical_jacobians_only = nonlinear_solver_options.use_numerical_jacobians_only();
 
-    numerical_jacobian_h =
-      input("linear-nonlinear-solver/numerical_jacobian_h",
-            numerical_jacobian_h);
+    // This is defined in libMesh::FEMSystem
+    numerical_jacobian_h = nonlinear_solver_options.numerical_jacobian_h();
 
-    const unsigned int n_numerical_jacobian_h_values =
-      input.vector_variable_size
-      ("linear-nonlinear-solver/numerical_jacobian_h_values");
-
-    if (n_numerical_jacobian_h_values !=
-        input.vector_variable_size
-        ("linear-nonlinear-solver/numerical_jacobian_h_variables"))
-      {
-        std::cerr << "Error: found " << n_numerical_jacobian_h_values
-                  << " numerical_jacobian_h_values" << std::endl;
-        std::cerr << "  but "
-                  << input.vector_variable_size
-          ("linear-nonlinear-solver/numerical_jacobian_h_variables")
-                  << " numerical_jacobian_h_variables" << std::endl;
-        libmesh_error();
-      }
-
-    _numerical_jacobian_h_variables.resize(n_numerical_jacobian_h_values);
-    _numerical_jacobian_h_values.resize(n_numerical_jacobian_h_values);
-    for (unsigned int i=0; i != n_numerical_jacobian_h_values; ++i)
-      {
-        _numerical_jacobian_h_variables[i] =
-          input("linear-nonlinear-solver/numerical_jacobian_h_variables",
-                "", i);
-        _numerical_jacobian_h_values[i] =
-          input("linear-nonlinear-solver/numerical_jacobian_h_values",
-                libMesh::Real(0), i);
-      }
+    nonlinear_solver_options.numerical_jacobian_h_vars_and_vals
+      (_numerical_jacobian_h_variables, _numerical_jacobian_h_values);
   }
 
   void MultiphysicsSystem::init_data()
