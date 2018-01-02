@@ -34,6 +34,7 @@
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
 #include "grins/composite_qoi.h"
+#include "grins/diff_solver_factory.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -61,6 +62,12 @@ namespace GRINS
 
     // Defined in subclasses depending on the solver used.
     this->init_time_solver(system);
+
+    // This needs to be done before EquationSystems::init() so that
+    // 1. We don't wastefully build a libMesh::NewtonSolver (since that is built
+    //    internally in libMesh if no other DiffSolver has been set)
+    // 2. The built DiffSolver will then be properly init'ed.
+    this->build_diff_solver(_nonlinear_solver_options, system);
 
     // Initialize the system
     equation_system->init();
@@ -100,6 +107,17 @@ namespace GRINS
         if(_nonlinear_solver_options.require_residual_reduction() == false)
           libmesh_warning("GRINS can't change require_residual_reduction when not using NewtonSolver!");
       }
+  }
+
+  void Solver::build_diff_solver( const NonlinearSolverOptions & options,
+                                  MultiphysicsSystem * system )
+  {
+    DiffSolverFactoryAbstract::set_system(system);
+
+    const std::string solver_type = options.type();
+    std::unique_ptr<libMesh::DiffSolver> & diff_solver = system->time_solver->diff_solver();
+
+    diff_solver = DiffSolverFactoryAbstract::build(solver_type);
   }
 
   void Solver::steady_adjoint_solve( SolverContext& context )
