@@ -22,40 +22,28 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_SOLVER_NAMES_H
-#define GRINS_SOLVER_NAMES_H
-
-// C++
-#include <string>
+#include "grins/diff_solver_factory.h"
 
 namespace GRINS
 {
-  class SolverNames
+  std::unique_ptr<libMesh::DiffSolver> DiffSolverFactoryAbstract::create()
   {
-  public:
+    if(!_system)
+      libmesh_error_msg("ERROR: Must must MultiphysicsSystem pointer before calling DiffSolverFactoryAbstract::create()!");
 
-    static const std::string steady_solver()
-    { return "grins_steady_solver"; }
+    return this->build_diff_solver(*_system);
+  }
 
-    static const std::string unsteady_solver()
-    { return "grins_unsteady_solver"; }
+  // Full specialization for the Factory<libMesh::DiffSolver>
+  template<>
+  std::map<std::string, FactoryAbstract<libMesh::DiffSolver>*>&
+  FactoryAbstract<libMesh::DiffSolver>::factory_map()
+  {
+    static std::map<std::string, FactoryAbstract<libMesh::DiffSolver>*> _map;
+    return _map;
+  }
 
-    static const std::string steady_mesh_adaptive_solver()
-    { return "grins_steady_mesh_adaptive_solver"; }
+  // Definition of static members
+  MultiphysicsSystem * DiffSolverFactoryAbstract::_system = NULL;
 
-    static const std::string unsteady_mesh_adaptive_solver()
-    { return "grins_unsteady_mesh_adaptive_solver"; }
-
-    static const std::string libmesh_euler_solver()
-    { return "libmesh_euler_solver"; }
-
-    static const std::string libmesh_euler2_solver()
-    { return "libmesh_euler2_solver"; }
-
-    static const std::string libmesh_newmark_solver()
-    { return "libmesh_newmark"; }
-
-  };
 } // end namespace GRINS
-
-#endif // GRINS_SOLVER_NAMES_H

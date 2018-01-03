@@ -1,6 +1,9 @@
 Version 0.9.0 (in progress)
    * C++11 compiler now required
    * Minimum libMesh git hash for this release is: daf2f70
+   * Use factory pattern for DiffSolver, now support
+     specifying DiffSolver type in inputfile,
+     add support for libMesh::PetscDiffSolver
 
 Version 0.8.0
    * Minimum libMesh git hash for this release is: 8be0a4e

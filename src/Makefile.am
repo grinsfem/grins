@@ -218,6 +218,9 @@ libgrins_la_SOURCES += solver/src/unsteady_mesh_adaptive_solver.C
 libgrins_la_SOURCES += solver/src/simulation_initializer.C
 libgrins_la_SOURCES += solver/src/runner.C
 libgrins_la_SOURCES += solver/src/nonlinear_solver_options.C
+libgrins_la_SOURCES += solver/src/diff_solver_factory.C
+libgrins_la_SOURCES += solver/src/diff_solver_factory_initializer.C
+
 
 # src/strategies files
 libgrins_la_SOURCES += strategies/src/strategies_parsing.C
@@ -521,6 +524,10 @@ include_HEADERS += solver/include/grins/unsteady_mesh_adaptive_solver.h
 include_HEADERS += solver/include/grins/simulation_initializer.h
 include_HEADERS += solver/include/grins/runner.h
 include_HEADERS += solver/include/grins/nonlinear_solver_options.h
+include_HEADERS += solver/include/grins/diff_solver_names.h
+include_HEADERS += solver/include/grins/diff_solver_factory.h
+include_HEADERS += solver/include/grins/diff_solver_factory_initializer.h
+
 
 # src/strategies headers
 include_HEADERS += strategies/include/grins/strategies_parsing.h

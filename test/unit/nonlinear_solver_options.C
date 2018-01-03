@@ -71,6 +71,7 @@ namespace GRINSTesting
         "numerical_jacobian_h  = '1.0e-3'                    \n"
         "numerical_jacobian_h_variables = 'U y Vz'           \n"
         "numerical_jacobian_h_values = '1.0  2.0e-6  3.0e-8' \n"
+        "type = 'libmesh_petsc_diff'                         \n"
         "[]\n";
 
       std::stringstream inputfile;
@@ -101,6 +102,8 @@ namespace GRINSTesting
       options.numerical_jacobian_h_vars_and_vals(variables,values);
       CPPUNIT_ASSERT(variables.empty());
       CPPUNIT_ASSERT(values.empty());
+
+      CPPUNIT_ASSERT_EQUAL(GRINS::DiffSolverNames::newton_solver(), options.type() );
     }
 
     void test_eval()
@@ -132,6 +135,8 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_EQUAL(1.0,values[0]);
       CPPUNIT_ASSERT_EQUAL(2.0e-6,values[1]);
       CPPUNIT_ASSERT_EQUAL(3.0e-8,values[2]);
+
+      CPPUNIT_ASSERT_EQUAL(GRINS::DiffSolverNames::petsc_diff_solver(), options.type() );
     }
 
   };

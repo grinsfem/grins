@@ -22,40 +22,25 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_SOLVER_NAMES_H
-#define GRINS_SOLVER_NAMES_H
+#ifndef GRINS_DIFF_SOLVER_NAMES_H
+#define GRINS_DIFF_SOLVER_NAMES_H
 
 // C++
 #include <string>
 
 namespace GRINS
 {
-  class SolverNames
+  class DiffSolverNames
   {
   public:
 
-    static const std::string steady_solver()
-    { return "grins_steady_solver"; }
+    static const std::string newton_solver()
+    { return "libmesh_newton"; }
 
-    static const std::string unsteady_solver()
-    { return "grins_unsteady_solver"; }
-
-    static const std::string steady_mesh_adaptive_solver()
-    { return "grins_steady_mesh_adaptive_solver"; }
-
-    static const std::string unsteady_mesh_adaptive_solver()
-    { return "grins_unsteady_mesh_adaptive_solver"; }
-
-    static const std::string libmesh_euler_solver()
-    { return "libmesh_euler_solver"; }
-
-    static const std::string libmesh_euler2_solver()
-    { return "libmesh_euler2_solver"; }
-
-    static const std::string libmesh_newmark_solver()
-    { return "libmesh_newmark"; }
+    static const std::string petsc_diff_solver()
+    { return "libmesh_petsc_diff"; }
 
   };
 } // end namespace GRINS
 
-#endif // GRINS_SOLVER_NAMES_H
+#endif // GRINS_DIFF_SOLVER_NAMES_H

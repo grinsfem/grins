@@ -199,6 +199,7 @@ TESTS += exact_soln/axi_ns_con_cyl_flow.sh
 TESTS += exact_soln/axi_ns_poiseuille_flow.sh
 TESTS += exact_soln/convection_diffusion_steady_1d.sh
 TESTS += exact_soln/convection_diffusion_unsteady_2d.sh
+TESTS += exact_soln/convection_diffusion_unsteady_2d_petsc_diff.sh
 TESTS += exact_soln/heat_eqn_unsteady_2d_restart.sh
 TESTS += exact_soln/laplace_parsed_source.sh
 TESTS += exact_soln/ns_couette_flow_2d_x.sh
@@ -269,6 +270,7 @@ TESTS += regression/velocity_penalty_drag.sh
 TESTS += regression/redistribute.sh
 TESTS += regression/coupled_stokes_ns.sh
 TESTS += regression/hot_cylinder.sh
+TESTS += regression/hot_cylinder_petsc_diff.sh
 
 TESTS += regression/reacting_low_mach_cantera.sh
 XFAIL_TESTS += regression/reacting_low_mach_cantera.sh

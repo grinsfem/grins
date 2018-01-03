@@ -104,6 +104,9 @@ namespace GRINS
 
     virtual void init_time_solver(GRINS::MultiphysicsSystem* system)=0;
 
+    void build_diff_solver( const NonlinearSolverOptions & options,
+                            MultiphysicsSystem * system );
+
   };
 
 } //End namespace block

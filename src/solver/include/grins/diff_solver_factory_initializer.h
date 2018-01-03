@@ -22,40 +22,22 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_SOLVER_NAMES_H
-#define GRINS_SOLVER_NAMES_H
-
-// C++
-#include <string>
+#ifndef GRINS_DIFF_SOLVER_FACTORY_INITIALIZER_H
+#define GRINS_DIFF_SOLVER_FACTORY_INITIALIZER_H
 
 namespace GRINS
 {
-  class SolverNames
+  //! Initialize all Factory objects related to libMesh::DiffSolver subclasses
+  /*! To avoid symbol stripping from static linking, we use this
+    class to initialize/register the libMesh::DiffSolver factory objects.
+
+    Relevant discussion: http://stackoverflow.com/questions/5202142/static-variable-initialization-over-a-library*/
+  class DiffSolverFactoryInitializer
   {
   public:
-
-    static const std::string steady_solver()
-    { return "grins_steady_solver"; }
-
-    static const std::string unsteady_solver()
-    { return "grins_unsteady_solver"; }
-
-    static const std::string steady_mesh_adaptive_solver()
-    { return "grins_steady_mesh_adaptive_solver"; }
-
-    static const std::string unsteady_mesh_adaptive_solver()
-    { return "grins_unsteady_mesh_adaptive_solver"; }
-
-    static const std::string libmesh_euler_solver()
-    { return "libmesh_euler_solver"; }
-
-    static const std::string libmesh_euler2_solver()
-    { return "libmesh_euler2_solver"; }
-
-    static const std::string libmesh_newmark_solver()
-    { return "libmesh_newmark"; }
-
+    DiffSolverFactoryInitializer();
+    ~DiffSolverFactoryInitializer(){}
   };
 } // end namespace GRINS
 
-#endif // GRINS_SOLVER_NAMES_H
+#endif // GRINS_SOLVER_FACTORY_INITIALIZER_H
