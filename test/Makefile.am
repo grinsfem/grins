@@ -309,6 +309,7 @@ TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
 #AMR TESTS
 TESTS += amr/convection_diffusion_unsteady_2d.sh
+TESTS += amr/convection_diffusion_unsteady_2d_petsc_diff.sh
 
 EXTRA_DIST = unit/input_files common amr/gold_data amr/input_files amr/README exact_soln/README
 
