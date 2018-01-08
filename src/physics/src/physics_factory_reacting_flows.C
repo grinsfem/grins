@@ -187,6 +187,11 @@ namespace GRINS
 
   ReactingFlowsPhysicsFactoryInitializer::ReactingFlowsPhysicsFactoryInitializer()
   {
+    static PhysicsFactoryReactingFlows<ODPremixedFlame>
+      grins_factory_rlmns
+      (PhysicsNaming::od_premixed_flame(),
+       PhysicsNaming::od_premixed_flame());
+    
     static PhysicsFactoryReactingFlows<ReactingLowMachNavierStokes>
       grins_factory_rlmns
       (PhysicsNaming::reacting_low_mach_navier_stokes(),
