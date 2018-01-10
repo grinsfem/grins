@@ -4,14 +4,16 @@ set -e
 
 INPUT="${GRINS_TEST_SRCDIR_DIR}/amr/input_files/convection_diffusion_unsteady_2d_amr.in"
 
-TESTDATA="./convection_diffusion_unsteady_2d_amr"
+TESTDATA="./convection_diffusion_unsteady_2d_amr_petsc_diff"
 MESHDATA=$TESTDATA
 
+PETSC_OPTIONS="-snes_monitor -snes_view -ksp_monitor -ksp_rtol 1.0e-12"
+
 # First run the case with grins
-${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT
+${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT linear-nonlinear-solver/type='libmesh_petsc_diff' vis-options/vis_output_file_prefix='convection_diffusion_unsteady_2d_amr_petsc_diff' $PETSC_OPTIONS
 
 # Untar the files into a local directory in the build tree
-LOCALTESTDIR="./convection_diffusion_unsteady_2d_amr_test_tmp"
+LOCALTESTDIR="./convection_diffusion_unsteady_2d_amr_petsc_diff_test_tmp"
 
 mkdir -p $LOCALTESTDIR
 tar -xzf ${GRINS_TEST_SRCDIR_DIR}/amr/gold_data/convection_diffusion_unsteady_2d/files.tar.gz --directory $LOCALTESTDIR
