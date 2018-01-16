@@ -175,7 +175,7 @@ namespace GRINS
           {
             // print the QoI before AMR
             if( context.qoi_output->output_qoi_set() )
-              this->print_qoi(context,context.output_every_amr);
+              this->print_qoi(context);
             
             this->perform_amr(context, error);
           }

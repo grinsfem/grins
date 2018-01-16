@@ -132,8 +132,6 @@ namespace GRINS
     filename+="."+suffix.str();
 
     this->dump_visualization( equation_system, filename, 0.0 );
-
-    return;
   }
 
   void Visualization::output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,

@@ -71,7 +71,7 @@ namespace GRINS
         if( comm.rank() == 0 )
           {
             std::ofstream output;
-            output.open( _file_prefix+".dat" );
+            output.open( _file_prefix+".dat",std::ofstream::app );
 
             qois.output_qoi(output);
 
