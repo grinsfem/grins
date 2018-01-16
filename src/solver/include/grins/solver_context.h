@@ -61,6 +61,7 @@ namespace GRINS
     unsigned int timesteps_per_vis;
     unsigned int timesteps_per_perflog;
     bool output_vis;
+    bool output_every_amr;
     bool output_adjoint;
     bool output_residual;
     bool output_residual_sensitivities;
