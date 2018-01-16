@@ -60,6 +60,8 @@ namespace GRINS
 
   protected:
 
+    bool amr_helper(SolverContext & context, unsigned int r_step, bool do_amr);
+
     virtual void init_time_solver( MultiphysicsSystem* system );
 
     void check_qoi_error_option_consistency( SolverContext& context );

@@ -86,6 +86,8 @@ namespace GRINS
     libMesh::MeshBase& mesh = context.equation_system->get_mesh();
     this->build_mesh_refinement( mesh );
 
+    bool converged = false;
+
     /*! \todo This output cannot be toggled in the input file, but it should be able to be. */
     std::cout << "==========================================================" << std::endl
               << "Performing " << _mesh_adaptivity_options.max_refinement_steps()
@@ -94,71 +96,92 @@ namespace GRINS
 
     for ( unsigned int r_step = 0; r_step < _mesh_adaptivity_options.max_refinement_steps(); r_step++ )
       {
-        std::cout << "==========================================================" << std::endl
+        std::cout << std::endl
+                  << "==========================================================" << std::endl
                   << "Adaptive Refinement Step " << r_step << std::endl
                   << "==========================================================" << std::endl;
 
-        // Solve the forward problem
-        context.system->solve();
-
-        if( context.output_vis )
-          {
-            context.postprocessing->update_quantities( *(context.equation_system) );
-            context.vis->output( context.equation_system );
-          }
-
-        // Solve adjoint system
-        if(context.do_adjoint_solve)
-          this->steady_adjoint_solve(context);
-
-        if(context.output_adjoint)
-          context.vis->output_adjoint(context.equation_system, context.system);
-
-        if( context.output_residual )
-          {
-            context.vis->output_residual( context.equation_system, context.system );
-          }
-
-        // Now we construct the data structures for the mesh refinement process
-        libMesh::ErrorVector error;
-        this->estimate_error_for_amr( context, error );
-
-        // Get the global error estimate if you can and are asked to
-        if( _error_estimator_options.compute_qoi_error_estimate() )
-          for(unsigned int i = 0; i != context.system->qoi.size(); i++)
-            {
-              libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
-              std::cout<<"The error estimate for QoI("<<i<<") is: "<<adjoint_ref_error_estimator->get_global_QoI_error_estimate(i)<<std::endl;
-            }
-
-        // Check for convergence of error
-        bool converged = this->check_for_convergence( context, error );
-
-        if( converged )
-          {
-            // Break out of adaptive loop
-            std::cout << "==========================================================" << std::endl
-                      << "Convergence detected!" << std::endl
-                      << "==========================================================" << std::endl;
-            break;
-          }
-        else
-          {
-            // Only bother refining if we're on the last step.
-            if( r_step < _mesh_adaptivity_options.max_refinement_steps() -1 )
-              {
-                this->perform_amr(context, error);
-
-                // It's helpful to print the qoi along the way, but only do it if the user
-                // asks for it
-                if( context.qoi_output->output_qoi_set() )
-                  this->print_qoi(context);
-              }
-          }
+        converged = this->amr_helper(context,r_step,true);
+        if (converged)
+          break;
 
       } // r_step for-loop
 
+    // this will print output the error estimates and/or meshes after the final AMR run
+    if (! converged)
+      {
+        std::cout << std::endl
+                  << "==========================================================" << std::endl
+                  << "Post-AMR Output " << std::endl
+                  << "==========================================================" << std::endl;
+        this->amr_helper(context,_mesh_adaptivity_options.max_refinement_steps(),false);
+      }
+
     return;
+  }
+
+  bool SteadyMeshAdaptiveSolver::amr_helper(SolverContext & context, unsigned int r_step, bool do_amr)
+  {
+    // Solve the forward problem
+    context.system->solve();
+
+    if( context.output_vis )
+      {
+        context.postprocessing->update_quantities( *(context.equation_system) );
+
+        if (context.output_every_amr)
+          context.vis->output_amr( context.equation_system,r_step );
+        else
+          context.vis->output( context.equation_system );
+      }
+
+    // Solve adjoint system
+    if(context.do_adjoint_solve)
+      this->steady_adjoint_solve(context);
+
+    if(context.output_adjoint)
+      context.vis->output_adjoint(context.equation_system, context.system);
+
+    if( context.output_residual )
+      {
+        context.vis->output_residual( context.equation_system, context.system );
+      }
+
+    // Now we construct the data structures for the mesh refinement process
+    libMesh::ErrorVector error;
+    this->estimate_error_for_amr( context, error );
+
+    // Get the global error estimate if you can and are asked to
+    if( _error_estimator_options.compute_qoi_error_estimate() )
+      for(unsigned int i = 0; i != context.system->qoi.size(); i++)
+        {
+          libMesh::AdjointRefinementEstimator* adjoint_ref_error_estimator = libMesh::cast_ptr<libMesh::AdjointRefinementEstimator*>( context.error_estimator.get() );
+          std::cout<<"The error estimate for QoI("<<i<<") is: "<<adjoint_ref_error_estimator->get_global_QoI_error_estimate(i)<<std::endl;
+        }
+
+    // Check for convergence of error
+    bool converged = this->check_for_convergence(context,error);
+
+    if( converged )
+      {
+        // Break out of adaptive loop
+        std::cout << "==========================================================" << std::endl
+                  << "Convergence detected!" << std::endl
+                  << "==========================================================" << std::endl;
+      }
+    else
+      {
+        if (do_amr)
+          {
+            // print the QoI before AMR
+            if( context.qoi_output->output_qoi_set() )
+              this->print_qoi(context,context.output_every_amr);
+            
+            this->perform_amr(context, error);
+          }
+      }
+
+    return converged;
   }
 
   void SteadyMeshAdaptiveSolver::adjoint_qoi_parameter_sensitivity
