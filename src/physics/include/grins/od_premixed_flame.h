@@ -10,15 +10,18 @@
 
 #include "grins/single_variable.h"
 #include "grins/materials_parsing.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/multicomponent_variable.h"
 
 namespace GRINS
 {
-  class ODPremixedFlame : public Physics
+  template< typename Mixture, typename Evaluator>
+    class ODPremixedFlame : public Physics
   {
   public:
     ODPremixedFlame(const PhysicsName& physics_name,
 		    const GetPot & input,
-		    std::unique_ptr<Mixture> & gas_mix);
+		    libMesh::UniquePtr<Mixture> & gas_mix);
     
     virtual ~ODPremixedFlame(){};
 
@@ -41,17 +44,15 @@ namespace GRINS
 
     libMesh::Real get_p0() const;
 
-
-
-    //
-
     
     //Register postprocessing variables for OD Premixed Flame 
     virtual void register_postprocessing_vars( const GetPot& input,
 					       PostProcessedQuantities<libMesh::Real>& postprocessing);
-
+    
+    virtual void register_parameter(const std::string & param_name, libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) 
+      const;
     // Context Initializations
-    virual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context );
 
     //Time dependent part(s)          // The Energy and species, and Mass equations will be included here, F(u,v)
     virtual void element_time_derivative( bool compute_jacobian,
@@ -69,17 +70,8 @@ namespace GRINS
 						 const AssemblyContext& context,
 						 const libMesh::Point& point,
 						 libMesh::Real& value );
-    //Ditched the Caching of the time derivatives
 
-   
-
-    
-
-
-
-
-
-
+    const Mixture & gas_mixture() const;
 
 
 
@@ -88,6 +80,8 @@ namespace GRINS
     PrimitiveTempFEVariables& _temp_vars;
     SingleVariable& _mass_flux_vars;
     SpeciesMassFractionsVariable& _species_vars;
+
+    libMesh::UniquePtr<Mixture> _gas_mixture;
 
 
     //! Number of species
@@ -106,7 +100,7 @@ namespace GRINS
     //! Index from registering this quantity
     unsigned int _rho_index;               
 
-    //! Index from registering this quantity                        //This is the coefficient of thermal conductivity, or lambda in my case
+    //! Index from registering this quantity        
     unsigned int _k_index;
 
     //!Index from registering this quantity
@@ -115,6 +109,9 @@ namespace GRINS
     //!Index from registering this quantity
     libMesh::Number _p0;
 
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _mole_fractions_index;
+    
     //! Index from registering this quantity. Each species will have it's own index.
     std::vector<unsigned int> _h_s_index;
 
@@ -135,60 +132,66 @@ namespace GRINS
     ODPremixedFlame();
 
   }; //Class ODPremixedFlame
-
-
-  inline
-    unsigned int ODPremixedFlame::n_species() const
-    { return _n_species }
-
-
-  inline
-    libMesh::Real ODPremixedFlame::T( const libMesh::Point& p,
-                                                        const AssemblyContext& c ) const
-  { return c.point_value(_temp_vars.T(),p); }
-
-
-  inline
-    libMesh::Real M_dot( const libMesh::Point& p,
-			 const AssemblyContext& c ) const
-  { return c.point_value(_mass_flux_vars.M(),p); }
-
   
-  inline
-    void ODPremixedFlame::mass_fractions( const libMesh::Point& p,
-						const AssemblyContext& c,
-						std::vector<libMesh::Real>& mass_fracs ) const
-  {
-    libmesh_assert_equal_to(mass_fracs.size(), this->_n_species);
+  template< typename Mixture, typename Evaluator>
+    inline
+    unsigned int ODPremixedFlame<Mixture,Evaluator>::n_species() const
+    { return _n_species; }
+  
+  template< typename Mixture, typename Evaluator>
+    inline
+    libMesh::Real ODPremixedFlame<Mixture,Evaluator>::T( const libMesh::Point& p,
+							 const AssemblyContext& c ) const
+    { return c.point_value(_temp_vars.T(),p); }
+  
+  template< typename Mixture, typename Evaluator>
+    inline
+    libMesh::Real ODPremixedFlame<Mixture,Evaluator>::M_dot( const libMesh::Point& p,
+							     const AssemblyContext& c ) const
+    { return c.point_value(_mass_flux_vars.var(),p); }
+  
+  template< typename Mixture, typename Evaluator>
+    inline
+    void ODPremixedFlame<Mixture,Evaluator>::mass_fractions( const libMesh::Point& p,
+							     const AssemblyContext& c,
+							     std::vector<libMesh::Real>& mass_fracs ) const
+    {
+      libmesh_assert_equal_to(mass_fracs.size(), this->_n_species);
     
-    for( unsigned int var = 0; var < this->_n_species; var++ )
-      {
-        mass_fracs[var] = c.point_value(_species_vars.species(var),p);
-      }
-  }
-
+      for( unsigned int var = 0; var < this->_n_species; var++ )
+	{
+	  mass_fracs[var] = c.point_value(_species_vars.species(var),p);
+	}
+    }
+ 
+  template< typename Mixture, typename Evaluator>
+    inline
+    libMesh::Real ODPremixedFlame<Mixture,Evaluator>::rho( libMesh::Real T,
+							   libMesh::Real p0,
+							   libMesh::Real R_mix) const
+    {
+      libMesh::Real value = 0;
+      if( this->_fixed_density )
+	value = this->_fixed_rho_value;
+      else
+	value = p0/(R_mix*T);
+      
+      return value;
+    }
   
-  inline
-    libMesh::Real ODPremixedFlame::rho( libMesh::Real T,
-					      libMesh::Real p0,
-					      libMesh::Real R_mix) const
+  template< typename Mixture, typename Evaluator>
+    inline
+    libMesh::Real ODPremixedFlame<Mixture,Evaluator>::get_p0() const
+    {return _p0;}
+
+  template< typename Mixture, typename Evaluator>
+    inline
+    const Mixture & ODPremixedFlame<Mixture,Evaluator>::gas_mixture() const
   {
-    libMesh::Real value = 0;
-    if( this->_fixed_density )
-      value = this->_fixed_rho_value;
-    else
-      value = p0/(R_mix*T);
-
-    return value;
+    return *_gas_mixture;
   }
-
-
-  inline
-    libMesh::Real get_p0() const
-  {return _p0;}
-
-
-
+    
+  
 } // namespace Grins
 
 

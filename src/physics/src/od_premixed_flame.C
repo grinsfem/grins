@@ -22,7 +22,7 @@
 namespace GRINS
 {
 
-  template<class Mixture, class Evaluator>
+  template<typename Mixture, typename Evaluator>
 
   ODPremixedFlame<Mixture,Evaluator>::ODPremixedFlame(const std::string& physics_name,
 								  const GetPot& input,
@@ -30,9 +30,9 @@ namespace GRINS
     : Physics(physics_name,input),
       _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
       _species_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>(VariablesParsing::species_mass_frac_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
-      _mass_flux_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariableParsing::single_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
+      _mass_flux_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
       _n_species(_species_vars.n_species()),
-      _fixed_density( input("Physics/"+PhysicsNaming::od_premixed_flame+"/fixed_density", false ) ),
+      _fixed_density( input("Physics/"+PhysicsNaming::od_premixed_flame()+"/fixed_density", false ) ),
       _fixed_rho_value(0.0),
       _gas_mixture(gas_mix.release()),
       _rho_index(0),
@@ -41,7 +41,7 @@ namespace GRINS
   {
     this->set_parameter                    
       (_fixed_rho_value, input,
-       "Physics/"+PhysicsNaming::od_premixed_flame+"fixed_rho_value", 0.0 );
+       "Physics/"+PhysicsNaming::od_premixed_flame()+"fixed_rho_value", 0.0 );
 
     this->read_input_options(input);
                                                                       
@@ -53,8 +53,9 @@ namespace GRINS
     this->_ic_handler = new GenericICHandler( physics_name, input );
   }
 
-  //Reading and setting the Thermodynamic Pressure
-  void ODPremixedFlame::read_input_options( const GetPot& input )
+  //Reading and setting the Thermodynamic Pressure  
+  template<typename Mixture, typename Evaluator>
+  void ODPremixedFlame<Mixture,Evaluator>::read_input_options( const GetPot& input )
   {
     // Read thermodynamic pressure info
     MaterialsParsing::read_property( input,
@@ -64,9 +65,16 @@ namespace GRINS
                                      _p0 );
   }
 
-  
- 
-  void ODPremixedFlame::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<typename Mixture, typename Evaluator>
+  void ODPremixedFlame<Mixture,Evaluator>::register_parameter( const std::string & param_name,
+					    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _gas_mixture->register_parameter(param_name, param_pointer);
+  }
+
+  template<typename Mixture, typename Evaluator>
+  void ODPremixedFlame<Mixture,Evaluator>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {    
     for( unsigned int i = 0; i < this->_n_species; i++ )
       {
@@ -75,8 +83,8 @@ namespace GRINS
         system->time_evolving(_temp_vars.T(), 1);
   }
 
-
-  void ODPremixedFlame::init_context( AssemblyContext& context )   
+  template<typename Mixture, typename Evaluator>
+  void ODPremixedFlame<Mixture,Evaluator>::init_context( AssemblyContext& context )   
   {
     // We should prerequest all the data
     // we will need to build the linear system
@@ -110,8 +118,6 @@ namespace GRINS
     context.get_side_fe(this->_temp_vars.T())->get_xyz();
   }		   
 
-
- 
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::register_postprocessing_vars( const GetPot& input,
 									       PostProcessedQuantities<libMesh::Real>& postprocessing )
@@ -136,7 +142,7 @@ namespace GRINS
 	      }
 	    else if( name == std::string("cp") )
 	      {
-		this->_cp_index = post.processing.register_quantity( name );
+		this->_cp_index = postprocessing.register_quantity( name );
 	      }
 	    else if( name == (std::string("u")) )
 	      {
@@ -151,7 +157,7 @@ namespace GRINS
 	    
 		for(unsigned int s=0; s < this->n_species(); s++)
 		  {
-		    this->mole_fractions_index[s] = postprocessing.register_quantity("X_"+this->_gas_mixture->species_name(s) );
+		    this->_mole_fractions_index[s] = postprocessing.register_quantity("X_"+this->_gas_mixture->species_name(s) );
 		  }
 	      }
 	    else if(name == std::string("h_s") )
@@ -254,12 +260,13 @@ namespace GRINS
     for(unsigned int qp = 0;qp != n_qpoints;qp++)
       {
 	libMesh::Real T, M_dot;
-	libMesh::Gradient Dx_T;
-       
-	libmesh::Real R, M, k, cp, rho, p0, mu;
-	
+	libMesh::Gradient Grad_T;
+
+	libMesh::Real R, M, k, cp, rho, p0, mu;
+	Evaluator gas_evaluator( *(this->_gas_mixture) );
+
 	T = context.interior_value(this->_temp_vars_T(),qp);
-	Dx_T = context.interior_gradient(this->_temp_vars.T(), qp);
+	Grad_T = context.interior_gradient(this->_temp_vars.T(), qp);
 	
 	M_dot = context.interior_value(this->_mass_flux_vars.var(), qp);
 	
@@ -267,16 +274,16 @@ namespace GRINS
 	
 	
 	std::vector<libMesh::Real> mass_fractions, h, D, omega_dot;
-	std::vector<libMesh::Gradient> Dx_mass_fractions;
+	std::vector<libMesh::Gradient> Grad_mass_fractions;
 	
 	mass_fractions.resize(this->_n_species);
-	Dx_mass_fractions.resize(this->_n_species);
+	Grad_mass_fractions.resize(this->_n_species);
 	h.resize(this->_n_species);
 	
 	for (unsigned int s = 0; s < this->_n_species; s++)
 	  {
 	    mass_fractions[s] = std::max( context.interior_value(this->_species_vars.species(s),qp),0.0);
-	    Dx_mass_fractions[s] = context.interior_gradient(this->_species_vars.species(s),qp);
+	    Grad_mass_fractions[s] = context.interior_gradient(this->_species_vars.species(s),qp);
 	    h[s] = gas_evaluator.h_s( T, s );
 	  }
 	M = gas_evaluator.M_mix( mass_fractions );
@@ -306,8 +313,8 @@ namespace GRINS
 	  }
 	for (unsigned int i=0;i != n_T_dofs; i++ )
 	  {
-	    FT(i) += ( ( -cp*M_dot *Dx_T - chem_term )*T_phi[i][qp]
-		       -k*Dx_T*T_dphi[i][qp])*jac;
+	    FT(i) += ( ( -cp*M_dot *Grad_T(0)*5 - chem_term )*T_phi[i][qp]
+		       -k*Grad_T(0)*T_dphi[i][qp](0))*jac;
 	    
 	  }
 	
@@ -315,14 +322,14 @@ namespace GRINS
 	for (unsigned int s = 0; s < _n_species; s++)
 	  {
 	    libMesh::DenseSubVector<libMesh::Number> &FS =
-	      contest.get_elem_residual(this->_species_vars.species(s)); //R_{s}
+	      context.get_elem_residual(this->_species_vars.species(s)); //R_{s}
 	    
-	    const libMesh::Real term1 = -M_dot*Dx_mass_fractions[s] + omega_dot[s]*(this->_gas_mixture->M(s));
-	    const libMesh::gradient term2 = -rho*D[s]*Dx_mass_fractions[s];
+	    const libMesh::Real term1 = -M_dot*Grad_mass_fractions[s](0) + omega_dot[s]*(this->_gas_mixture->M(s));
+	    const libMesh::Real term2 = -rho*D[s]*Grad_mass_fractions[s](0);
 	    
 	    for (unsigned int i =0;i != n_s_dofs;i++)
 	      {
-		FS(i) += ( term1 * s_phi[i][qp] + term2 * s_dphi[i][qp] )*jac;
+		FS(i) += ( term1 * s_phi[i][qp] + term2 * s_dphi[i][qp](0) )*jac;
 	      }
 	  }
       } // end of quadrature loop
@@ -383,21 +390,21 @@ namespace GRINS
 	// Species residual
 	for(unsigned int s=0; s < this->n_species(); s++)
 	  {
-	    libMesh::DenseSubVector<libMesh::Number> & F_s =
+	    libMesh::DenseSubVector<libMesh::Number> &F_s =
 	      context.get_elem_residual(this->_species_vars.species(s));
 
 	    libMesh::Real mass_fractions_dot;
-	    context.interior_rate(this->_species_vars.species(s));
+	    context.interior_rate(this->_species_vars.species(s),qp,mass_fractions_dot);
 
 	    for (unsigned int i = 0; i != n_s_dofs; ++i)
 	      {
-	      F_s(i) -= rho*mass_fractions_dot*s_phi[i][qp]*jac;
+		F_s(i) -= rho*mass_fractions_dot*s_phi[i][qp]*jac;
 	      }
 	  }
 	
 	//Energy Residual
 	
-	for (unsigned int i = 0; i!= n_T_dofs)
+	for (unsigned int i = 0; i!= n_T_dofs; i++)
 	  {
 	    F_T(i) = rho*cp*T_dot*T_phi[i][qp]*jac;
 	  }
@@ -431,14 +438,14 @@ namespace GRINS
       const unsigned int n_M_dofs = context.get_dof_indices(this->_mass_flux_vars.var()).size();
 
       libMesh::DenseSubVector<libMesh::Number> &Fm = context.get_elem_residual(this->_Mass_flux_vars.var()); // R_{M}
-
+      unsigned int n_qpoints = context.get_element_qrule().n_points();
       for(unsigned int qp=0; qp!=n_qpoints; qp++)
 	{
-	  libmesh::Gradient Dx_M_dot = context.interior_gradient(this->_mass_flux_vars.var(), qp);
+	  libMesh::Gradient Grad_M_dot = context.interior_gradient(this->_mass_flux_vars.var(), qp);
 	  libMesh::Real jac = JxW[qp];
 	  for(unsigned int i=0;i != n_M_dofs; i++)
 	    {
-	      Fm(i) += Dx_M_dot*M_phi[i][qp]*jac;
+	      Fm(i) += Grad_M_dot(0)*M_phi[i][qp]*jac;
 	    }
 	}
     }   //end Element Constraint
@@ -448,10 +455,9 @@ namespace GRINS
 
 
 
-
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::compute_postprocessed_quantity( unsigned int quantity_index, 
-										       const Assembly Context& context,
+										       const AssemblyContext& context,
 										       const libMesh::Point& point,
 										       libMesh::Real & value )
   {
@@ -460,7 +466,7 @@ namespace GRINS
     if( quantity_index == this->_rho_index )
       {
 	std::vector<libMesh::Real> Y( this->_n_species );
-	libMesh Real T = this->T(point,context);
+	libMesh::Real T = this->T(point,context);
 	libMesh::Real p0 = this->get_p0();
 	this->mass_fractions( point, context, Y );
 	
@@ -480,6 +486,7 @@ namespace GRINS
 
 	libMesh::Real mu,k;
 	
+	std::vector<libMesh::Real> D;
 	gas_evaluator.mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
 
 	value = k;
@@ -490,7 +497,7 @@ namespace GRINS
 	std::vector<libMesh::Real> Y( this->_n_species );
 	libMesh::Real T = this->T(point,context);
 	this->mass_fractions( point, context, Y);
-	libMesh::Real p0 = this0>get_p0();
+	libMesh::Real p0 = this>get_p0();
 	
 	value = gas_evaluator.cp( T, p0, Y );
       }
@@ -499,7 +506,7 @@ namespace GRINS
 	libMesh::Real M_dot = this->M_dot(point,context);
 
 	std::vector<libMesh::Real> Y( this->_n_species );
-	libMesh Real T = this->T(point,context);
+	libMesh::Real T = this->T(point,context);
 	libMesh::Real p0 = this->get_p0();
 	this->mass_fractions( point, context, Y );
 	rho = this->rho(T,p0,Y );
@@ -566,8 +573,8 @@ namespace GRINS
 		    std::vector<libMesh::Real> omega_dot( this->n_species() );
 		    gas_evaluator.omega_dot( T, rho, Y, omega_dot );
 		    
-		    value = omega_dot[s]
-		      return;
+		    value = omega_dot[s];
+		    return;
 		  }
 	      }
 	  }
@@ -578,7 +585,7 @@ namespace GRINS
 
 	    for( unsigned int s = 0; s < this->n_species(); s++ )
 	      {
-		if(qunatity_index == this->_Ds_index[s] )
+		if(quantity_index == this->_Ds_index[s] )
 		  {
 		    std::vector<libMesh::Real> Y( this->_n_species );
 		    

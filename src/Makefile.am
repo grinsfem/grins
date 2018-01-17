@@ -72,6 +72,7 @@ libgrins_la_SOURCES += physics/src/assembly_context.C
 libgrins_la_SOURCES += physics/src/physics.C
 libgrins_la_SOURCES += physics/src/stokes.C
 libgrins_la_SOURCES += physics/src/od_premixed_flame.C
+libgrins_la_SOURCES += physics/src/od_premixed_flame_instantiate.C
 libgrins_la_SOURCES += physics/src/inc_navier_stokes_base.C
 libgrins_la_SOURCES += physics/src/inc_navier_stokes.C
 libgrins_la_SOURCES += physics/src/inc_navier_stokes_stab_base.C

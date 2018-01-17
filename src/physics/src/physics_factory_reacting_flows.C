@@ -18,6 +18,7 @@
 #endif // GRINS_HAVE_ANTIOCH
 
 // Physics whose factories we're instantiating
+#include "grins/od_premixed_flame.h"
 #include "grins/reacting_low_mach_navier_stokes.h"
 #include "grins/reacting_low_mach_navier_stokes_spgsm_stab.h"
 
@@ -188,7 +189,7 @@ namespace GRINS
   ReactingFlowsPhysicsFactoryInitializer::ReactingFlowsPhysicsFactoryInitializer()
   {
     static PhysicsFactoryReactingFlows<ODPremixedFlame>
-      grins_factory_rlmns
+      grins_factory_odpf
       (PhysicsNaming::od_premixed_flame(),
        PhysicsNaming::od_premixed_flame());
     
