@@ -19,6 +19,8 @@
 #include "libmesh/quadrature.h"
 #include "libmesh/fem_system.h"
 
+
+
 namespace GRINS
 {
 
@@ -37,7 +39,8 @@ namespace GRINS
       _gas_mixture(gas_mix.release()),
       _rho_index(0),
       _k_index(0),           
-      _cp_index(0)
+      _cp_index(0),
+      _u_index(0)
   {
     this->set_parameter                    
       (_fixed_rho_value, input,
@@ -59,6 +62,7 @@ namespace GRINS
   {
     // Read thermodynamic pressure info
     MaterialsParsing::read_property( input,
+				     "hubbabaloo",
 				     "ThermodynamicPressure",
                                      PhysicsNaming::od_premixed_flame(),                     
                                      (*this),
@@ -122,7 +126,7 @@ namespace GRINS
   void ODPremixedFlame<Mixture,Evaluator>::register_postprocessing_vars( const GetPot& input,
 									       PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    std::string section = "physics/"+PhysicsNaming::od_premixed_flame()+"/output_vars";
+    std::string section = "Physics/"+PhysicsNaming::od_premixed_flame()+"/output_vars";
     
     if( input.have_variable(section) )
       {
@@ -230,7 +234,6 @@ namespace GRINS
     
     // The number of local degrees of freedom in each variable                                  //Variables are Species, Mass flux, and Temperature
     const unsigned int n_s_dofs = context.get_dof_indices(s0_var).size();
-    const unsigned int n_M_dofs = context.get_dof_indices(this->_mass_flux_vars.var()).size();
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
     
     // Element Jacobian * quadrature weights for interior integration.
@@ -262,10 +265,10 @@ namespace GRINS
 	libMesh::Real T, M_dot;
 	libMesh::Gradient Grad_T;
 
-	libMesh::Real R, M, k, cp, rho, p0, mu;
+	libMesh::Real R, k, cp, rho, p0, mu;
 	Evaluator gas_evaluator( *(this->_gas_mixture) );
 
-	T = context.interior_value(this->_temp_vars_T(),qp);
+	T = context.interior_value(this->_temp_vars.T(),qp);
 	Grad_T = context.interior_gradient(this->_temp_vars.T(), qp);
 	
 	M_dot = context.interior_value(this->_mass_flux_vars.var(), qp);
@@ -286,8 +289,7 @@ namespace GRINS
 	    Grad_mass_fractions[s] = context.interior_gradient(this->_species_vars.species(s),qp);
 	    h[s] = gas_evaluator.h_s( T, s );
 	  }
-	M = gas_evaluator.M_mix( mass_fractions );
-	
+		
 	R = gas_evaluator.R_mix( mass_fractions );
 	
 	rho = this->rho( T, p0, R );
@@ -313,7 +315,7 @@ namespace GRINS
 	  }
 	for (unsigned int i=0;i != n_T_dofs; i++ )
 	  {
-	    FT(i) += ( ( -cp*M_dot *Grad_T(0)*5 - chem_term )*T_phi[i][qp]
+	    FT(i) += ( ( -cp*M_dot *Grad_T(0) - chem_term )*T_phi[i][qp]
 		       -k*Grad_T(0)*T_dphi[i][qp](0))*jac;
 	    
 	  }
@@ -344,7 +346,6 @@ namespace GRINS
   {
     const VariableIndex s0_var = this->_species_vars.species(0);
     const unsigned int n_s_dofs = context.get_dof_indices(s0_var).size();
-    const unsigned int n_M_dofs = context.get_dof_indices(this->_mass_flux_vars.var()).size();
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
   
     
@@ -361,8 +362,6 @@ namespace GRINS
  
     //The subvectors and submatrices we need to fill:
     libMesh::DenseSubVector<libMesh::Real> &F_T = context.get_elem_residual(this->_temp_vars.T());
-
-    libMesh::DenseSubVector<libMesh::Number> &F_M = context.get_elem_residual(this->_mass_flux_vars.var());
 
     //Get the number of quadrature points
     unsigned int n_qpoints = context.get_element_qrule().n_points();
@@ -383,7 +382,6 @@ namespace GRINS
         const libMesh::Real p0 = this->get_p0();
         const libMesh::Real rho = this->rho(T, p0, R_mix);
         const libMesh::Real cp = gas_evaluator.cp(T,p0,mass_fractions);
-        const libMesh::Real M = gas_evaluator.M_mix(mass_fractions);
 
 	libMesh::Real jac = JxW[qp];
 	
@@ -431,13 +429,13 @@ namespace GRINS
       
       // The Mass Flux shape functions at interior quadrature points.
       const std::vector<std::vector<libMesh::Real> >& M_phi =
-	context.get_element_fe(this->_Mass_flux_vars.var())->get_phi();
+	context.get_element_fe(this->_mass_flux_vars.var())->get_phi();
 
     
 
       const unsigned int n_M_dofs = context.get_dof_indices(this->_mass_flux_vars.var()).size();
 
-      libMesh::DenseSubVector<libMesh::Number> &Fm = context.get_elem_residual(this->_Mass_flux_vars.var()); // R_{M}
+      libMesh::DenseSubVector<libMesh::Number> &Fm = context.get_elem_residual(this->_mass_flux_vars.var()); // R_{M}
       unsigned int n_qpoints = context.get_element_qrule().n_points();
       for(unsigned int qp=0; qp!=n_qpoints; qp++)
 	{
@@ -497,7 +495,7 @@ namespace GRINS
 	std::vector<libMesh::Real> Y( this->_n_species );
 	libMesh::Real T = this->T(point,context);
 	this->mass_fractions( point, context, Y);
-	libMesh::Real p0 = this>get_p0();
+	libMesh::Real p0 = this->get_p0();
 	
 	value = gas_evaluator.cp( T, p0, Y );
       }
@@ -509,7 +507,7 @@ namespace GRINS
 	libMesh::Real T = this->T(point,context);
 	libMesh::Real p0 = this->get_p0();
 	this->mass_fractions( point, context, Y );
-	rho = this->rho(T,p0,Y );
+	libMesh::Real rho = this->rho(T,p0, gas_evaluator.R_mix(Y));
 
 	value = M_dot/rho;
 	

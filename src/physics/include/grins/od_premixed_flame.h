@@ -25,44 +25,35 @@ namespace GRINS
     
     virtual ~ODPremixedFlame(){};
 
-
-
-
     //! Sets  variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     unsigned int n_species() const;
-
     libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
-
     libMesh::Real M_dot( const libMesh::Point& p, const AssemblyContext& c ) const;
-
     void mass_fractions( const libMesh::Point& p, const AssemblyContext& c,
                          std::vector<libMesh::Real>& mass_fracs ) const;
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
-
     libMesh::Real get_p0() const;
 
     
     //Register postprocessing variables for OD Premixed Flame 
     virtual void register_postprocessing_vars( const GetPot& input,
 					       PostProcessedQuantities<libMesh::Real>& postprocessing);
-    
-    virtual void register_parameter(const std::string & param_name, libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) 
+        virtual void register_parameter(const std::string & param_name, libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) 
       const;
+
     // Context Initializations
     virtual void init_context( AssemblyContext& context );
 
-    //Time dependent part(s)          // The Energy and species, and Mass equations will be included here, F(u,v)
+    //Time dependent part(s)         
     virtual void element_time_derivative( bool compute_jacobian,
 					  AssemblyContext & context);
   
-
-    //Mass matrix part(s)             //This would by my LHS of the species and energy, and mass residuals  M(u,v)
+    //Mass matrix part(s)            
     virtual void mass_residual( bool compute_jacobian,
 				AssemblyContext & context );
-
     virtual void element_constraint(bool compute_jacobian,
 				    AssemblyContext & context );
 
@@ -73,25 +64,18 @@ namespace GRINS
 
     const Mixture & gas_mixture() const;
 
-
-
   protected:
     //Variables 
     PrimitiveTempFEVariables& _temp_vars;
-    SingleVariable& _mass_flux_vars;
     SpeciesMassFractionsVariable& _species_vars;
-
-    libMesh::UniquePtr<Mixture> _gas_mixture;
-
+    SingleVariable& _mass_flux_vars;
 
     //! Number of species
     unsigned int _n_species;
-    
-
     bool _fixed_density;
 
     libMesh::Real _fixed_rho_value;
-
+    std::unique_ptr<Mixture> _gas_mixture;
 
 
 
@@ -99,13 +83,12 @@ namespace GRINS
 
     //! Index from registering this quantity
     unsigned int _rho_index;               
-
     //! Index from registering this quantity        
     unsigned int _k_index;
-
     //!Index from registering this quantity
     unsigned int _cp_index;
-    
+    //!Index from registering this quantity
+    unsigned int _u_index;
     //!Index from registering this quantity
     libMesh::Number _p0;
 
