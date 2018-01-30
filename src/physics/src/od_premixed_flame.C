@@ -62,9 +62,8 @@ namespace GRINS
   {
     // Read thermodynamic pressure info
     MaterialsParsing::read_property( input,
-				     "hubbabaloo",
 				     "ThermodynamicPressure",
-                                     PhysicsNaming::od_premixed_flame(),                     
+                                     PhysicsNaming::od_premixed_flame(),
                                      (*this),
                                      _p0 );
   }
@@ -323,7 +322,7 @@ namespace GRINS
 	//Species equation Residuals
 	for (unsigned int s = 0; s < _n_species; s++)
 	  {
-	    libMesh::DenseSubVector<libMesh::Number> &FS =
+	    libMesh::DenseSubVector<libMesh::Number> &Fs =
 	      context.get_elem_residual(this->_species_vars.species(s)); //R_{s}
 	    
 	    const libMesh::Real term1 = -M_dot*Grad_mass_fractions[s](0) + omega_dot[s]*(this->_gas_mixture->M(s));
@@ -331,7 +330,7 @@ namespace GRINS
 	    
 	    for (unsigned int i =0;i != n_s_dofs;i++)
 	      {
-		FS(i) += ( term1 * s_phi[i][qp] + term2 * s_dphi[i][qp](0) )*jac;
+		Fs(i) += ( term1 * s_phi[i][qp] + term2 * s_dphi[i][qp](0) )*jac;
 	      }
 	  }
       } // end of quadrature loop
@@ -375,7 +374,9 @@ namespace GRINS
 
 	std::vector<libMesh::Real> mass_fractions(this->n_species());
         for(unsigned int s=0; s < this->_n_species; s++ )
-          mass_fractions[s] = context.interior_value(this->_species_vars.species(s), qp);
+	  {
+ mass_fractions[s] = context.interior_value(this->_species_vars.species(s), qp);
+	  }
 
 	Evaluator gas_evaluator(*(this-> _gas_mixture));
 	const libMesh::Real R_mix = gas_evaluator.R_mix(mass_fractions);
@@ -404,7 +405,7 @@ namespace GRINS
 	
 	for (unsigned int i = 0; i!= n_T_dofs; i++)
 	  {
-	    F_T(i) = rho*cp*T_dot*T_phi[i][qp]*jac;
+	    F_T(i) -= rho*cp*T_dot*T_phi[i][qp]*jac;
 	  }
 	
 	if( compute_jacobian ) 
