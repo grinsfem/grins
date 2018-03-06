@@ -1,0 +1,171 @@
+
+[SolverOptions]
+   [./TimeStepping]
+      solver_type = 'libmesh_euler_solver'
+      delta_t = '1e-6'
+      n_timesteps = '25000'
+      theta = '1.0'
+[]
+
+# Enabled Physics classes
+[Physics]
+
+    enabled_physics = 'ODPremixedFlame'
+
+   [./ODPremixedFlame]
+
+      material = 'OzoneGas'
+
+      # Initial Conditions
+      ic_ids = '0' 
+      ic_types = 'parsed'
+      ic_variables = 'Y_O2:Y_O3:T:M_dot'
+    ic_values = '{YO2:=${RunVars/YO2_Val};YO2}{YO3:=${RunVars/YO3_Val};YO3}{Tmax:=${RunVars/Tmax};300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}{M_dot_Value:=${RunVars/M_dot_Value};M_dot_Value}'
+
+ # ic_values = '{YO2_Val:=${RunVars/YO2_Val;YO2_Val}{YO3_Val:=${RunVariables/YO3_Val};YO3_Val}{Tmax:=${RunVars/Tmax};300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}{M_dot_Value:=${RunVariables/M_dot_Value};M_dot_Value}'
+
+      output_vars = 'mole_fractions omega_dot u rho'
+   [../]
+[]
+
+[BoundaryConditions]
+   bc_ids = '0 1'
+   bc_id_name_map = 'Inlet Outlet'
+
+   [./Inlet]
+      [./SingleVariable]
+         type = 'homogeneous_neumann'
+      [../]
+
+      [./Temperature]
+         type = 'isothermal'
+         T = '300'
+      [../]
+
+      [./SpeciesMassFractions]
+         type = 'parsed_dirichlet'
+	 Y_O2 = '{YO2:=${RunVars/YO2_Val};YO2}'
+ 	 Y_O3 = '{YO3:=${RunVars/YO3_Val};YO3}'
+      [../]
+   [../]
+
+   [./Outlet]
+      [./SingleVariable]
+	 type = 'homogeneous_neumann'
+      [../]
+      [./Temperature]
+         type = 'homogeneous_neumann'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+[]
+
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+       dimension = '1'
+       element_type = 'EDGE2'
+       x_min = '0.0'
+       x_max = '0.02'
+       n_elems_x = '600'
+      
+   [../]
+
+   #[./Read]
+   #   filename = 'unif_ref_1.xda'
+[]
+
+[Materials]
+  [./OzoneGas]
+     [./ThermodynamicPressure]
+        value = '1e5' #[Pa]
+     [../GasMixture]
+        thermochemistry_library = 'antioch'
+        species = 'O O2 O3'
+        kinetics_data = '../ozone_Data_Files/ozone.xml'
+
+        [./Antioch]
+           transport_model = 'constant'
+           thermo_model = 'cea'
+           viscosity_model = 'constant'
+           thermal_conductivity_model = 'constant'
+           mass_diffusivity_model = 'constant_lewis'
+           cea_data = '../ozone_Data_Files/ozone_cea_data.dat'
+           species_data = '../ozone_Data_Files/ozone_species_data.dat'
+
+     [../../Viscosity]
+        value = '1.0e-5'
+     [../ThermalConductivity]
+        value = '0.02'
+     [../LewisNumber]
+        value = '1.0'
+[]
+
+[Variables]
+   [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+
+      [./ConstrainedPoints]
+	[./FirstEdgeNode]
+	  constraint_location = '0.004'
+  	  constraint_rhs = '700'	
+        [../]
+      [../]		   
+		
+
+   [../SingleVariable]
+      names = 'M_dot'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+
+   [../SpeciesMassFractions]
+      names = 'Y_'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+      material = 'OzoneGas'
+[]
+
+#[restart-options]
+#   restart_file='./Run1DHeavy6/output.9999.xdr'
+#[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   continue_after_max_iterations = 'true'
+   max_nonlinear_iterations = '200'
+   max_linear_iterations = '2500'
+   minimum_linear_tolerance = '1.0e-10'
+   initial_linear_tolerance = '1.0e-10'
+   use_numerical_jacobians_only = 'true'
+
+   relative_residual_tolerance = '1.0e-10'
+   relative_step_tolerance = '1.0e-6'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = './Output/output'
+   output_residual = 'false'
+   output_format = 'ExodusII xdr'
+   timesteps_per_vis = '25'
+[]
+
+# Options for print info to the screen
+[screen-options]
+
+   system_name = 'Ozone'
+
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+
+   print_element_jacobians = 'false'
+[]
