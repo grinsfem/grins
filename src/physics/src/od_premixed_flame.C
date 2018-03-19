@@ -310,7 +310,7 @@ namespace GRINS
 	libMesh::Real chem_term = 0.0;
 	for ( unsigned int s=0; s< this->_n_species; s++ )
 	  {
-	    chem_term +=h[s]*(this->_gas_mixture->M(s))*omega_dot[s];
+	    chem_term +=h[s]*omega_dot[s];
 	  }
 	for (unsigned int i=0;i != n_T_dofs; i++ )
 	  {
@@ -325,7 +325,7 @@ namespace GRINS
 	    libMesh::DenseSubVector<libMesh::Number> &Fs =
 	      context.get_elem_residual(this->_species_vars.species(s)); //R_{s}
 	    
-	    const libMesh::Real term1 = -M_dot*Grad_mass_fractions[s](0) + omega_dot[s]*(this->_gas_mixture->M(s));
+	    const libMesh::Real term1 = -M_dot*Grad_mass_fractions[s](0) + omega_dot[s];
 	    const libMesh::Real term2 = -rho*D[s]*Grad_mass_fractions[s](0);
 	    
 	    for (unsigned int i =0;i != n_s_dofs;i++)
