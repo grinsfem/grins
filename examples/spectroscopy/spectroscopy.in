@@ -1,0 +1,155 @@
+# Materials
+[Materials]
+   [./TestMaterial]
+      [./ThermalConductivity]
+        model = 'constant'
+        value = '48.1e-3'
+      [../ThermodynamicPressure]
+        value = '266.6' #[Pa]
+      [../SpecificHeat]
+        model = 'constant'
+        value = '1003'
+      [../Viscosity]
+        model = 'constant'
+        value = '4.47e-5'
+      [../LewisNumber]
+        value = '1.4'
+
+      [../GasMixture]
+        thermochemistry_library = 'antioch'
+        species = 'O2 O CO'
+        kinetics_data = './CO_O_O2.xml'
+
+        [./Antioch]
+           transport_model = 'constant'
+           thermo_model = 'cea'
+           viscosity_model = 'constant'
+           thermal_conductivity_model = 'constant'
+           mass_diffusivity_model = 'constant_lewis'
+#           verbose_read = 'true'
+[]
+
+# Options related to all Physics
+[Physics]
+
+   enabled_physics = 'ReactingLowMachNavierStokes'
+
+   [./ReactingLowMachNavierStokes]
+
+      material = 'TestMaterial'
+      
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'T:Y_O:Y_O2:Y_CO'
+      ic_values = '{873.0}{0.0}{0.911392405063}{0.0886075949367}'
+
+      enable_thermo_press_calc = 'false'
+[]
+
+# Mesh related options
+[Mesh]
+  [./Generation]
+      dimension = '2'
+      n_elems_x = '10'
+      n_elems_y = '10'
+      x_min = '0.0'
+      x_max = '0.10'
+      y_min = '0.0'
+      y_max = '0.10'
+      element_type = 'QUAD9'
+  [../]
+[]
+
+[BoundaryConditions]
+    bc_ids = '0:1:2:3'
+    bc_id_name_map = 'Wall'
+
+    [./Wall]
+      [./Temperature]
+         type = 'isothermal'
+         T = '873.0'
+      [../]
+
+      [./Velocity]
+          type = 'no_slip'
+      [../]
+
+      [./SpeciesMassFractions]
+         type = 'mole_fractions'
+         X_O2 = '0.90'
+         X_CO = '0.10'
+      [../]
+    [../]
+[]
+
+[Variables]
+    [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+
+    [../Velocity]
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+
+    [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+
+    [../SpeciesMassFractions]
+      names = 'Y_'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+      material = 'TestMaterial'
+[]
+
+[QoI]
+  enabled_qois = 'spectroscopic_absorption'
+
+  [./SpectroscopicAbsorption]
+
+    material = 'TestMaterial'
+    species_of_interest = 'CO'
+    hitran_data_file = './CO_data.dat'
+    hitran_partition_function_file = './CO_partition_function.dat'
+    partition_temperatures = '295 900 1'
+    desired_wavenumber = '2172.758825'
+    min_wavenumber = '2170'
+    max_wavenumber = '2175'
+    calc_thermo_pressure = 'false'
+
+    [./Rayfire]
+      origin = '0.0 0.0055'
+      theta = '0.0'
+    [../]
+    
+  [../]
+[]
+
+[SpectroscopyExample]
+  wavenumber_range = '2171.0 2174.0 0.01'
+  output_prefix = 'example_data'
+[]
+
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  25
+   max_linear_iterations = 2500
+   relative_residual_tolerance = '1.0e-11'
+   absolute_residual_tolerance = '1.0e-10'
+   relative_step_tolerance = '1.0e-8'
+   use_numerical_jacobians_only = 'true'
+   do_adjoint_solve = 'true'
+[]
+
+[Output]
+   [./Display]
+      print_qoi = 'true'
+   [../]
+[]
+
+[screen-options]
+  system_name = 'spectroscopy-example'
+[]
+
