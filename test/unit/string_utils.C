@@ -62,7 +62,7 @@ namespace GRINSTesting
         std::string str_1("N->N2");
         std::vector<std::string> test_1_split_exact(2);
         test_1_split_exact[0] = std::string("N");
-        test_1_split_exact[1] = std::string("N2");
+        test_1_split_exact[1] = std::string("N");
 
         std::vector<std::string> str_1_split;
         GRINS::StringUtilities::split_string( str_1, "->", str_1_split);
