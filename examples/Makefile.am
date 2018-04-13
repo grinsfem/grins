@@ -222,6 +222,23 @@ ozone_SCRIPTS = $(top_builddir)/examples/ozone_flame/run.sh
 
 EXTRA_DIST += $(ozone_DATA)
 
+#=======================================================================
+# Spectroscopy Example
+#=======================================================================
+spectroscopydir = $(prefix)/examples/spectroscopy
+spectroscopy_PROGRAMS = spec
+spectroscopy_DATA  = $(top_srcdir)/examples/spectroscopy/spectroscopy.in
+spectroscopy_DATA += $(top_srcdir)/examples/spectroscopy/CO_data.dat
+spectroscopy_DATA += $(top_srcdir)/examples/spectroscopy/CO_O_O2.xml
+spectroscopy_DATA += $(top_srcdir)/examples/spectroscopy/CO_partition_function.dat
+spectroscopy_DATA += $(top_srcdir)/examples/spectroscopy/README
+spectroscopy_SCRIPTS = $(top_builddir)/examples/spectroscopy/run.sh
+
+EXTRA_DIST += $(spectroscopy_DATA)
+
+spec_SOURCES  = spectroscopy/spectroscopy.C
+
+spec_LDADD = $(LIBGRINS_LIBS)
 
 MAINTAINERCLEANFILES = Makefile.in
 

@@ -78,6 +78,11 @@ namespace GRINS
                     libMesh::Real desired_nu, const std::string & species,
                     libMesh::Real thermo_pressure);
 
+    void set_wavenumber(libMesh::Real new_nu)
+    {
+      _nu = new_nu;
+    }
+
     //! Calculate the absorption coefficient at a quadratue point
     virtual libMesh::Real operator()(const libMesh::FEMContext & context, const libMesh::Point & qp_xyz, const libMesh::Real t);
 

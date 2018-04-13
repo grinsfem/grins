@@ -1,0 +1,16 @@
+This example utilizes the SpectroscopicAbsorption QoI to produce a plot of
+absorption vs wavenumber over a specified wavenumber range.
+Two values must be specified in the input file:
+
+SpectroscopyExample/wavenumber_range = 'nu_min nu_max nu_step'
+SpectroscopyExample/output_prefix = 'prefix'
+
+where the data will be written to the file "prefix.dat"
+
+======================================================
+  NB: The file it not deleted before appending data.
+======================================================
+
+Data is output in CSV format as wavenumber,absorption for easy plotting.
+Wavenumbers are output to 8 decimal places, absorption is output to 16.
+
