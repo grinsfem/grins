@@ -29,12 +29,29 @@
 // GRINS
 #include "grins/qoi_base.h"
 #include "grins/variable_name_defaults.h"
+#include "grins_config.h"
+#include "grins/grins_enums.h"
+
+#include "grins/multiphysics_sys.h"
+#include "grins/assembly_context.h"
+#include "grins/materials_parsing.h"
+#include "grins/variable_warehouse.h"
+#include "grins/variables_parsing.h"
+#include "grins/single_variable.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/multicomponent_variable.h"
+
+// libMesh
+#include "libmesh/string_to_enum.h"
+#include "libmesh/getpot.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
   class PrimitiveTempFEVariables;
 
-  class FlameSpeed : public QoiBase
+  class FlameSpeed : public QoIBase
   {
   public:
 
@@ -51,6 +68,8 @@ namespace GRINS
     virtual void side_qoi( AssemblyContext& context,
                            const unsigned int qoi_index );
 
+   
+
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
                        unsigned int qoi_num );
@@ -60,23 +79,22 @@ namespace GRINS
     libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
     libMesh::Real M_dot( const libMesh::Point& p, const AssemblyContext& c ) const;
 
-    const Mixture & gas_mixture() const;
 
   protected:
 
+    void parse_Pressure( const GetPot& input);
+
     const PrimitiveTempFEVariables * _temp_vars;
-    const SpeciesMassFractionsVariable * _species_vars;
+
     const SingleVariable * _mass_flux_vars;
-
-    void parse_Pressure( const GetPot& input)
-
-    const PrimitiveTempFEVariables * _temp_vars;
+    
+    libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
 
     //! List of boundary ids for which we want to compute this QoI
-    libMesh::boundary_id_type _bc_ids;
+    std::set<libMesh::boundary_id_type> _bc_ids;
 
     //! Scaling constant
-    libMesh::Real _P0
+    libMesh::Real _P0;
 
   private:
 
@@ -99,12 +117,12 @@ namespace GRINS
   inline
     libMesh::Real FlameSpeed::M_dot( const libMesh::Point& p,
 							     const AssemblyContext& c ) const
-    { return c.point_value(_mass_flux_vars.var(),p); }
+    { return c.point_value(_mass_flux_vars->var(),p); }
 
   inline
     libMesh::Real FlameSpeed::T( const libMesh::Point& p,
 							 const AssemblyContext& c ) const
-    { return c.point_value(_temp_vars.T(),p); }
+    { return c.point_value(_temp_vars->T(),p); }
   
   inline
     bool FlameSpeed::assemble_on_interior() const

@@ -24,24 +24,30 @@
 
 
 // This class
-#include "grins/average_nusselt_number.h"
+#include "grins/flame_speed.h"
 
 // GRINS
+#include "grins_config.h"
+#include "grins/grins_enums.h"
+
 #include "grins/multiphysics_sys.h"
 #include "grins/assembly_context.h"
 #include "grins/materials_parsing.h"
 #include "grins/variable_warehouse.h"
 #include "grins/variables_parsing.h"
 #include "grins/single_variable.h"
+#include "grins/multi_component_vector_variable.h"
+#include "grins/multicomponent_variable.h"
 
 // libMesh
+#include "libmesh/string_to_enum.h"
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 
 namespace GRINS
 {
-  FlameSpeed::FlameSpeed( const std::string& qoi_name )
+  FlameSpeed::FlameSpeed( const std::string& qoi_name)
     : QoIBase(qoi_name)
   {
     return;
@@ -85,7 +91,6 @@ namespace GRINS
 
     //Set our Vaiables and number of species
     _temp_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
-    _species_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>(VariablesParsing::species_mass_frac_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
     _mass_flux_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
     // #### might only need to use once, no need to set it _n_species = _species_vars.n_species();
   }
@@ -109,7 +114,7 @@ namespace GRINS
   }
 
 
-
+  //###############################################################################################################
 
 
   void FlameSpeed::side_qoi( AssemblyContext& context,
@@ -127,27 +132,22 @@ namespace GRINS
 
     if (!on_correct_side)
       return;
-
+    
     libMesh::Number& qoi = context.get_qois()[qoi_index];
-    libMesh::Real T = this->T(point,context);
-    libMesh::Real p0 = this->_P0();
-    libMesh::Real Mdot = this->M_dot(point,context);
-    qoi += Mdot/(this->rho(T,p0, 500));
-      } // quadrature loop
-  }
+    libMesh::Real T = context.side_value(this->_temp_vars->T(),0);
+    libMesh::Real p0 = this->_P0;
+    libMesh::Real Mdot = context.side_value(this->_mass_flux_vars->var(),0);
+    qoi = Mdot/(this->rho(T,p0, 694));
+  } //end side_qoi
 
 
+  //###########################################################################################################
 
-
-
-
-
-
-  void FlameSpeed::parse_Pressure( const GetPot& input )
+  void FlameSpeed::parse_Pressure( const GetPot& input)
   {
     //grab where the value is located in input file
     std::string material = input("QoI/FlameSpeed/material", "NoMaterial!");
-
+    
     if( input.have_variable("Materials/"+material+"/ThermodynamicPressure/value") )
       {
         this->set_parameter
@@ -155,6 +155,6 @@ namespace GRINS
       }
     else
       libmesh_error_msg("ERROR: Could not find valid thermodynamicPressure value!");
-  }
+  }//end parse pressure
 
 } //namespace GRINS

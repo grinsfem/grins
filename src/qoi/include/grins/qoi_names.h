@@ -34,5 +34,6 @@ namespace GRINS
   const std::string weighted_flux = "weighted_flux";
   const std::string integrated_function = "integrated_function";
   const std::string spectroscopic_absorption = "spectroscopic_absorption";
+  const std::string flame_speed = "flame_speed";
 }
 #endif //GRINS_QOI_NAMES_H

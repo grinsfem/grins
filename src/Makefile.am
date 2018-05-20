@@ -199,6 +199,7 @@ libgrins_la_SOURCES += qoi/src/qoi_output.C
 libgrins_la_SOURCES += qoi/src/hitran.C
 libgrins_la_SOURCES += qoi/src/absorption_coeff.C
 libgrins_la_SOURCES += qoi/src/spectroscopic_absorption.C
+libgrins_la_SOURCES += qoi/src/flame_speed.C
 
 # src/solver files
 libgrins_la_SOURCES += solver/src/solver.C
@@ -503,7 +504,7 @@ include_HEADERS += qoi/include/grins/hitran.h
 include_HEADERS += qoi/include/grins/absorption_coeff.h
 include_HEADERS += qoi/include/grins/spectroscopic_absorption.h
 include_HEADERS += qoi/include/grins/fem_function_and_derivative_base.h
-
+include_HEADERS += qoi/include/grins/flame_speed.h
 # src/solver headers
 include_HEADERS += solver/include/grins/solver.h
 include_HEADERS += solver/include/grins/mesh_builder.h

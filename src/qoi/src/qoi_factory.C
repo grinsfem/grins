@@ -39,6 +39,7 @@
 #include "grins/absorption_coeff.h"
 #include "grins/spectroscopic_absorption.h"
 #include "grins/chemistry_builder.h"
+#include "grins/flame_speed.h"
 
 #if GRINS_HAVE_ANTIOCH
 #include "grins/antioch_chemistry.h"
@@ -104,6 +105,11 @@ namespace GRINS
         qoi = new AverageNusseltNumber( avg_nusselt );
       }
 
+    else if ( qoi_name == flame_speed )
+      {
+	qoi = new FlameSpeed( flame_speed );
+      }
+    
     else if( qoi_name == parsed_boundary )
       {
         qoi =  new ParsedBoundaryQoI( parsed_boundary );
@@ -159,7 +165,7 @@ namespace GRINS
             T_max = input(partition_temp_var, 0.0, 1);
             T_step = input(partition_temp_var, 0.0, 2);
           }
-        else
+      	else
           libmesh_error_msg("ERROR: Could not find tenmperature range specification for partition functions: "+partition_temp_var+" 'T_min T_max T_step'");
 
         std::shared_ptr<HITRAN> hitran( new HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
