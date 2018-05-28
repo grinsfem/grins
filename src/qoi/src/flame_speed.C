@@ -47,6 +47,7 @@
 
 namespace GRINS
 {
+
   FlameSpeed::FlameSpeed( const std::string& qoi_name)
     : QoIBase(qoi_name)
   {
@@ -92,6 +93,7 @@ namespace GRINS
     //Set our Vaiables and number of species
     _temp_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
     _mass_flux_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
+    _species_vars= &GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>(VariablesParsing::species_mass_frac_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
     // #### might only need to use once, no need to set it _n_species = _species_vars.n_species();
   }
 
@@ -137,7 +139,17 @@ namespace GRINS
     libMesh::Real T = context.side_value(this->_temp_vars->T(),0);
     libMesh::Real p0 = this->_P0;
     libMesh::Real Mdot = context.side_value(this->_mass_flux_vars->var(),0);
-    qoi = Mdot/(this->rho(T,p0, 694));
+
+    std::vector<libMesh::Real> mass_fractions;
+    mass_fractions.resize(this->_species_vars->n_species());
+    for (unsigned int s=0; s < this->_species_vars->n_species(); s++)
+      {
+	mass_fractions[s] = context.side_value(this->_species_vars->species(s),0);
+      }
+    libMesh::Real R = 8314.459848;
+    libMesh::Real Rmix =R/(1/(mass_fractions[0]/2.01588 + mass_fractions[3]/2/15.999));
+
+    qoi += Mdot/(this->rho(T,p0, Rmix));
   } //end side_qoi
 
 
