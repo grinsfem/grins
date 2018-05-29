@@ -105,11 +105,7 @@ namespace GRINS
         qoi = new AverageNusseltNumber( avg_nusselt );
       }
 
-    else if ( qoi_name == flame_speed )
-      {
-	qoi = new FlameSpeed( flame_speed );
-      }
-    
+ 
     else if( qoi_name == parsed_boundary )
       {
         qoi =  new ParsedBoundaryQoI( parsed_boundary );
@@ -130,6 +126,32 @@ namespace GRINS
         qoi =  new WeightedFluxQoI( weighted_flux );
       }
 
+   else if ( qoi_name == flame_speed )
+      {
+	std::string material;
+    
+        this->get_var_value<std::string>(input,material,"QoI/FlameSpeed/material","NoMaterial!");
+
+	ChemistryBuilder chem_builder;
+
+#if GRINS_HAVE_ANTIOCH
+	 std::unique_ptr<AntiochChemistry> chem_ptr;
+	 chem_builder.build_chemistry(input,material,chem_ptr);
+        
+
+	qoi = new FlameSpeed<AntiochChemistry>(qoi_name ,chem_ptr);
+	
+#elif GRINS_HAVE_CANTERA
+        std::unique_ptr<CanteraMixture> chem_ptr;
+        chem_builder.build_chemistry(input,material,chem_ptr);
+       
+
+        qoi = new FlameSpeed<CanteraMixture>(qoi_name,chem_ptr);
+#else
+        libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
+#endif
+      }
+    
     else if( qoi_name == integrated_function )
       {
         std::string function;

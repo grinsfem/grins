@@ -47,26 +47,29 @@
 
 namespace GRINS
 {
-
-  FlameSpeed::FlameSpeed( const std::string& qoi_name)
-    : QoIBase(qoi_name)
+  template< typename Chemistry>
+  FlameSpeed<Chemistry>::FlameSpeed( const std::string& qoi_name, std::unique_ptr<Chemistry> & chem)
+    : QoIBase(qoi_name),
+      _chemistry(chem.release())
   {
     return;
   }
 
-  FlameSpeed::~FlameSpeed()
+  template< typename Chemistry>
+  FlameSpeed<Chemistry>::~FlameSpeed()
   {
     return;
   }
 
-  QoIBase* FlameSpeed::clone() const
+  template< typename Chemistry>
+  QoIBase* FlameSpeed<Chemistry>::clone() const
   {
-    return new FlameSpeed( *this);
+    libmesh_not_implemented() ;
   }
 
 
-
-  void FlameSpeed::init
+  template< typename Chemistry>
+  void FlameSpeed<Chemistry>::init
   (const GetPot& input,
    const MultiphysicsSystem& /*system*/,
    unsigned int /*qoi_num*/ )
@@ -103,7 +106,8 @@ namespace GRINS
 
 
   ///Probaly NEED CHANGING OF SOME KIND
-  void FlameSpeed::init_context( AssemblyContext& context )
+  template< typename Chemistry>
+  void FlameSpeed<Chemistry>::init_context( AssemblyContext& context )
   {
     libMesh::FEBase* T_fe;
 
@@ -118,8 +122,8 @@ namespace GRINS
 
   //###############################################################################################################
 
-
-  void FlameSpeed::side_qoi( AssemblyContext& context,
+  template< typename Chemistry>
+  void FlameSpeed<Chemistry>::side_qoi( AssemblyContext& context,
                                        const unsigned int qoi_index )
   {
     bool on_correct_side = false;
@@ -146,16 +150,15 @@ namespace GRINS
       {
 	mass_fractions[s] = context.side_value(this->_species_vars->species(s),0);
       }
-    libMesh::Real R = 8314.459848;
-    libMesh::Real Rmix =R/(1/(mass_fractions[0]/2.01588 + mass_fractions[3]/2/15.999));
+    libMesh::Real Rmix = _chemistry->R_mix(mass_fractions);
 
     qoi += Mdot/(this->rho(T,p0, Rmix));
   } //end side_qoi
 
 
   //###########################################################################################################
-
-  void FlameSpeed::parse_Pressure( const GetPot& input)
+  template< typename Chemistry>
+  void FlameSpeed<Chemistry>::parse_Pressure( const GetPot& input)
   {
     //grab where the value is located in input file
     std::string material = input("QoI/FlameSpeed/material", "NoMaterial!");
