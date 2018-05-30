@@ -128,25 +128,11 @@ namespace GRINS
 
    else if ( qoi_name == flame_speed )
       {
-	std::string material;
-    
-        this->get_var_value<std::string>(input,material,"QoI/FlameSpeed/material","NoMaterial!");
-
-	ChemistryBuilder chem_builder;
 
 #if GRINS_HAVE_ANTIOCH
-	 std::unique_ptr<AntiochChemistry> chem_ptr;
-	 chem_builder.build_chemistry(input,material,chem_ptr);
-        
-
-	qoi = new FlameSpeed<AntiochChemistry>(qoi_name ,chem_ptr);
-	
+        qoi = new FlameSpeed<AntiochChemistry>( flame_speed);
 #elif GRINS_HAVE_CANTERA
-        std::unique_ptr<CanteraMixture> chem_ptr;
-        chem_builder.build_chemistry(input,material,chem_ptr);
-       
-
-        qoi = new FlameSpeed<CanteraMixture>(qoi_name,chem_ptr);
+        qoi = new FlameSpeed<CanteraMixture>(flame_speed);
 #else
         libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif

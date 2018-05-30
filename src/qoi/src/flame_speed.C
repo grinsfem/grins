@@ -27,30 +27,22 @@
 #include "grins/flame_speed.h"
 
 // GRINS
-#include "grins_config.h"
-#include "grins/grins_enums.h"
-
-#include "grins/multiphysics_sys.h"
-#include "grins/assembly_context.h"
-#include "grins/materials_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/variables_parsing.h"
-#include "grins/single_variable.h"
-#include "grins/multi_component_vector_variable.h"
-#include "grins/multicomponent_variable.h"
+#include "grins/chemistry_builder.h"
 
-// libMesh
-#include "libmesh/string_to_enum.h"
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
+#if GRINS_HAVE_ANTIOCH
+#include "grins/antioch_chemistry.h"
+#endif
+
+#if GRINS_HAVE_CANTERA
+#include "grins/cantera_mixture.h"
+#endif
 
 namespace GRINS
 {
   template< typename Chemistry>
-  FlameSpeed<Chemistry>::FlameSpeed( const std::string& qoi_name, std::unique_ptr<Chemistry> & chem)
-    : QoIBase(qoi_name),
-      _chemistry(chem.release())
+  FlameSpeed<Chemistry>::FlameSpeed( const std::string& qoi_name)
+    : QoIBase(qoi_name)      
   {
     return;
   }
@@ -64,7 +56,8 @@ namespace GRINS
   template< typename Chemistry>
   QoIBase* FlameSpeed<Chemistry>::clone() const
   {
-    libmesh_not_implemented() ;
+    //libmesh_not_implemented();
+     return new FlameSpeed(*this);
   }
 
 
@@ -76,6 +69,11 @@ namespace GRINS
   {
     //grab the pressure value
     this->parse_Pressure(input);
+
+    //figure out the chemistry
+     std::string material = input("QoI/FlameSpeed/material","DIE!");
+     _chemistry.reset( new Chemistry(input,material));
+       
 
     // Read boundary ids for which we want to compute, and make sure they are specified
     int num_bcs =  input.vector_variable_size("QoI/FlameSpeed/bc_ids");
@@ -97,7 +95,6 @@ namespace GRINS
     _temp_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
     _mass_flux_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
     _species_vars= &GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>(VariablesParsing::species_mass_frac_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
-    // #### might only need to use once, no need to set it _n_species = _species_vars.n_species();
   }
 
 
@@ -157,6 +154,9 @@ namespace GRINS
 
 
   //###########################################################################################################
+
+
+
   template< typename Chemistry>
   void FlameSpeed<Chemistry>::parse_Pressure( const GetPot& input)
   {
@@ -172,4 +172,15 @@ namespace GRINS
       libmesh_error_msg("ERROR: Could not find valid thermodynamicPressure value!");
   }//end parse pressure
 
+
+
+
+
+  #if GRINS_HAVE_ANTIOCH
+  template class FlameSpeed<AntiochChemistry>;
+#endif
+
+#if GRINS_HAVE_CANTERA
+  template class FlameSpeed<CanteraMixture>;
+  #endif
 } //namespace GRINS

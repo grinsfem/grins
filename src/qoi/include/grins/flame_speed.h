@@ -28,24 +28,10 @@
 
 // GRINS
 #include "grins/qoi_base.h"
-#include "grins/variable_name_defaults.h"
-#include "grins_config.h"
-#include "grins/grins_enums.h"
 
 #include "grins/multiphysics_sys.h"
-#include "grins/assembly_context.h"
-#include "grins/materials_parsing.h"
-#include "grins/variable_warehouse.h"
-#include "grins/variables_parsing.h"
 #include "grins/single_variable.h"
-#include "grins/multi_component_vector_variable.h"
 #include "grins/multicomponent_variable.h"
-
-// libMesh
-#include "libmesh/string_to_enum.h"
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -55,7 +41,7 @@ namespace GRINS
   {
   public:
 
-    FlameSpeed(const std::string& qoi_name, std::unique_ptr<Chemistry> & chem);
+    FlameSpeed(const std::string& qoi_name);
     
     virtual ~FlameSpeed();
     
@@ -97,7 +83,7 @@ namespace GRINS
     std::set<libMesh::boundary_id_type> _bc_ids;
 
  
-    std::unique_ptr<Chemistry> _chemistry;
+    std::shared_ptr<Chemistry> _chemistry;
 
     libMesh::Real _P0;
 
