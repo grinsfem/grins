@@ -47,14 +47,26 @@ namespace GRINS
       (_fixed_rho_value, input,
        "Physics/"+PhysicsNaming::od_premixed_flame()+"/fixed_rho_value", 0.0 );
 
-    this->_T_Fixed_Loc = input("Physics/"+PhysicsNaming::od_premixed_flame()+"/T_Fixed_Loc", 0.0);
+    this->set_parameter(_Ti, input, 
+	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Inlet_Temperature", 0.0); 
+
+    this->set_parameter(_Tu, input, 
+	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Unburnt_Temperature", 0.0); 
+    for (unsigned int s = 0; s < this->_n_species; s++)
+	  {
+	    this->set_parameter(_Inflow_Species[s], input, "Physics/"+PhysicsNaming::od_premixed_flame()+"/"
+				+_species_vars->_var_names[1], 0.0); 
+	  }
+    
+
+    /*this->_T_Fixed_Loc = input("Physics/"+PhysicsNaming::od_premixed_flame()+"/T_Fixed_Loc", 0.0);
    
     this->set_parameter
       (_T_Fixed,input,"Physics/"+PhysicsNaming::od_premixed_flame()+"/T_Fixed",0.0 );
 
     this->set_parameter
       (_Penalty_Tol,input,"Physics/"+PhysicsNaming::od_premixed_flame()+"/Penalty_Tol",1.0e-8 );
-
+    */
     this->read_input_options(input);
                                                                       
     this->check_var_subdomain_consistency(_mass_flux_vars);
@@ -228,7 +240,7 @@ namespace GRINS
     return;
   }    //end post processing vars
   
-
+  /*************************************************************************************************************/
 
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::element_time_derivative
@@ -472,6 +484,13 @@ namespace GRINS
   }   //end Element Constraint
 
       
+  template<typename Mixture, typename Evaluator>
+  void ODPremixedFlame<Mixture,Evaluator>::side_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context)
+  { if(compute_jacobian)
+      libmesh_not_implemented();
+
+  }
 
 
 

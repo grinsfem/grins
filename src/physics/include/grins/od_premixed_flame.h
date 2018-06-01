@@ -28,11 +28,15 @@ namespace GRINS
     //! Sets  variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
-    unsigned int n_species() const;
     libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
     libMesh::Real M_dot( const libMesh::Point& p, const AssemblyContext& c ) const;
+
     void mass_fractions( const libMesh::Point& p, const AssemblyContext& c,
                          std::vector<libMesh::Real>& mass_fracs ) const;
+    unsigned int n_species() const;
+
+    const Mixture & gas_mixture() const;
+
 
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
     libMesh::Real get_p0() const;
@@ -50,19 +54,20 @@ namespace GRINS
     //Time dependent part(s)         
     virtual void element_time_derivative( bool compute_jacobian,
 					  AssemblyContext & context);
-  
     //Mass matrix part(s)            
     virtual void mass_residual( bool compute_jacobian,
 				AssemblyContext & context );
     virtual void element_constraint(bool compute_jacobian,
 				    AssemblyContext & context );
+    //  virtual void side_time_derivative(bool compute_jacobian,
+    //				      AssemblyContext & context );
+
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index, 
 						 const AssemblyContext& context,
 						 const libMesh::Point& point,
 						 libMesh::Real& value );
 
-    const Mixture & gas_mixture() const;
 
   protected:
     //Variables 
@@ -70,13 +75,15 @@ namespace GRINS
     SpeciesMassFractionsVariable& _species_vars;
     SingleVariable& _mass_flux_vars;
 
+    std::vector<std::strings> _Inflow_Species;
+
     //! Number of species
     unsigned int _n_species;
     bool _fixed_density;
 
     libMesh::Real _fixed_rho_value;
     std::unique_ptr<Mixture> _gas_mixture;
-
+    
 
 
 
@@ -92,9 +99,12 @@ namespace GRINS
     //!Index from registering this quantity
     
     libMesh::Number _p0;
-    libMesh::Point _T_Fixed_Loc;
-    libMesh::Number _T_Fixed;
-    libMesh::Number _Penalty_Tol;
+    libMesh::Number _Ti;
+    libMesh::Number _Tu;
+
+    //libMesh::Point _T_Fixed_Loc;
+    //libMesh::Number _T_Fixed;
+    //libMesh::Number _Penalty_Tol;
 
     //! Index from registering this quantity. Each species will have it's own index.
     std::vector<unsigned int> _mole_fractions_index;
