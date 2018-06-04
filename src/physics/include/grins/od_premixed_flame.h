@@ -59,8 +59,8 @@ namespace GRINS
 				AssemblyContext & context );
     virtual void element_constraint(bool compute_jacobian,
 				    AssemblyContext & context );
-    //  virtual void side_time_derivative(bool compute_jacobian,
-    //				      AssemblyContext & context );
+    virtual void side_time_derivative(bool compute_jacobian,
+				      AssemblyContext & context );
 
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index, 
@@ -75,7 +75,7 @@ namespace GRINS
     SpeciesMassFractionsVariable& _species_vars;
     SingleVariable& _mass_flux_vars;
 
-    std::vector<std::strings> _Inflow_Species;
+    std::vector<libMesh::Real> _Inflow_Species;
 
     //! Number of species
     unsigned int _n_species;

@@ -340,17 +340,16 @@ namespace GRINS
   bool MultiphysicsSystem::side_time_derivative( bool request_jacobian,
                                                  libMesh::DiffContext& context )
   {
-    bool jacobian_computed = this->apply_neumann_bcs(request_jacobian,
-                                                     context);
-
-    jacobian_computed = jacobian_computed &&
-      this->_general_residual
+    
+    bool jacobian_computed2 = this->apply_neumann_bcs(request_jacobian,
+						      context);
+    bool jacobian_computed = this->_general_residual
       (request_jacobian,
        context,
        &GRINS::Physics::side_time_derivative,
        &GRINS::Physics::compute_side_time_derivative_cache);
-
-    return jacobian_computed;
+    
+    return (jacobian_computed && jacobian_computed2);
   }
 
   bool MultiphysicsSystem::nonlocal_time_derivative( bool request_jacobian,
