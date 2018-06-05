@@ -114,7 +114,8 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/integrated_function_test.C \
                       unit/hitran_test.C \
                       unit/spectroscopic_absorption_test.C \
-                      unit/nonlinear_solver_options.C
+                      unit/nonlinear_solver_options.C \
+                      unit/overlapping_fluid_solid_mesh.C
 
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
