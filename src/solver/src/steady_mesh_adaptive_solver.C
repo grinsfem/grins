@@ -37,6 +37,7 @@
 #include "libmesh/error_vector.h"
 #include "libmesh/steady_solver.h"
 #include "libmesh/adjoint_refinement_estimator.h"
+#include "libmesh/enum_error_estimator_type.h"
 
 namespace GRINS
 {

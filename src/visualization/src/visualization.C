@@ -38,6 +38,7 @@
 #include "libmesh/nemesis_io.h"
 #include "libmesh/tecplot_io.h"
 #include "libmesh/vtk_io.h"
+#include "libmesh/enum_xdr_mode.h"
 
 // POSIX
 #include <sys/errno.h>

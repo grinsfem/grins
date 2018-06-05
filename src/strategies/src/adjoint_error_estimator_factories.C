@@ -27,6 +27,7 @@
 
 // libMesh
 #include "libmesh/patch_recovery_error_estimator.h"
+#include "libmesh/enum_norm_type.h"
 
 namespace GRINS
 {
