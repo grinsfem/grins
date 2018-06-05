@@ -49,6 +49,7 @@
 #include "libmesh/zero_function.h"
 #include "libmesh/composite_function.h"
 #include "libmesh/zero_function.h"
+#include "libmesh/enum_xdr_mode.h"
 
 namespace GRINS
 {

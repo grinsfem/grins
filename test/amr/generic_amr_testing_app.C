@@ -35,6 +35,7 @@
 #include "libmesh/exact_solution.h"
 #include "libmesh/parsed_function.h"
 #include "libmesh/composite_function.h"
+#include "libmesh/enum_xdr_mode.h"
 
 int test_error_norm( libMesh::ExactSolution& exact_sol,
                      const std::string& system_name,
