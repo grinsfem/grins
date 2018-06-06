@@ -47,7 +47,7 @@ namespace GRINS
       (_fixed_rho_value, input,
 
        "Physics/"+PhysicsNaming::od_premixed_flame()+"/fixed_rho_value", 0.0 );
-    //Parsing the Temperature at the Inflow
+    //Parsing the Temperature at the Inflow, can probably make a better error message, or just initialize the value as something else
     this->set_parameter(_Ti, input, 
 	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Inlet_Temperature", 0.0);
     if(_Ti == 0)
@@ -73,7 +73,7 @@ namespace GRINS
 				+_gas_mixture->species_name(s), 0.0); 
 	  }
     
-
+    //Remenants of failed attempts
     /*this->_T_Fixed_Loc = input("Physics/"+PhysicsNaming::od_premixed_flame()+"/T_Fixed_Loc", 0.0);
    
     this->set_parameter
@@ -91,7 +91,7 @@ namespace GRINS
    
     this->_ic_handler = new GenericICHandler( physics_name, input );
   }
-  /****************************************************************************************************/
+
   //Reading and setting the Thermodynamic Pressure  
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::read_input_options( const GetPot& input )
@@ -103,7 +103,7 @@ namespace GRINS
                                      (*this),
                                      _p0 );
   }
- /****************************************************************************************************/
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::register_parameter( const std::string & param_name,
 					    libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const
@@ -111,7 +111,7 @@ namespace GRINS
     ParameterUser::register_parameter(param_name, param_pointer);
     _gas_mixture->register_parameter(param_name, param_pointer);
   }
- /****************************************************************************************************/
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {    
@@ -121,7 +121,7 @@ namespace GRINS
       }
         system->time_evolving(_temp_vars.T(), 1);
   }
- /****************************************************************************************************/
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::init_context( AssemblyContext& context )   
   {
@@ -156,7 +156,7 @@ namespace GRINS
     context.get_side_fe(this->_temp_vars.T())->get_dphi();
     context.get_side_fe(this->_temp_vars.T())->get_xyz();
   }		   
- /****************************************************************************************************/
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::register_postprocessing_vars( const GetPot& input,
 									       PostProcessedQuantities<libMesh::Real>& postprocessing )
@@ -255,7 +255,6 @@ namespace GRINS
     return;
   }    //end post processing vars
   
-  /*************************************************************************************************************/
 
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::element_time_derivative
@@ -373,8 +372,9 @@ namespace GRINS
     return;
   }            // end element time derivative
 
- /****************************************************************************************************/
- /****************************************************************************************************/
+
+
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::mass_residual
   (bool compute_jacobian, AssemblyContext & context )
@@ -451,8 +451,8 @@ namespace GRINS
       } // end Quadrature loop
   }                   //end Mass Residual
 
- /****************************************************************************************************/
- /****************************************************************************************************/
+
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::element_constraint
   ( bool compute_jacobian, AssemblyContext & context )
@@ -497,16 +497,19 @@ namespace GRINS
 	  }*/
 
   }   //end Element Constraint
- /****************************************************************************************************/
-      /****************************************************************************************************/ 
+
+
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::side_time_derivative( bool compute_jacobian, AssemblyContext & context)
   { if(compute_jacobian)
       libmesh_not_implemented();
     
+    //Check if were on the right boundary,
+    //TODO:: make this specified in input file probably
     if( context.has_side_boundary_id( 0 ))
       {
-
+	//Still integrating, can probably just get rid of this stuff.
 	const std::vector<libMesh::Real> &JxW =
 	  context.get_element_fe(this->_temp_vars.T())->get_JxW();
 	
@@ -519,12 +522,13 @@ namespace GRINS
 	const unsigned int n_M_dofs =
 	  context.get_dof_indices(this->_mass_flux_vars.var()).size();
 
+	//grabbing the element Mass Residual
 	libMesh::DenseSubVector<libMesh::Number> & Fm =
 	  context.get_elem_residual(this->_mass_flux_vars.var()); // R_{M}
 
 	for(unsigned int qp=0; qp!=n_qpoints; qp++)
 	  {
-	    
+	    //Defining and grabbing all the variables we'll need
 	    libMesh::Real T, M_dot;
 	    libMesh::Gradient Grad_T;
 	    
@@ -552,18 +556,21 @@ namespace GRINS
 		h_i[s] = gas_evaluator.h_s( this->_Ti, s );
 		h_u[s] = gas_evaluator.h_s( this->_Tu, s );
 	      }
-	    
+	    //proccess to calculate k
 	    R = gas_evaluator.R_mix( mass_fractions );
 	    rho = this->rho( T, p0, R );
 	    cp = gas_evaluator.cp( T, p0, mass_fractions);
 	    D.resize(this->_n_species);
 	    gas_evaluator.mu_and_k_and_D( T, rho, cp, mass_fractions, 
 					  mu, k, D );
+
+	    //Solve our loop over species
 	    libMesh::Real Enth_Diff = 0;
 	    for(unsigned int s=0; s < this->n_species(); s++)
 	      {
 		Enth_Diff += _Inflow_Species[s]*(h_i[s]-h_u[s]);
 	      }
+	    
 	    for(unsigned int i=0; i != n_M_dofs; i++)
 	      {
 		libMesh::Real jac = JxW[qp];
@@ -574,10 +581,6 @@ namespace GRINS
   }
 
       
-      
-
- /****************************************************************************************************/
- /****************************************************************************************************/
 
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::compute_postprocessed_quantity( unsigned int quantity_index, 
