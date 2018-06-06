@@ -49,10 +49,22 @@ namespace GRINS
        "Physics/"+PhysicsNaming::od_premixed_flame()+"/fixed_rho_value", 0.0 );
     //Parsing the Temperature at the Inflow
     this->set_parameter(_Ti, input, 
-	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Inlet_Temperature", 0.0); 
+	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Inlet_Temperature", 0.0);
+    if(_Ti == 0)
+      {
+	std::cout << "Initial Boundary Temperature not set in the input!!" << std::endl;
+	libmesh_not_implemented();
+      }
+
     //Parsing the Unburnt Temperature
     this->set_parameter(_Tu, input, 
 	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Unburnt_Temperature", 0.0); 
+    if(_Tu ==0)
+      {
+	std::cout << "Unburnt gas Temperature not set in the input!!" << std::endl;
+	libmesh_not_implemented();
+      }
+
     //Initial Inflow Equivalence ration
     _Inflow_Species.resize(this->_n_species);
     for (unsigned int s = 0; s < this->_n_species; s++)
