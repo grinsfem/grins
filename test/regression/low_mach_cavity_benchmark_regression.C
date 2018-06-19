@@ -29,6 +29,9 @@
 // GRINS
 #include "grins/runner.h"
 
+// libMesh
+#include "libmesh/enum_solver_package.h"
+
 // Function for getting initial temperature field
 libMesh::Real
 initial_values( const libMesh::Point& p, const libMesh::Parameters &params,

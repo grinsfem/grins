@@ -80,7 +80,7 @@ namespace GRINSTesting
     void single_elem_mesh()
     {
       const std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/spectroscopic_absorption_qoi.in";
-      libMesh::Real calc_answer = 0.520403290868787;
+      libMesh::Real calc_answer = 1.0 - 0.520403290868787;
 
       this->run_test(filename,calc_answer);
     }
@@ -89,7 +89,7 @@ namespace GRINSTesting
     void multi_elem_mesh()
     {
       const std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/spectroscopic_absorption_qoi_fine.in";
-      libMesh::Real calc_answer = 0.520403290868787; // same physical conditions as single_elem_mesh, so answer should not change
+      libMesh::Real calc_answer = 1.0 - 0.520403290868787; // same physical conditions as single_elem_mesh, so answer should not change
 
       this->run_test(filename,calc_answer);
     }

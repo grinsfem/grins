@@ -104,6 +104,11 @@ namespace GRINS
     {
       return *(_rayfire.get());
     }
+    
+    Function & get_function()
+    {
+      return *(_f.get());
+    }
 
   private:
     //! Quadrature order

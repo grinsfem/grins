@@ -39,6 +39,7 @@
 #include "libmesh/parsed_function.h"
 #include "libmesh/serial_mesh.h"
 #include "libmesh/elem.h"
+#include "libmesh/enum_order.h"
 
 namespace GRINS
 {
