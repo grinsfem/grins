@@ -93,7 +93,7 @@ int main( int argc, char* argv[] )
       return_flag = 1;
     }
 
-  if( std::fabs( (cantera.M_mix(mass_fractions) - M_exact)/M_exact ) > tol )
+  if( std::fabs( (cantera.M_mix(mass_fractions)*1000 - M_exact)/M_exact ) > tol )
     {
       std::cerr << "Error: Mismatch in mixture molar mass." << std::endl
                 << std::setprecision(16) << std::scientific
