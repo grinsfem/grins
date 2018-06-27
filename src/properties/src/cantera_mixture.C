@@ -56,7 +56,7 @@ namespace GRINS
 
     try
       {
-        _cantera_transport.reset( Cantera::newTransportMgr("Mix", _cantera_gas.get()) );
+        _cantera_transport.reset( Cantera::newDefaultTransportMgr(_cantera_gas.get()) );
       }
     catch(Cantera::CanteraError)
       {
