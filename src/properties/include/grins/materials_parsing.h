@@ -130,6 +130,9 @@ namespace GRINS
     static std::string parse_chemical_kinetics_datafile_name( const GetPot & input,
                                                               const std::string & material );
 
+    static std::string chemical_data_option()
+    { return std::string("chemical_data"); }
+
   };
 
   inline
