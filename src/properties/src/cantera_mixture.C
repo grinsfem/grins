@@ -41,8 +41,7 @@ namespace GRINS
   CanteraMixture::CanteraMixture( const GetPot& input, const std::string& material )
     : ParameterUser("CanteraMixture")
   {
-    const std::string cantera_chem_file = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
-
+    const std::string cantera_chem_file = this->parse_chem_file(input,material);
     std::string mixture = this->parse_mixture(input,material);
 
     try
@@ -71,6 +70,22 @@ namespace GRINS
   CanteraMixture::~CanteraMixture()
   {
     return;
+  }
+
+  std::string CanteraMixture::parse_chem_file( const GetPot& input, const std::string& material )
+  {
+    std::string filename;
+
+    // Preferred option
+    std::string option = "Materials/"+material+"/GasMixture/Cantera/"+MaterialsParsing::chemical_data_option();
+    if( input.have_variable(option) )
+      filename = input(option, std::string("DIE!") );
+
+    // Now check for deprecated option
+    else
+      filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
+
+    return filename;
   }
 
   std::string CanteraMixture::parse_mixture( const GetPot& input, const std::string& material )
