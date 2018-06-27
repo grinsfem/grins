@@ -220,6 +220,11 @@ namespace GRINS
     std::string option("Materials/"+material+"/GasMixture/kinetics_data");
     MaterialsParsing::check_for_input_option(input,option);
 
+    std::string warning = "WARNING: option "+option+"is DEPRECATED!\n";
+    warning += "         kinetics_data moved to thermochemistry section\n";
+    warning += "         and renamed chemical_data!";
+    grins_warning_once(warning);
+
     std::string filename = input(option, "DIE!");
 
     return filename;
