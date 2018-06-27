@@ -4,10 +4,10 @@
      [./GasMixture]
         thermochemistry_library = 'cantera'
         species = 'N2 N C CN'
-        kinetics_data = './input_files/air_4sp.xml'
 
         [./Cantera]
            gas_mixture = 'air4sp'
+           chemical_data = './input_files/air_4sp.xml'
 
    [../../../AntiochMaterial]
       [./GasMixture]
