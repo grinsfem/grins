@@ -133,6 +133,11 @@ namespace GRINS
     static std::string chemical_data_option()
     { return std::string("chemical_data"); }
 
+  private:
+
+    static std::string thermochem_lib_input_string( const std::string & material )
+    { return std::string("Materials/"+material+"/GasMixture/thermochemistry_library"); }
+
   };
 
   inline
@@ -150,6 +155,8 @@ namespace GRINS
     if( !input.have_variable(option) )
       libmesh_error_msg("ERROR: Could not find required input parameter "+option+"!");
   }
+
+
 
 } // end namespace GRINS
 

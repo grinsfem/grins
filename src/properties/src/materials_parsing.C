@@ -101,7 +101,8 @@ namespace GRINS
   {
     std::string material = MaterialsParsing::material_name( input, physics );
 
-    std::string thermochem_lib_option("Materials/"+material+"/GasMixture/thermochemistry_library");
+    std::string thermochem_lib_option =
+      MaterialsParsing::thermochem_lib_input_string(material);
 
     MaterialsParsing::check_for_input_option(input,thermochem_lib_option);
 
