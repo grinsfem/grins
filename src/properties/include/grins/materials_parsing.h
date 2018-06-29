@@ -114,11 +114,18 @@ namespace GRINS
                                         std::vector<std::string>& species_names );
 
     //! Helper function for parsing the chemical species and setting variable name
-    /*! The user-provided vector will populated with the chemical
-      species variable names based on the species name the input file. The variable
-      name will used for adding the variable to the libMesh System.
-      "Physics/Chemistry/species" is deprecated in favor of
-      "Material/"+material+"/GasMixture/species" */
+    /*! This function will parse the thermochemistry library requested by the
+        user and then use the corresponding thermochemistry object to parse
+        the datafiles to ascertain the requested species names. As such,
+        this function could be very inefficient if called repeatedly so it should
+        only be called if *absolutely necessary*, essentially if the
+        MultiphysicsSystem has not been constructed.
+
+        Deprecated functionality is explicitly setting the species names
+        in the GRINS inptu file.
+        The user-provided vector will populated with the chemical
+        species variable names based on the species name the input file. The variable
+        name will used for adding the variable to the libMesh System. */
     static void parse_species_varnames( const GetPot & input,
                                         const std::string & material,
                                         const std::string & prefix,
