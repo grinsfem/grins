@@ -53,8 +53,7 @@ namespace GRINS
   ( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture )
     : ParameterUser("AntiochChemistry")
   {
-    /*! \todo Use std::move when we have C++11 */
-    _antioch_gas.reset( chem_mixture.release() );
+    _antioch_gas = std::move(chem_mixture);
   }
 
   std::string AntiochChemistry::species_name( unsigned int species_index ) const
