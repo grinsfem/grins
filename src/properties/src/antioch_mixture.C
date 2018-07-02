@@ -79,9 +79,8 @@ namespace GRINS
       _minimum_T(min_T),
       _clip_negative_rho(clip_negative_rho)
   {
-    /*! \todo Use std::move when we have C++11 */
-    _reaction_set.reset( reaction_set.release() );
-    _nasa_mixture.reset( nasa_mixture.release() );
+    _reaction_set = std::move(reaction_set);
+    _nasa_mixture = std::move(nasa_mixture);
 
     this->build_stat_mech_ref_correction();
   }
