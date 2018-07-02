@@ -72,6 +72,8 @@ namespace GRINS
 
     // Thermo
     libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
+    
+    libMesh::Real cp_s( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y, const libMesh::Real species);
 
     libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
@@ -173,6 +175,15 @@ namespace GRINS
   }
 
   inline
+    libMesh::Real CanteraEvaluator::cp_s( const libMesh::Real& T,
+					  const libMesh::Real P,
+					  const std::vector<libMesh::Real>& Y,
+					  const libMesh::Real species)
+  {
+    return _thermo.cp_s(T,P,Y,species);
+  }
+
+  inline
   libMesh::Real CanteraEvaluator::cv( const libMesh::Real& T,
                                       const libMesh::Real P,
                                       const std::vector<libMesh::Real>& Y )
@@ -230,6 +241,8 @@ namespace GRINS
   {
     _kinetics.omega_dot(T,rho,mass_fractions,omega_dot);
   }
+
+
 
 } // end namespace GRINS
 
