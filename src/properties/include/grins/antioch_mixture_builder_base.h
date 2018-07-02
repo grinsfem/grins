@@ -107,6 +107,20 @@ namespace GRINS
       Antioch::read_nasa_mixture_data( nasa_mixture, cea_data_filename, Antioch::ASCII, true );
     }
 
+    void parse_nasa_data
+    ( Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA7CurveFit<libMesh::Real> > & /*nasa_mixture*/,
+      const GetPot & /*input*/, const std::string & /*material*/)
+    {
+      libmesh_not_implemented();
+    }
+
+    void parse_nasa_data
+    ( Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA9CurveFit<libMesh::Real> > & /*nasa_mixture*/,
+      const GetPot & /*input*/, const std::string & /*material*/)
+    {
+      libmesh_not_implemented();
+    }
+
   };
 
   template<typename KineticsThermoCurveFit>
