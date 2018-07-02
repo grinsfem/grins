@@ -33,6 +33,7 @@
 
 // GRINS
 #include "grins/materials_parsing.h"
+#include "grins/antioch_mixture_builder_base.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -49,10 +50,10 @@ namespace GRINS
   AntiochMixture<KineticsThermoCurveFit>::AntiochMixture( const GetPot& input,
                                                           const std::string& material )
     : AntiochChemistry(input,material),
-      _reaction_set( new Antioch::ReactionSet<libMesh::Real>( (*_antioch_gas.get()) ) ),
-      _nasa_mixture( new Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit>( (*_antioch_gas.get()) ) ),
-      _minimum_T( input( "Materials/"+material+"/GasMixture/Antioch/minimum_T", -std::numeric_limits<libMesh::Real>::max() ) ),
-      _clip_negative_rho( input( "Materials/"+material+"/GasMixture/Antioch/clip_negative_rho", false) )
+      _reaction_set( AntiochMixtureBuilderBase().build_reaction_set(input,material,(*_antioch_gas.get())) ),
+      _nasa_mixture( AntiochMixtureBuilderBase().build_nasa_thermo_mix<KineticsThermoCurveFit>(input,material,(*_antioch_gas.get())) ),
+      _minimum_T( AntiochMixtureBuilderBase().parse_min_T(input,material) ),
+      _clip_negative_rho( AntiochMixtureBuilderBase().parse_clip_negative_rho(input,material) )
   {
     {
       std::string warning = "==============================================\n";
@@ -63,18 +64,6 @@ namespace GRINS
 
       libmesh_warning(warning);
     }
-
-    std::string kinetics_data_filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
-
-    bool verbose_read = input("screen-options/verbose_kinetics_read", false );
-
-    Antioch::read_reaction_set_data_xml<libMesh::Real>( kinetics_data_filename, verbose_read, *_reaction_set.get() );
-
-    std::string cea_data_filename = input( "Materials/"+material+"/GasMixture/Antioch/cea_data", "default" );
-    if( cea_data_filename == std::string("default") )
-      cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
-
-    Antioch::read_nasa_mixture_data( *_nasa_mixture.get(), cea_data_filename, Antioch::ASCII, true );
 
     this->build_stat_mech_ref_correction();
   }
