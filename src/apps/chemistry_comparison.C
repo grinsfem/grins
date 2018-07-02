@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
 	  for(unsigned int species =0; species<n_species;species++)
 	    {
 
-	      output << antioch_evaluator.cp_s(Temperature_Dist[Temp_iter],p0,species) << " " ;
+	      output << antioch_evaluator.cp_s(Temperature_Dist[Temp_iter],p0,Mass_Fractions,species) << " " ;
 	    }
 	  output << std::endl;
 	}

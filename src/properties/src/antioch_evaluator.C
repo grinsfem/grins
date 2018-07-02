@@ -76,8 +76,9 @@ namespace GRINS
   libMesh::Real
   AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
   cp_s( const libMesh::Real& T,
-      const libMesh::Real /*P*/,
-      const libMesh::Real& species )
+	const libMesh::Real /*P*/,
+	const std::vector<libMesh::Real>& Y,
+	const libMesh::Real& species )
   {
     this->check_and_reset_temp_cache(T);
     return this->_nasa_evaluator->cp( *(_temp_cache.get()), species );
@@ -113,6 +114,7 @@ namespace GRINS
   template<>
   libMesh::Real AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >::cp_s( const libMesh::Real& T,
 															     const libMesh::Real /*P*/,
+															     const std::vector<libMesh::Real>& Y,
 															     const libMesh::Real& species )
   {
     //will need to figure out before pushing

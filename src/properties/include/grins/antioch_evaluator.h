@@ -81,7 +81,7 @@ namespace GRINS
 
     // Thermo
     libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
-    libMesh::Real cp_s( const libMesh::Real& T, const libMesh::Real P, const libMesh::Real& species );
+    libMesh::Real cp_s( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y, const libMesh::Real& species );
 
     libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
