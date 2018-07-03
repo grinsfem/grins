@@ -136,14 +136,8 @@ namespace GRINS
     void build_thermo()
     { specialized_build_thermo( _thermo, thermo_type<Thermo>() ); }
 
-    void build_viscosity( const GetPot& input, const std::string& material )
-    { specialized_build_viscosity( input, material, _viscosity, viscosity_type<Viscosity>() ); }
-
     void build_conductivity()
     { specialized_build_conductivity( _conductivity, conductivity_type<Conductivity>() ); }
-
-    void build_diffusivity( const GetPot& input, const std::string& material )
-    { specialized_build_diffusivity( input, material, _diffusivity, diffusivity_type<Diffusivity>() ); }
 
   private:
 
@@ -162,46 +156,6 @@ namespace GRINS
       thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real>( *_nasa_evaluator, *(this->_antioch_gas.get()) ) );
     }
 
-    void specialized_build_viscosity( const GetPot& input,
-                                      const std::string& material,
-                                      std::unique_ptr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> > & viscosity,
-                                      viscosity_type<Antioch::SutherlandViscosity<libMesh::Real> > )
-    {
-      viscosity.reset( new Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
-
-      std::string sutherland_data = input("Materials/"+material+"/GasMixture/Antioch/sutherland_data", "default");
-      if( sutherland_data == "default" )
-        sutherland_data = Antioch::DefaultInstallFilename::sutherland_data();
-
-      Antioch::read_sutherland_data_ascii( *(viscosity.get()), sutherland_data );
-    }
-
-    void specialized_build_viscosity( const GetPot& input,
-                                      const std::string& material,
-                                      std::unique_ptr<Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real> > & viscosity,
-                                      viscosity_type<Antioch::BlottnerViscosity<libMesh::Real> > )
-    {
-      viscosity.reset( new Antioch::MixtureViscosity<Antioch::BlottnerViscosity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
-
-      std::string blottner_data = input("Materials/"+material+"/GasMixture/Antioch/blottner_data", "default");
-      if( blottner_data == "default" )
-        blottner_data = Antioch::DefaultInstallFilename::blottner_data();
-
-      Antioch::read_blottner_data_ascii( *(viscosity.get()), blottner_data );
-    }
-
-#ifdef ANTIOCH_HAVE_GSL
-    void specialized_build_viscosity( const GetPot& /*input*/,
-                                      const std::string& /*material*/,
-                                      std::unique_ptr<Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> > & viscosity,
-                                      viscosity_type<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner> > )
-    {
-      viscosity.reset( new Antioch::MixtureViscosity<Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real>(*(_trans_mixture.get())) );
-
-      Antioch::build_kinetics_theory_viscosity<libMesh::Real,Antioch::GSLSpliner>( *(viscosity.get()) );
-    }
-#endif // ANTIOCH_HAVE_GSL
-
     void specialized_build_conductivity( std::unique_ptr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> > & conductivity,
                                          conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
     {
@@ -217,29 +171,6 @@ namespace GRINS
       conductivity.reset( new Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
 
       Antioch::build_kinetics_theory_thermal_conductivity<Thermo,libMesh::Real>( *(conductivity.get()), *(_thermo.get()) );
-    }
-#endif // ANTIOCH_HAVE_GSL
-
-    void specialized_build_diffusivity( const GetPot& input,
-                                        const std::string& material,
-                                        std::unique_ptr<Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real> > & diffusivity,
-                                        diffusivity_type<Antioch::ConstantLewisDiffusivity<libMesh::Real> > )
-    {
-      libMesh::Real Le = MaterialsParsing::parse_lewis_number(input,material);
-
-      diffusivity.reset( new Antioch::MixtureDiffusion<Antioch::ConstantLewisDiffusivity<libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
-
-      Antioch::build_constant_lewis_diffusivity<libMesh::Real>( *(diffusivity.get()), Le);
-      return;
-    }
-
-#ifdef ANTIOCH_HAVE_GSL
-    void specialized_build_diffusivity( const GetPot& /*input*/,
-                                        const std::string& /*material*/,
-                                        std::unique_ptr<Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> > & diffusivity,
-                                        diffusivity_type<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > )
-    {
-      diffusivity.reset( new Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real>(*(_trans_mixture.get())) );
     }
 #endif // ANTIOCH_HAVE_GSL
 
