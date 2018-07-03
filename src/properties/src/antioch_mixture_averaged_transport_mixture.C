@@ -30,6 +30,9 @@
 // This class
 #include "grins/antioch_mixture_averaged_transport_mixture.h"
 
+// GRINS
+#include "grins/antioch_mixture_averaged_transport_mixture_builder.h"
+
 // Antioch
 #include "antioch/default_filename.h"
 
@@ -53,29 +56,19 @@ namespace GRINS
       libmesh_warning(warning);
     }
 
-    std::string transport_data_filename =
-      input( "Materials/"+material+"/GasMixture/Antioch/transport_data", "default" );
+    AntiochMixtureAveragedTransportMixtureBuilder builder;
 
-    if( transport_data_filename == std::string("default") )
-      transport_data_filename = Antioch::DefaultInstallFilename::transport_mixture();
+    _trans_mixture = builder.build_transport_mixture(  input, material, *(this->_antioch_gas.get()) );
 
-    bool verbose_transport_read =
-      input( "Materials/"+material+"/GasMixture/Antioch/verbose_transport_read", false );
-
-    _trans_mixture.reset( new Antioch::TransportMixture<libMesh::Real>( *(this->_antioch_gas.get()),
-                                                                        transport_data_filename,
-                                                                        verbose_transport_read,
-                                                                        Antioch::ParsingType::ASCII ) );
-
-    _wilke_mixture.reset( new Antioch::MixtureAveragedTransportMixture<libMesh::Real>(*(_trans_mixture.get()) ) );
+    _wilke_mixture = builder.build_mix_avg_trans_mixture(*(this->_trans_mixture.get()));
 
     this->build_thermo();
 
-    this->build_viscosity( input, material );
+    _viscosity = builder.build_viscosity<V>(input, material, (*(this->_trans_mixture.get())));
 
     this->build_conductivity( );
 
-    this->build_diffusivity( input, material );
+    _diffusivity = builder.build_diffusivity<D>(input, material, (*(this->_trans_mixture.get())));
   }
 
   template<typename KT, typename T, typename V, typename C, typename D>
