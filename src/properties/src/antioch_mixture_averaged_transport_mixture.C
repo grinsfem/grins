@@ -84,11 +84,10 @@ namespace GRINS
     bool clip_negative_rho )
   : AntiochMixture<KT>(chem_mixture,reaction_set,kinetics_thermo_mix,min_T,clip_negative_rho)
   {
-    /*! \todo Use std::move when we have C++11 */
-    _trans_mixture.reset( trans_mix.release() );
-    _wilke_mixture.reset( wilke_mix.release() );
-    _viscosity.reset( visc.release() );
-    _diffusivity.reset( diff.release() );
+    _trans_mixture = std::move(trans_mix);
+    _wilke_mixture = std::move(wilke_mix);
+    _viscosity = std::move(visc);
+    _diffusivity = std::move(diff);
 
     this->build_thermo();
     this->build_conductivity();
