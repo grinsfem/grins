@@ -67,6 +67,12 @@ namespace GRINS
                        const Antioch::TransportMixture<libMesh::Real> & trans_mix )
     { return specialized_build_diffusivity( input, material, trans_mix, diffusivity_type<Diffusivity>() ); }
 
+    template<typename Conductivity, typename Thermo>
+    std::unique_ptr<Antioch::MixtureConductivity<Conductivity,libMesh::Real> >
+    build_conductivity( const Antioch::TransportMixture<libMesh::Real> & trans_mix,
+                        const Thermo & thermo )
+    { return specialized_build_conductivity<Thermo>(trans_mix, thermo, conductivity_type<Conductivity>() ); }
+
   private:
 
     std::unique_ptr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >
@@ -147,6 +153,35 @@ namespace GRINS
     {
       return std::unique_ptr<Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real> >
         ( new Antioch::MixtureDiffusion<Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner>,libMesh::Real>(trans_mix) );
+    }
+#endif // ANTIOCH_HAVE_GSL
+
+    template<typename Thermo>
+    std::unique_ptr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> >
+    specialized_build_conductivity(const Antioch::TransportMixture<libMesh::Real> & trans_mix,
+                                   const Thermo & thermo,
+                                   conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
+    {
+      std::unique_ptr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> >
+        conductivity( new Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real>(trans_mix) );
+      Antioch::build_eucken_thermal_conductivity<Thermo,libMesh::Real>(*(conductivity.get()),thermo);
+
+      return conductivity;
+    }
+
+#ifdef ANTIOCH_HAVE_GSL
+    template<typename Thermo>
+    std::unique_ptr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> >
+    specialized_build_conductivity(const Antioch::TransportMixture<libMesh::Real> & trans_mix,
+                                   const Thermo & thermo,
+                                   conductivity_type<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real> > )
+    {
+      std::unique_ptr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> >
+      conductivity( new Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real>(trans_mix));
+
+      Antioch::build_kinetics_theory_thermal_conductivity<Thermo,libMesh::Real>(*(conductivity.get()), thermo);
+
+      return conductivity;
     }
 #endif // ANTIOCH_HAVE_GSL
 
