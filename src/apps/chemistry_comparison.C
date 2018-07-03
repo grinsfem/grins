@@ -204,34 +204,40 @@ int main(int argc, char* argv[])
 
       //Testing my take at species specific heat capacities
       output.open("Antioch_Species_Specific_Specific_Heats.dat");
+      std::vector<std::vector<libMesh::Real> > cp_sA(Temperature_Dist.size());
       output << "Temperature " << " Antioch Species             " << std::endl;
       for(unsigned int Temp_iter = 0; Temp_iter < Temperature_Dist.size();Temp_iter++)
 	{
+	  cp_sA[Temp_iter].resize(n_species);
+	  antioch_evaluator.cp_s(Temperature_Dist[Temp_iter],p0,Mass_Fractions,cp_sA[Temp_iter]);
 	  output << Temperature_Dist[Temp_iter] << " ";
 	  for(unsigned int species =0; species<n_species;species++)
 	    {
 
-	      output << antioch_evaluator.cp_s(Temperature_Dist[Temp_iter],p0,Mass_Fractions,species) << " " ;
+	      output << cp_sA[Temp_iter][species] << " " ;
 	    }
 	  output << std::endl;
 	}
       output.close();
 
-     output.open("Cantera_Species_Specific_Specific_Heats.dat");
+      output.open("Cantera_Species_Specific_Specific_Heats.dat");
+      std::vector<std::vector<libMesh::Real> > cp_sC(Temperature_Dist.size());
       output << "Temperature " << " Cantera Species             " << std::endl;
       for(unsigned int Temp_iter = 0; Temp_iter < Temperature_Dist.size();Temp_iter++)
 	{
 	  output << Temperature_Dist[Temp_iter] << " ";
+	  cp_sC[Temp_iter].resize(n_species);
+	  cantera_evaluator.cp_s(Temperature_Dist[Temp_iter],p0,Mass_Fractions,cp_sC[Temp_iter]);
 	  for(unsigned int species =0; species<n_species;species++)
 	    {
 
-	      output << cantera_evaluator.cp_s(Temperature_Dist[Temp_iter],p0,Mass_Fractions,species) << " " ;
+	      output << cp_sC[Temp_iter][species] << " " ;
 	    }
 	  output << std::endl;
 	}
       output.close();
 
-
+      
    return 0;
 }
 #endif //GRINS_HAVE_CANTERA

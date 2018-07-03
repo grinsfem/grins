@@ -310,7 +310,7 @@ namespace GRINS
 	p0 = this->get_p0();
 	
 	
-	std::vector<libMesh::Real> mass_fractions, h, D, omega_dot;
+	std::vector<libMesh::Real> mass_fractions, h, D, omega_dot, cp_s;
 	std::vector<libMesh::Gradient> Grad_mass_fractions;
 	
 	mass_fractions.resize(this->_n_species);
@@ -339,17 +339,20 @@ namespace GRINS
 	
 	gas_evaluator.omega_dot( T, rho, mass_fractions, omega_dot );
 	
+	gas_evaluator.cp_s(T, p0, mass_fractions, cp_s);
 	libMesh::Real jac = JxW[qp];
 	
 	//Energy equation Residual
 	libMesh::Real chem_term = 0.0;
+	libMesh::Real Sum = 0.0;
 	for ( unsigned int s=0; s< this->_n_species; s++ )
 	  {
 	    chem_term +=h[s]*omega_dot[s];
+	    Sum += rho*D[s]*Grad_mass_fractions[s](0)*Grad_T(0)*cp_s[s];
 	  }
 	for (unsigned int i=0;i != n_T_dofs; i++ )
 	  {
-	    FT(i) += ( ( -cp*M_dot *Grad_T(0) - chem_term )*T_phi[i][qp]
+	    FT(i) += ( ( -cp*M_dot *Grad_T(0) - chem_term + Sum )*T_phi[i][qp]
 		       -k*Grad_T(0)*T_dphi[i][qp](0))*jac;
 	    
 	  }

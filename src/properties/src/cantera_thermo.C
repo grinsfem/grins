@@ -75,21 +75,21 @@ namespace GRINS
     return cp;
   }
 
-  libMesh::Real CanteraThermodynamics::cp_s( const libMesh::Real& T,
-					     const libMesh::Real P,
-					     const std::vector<libMesh::Real>& Y,
-					     const libMesh::Real &species)
+  void CanteraThermodynamics::cp_s( const libMesh::Real& T,
+				    const libMesh::Real P,
+				    const std::vector<libMesh::Real>& Y,
+				    std::vector<libMesh::Real> &Cp_s)
   {
-    libMesh::Real cp = 0.0;
-    std::vector<libMesh::Real> Molar_cp(Y.size());
+    libmesh_assert_equal_to( Cp_s.size(), _cantera_gas.nSpecies() );
     {
       libMesh::Threads::spin_mutex::scoped_lock lock(cantera_mutex);
       
       try
 	{
 	  _cantera_gas.setState_TPY( T, P, &Y[0]);
-	  _cantera_gas.getPartialMolarCp(&Molar_cp[0]);
-	  cp = Molar_cp[species]/_cantera_gas.molecularWeight(species);
+	  _cantera_gas.getPartialMolarCp(&Cp_s[0]);
+	  for(unsigned int species = 0; species < _cantera_gas.nSpecies(); species++)
+	    Cp_s[species] = Cp_s[species]/_cantera_gas.molecularWeight(species);
 	}
       catch(Cantera::CanteraError)
 	{
@@ -98,7 +98,7 @@ namespace GRINS
 	}
     }
     
-    return cp;
+    return;
   }
 
   libMesh::Real CanteraThermodynamics::cv( const libMesh::Real& T,

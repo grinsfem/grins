@@ -73,15 +73,17 @@ namespace GRINS
   }
 
   template<>
-  libMesh::Real
-  AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
+  void AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
   cp_s( const libMesh::Real& T,
 	const libMesh::Real /*P*/,
 	const std::vector<libMesh::Real>& Y,
-	const libMesh::Real& species )
+        std::vector<libMesh::Real>& Cp_s )
   {
+    libmesh_assert_equal_to(Y.size(), Cp_s.size());
     this->check_and_reset_temp_cache(T);
-    return this->_nasa_evaluator->cp( *(_temp_cache.get()), species );
+    for(unsigned int species = 0;species < Y.size();species++)
+      Cp_s[species] = _nasa_evaluator->cp( *(_temp_cache.get()), species );
+    return;
   }
 
   template<>
@@ -112,13 +114,15 @@ namespace GRINS
   }
 
   template<>
-  libMesh::Real AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >::cp_s( const libMesh::Real& T,
-															     const libMesh::Real /*P*/,
-															     const std::vector<libMesh::Real>& Y,
-															     const libMesh::Real& species )
+  void AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >::cp_s( const libMesh::Real& T,
+														    const libMesh::Real /*P*/,
+														    const std::vector<libMesh::Real>& Y,
+														    std::vector<libMesh::Real>& Cp_s)
   {
     //will need to figure out before pushing
-    return _thermo->cv(species, T, T) + this->R(species);
+    for(unsigned int species = 0;species< Y.size();species++)
+      Cp_s[species] = _thermo->cv(species, T, T) + this->R(species);
+    return;
   }
 
 
