@@ -136,9 +136,6 @@ namespace GRINS
     void build_thermo()
     { specialized_build_thermo( _thermo, thermo_type<Thermo>() ); }
 
-    void build_conductivity()
-    { specialized_build_conductivity( _conductivity, conductivity_type<Conductivity>() ); }
-
   private:
 
     AntiochMixtureAveragedTransportMixture();
@@ -155,24 +152,6 @@ namespace GRINS
       _nasa_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>(this->nasa_mixture()) );
       thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real>( *_nasa_evaluator, *(this->_antioch_gas.get()) ) );
     }
-
-    void specialized_build_conductivity( std::unique_ptr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> > & conductivity,
-                                         conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
-    {
-      conductivity.reset( new Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real>(*(_trans_mixture.get())) );
-      Antioch::build_eucken_thermal_conductivity<Thermo,libMesh::Real>(*(conductivity.get()),*(_thermo.get()));
-      return;
-    }
-
-#ifdef ANTIOCH_HAVE_GSL
-    void specialized_build_conductivity( std::unique_ptr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> > & conductivity,
-                                         conductivity_type<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real> > )
-    {
-      conductivity.reset( new Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real>(*(_trans_mixture.get())) );
-
-      Antioch::build_kinetics_theory_thermal_conductivity<Thermo,libMesh::Real>( *(conductivity.get()), *(_thermo.get()) );
-    }
-#endif // ANTIOCH_HAVE_GSL
 
   };
 
