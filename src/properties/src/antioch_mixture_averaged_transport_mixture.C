@@ -66,7 +66,7 @@ namespace GRINS
 
     _viscosity = builder.build_viscosity<V>(input, material, (*(this->_trans_mixture.get())));
 
-    this->build_conductivity( );
+    _conductivity = builder.build_conductivity<C>(*(this->_trans_mixture.get()), *(this->_thermo.get()));
 
     _diffusivity = builder.build_diffusivity<D>(input, material, (*(this->_trans_mixture.get())));
   }
@@ -90,7 +90,9 @@ namespace GRINS
     _diffusivity = std::move(diff);
 
     this->build_thermo();
-    this->build_conductivity();
+
+    AntiochMixtureAveragedTransportMixtureBuilder builder;
+    _conductivity = builder.build_conductivity<C>(*(this->_trans_mixture.get()), *(this->_thermo.get()));
   }
 
 } // end namespace GRINS
