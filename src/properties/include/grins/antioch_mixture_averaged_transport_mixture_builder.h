@@ -46,8 +46,6 @@ namespace GRINS
     std::unique_ptr<AntiochMixtureAveragedTransportMixture<KineticsThermoCurveFit,Thermo,Viscosity,Conductivity,Diffusivity> >
     build_mixture( const GetPot & input, const std::string & material );
 
-  private:
-
     std::unique_ptr<Antioch::TransportMixture<libMesh::Real> >
     build_transport_mixture( const GetPot& input, const std::string& material,
                              const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
@@ -68,6 +66,8 @@ namespace GRINS
     build_diffusivity( const GetPot& input, const std::string& material,
                        const Antioch::TransportMixture<libMesh::Real> & trans_mix )
     { return specialized_build_diffusivity( input, material, trans_mix, diffusivity_type<Diffusivity>() ); }
+
+  private:
 
     std::unique_ptr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >
     specialized_build_viscosity( const GetPot& input,
