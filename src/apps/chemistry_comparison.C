@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
    output.close();
   
    //print out the species mass fractions and molecular weights to use in my matlab program:
-   output.open("Cantera_evaluated_species_fractions:");
+   output.open("Cantera_evaluated_species_fractions.dat");
    for(unsigned int s=0;s<n_species;s++)
      output << cantera_evaluator.species_name(s) << " " << Mass_Fractions[s] << " " << std::setprecision(16) << cantera_evaluator.M(s) << std::endl;
    output.close();

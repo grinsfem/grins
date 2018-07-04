@@ -316,7 +316,7 @@ namespace GRINS
 	mass_fractions.resize(this->_n_species);
 	Grad_mass_fractions.resize(this->_n_species);
 	h.resize(this->_n_species);
-	
+	cp_s.resize(this->_n_species);
 	for (unsigned int s = 0; s < this->_n_species; s++)
 	  {
 	    mass_fractions[s] = std::max( context.interior_value(this->_species_vars.species(s),qp),0.0);
