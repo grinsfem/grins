@@ -66,6 +66,8 @@ namespace GRINS
     ~CanteraThermodynamics(){};
 
     libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
+   
+    void cp_s(const libMesh::Real& T,const libMesh::Real P, const std::vector<libMesh::Real>& Y , std::vector<libMesh::Real>& Cp_s);
 
     libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 

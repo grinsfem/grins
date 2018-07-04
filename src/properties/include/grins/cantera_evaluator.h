@@ -72,6 +72,8 @@ namespace GRINS
 
     // Thermo
     libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
+    
+    void cp_s( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y, std::vector<libMesh::Real>& Cp_s);
 
     libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
 
@@ -170,6 +172,16 @@ namespace GRINS
                                       const std::vector<libMesh::Real>& Y )
   {
     return _thermo.cp(T,P,Y);
+  }
+
+  inline
+  void CanteraEvaluator::cp_s( const libMesh::Real& T,
+				 const libMesh::Real P,
+				 const std::vector<libMesh::Real>& Y,
+				 std::vector<libMesh::Real>& Cp_s)
+  {
+    _thermo.cp_s(T,P,Y,Cp_s);
+    return;
   }
 
   inline
