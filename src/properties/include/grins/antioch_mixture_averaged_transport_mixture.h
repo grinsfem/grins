@@ -120,9 +120,6 @@ namespace GRINS
 
     std::unique_ptr<Thermo> _thermo;
 
-    //! For some Thermo types, we also need to cache a NASAEvaluator.
-    std::unique_ptr<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit> > _nasa_evaluator;
-
     std::unique_ptr<Antioch::MixtureViscosity<Viscosity,libMesh::Real> > _viscosity;
 
     std::unique_ptr<Antioch::MixtureConductivity<Conductivity,libMesh::Real> > _conductivity;
