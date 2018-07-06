@@ -126,29 +126,9 @@ namespace GRINS
 
     std::unique_ptr<Antioch::MixtureDiffusion<Diffusivity,libMesh::Real> > _diffusivity;
 
-    /* Below we will specialize the specialized_build_* functions to the appropriate type.
-       This way, we can control how the cached transport objects get constructed
-       based on the template type. This is achieved by the dummy types forcing operator
-       overloading for each of the specialized types. */
-    void build_thermo()
-    { specialized_build_thermo( _thermo, thermo_type<Thermo>() ); }
-
   private:
 
     AntiochMixtureAveragedTransportMixture();
-
-    void specialized_build_thermo( std::unique_ptr<Antioch::StatMechThermodynamics<libMesh::Real> > & thermo,
-                                   thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
-    {
-      thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( *(this->_antioch_gas.get()) ) );
-    }
-
-    void specialized_build_thermo( std::unique_ptr<Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> > & thermo,
-                                   thermo_type<Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> >  )
-    {
-      thermo.reset( new Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real>
-                    ( *(this->_nasa_mixture.get()), *(this->_antioch_gas.get()) ) );
-    }
 
   };
 
