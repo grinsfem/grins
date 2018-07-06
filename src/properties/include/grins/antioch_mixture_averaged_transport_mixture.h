@@ -93,9 +93,11 @@ namespace GRINS
     AntiochMixtureAveragedTransportMixture( std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & chem_mixture,
                                             std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > & reaction_set,
                                             std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > & kinetics_thermo_mix,
+                                            std::unique_ptr<Thermo> & gas_thermo,
                                             std::unique_ptr<Antioch::TransportMixture<libMesh::Real> > & trans_mix,
                                             std::unique_ptr<Antioch::MixtureAveragedTransportMixture<libMesh::Real> > & wilke_mix,
                                             std::unique_ptr<Antioch::MixtureViscosity<Viscosity,libMesh::Real> > & visc,
+                                            std::unique_ptr<Antioch::MixtureConductivity<Conductivity,libMesh::Real> > & conductivity,
                                             std::unique_ptr<Antioch::MixtureDiffusion<Diffusivity,libMesh::Real> > & diff,
                                             libMesh::Real min_T = -std::numeric_limits<libMesh::Real>::max(),
                                             bool clip_negative_rho = false );
