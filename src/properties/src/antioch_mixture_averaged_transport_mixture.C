@@ -62,7 +62,7 @@ namespace GRINS
 
     _wilke_mixture = builder.build_mix_avg_trans_mixture(*(this->_trans_mixture.get()));
 
-    this->build_thermo();
+    _thermo = builder.build_gas_thermo<KT,T>( *(this->_antioch_gas.get()), *(this->_nasa_mixture.get()) );
 
     _viscosity = builder.build_viscosity<V>(input, material, (*(this->_trans_mixture.get())));
 
@@ -89,9 +89,9 @@ namespace GRINS
     _viscosity = std::move(visc);
     _diffusivity = std::move(diff);
 
-    this->build_thermo();
-
     AntiochMixtureAveragedTransportMixtureBuilder builder;
+
+    _thermo = builder.build_gas_thermo<KT,T>( *(this->_antioch_gas.get()), *(this->_nasa_mixture.get()) );
     _conductivity = builder.build_conductivity<C>(*(this->_trans_mixture.get()), *(this->_thermo.get()));
   }
 

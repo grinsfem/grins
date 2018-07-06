@@ -36,6 +36,7 @@
 // GRINS
 #include "grins/antioch_mixture.h"
 #include "grins/cached_values.h"
+#include "grins/antioch_mixture_builder_base.h"
 
 namespace GRINS
 {
@@ -43,11 +44,14 @@ namespace GRINS
   AntiochEvaluator<KineticsThermoCurveFit,Thermo>::
   AntiochEvaluator( const AntiochMixture<KineticsThermoCurveFit>& mixture )
     : _chem( mixture ),
+      _nasa_evaluator( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>(mixture.nasa_mixture()) ),
       _kinetics( new AntiochKinetics<KineticsThermoCurveFit>(mixture) ),
       _minimum_T( mixture.minimum_T() ),
       _temp_cache( new Antioch::TempCache<libMesh::Real>(1.0) )
   {
-    this->build_thermo( mixture );
+    AntiochMixtureBuilderBase builder;
+    _thermo = builder.build_gas_thermo<KineticsThermoCurveFit,Thermo>
+      ( mixture.chemical_mixture(), mixture.nasa_mixture() );
   }
 
   template<typename KineticsThermoCurveFit, typename Thermo>

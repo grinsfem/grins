@@ -120,33 +120,9 @@ namespace GRINS
       of Antioch::TempCache! */
     void check_and_reset_temp_cache( const libMesh::Real& T );
 
-    /* Below we will specialize the specialized_build_* functions to the appropriate type.
-       This way, we can control how the cached transport objects get constructed
-       based on the template type. This is achieved by the dummy types forcing operator
-       overloading for each of the specialized types. */
-    void build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture )
-    { specialized_build_thermo( mixture, _thermo, thermo_type<Thermo>() ); }
-
   private:
 
     AntiochEvaluator();
-
-    void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
-                                   std::unique_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
-                                   thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
-    {
-      thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
-    }
-
-    void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
-                                   std::unique_ptr<Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> > & thermo,
-                                   thermo_type<Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> >  )
-    {
-      _nasa_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>( mixture.nasa_mixture() ) );
-
-      thermo.reset( new Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real>
-                    ( mixture.nasa_mixture(), mixture.chemical_mixture()) );
-    }
 
   };
 
