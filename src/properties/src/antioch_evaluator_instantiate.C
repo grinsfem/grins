@@ -34,7 +34,6 @@
 #include "antioch/nasa_evaluator.h"
 #include "antioch/cea_curve_fit.h"
 #include "antioch/stat_mech_thermo.h"
-#include "antioch/ideal_gas_micro_thermo.h"
 #include "antioch/ideal_gas_thermo.h"
 
 // This class
