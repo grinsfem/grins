@@ -72,14 +72,14 @@ namespace GRINS
     build_reaction_set( const GetPot & input, const std::string & material,
                         const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
 
-    template<typename KineticsThermoCurveFit>
-    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> >
+    template<typename NASACurveFit>
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> >
     build_nasa_thermo_mix( const GetPot & input, const std::string & material,
                            const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
 
 
-    template<typename KineticsThermoCurveFit>
-    std::unique_ptr<AntiochMixture<KineticsThermoCurveFit> >
+    template<typename NASACurveFit>
+    std::unique_ptr<AntiochMixture<NASACurveFit> >
     build_antioch_mixture(const GetPot & input, const std::string & material );
 
     libMesh::Real parse_min_T( const GetPot & input, const std::string & material )
@@ -123,23 +123,23 @@ namespace GRINS
 
   };
 
-  template<typename KineticsThermoCurveFit>
+  template<typename NASACurveFit>
   inline
-  std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> >
+  std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> >
   AntiochMixtureBuilderBase::build_nasa_thermo_mix( const GetPot & input, const std::string & material,
                                                     const Antioch::ChemicalMixture<libMesh::Real> & chem_mix )
   {
-    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> >
-      nasa_mixture( new Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit>(chem_mix) );
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> >
+      nasa_mixture( new Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit>(chem_mix) );
 
     this->parse_nasa_data( *nasa_mixture, input, material);
 
     return nasa_mixture;
   }
 
-  template<typename KineticsThermoCurveFit>
+  template<typename NASACurveFit>
   inline
-  std::unique_ptr<AntiochMixture<KineticsThermoCurveFit> >
+  std::unique_ptr<AntiochMixture<NASACurveFit> >
   AntiochMixtureBuilderBase::build_antioch_mixture(const GetPot & input, const std::string & material )
   {
     std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > chem_mixture =
@@ -148,14 +148,14 @@ namespace GRINS
     std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > reaction_set =
       this->build_reaction_set(input,material,*chem_mixture);
 
-    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KineticsThermoCurveFit> > nasa_mixture =
-      this->build_nasa_thermo_mix<KineticsThermoCurveFit>(input,material,*chem_mixture);
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> > nasa_mixture =
+      this->build_nasa_thermo_mix<NASACurveFit>(input,material,*chem_mixture);
 
     libMesh::Real min_T = this->parse_min_T(input,material);
     bool clip_negative_rho = this->parse_clip_negative_rho(input,material);
 
-    return std::unique_ptr<AntiochMixture<KineticsThermoCurveFit> >
-      ( new AntiochMixture<KineticsThermoCurveFit>
+    return std::unique_ptr<AntiochMixture<NASACurveFit> >
+      ( new AntiochMixture<NASACurveFit>
         (chem_mixture,reaction_set,nasa_mixture,min_T,clip_negative_rho) );
   }
 
