@@ -57,9 +57,11 @@ namespace GRINS
   {
   public:
 
+    AntiochEvaluator() = delete;
+
     AntiochEvaluator( const AntiochMixture<KineticsThermoCurveFit>& mixture );
 
-    virtual ~AntiochEvaluator(){};
+    virtual ~AntiochEvaluator() = default;
 
     // Chemistry
     libMesh::Real M( unsigned int species ) const;
@@ -122,7 +124,6 @@ namespace GRINS
 
   private:
 
-    AntiochEvaluator();
 
   };
 
