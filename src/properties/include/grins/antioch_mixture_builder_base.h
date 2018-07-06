@@ -32,6 +32,7 @@
 
 // GRINS
 #include "grins/materials_parsing.h"
+#include "grins/property_types.h"
 #include "grins/antioch_mixture.h"
 
 // Antioch
@@ -42,6 +43,8 @@
 #include "antioch/nasa_mixture.h"
 #include "antioch/cea_curve_fit.h"
 #include "antioch/nasa_mixture_parsing.h"
+#include "antioch/ideal_gas_thermo.h"
+#include "antioch/stat_mech_thermo.h"
 
 // libMesh
 #include "libmesh/auto_ptr.h" // std::unique_ptr
@@ -77,6 +80,11 @@ namespace GRINS
     build_nasa_thermo_mix( const GetPot & input, const std::string & material,
                            const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
 
+    template<typename NASACurveFit, typename Thermo>
+    std::unique_ptr<Thermo>
+    build_gas_thermo( const Antioch::ChemicalMixture<libMesh::Real> & chem_mix,
+                      const Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> & nasa_mix )
+    { return specialized_build_gas_thermo<NASACurveFit>( chem_mix, nasa_mix, thermo_type<Thermo>() ); }
 
     template<typename NASACurveFit>
     std::unique_ptr<AntiochMixture<NASACurveFit> >
@@ -94,6 +102,26 @@ namespace GRINS
     }
 
   protected:
+
+    template<typename NASACurveFit>
+    std::unique_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >
+    specialized_build_gas_thermo( const Antioch::ChemicalMixture<libMesh::Real> & chem_mix,
+                                  const Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> & /*nasa_mix*/,
+                                  thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
+    {
+      return std::unique_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >
+        (new Antioch::StatMechThermodynamics<libMesh::Real>(chem_mix));
+    }
+
+    template<typename NASACurveFit>
+    std::unique_ptr<Antioch::IdealGasThermo<NASACurveFit,libMesh::Real> >
+    specialized_build_gas_thermo( const Antioch::ChemicalMixture<libMesh::Real> & chem_mix,
+                                  const Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> & nasa_mix,
+                                  thermo_type<Antioch::IdealGasThermo<NASACurveFit,libMesh::Real> > )
+    {
+      return std::unique_ptr<Antioch::IdealGasThermo<NASACurveFit,libMesh::Real> >
+        (new Antioch::IdealGasThermo<NASACurveFit,libMesh::Real>(nasa_mix,chem_mix));
+    }
 
     void parse_nasa_data
     ( Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & nasa_mixture,
