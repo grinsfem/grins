@@ -300,14 +300,14 @@ namespace GRINSTesting
       GRINS::AntiochMixtureAveragedTransportMixtureBuilder builder;
 
       std::unique_ptr<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
-                                                                    Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
+                                                                    Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real>,
                                                                     Antioch::SutherlandViscosity<libMesh::Real>,
-                                                                    Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> > ,
+                                                                    Antioch::EuckenThermalConductivity<Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> > ,
                                                                     Antioch::ConstantLewisDiffusivity<libMesh::Real> > >
         mixture = builder.build_mixture<Antioch::CEACurveFit<libMesh::Real>,
-                                        Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
+                                        Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real>,
                                         Antioch::SutherlandViscosity<libMesh::Real>,
-                                        Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >,
+                                        Antioch::EuckenThermalConductivity<Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >,
                                         Antioch::ConstantLewisDiffusivity<libMesh::Real> >( *_input, "TestMaterial" );
 
       CPPUNIT_ASSERT(mixture);
@@ -337,14 +337,14 @@ namespace GRINSTesting
       GRINS::AntiochMixtureAveragedTransportMixtureBuilder builder;
 
       std::unique_ptr<GRINS::AntiochMixtureAveragedTransportMixture<Antioch::CEACurveFit<libMesh::Real>,
-                                                                    Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
+                                                                    Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real>,
                                                                     Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
-                                                                    Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,libMesh::Real>,
+                                                                    Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real>,libMesh::Real>,
                                                                     Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> > >
         mixture = builder.build_mixture<Antioch::CEACurveFit<libMesh::Real>,
-                                        Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,
+                                        Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real>,
                                         Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>,
-                                        Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real>,libMesh::Real>,
+                                        Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real>,libMesh::Real>,
                                         Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >( *_input, "TestMaterial" );
 
       CPPUNIT_ASSERT(mixture);

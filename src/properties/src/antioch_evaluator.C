@@ -63,7 +63,7 @@ namespace GRINS
 
   template<>
   libMesh::Real
-  AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
+  AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >::
   cp( const libMesh::Real& T,
       const libMesh::Real /*P*/,
       const std::vector<libMesh::Real>& Y )
@@ -73,7 +73,7 @@ namespace GRINS
   }
 
   template<>
-  void AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
+  void AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >::
   cp_s( const libMesh::Real& T,
 	const libMesh::Real /*P*/,
 	const std::vector<libMesh::Real>& Y,
@@ -87,7 +87,7 @@ namespace GRINS
   }
 
   template<>
-  libMesh::Real AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
+  libMesh::Real AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >::
   cv( const libMesh::Real& T,
       const libMesh::Real /*P*/,
       const std::vector<libMesh::Real>& Y )
@@ -97,7 +97,7 @@ namespace GRINS
   }
 
   template<>
-  libMesh::Real AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >::
+  libMesh::Real AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >::
   h_s( const libMesh::Real& T, unsigned int species )
   {
     this->check_and_reset_temp_cache(T);

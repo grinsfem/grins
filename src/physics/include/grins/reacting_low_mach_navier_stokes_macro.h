@@ -11,7 +11,7 @@ namespace GRINSPrivate
 {
   // Need typedefs for these because the commas in the template arguments screw up the C preprocessor
   // when putting the full types in the argument list
-  typedef Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> CEAIdealGasThermo;
+  typedef Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> CEAIdealGasThermo;
   typedef Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner> KineticsViscosity;
   typedef Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> BinaryDiffusion;
   typedef Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real> KineticsConductivityStatMech;

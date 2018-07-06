@@ -126,7 +126,7 @@ namespace GRINS
     else if( (thermo_model == AntiochOptions::cea_nasa_model()) )
       {
         this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
-                                                  Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >
+                                                  Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >
           (input,physics_name,material,diffusivity_model,
            conductivity_model,viscosity_model,
            new_physics);
@@ -163,7 +163,7 @@ namespace GRINS
     else if( thermo_model == AntiochOptions::cea_nasa_model() )
       {
         this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
-                                              Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > > >
+                                              Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >
           (input,physics_name,material,conductivity_model,new_physics);
       }
     else
