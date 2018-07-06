@@ -41,6 +41,7 @@
 #include "antioch/cea_evaluator.h"
 #include "antioch/stat_mech_thermo.h"
 #include "antioch/ideal_gas_micro_thermo.h"
+#include "antioch/ideal_gas_thermo.h"
 
 namespace GRINS
 {
@@ -144,6 +145,16 @@ namespace GRINS
     {
       _nasa_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>( mixture.nasa_mixture() ) );
       thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>,libMesh::Real>( *_nasa_evaluator, mixture.chemical_mixture() ) );
+    }
+
+    void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
+                                   std::unique_ptr<Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> > & thermo,
+                                   thermo_type<Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> >  )
+    {
+      _nasa_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>( mixture.nasa_mixture() ) );
+
+      thermo.reset( new Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real>
+                    ( mixture.nasa_mixture(), mixture.chemical_mixture()) );
     }
 
   };
