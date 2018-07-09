@@ -168,6 +168,12 @@ namespace GRINS
                                  const std::string & material,
                                  std::vector<std::string>& species_names );
 
+    //! Determine the input file type the user is using for Antioch
+    /*! There are three valid options: ASCII, XML, and CHEMKIN. We will use a convention on the
+        suffix of the chemical_data file name to ascertain the parsing type. Once we know the
+        parsing type from this function, other functions can act accordingly. */
+    Antioch::ParsingType get_antioch_parsing_type( const GetPot & input, const std::string & material ) const;
+
     //! Helper function to encapsulate parsing prefix
     std::string antioch_prefix( const std::string & material ) const
     { return std::string("Materials/"+material+"/GasMixture/Antioch"); }

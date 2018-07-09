@@ -30,6 +30,7 @@
 #include "grins/antioch_mixture_builder_base.h"
 
 // GRINS
+#include "grins/common.h"
 #include "grins/materials_parsing.h"
 
 // Antioch
@@ -109,6 +110,59 @@ namespace GRINS
       species_names.push_back( input( option, "DIE!", i ) );
 
   }
+
+  Antioch::ParsingType
+  AntiochMixtureBuilderBase::get_antioch_parsing_type( const GetPot & input, const std::string & material ) const
+  {
+    Antioch::ParsingType parsing_type = Antioch::ASCII;
+
+    std::string prefix(this->antioch_prefix(material));
+    std::string chem_data_option(prefix+"/"+MaterialsParsing::chemical_data_option());
+
+    // Check for old_option. If this is specified, then we are doing ASCII.
+    // We only really want to support XML and ChemKin parsing interfaces.
+    std::string old_option("Materials/"+material+"/GasMixture/species");
+    if( input.have_variable(old_option) )
+      {
+        parsing_type = Antioch::ASCII;
+        std::string warning = "WARNING: Specifying "+old_option+"is DEPRECATED!\n";
+        warning += "         Instead use the option "+prefix+"/species\n";
+        warning += "         or, preferred, use XML or ChemKin formats so that species\n";
+        warning += "         are parsed automatically.\n";
+        grins_warning(warning);
+      }
+
+    // If not the above, then we're new style. Check the suffix of the chemical data file.
+    // If .dat --> ASCII
+    // If .xml --> XML
+    // If .chemkin --> CHEMKIN
+    else if( input.have_variable(prefix+"/"+MaterialsParsing::chemical_data_option()) )
+      {
+        std::string chem_data_filename = input(chem_data_option, std::string("DIE!") );
+        if( chem_data_filename.find(".dat") != chem_data_filename.npos )
+          parsing_type = Antioch::ASCII;
+        else if( chem_data_filename.find(".xml") != chem_data_filename.npos )
+          parsing_type = Antioch::XML;
+        else if( chem_data_filename.find(".chemkin") != chem_data_filename.npos )
+          parsing_type = Antioch::CHEMKIN;
+        else
+          {
+            std::string msg = "ERROR: Could not find valid input specification for ";
+            msg += prefix+"/"+MaterialsParsing::chemical_data_option()+"\n";
+            msg += "       Expected a filename with .dat, .xml, or .chemkin suffix.\n";
+            libmesh_error_msg(msg);
+          }
+      }
+    else
+      {
+        std::string msg = "ERROR: Could not find valid input specification for ";
+        msg += prefix+"/"+MaterialsParsing::chemical_data_option()+"\n";
+        libmesh_error_msg(msg);
+      }
+
+    return parsing_type;
+  }
+
 
 } // end namespace GRINS
 
