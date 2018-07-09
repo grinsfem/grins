@@ -76,9 +76,11 @@ namespace GRINS
     build_species_names( const GetPot & input, const std::string & material,
                          std::vector<std::string> & species_names);
 
+    //! Returns a unique_ptr to a fully constructed Antioch::ChemicalMixture
     std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> >
     build_chem_mix( const GetPot & input, const std::string & material );
 
+    //! Returns a unique_ptr to a fully constructed Antioch::ReactionSet
     std::unique_ptr<Antioch::ReactionSet<libMesh::Real> >
     build_reaction_set( const GetPot & input, const std::string & material,
                         const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
