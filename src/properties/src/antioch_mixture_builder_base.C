@@ -42,7 +42,7 @@ namespace GRINS
   AntiochMixtureBuilderBase::build_chem_mix( const GetPot & input, const std::string & material )
   {
     std::vector<std::string> species_list;
-    MaterialsParsing::parse_chemical_species(input,material,species_list);
+    this->build_species_names(input,material,species_list);
 
     bool verbose_antioch_read = input("Materials/"+material+"/GasMixture/Antioch/verbose_read",false);
 
@@ -81,6 +81,31 @@ namespace GRINS
     Antioch::read_reaction_set_data_xml<libMesh::Real>( kinetics_data_filename, verbose_read, *reaction_set );
 
     return reaction_set;
+  }
+
+  void AntiochMixtureBuilderBase::build_species_names( const GetPot & input, const std::string & material,
+                                                       std::vector<std::string> & species_names)
+  {
+    this->parse_chemical_species(input,material,species_names);
+  }
+
+  void AntiochMixtureBuilderBase::parse_chemical_species( const GetPot & input,
+                                                          const std::string & material,
+                                                          std::vector<std::string>& species_names )
+  {
+    // Clear out anything the user might've put in there.
+    species_names.clear();
+
+    std::string option("Materials/"+material+"/GasMixture/species");
+    MaterialsParsing::check_for_input_option(input,option);
+
+    // Read variable naming info
+    unsigned int n_species = input.vector_variable_size(option);
+
+    species_names.reserve(n_species);
+    for( unsigned int i = 0; i < n_species; i++ )
+      species_names.push_back( input( option, "DIE!", i ) );
+
   }
 
 } // end namespace GRINS

@@ -105,14 +105,6 @@ namespace GRINS
     //! Helper function to check for option and error out if it's not found.
     static void check_for_input_option( const GetPot & input, const std::string & option );
 
-    //! Helper function for parsing the chemical species
-    /*! The user-provided vector will populated with the chemical
-      species names in the input file. "Physics/Chemistry/species" is
-      deprecated in favor of "Material/"+material+"/GasMixture/species" */
-    static void parse_chemical_species( const GetPot & input,
-                                        const std::string & material,
-                                        std::vector<std::string>& species_names );
-
     //! Helper function for parsing the chemical species and setting variable name
     /*! This function will parse the thermochemistry library requested by the
         user and then use the corresponding thermochemistry object to parse

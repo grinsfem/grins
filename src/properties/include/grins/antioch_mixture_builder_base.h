@@ -68,6 +68,14 @@ namespace GRINS
     AntiochMixtureBuilderBase(){}
     ~AntiochMixtureBuilderBase(){}
 
+    //! Populates the passed in vector of strings with all the species names
+    /*! This method handles the details of how we parse the species names using Antioch's
+        parsing methods. The vector of strings will be sized accordingly, the user
+        does not need to worry about correct sizing. */
+    void
+    build_species_names( const GetPot & input, const std::string & material,
+                         std::vector<std::string> & species_names);
+
     std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> >
     build_chem_mix( const GetPot & input, const std::string & material );
 
@@ -148,6 +156,14 @@ namespace GRINS
     {
       libmesh_not_implemented();
     }
+
+    //! Helper function for parsing the chemical species
+    /*! The user-provided vector will populated with the chemical
+        species names in the input file. "Material/"+material+"/GasMixture/species"
+        is the option name. */
+    void parse_chemical_species( const GetPot & input,
+                                 const std::string & material,
+                                 std::vector<std::string>& species_names );
 
   };
 
