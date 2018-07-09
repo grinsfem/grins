@@ -137,7 +137,8 @@ namespace GRINS
     ( Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & nasa_mixture,
       const GetPot & input, const std::string & material)
     {
-      std::string cea_data_filename = input( "Materials/"+material+"/GasMixture/Antioch/cea_data", "default" );
+      std::string prefix(this->antioch_prefix(material));
+      std::string cea_data_filename = input( prefix+"/cea_data", "default" );
 
       if( cea_data_filename == std::string("default") )
         cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
@@ -166,6 +167,10 @@ namespace GRINS
     void parse_chemical_species( const GetPot & input,
                                  const std::string & material,
                                  std::vector<std::string>& species_names );
+
+    //! Helper function to encapsulate parsing prefix
+    std::string antioch_prefix( const std::string & material ) const
+    { return std::string("Materials/"+material+"/GasMixture/Antioch"); }
 
   };
 

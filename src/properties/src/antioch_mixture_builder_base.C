@@ -44,17 +44,19 @@ namespace GRINS
     std::vector<std::string> species_list;
     this->build_species_names(input,material,species_list);
 
-    bool verbose_antioch_read = input("Materials/"+material+"/GasMixture/Antioch/verbose_read",false);
+    std::string prefix(this->antioch_prefix(material));
 
-    std::string species_data_filename = input("Materials/"+material+"/GasMixture/Antioch/species_data", "default" );
+    bool verbose_antioch_read = input(prefix+"/verbose_read",false);
+
+    std::string species_data_filename = input(prefix+"/species_data", "default" );
     if( species_data_filename == std::string("default") )
       species_data_filename = Antioch::DefaultInstallFilename::chemical_mixture();
 
-    std::string vibration_data_filename = input("Materials/"+material+"/GasMixture/Antioch/vibration_data", "default" );
+    std::string vibration_data_filename = input(prefix+"/vibration_data", "default" );
     if( vibration_data_filename == std::string("default") )
       vibration_data_filename = Antioch::DefaultInstallFilename::vibrational_data();
 
-    std::string electronic_data_filename = input("Materials/"+material+"/GasMixture/Antioch/electronic_data", "default" );
+    std::string electronic_data_filename = input(prefix+"/electronic_data", "default" );
     if( electronic_data_filename == std::string("default") )
       electronic_data_filename = Antioch::DefaultInstallFilename::electronic_data();
 
