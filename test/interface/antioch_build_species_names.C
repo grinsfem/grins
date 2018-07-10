@@ -34,12 +34,47 @@
 
 namespace GRINSTesting
 {
-  class AntiochBuildSpeciesTest : public CppUnit::TestCase,
-                                  public GRINS::AntiochMixtureBuilderBase
+  class AntiochBuilderFormatTestBase
+  {
+  protected:
+
+    // Handcoding our inputfile. Common things between all formats
+    std::string basic_input_setup( const std::string & chemical_data_filename )
+    {
+      std::string text = "[Materials]\n";
+      text +="[./TestMaterial]\n";
+      text +="[./GasMixture]\n";
+      text +="[./Antioch]\n";
+      text += "chemical_data = './input_files/"+chemical_data_filename+"'\n";
+      return text;
+    }
+
+    // Specific for ASCII type parsing
+    std::string setup_ascii_input( const std::string & chemical_data_filename )
+    {
+      std::string text = this->basic_input_setup(chemical_data_filename);
+      text += "species = 'O O2 O3'\n";
+
+      return text;
+    }
+
+    // Specific for XML type parsing
+    std::string setup_xml_input( const std::string & chemical_data_filename, const std::string & mixture )
+    {
+      std::string text = this->basic_input_setup(chemical_data_filename);
+      text += "gas_mixture = '"+mixture+"'\n";
+      return text;
+    }
+  };
+
+  //! Test AntiochMixtureBuilderBase::build_species_names for different parsing formats
+  class AntiochBuilderFormatSpeciesNameTest : public CppUnit::TestCase,
+                                              public AntiochBuilderFormatTestBase,
+                                              public GRINS::AntiochMixtureBuilderBase
   {
   public:
 
-    CPPUNIT_TEST_SUITE( AntiochBuildSpeciesTest );
+    CPPUNIT_TEST_SUITE( AntiochBuilderFormatSpeciesNameTest );
 
     CPPUNIT_TEST( test_ascii );
     CPPUNIT_TEST( test_xml_air5sp );
@@ -85,31 +120,6 @@ namespace GRINSTesting
       return species_names;
     }
 
-    std::string setup_xml_input( const std::string & chemical_data_filename, const std::string & mixture )
-    {
-      std::string text = this->basic_input_setup(chemical_data_filename);
-      text += "gas_mixture = '"+mixture+"'\n";
-      return text;
-    }
-
-    std::string setup_ascii_input( const std::string & chemical_data_filename )
-    {
-      std::string text = this->basic_input_setup(chemical_data_filename);
-      text += "species = 'O O2 O3'\n";
-
-      return text;
-    }
-
-    std::string basic_input_setup( const std::string & chemical_data_filename )
-    {
-      std::string text = "[Materials]\n";
-      text +="[./TestMaterial]\n";
-      text +="[./GasMixture]\n";
-      text +="[./Antioch]\n";
-      text += "chemical_data = './input_files/"+chemical_data_filename+"'\n";
-      return text;
-    }
-
     void check_ascii( const std::vector<std::string> & species_names )
     {
       CPPUNIT_ASSERT_EQUAL(3,(int)species_names.size());
@@ -144,7 +154,7 @@ namespace GRINSTesting
 
   };
 
-  CPPUNIT_TEST_SUITE_REGISTRATION( AntiochBuildSpeciesTest );
+  CPPUNIT_TEST_SUITE_REGISTRATION( AntiochBuilderFormatSpeciesNameTest );
 
 } // end namespace GRINSTesting
 
