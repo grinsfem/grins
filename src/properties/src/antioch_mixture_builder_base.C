@@ -89,17 +89,57 @@ namespace GRINS
   void AntiochMixtureBuilderBase::build_species_names( const GetPot & input, const std::string & material,
                                                        std::vector<std::string> & species_names)
   {
-    this->parse_chemical_species(input,material,species_names);
-  }
-
-  void AntiochMixtureBuilderBase::parse_chemical_species( const GetPot & input,
-                                                          const std::string & material,
-                                                          std::vector<std::string>& species_names )
-  {
     // Clear out anything the user might've put in there.
     species_names.clear();
 
-    std::string option("Materials/"+material+"/GasMixture/species");
+    Antioch::ParsingType parsing_type = this->get_antioch_parsing_type(input,material);
+
+    switch(parsing_type)
+      {
+      case(Antioch::ASCII):
+        {
+          std::string prefix(this->antioch_prefix(material));
+          std::string old_option("Materials/"+material+"/GasMixture/species");
+          std::string new_option(prefix+"/species");
+
+          if( input.have_variable(old_option) )
+            this->parse_chemical_species(input,old_option,species_names);
+
+          else if( input.have_variable(new_option) )
+            this->parse_chemical_species(input,new_option,species_names);
+
+          else
+            {
+              std::string msg = "ERROR: Could not find valid entry for "+new_option+" !\n";
+              msg += "       Using the ASCII parser with Antioch, you must explicitly\n";
+              msg += "       specify the list of species using the input option\n";
+              msg += "       "+new_option+" .\n";
+              msg += "       We strongly recommend switching to XML format.\n";
+
+              libmesh_error_msg(msg);
+            }
+          break;
+        }
+      case(Antioch::XML):
+        {
+          libmesh_not_implemented();
+          break;
+        }
+      case(Antioch::CHEMKIN):
+        {
+          libmesh_not_implemented();
+          break;
+        }
+      default:
+        libmesh_error_msg("ERROR: Invalid Antioch parsing type!");
+      }
+  }
+
+  void AntiochMixtureBuilderBase::parse_chemical_species( const GetPot & input,
+                                                          const std::string & option,
+                                                          std::vector<std::string>& species_names )
+  {
+
     MaterialsParsing::check_for_input_option(input,option);
 
     // Read variable naming info

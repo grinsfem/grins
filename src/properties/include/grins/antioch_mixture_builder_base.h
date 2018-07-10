@@ -165,7 +165,7 @@ namespace GRINS
         species names in the input file. "Material/"+material+"/GasMixture/species"
         is the option name. */
     void parse_chemical_species( const GetPot & input,
-                                 const std::string & material,
+                                 const std::string & option,
                                  std::vector<std::string>& species_names );
 
     //! Determine the input file type the user is using for Antioch
