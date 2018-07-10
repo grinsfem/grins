@@ -142,7 +142,8 @@ interface_driver_SOURCES = interface/interface_driver.C \
                            interface/air_5sp.C \
                            interface/antioch_mixture_builder_test.C \
                            interface/absorption_coeff_testing.h \
-                           interface/antioch_parsing_type.C
+                           interface/antioch_parsing_type.C \
+                           interface/antioch_build_species_names.C
 
 
 
