@@ -36,6 +36,7 @@
 // Antioch
 #include "antioch/default_filename.h"
 #include "antioch/read_reaction_set_data.h"
+#include "antioch/xml_parser.h"
 
 namespace GRINS
 {
@@ -94,11 +95,12 @@ namespace GRINS
 
     Antioch::ParsingType parsing_type = this->get_antioch_parsing_type(input,material);
 
+    std::string prefix(this->antioch_prefix(material));
+
     switch(parsing_type)
       {
       case(Antioch::ASCII):
         {
-          std::string prefix(this->antioch_prefix(material));
           std::string old_option("Materials/"+material+"/GasMixture/species");
           std::string new_option(prefix+"/species");
 
@@ -122,7 +124,17 @@ namespace GRINS
         }
       case(Antioch::XML):
         {
-          libmesh_not_implemented();
+          std::string chem_data_option(prefix+"/"+MaterialsParsing::chemical_data_option());
+          std::string chem_data_filename = input(chem_data_option,std::string("DIE!"));
+
+          std::string gas_mixture_option(prefix+"/gas_mixture");
+          MaterialsParsing::check_for_input_option(input,gas_mixture_option);
+
+          std::string gas_mixture = input(gas_mixture_option,"DIE!");
+
+          Antioch::XMLParser<libMesh::Real> parser(chem_data_filename, gas_mixture, false);
+          species_names = parser.species_list();
+
           break;
         }
       case(Antioch::CHEMKIN):
