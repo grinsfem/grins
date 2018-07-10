@@ -154,7 +154,158 @@ namespace GRINSTesting
 
   };
 
+  //! Test AntiochMixtureBuilderBase::build_reaction_set for different parsing formats
+  class AntiochBuilderFormatKineticsTest : public CppUnit::TestCase,
+                                           public AntiochBuilderFormatTestBase,
+                                           public GRINS::AntiochMixtureBuilderBase
+  {
+  public:
+
+    CPPUNIT_TEST_SUITE( AntiochBuilderFormatKineticsTest );
+
+    CPPUNIT_TEST( test_xml_air5sp );
+
+    CPPUNIT_TEST_SUITE_END();
+
+  public:
+
+    void test_xml_air5sp()
+    {
+      std::string inputfile = this->setup_xml_input("air.xml","air5sp");
+      std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > mixture;
+      std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > reaction_set;
+
+      this->do_work( inputfile, mixture, reaction_set );
+
+      this->check_air5sp_kinetics(*mixture,*reaction_set);
+    }
+
+  private:
+
+    void do_work( const std::string & inputfile,
+                  std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & mixture,
+                  std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > & reaction_set )
+    {
+      std::stringstream inputstream;
+      inputstream << inputfile;
+
+      GetPot input(inputstream);
+
+      mixture = this->build_chem_mix(input,"TestMaterial");
+      reaction_set = this->build_reaction_set(input,"TestMaterial",*mixture);
+    }
+
+
+    void check_air5sp_kinetics( const Antioch::ChemicalMixture<libMesh::Real> & mixture,
+                                const Antioch::ReactionSet<libMesh::Real> & reaction_set )
+    {
+      // This file actually has a lot more reactions, so we're additionally
+      // testing that we're stripping off reactions that include species
+      // that are not in the mixture that formed the reaction set.
+      CPPUNIT_ASSERT_EQUAL(5,(int)reaction_set.n_reactions());
+
+      this->check_air5sp_reactions_only(mixture,reaction_set);
+    }
+
+    void check_air5sp_reactions_only( const Antioch::ChemicalMixture<libMesh::Real> & mixture,
+                                      const Antioch::ReactionSet<libMesh::Real> & reaction_set )
+    {
+      // Check first reaction
+      {
+        const Antioch::Reaction<libMesh::Real> & modarr_threebody = reaction_set.reaction(0);
+        CPPUNIT_ASSERT_EQUAL(Antioch::ReactionType::THREE_BODY, modarr_threebody.type() );
+        CPPUNIT_ASSERT_EQUAL(Antioch::KineticsModel::KOOIJ, modarr_threebody.kinetics_model() );
+        CPPUNIT_ASSERT(modarr_threebody.reversible());
+
+        // Check threebody efficiencies
+        for( unsigned int s = 0; s < reaction_set.n_species(); s++ )
+          {
+            std::string species_name = mixture.chemical_species()[s]->species();
+            libMesh::Real efficiency = modarr_threebody.get_efficiency(s);
+
+            if( species_name == std::string("N") )
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(4.2857, efficiency, this->tol());
+            else if( species_name == std::string("O") )
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(4.2857, efficiency, this->tol());
+            else
+              // Default should be 1.0
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, efficiency, this->tol());
+          }
+      }
+
+      // Check second reaction
+      {
+        const Antioch::Reaction<libMesh::Real> & modarr_threebody = reaction_set.reaction(1);
+        CPPUNIT_ASSERT_EQUAL(Antioch::ReactionType::THREE_BODY, modarr_threebody.type() );
+        CPPUNIT_ASSERT_EQUAL(Antioch::KineticsModel::KOOIJ, modarr_threebody.kinetics_model() );
+        CPPUNIT_ASSERT(modarr_threebody.reversible());
+
+        // Check threebody efficiencies
+        for( unsigned int s = 0; s < reaction_set.n_species(); s++ )
+          {
+            std::string species_name = mixture.chemical_species()[s]->species();
+            libMesh::Real efficiency = modarr_threebody.get_efficiency(s);
+
+            if( species_name == std::string("N") )
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0, efficiency, this->tol());
+            else if( species_name == std::string("O") )
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0, efficiency, this->tol());
+            else
+              // Default should be 1.0
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, efficiency, this->tol());
+          }
+      }
+
+      // Check third reaction
+      {
+        const Antioch::Reaction<libMesh::Real> & arr_threebody = reaction_set.reaction(2);
+        CPPUNIT_ASSERT_EQUAL(Antioch::ReactionType::THREE_BODY, arr_threebody.type() );
+        CPPUNIT_ASSERT_EQUAL(Antioch::KineticsModel::ARRHENIUS, arr_threebody.kinetics_model() );
+        CPPUNIT_ASSERT(arr_threebody.reversible());
+
+        // Check threebody efficiencies
+        for( unsigned int s = 0; s < reaction_set.n_species(); s++ )
+          {
+            std::string species_name = mixture.chemical_species()[s]->species();
+            libMesh::Real efficiency = arr_threebody.get_efficiency(s);
+
+            if( species_name == std::string("N") )
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(22.0, efficiency, this->tol());
+            else if( species_name == std::string("O") )
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(22.0, efficiency, this->tol());
+            else if( species_name == std::string("NO") )
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(22.0, efficiency, this->tol());
+            else
+              // Default should be 1.0
+              CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, efficiency, this->tol());
+          }
+      }
+
+
+      // Check fourth reaction
+      {
+        const Antioch::Reaction<libMesh::Real> & modarr_rev = reaction_set.reaction(3);
+        CPPUNIT_ASSERT_EQUAL(Antioch::ReactionType::ELEMENTARY ,modarr_rev.type() );
+        CPPUNIT_ASSERT_EQUAL(Antioch::KineticsModel::KOOIJ, modarr_rev.kinetics_model() );
+        CPPUNIT_ASSERT(modarr_rev.reversible());
+      }
+
+      // Check fifth reaction
+      {
+        const Antioch::Reaction<libMesh::Real> & arr_rev = reaction_set.reaction(4);
+        CPPUNIT_ASSERT_EQUAL(Antioch::ReactionType::ELEMENTARY ,arr_rev.type() );
+        CPPUNIT_ASSERT_EQUAL(Antioch::KineticsModel::ARRHENIUS, arr_rev.kinetics_model() );
+        CPPUNIT_ASSERT(arr_rev.reversible());
+      }
+    }
+
+    libMesh::Real tol()
+    { return std::numeric_limits<libMesh::Real>::epsilon() * 10; }
+
+  };
+
   CPPUNIT_TEST_SUITE_REGISTRATION( AntiochBuilderFormatSpeciesNameTest );
+  CPPUNIT_TEST_SUITE_REGISTRATION( AntiochBuilderFormatKineticsTest );
 
 } // end namespace GRINSTesting
 
