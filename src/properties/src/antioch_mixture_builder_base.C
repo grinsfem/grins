@@ -78,11 +78,76 @@ namespace GRINS
     std::unique_ptr<Antioch::ReactionSet<libMesh::Real> >
       reaction_set( new Antioch::ReactionSet<libMesh::Real>(chem_mix) );
 
-    std::string kinetics_data_filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
-
     bool verbose_read = input("screen-options/verbose_kinetics_read", false );
 
-    Antioch::read_reaction_set_data_xml<libMesh::Real>( kinetics_data_filename, verbose_read, *reaction_set );
+    std::string prefix(this->antioch_prefix(material));
+    std::string gas_mixture_option(prefix+"/gas_mixture");
+
+    Antioch::ParsingType parsing_type = this->get_antioch_parsing_type(input,material);
+
+    switch(parsing_type)
+      {
+        // We're actually going to use Antioch's XML parser to parse the kinetics,
+        // but we distinguish ASCII because we need a separate GRINS input option
+        // to get the kinetics file. In the XML case, everything is in one XML file
+        // whereas with the ASCII, we have \infty files...
+      case(Antioch::ASCII):
+        {
+          std::string old_option("Materials/"+material+"/GasMixture/kinetics_data");
+          std::string new_option(prefix+"/kinetics_data");
+
+          std::string filename;
+          if( input.have_variable(old_option) )
+            {
+              // Deprecated message is in this function call
+              filename = MaterialsParsing::parse_chemical_kinetics_datafile_name( input, material );
+            }
+          else if( input.have_variable(new_option) )
+            filename = input(new_option,std::string("DIE!"));
+
+          else
+            libmesh_error_msg("ERROR: Could not valid input for "+new_option+"!\n");
+
+          if( input.have_variable(gas_mixture_option) )
+            {
+              std::string gas_mixture = input(gas_mixture_option,"DIE!");
+              Antioch::XMLParser<libMesh::Real> parser(filename, gas_mixture, verbose_read);
+              Antioch::read_reaction_set_data<libMesh::Real>( verbose_read, *reaction_set, &parser );
+            }
+          else
+            {
+              std::string msg = "WARNING: Option "+gas_mixture_option+" not found!\n";
+              msg += "         The first kinetics data set in the file "+filename+"\n";
+              msg += "         will be used. This is DEPRECATED behavior. In the future,\n";
+              msg += "         the option "+gas_mixture_option+" will be required.\n";
+              grins_warning(msg);
+
+              Antioch::read_reaction_set_data<libMesh::Real>( filename, verbose_read, *reaction_set, Antioch::XML );
+            }
+          break;
+        }
+      case(Antioch::XML):
+        {
+          std::string chem_data_option(prefix+"/"+MaterialsParsing::chemical_data_option());
+          std::string chem_data_filename = input(chem_data_option,std::string("DIE!"));
+
+          MaterialsParsing::check_for_input_option(input,gas_mixture_option);
+          std::string gas_mixture = input(gas_mixture_option,"DIE!");
+
+          Antioch::XMLParser<libMesh::Real> parser(chem_data_filename, gas_mixture, verbose_read);
+          Antioch::read_reaction_set_data<libMesh::Real>( verbose_read, *reaction_set, &parser );
+          break;
+        }
+      case(Antioch::CHEMKIN):
+        {
+          libmesh_not_implemented();
+          break;
+        }
+      default:
+        libmesh_error_msg("ERROR: Invalid Antioch parsing type!");
+      }
+
+
 
     return reaction_set;
   }
