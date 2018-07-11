@@ -16,8 +16,6 @@
 
       enable_thermo_press_calc = 'false'
       pin_pressure = 'false'
-
-      output_vars = 'mole_fractions omega_dot'
    [../]
 []
 
@@ -28,7 +26,7 @@
    [./Inlet]
       [./Velocity]
          type = 'parsed_dirichlet'
-         Ux = '64000.0*(y*(0.005-y))'
+         Ux = '28000.0*(y*(0.005-y))'
       [../]
 
       [./Temperature]
@@ -85,7 +83,6 @@
        y_max = '0.005'
        n_elems_x = '80'
        n_elems_y = '20'
-   #   filename = 'unif_ref_1.xda'
 []
 
 [Materials]
@@ -105,8 +102,6 @@
            mass_diffusivity_model = 'constant_lewis'
            cea_data = './input_files/ozone_cea_data.dat'
            species_data = './input_files/ozone_species_data.dat'
-           minimum_T = 10
-           clip_negative_rho = true
 
      [../../Viscosity]
         value = '1.0e-5'
@@ -153,7 +148,12 @@
    use_numerical_jacobians_only = 'true'
 
    relative_residual_tolerance = '1.0e-10'
-   relative_step_tolerance = '1.0e-8'
+
+   #[PB]: This is as small as I could make this
+   #      and still get convergence on this
+   #      problem. Too coarse grid and (probably)
+   #      bad scaling to do any better.
+   relative_step_tolerance = '5.0e-7'
 []
 
 # Visualization options
