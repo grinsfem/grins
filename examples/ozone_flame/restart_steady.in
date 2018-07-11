@@ -13,11 +13,6 @@
       g = '0.0 0.0' #[m/s^2]
 
       Tmax = '700.0'
-
-      enable_thermo_press_calc = 'false'
-      pin_pressure = 'false'
-
-      output_vars = 'mole_fractions omega_dot'
    [../]
 []
 
@@ -28,7 +23,7 @@
    [./Inlet]
       [./Velocity]
          type = 'parsed_dirichlet'
-         Ux = '64000.0*(y*(0.005-y))'
+         Ux = '28000.0*(y*(0.005-y))'
       [../]
 
       [./Temperature]
@@ -144,20 +139,20 @@
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
    continue_after_max_iterations = 'true'
-   max_nonlinear_iterations = '200'
+   max_nonlinear_iterations = '50'
    max_linear_iterations = '2500'
    minimum_linear_tolerance = '1.0e-10'
    initial_linear_tolerance = '1.0e-10'
    use_numerical_jacobians_only = 'true'
 
    relative_residual_tolerance = '1.0e-10'
-   relative_step_tolerance = '1.0e-6'
+   relative_step_tolerance = '5.0e-7'
 []
 
 # Visualization options
 [vis-options]
    output_vis = 'true'
-   vis_output_file_prefix = 'output'
+   vis_output_file_prefix = 'steady'
    output_residual = 'false'
    output_format = 'ExodusII xdr'
 []

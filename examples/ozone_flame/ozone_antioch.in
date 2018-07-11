@@ -3,7 +3,7 @@
 [SolverOptions]
    [./TimeStepping]
       solver_type = 'libmesh_euler_solver'
-      delta_t = '1.0e-6'
+      delta_t = '5.0e-6'
       n_timesteps = '500'
       theta = '1.0'
 []
@@ -27,12 +27,12 @@
       ic_ids = '0'
       ic_types = 'parsed'
       ic_variables = 'Y_O2:Y_O3:T:Ux'
-      ic_values = '{0.8}{0.2}{Tmax:=${Physics/ReactingLowMachNavierStokes/Tmax};300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}{64000.0*(y*(0.005-y))}'
+      ic_values = '{0.8}{0.2}{Tmax:=${Physics/ReactingLowMachNavierStokes/Tmax};300+(x<=0.005)*(x>0.002)*((x-0.002)*(Tmax-300)/(0.005-0.002))+(x<0.008)*(x>0.005)*((0.008-x)*(Tmax-300)/(0.008-0.005))}{28000.0*(y*(0.005-y))}'
 
       enable_thermo_press_calc = 'false'
       pin_pressure = 'false'
 
-      output_vars = 'mole_fractions omega_dot'
+      #output_vars = 'mole_fractions omega_dot'
    [../]
 []
 
@@ -43,7 +43,7 @@
    [./Inlet]
       [./Velocity]
          type = 'parsed_dirichlet'
-         Ux = '64000.0*(y*(0.005-y))'
+         Ux = '28000.0*(y*(0.005-y))'
       [../]
 
       [./Temperature]
@@ -172,9 +172,10 @@
 # Visualization options
 [vis-options]
    output_vis = 'true'
-   vis_output_file_prefix = 'output'
+   vis_output_file_prefix = 'run0'
    output_residual = 'false'
    output_format = 'ExodusII xdr'
+   timesteps_per_vis = '50' 
 []
 
 # Options for print info to the screen

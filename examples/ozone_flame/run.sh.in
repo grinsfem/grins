@@ -1,7 +1,31 @@
 #!/bin/sh
 
 GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
-DEFAULT_SOLVER_OPTIONS="-ksp_type gmeres -pc_type bjacobi -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
+DEFAULT_SOLVER_OPTIONS="-ksp_type gmres -pc_type asm -pc_asm_overlap 10 -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
 GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS:$DEFAULT_SOLVER_OPTIONS}
 
-$GRINS_RUN @prefix@/bin/grins @prefix@/examples/ozone_flame/ozone_antioch.in $GRINS_SOLVER_OPTIONS
+GRINS=@prefix@/bin/grins
+INPUT=@prefix@/examples/ozone_flame/ozone_antioch.in
+
+STEADY_INPUT=@prefix@/examples/ozone_flame/restart_steady.in
+
+mkdir -p run0;
+$GRINS_RUN $GRINS $INPUT vis-options/vis_output_file_prefix='./run0/run0' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./run0/run0.log
+
+mkdir -p run1;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./run0/run0.499.xdr' vis-options/vis_output_file_prefix='./run1/run1' SolverOptions/TimeStepping/delta_t='1e-5' SolverOptions/TimeStepping/n_timesteps='1000' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./run1/run1.log
+
+mkdir -p run2;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./run1/run1.999.xdr' vis-options/vis_output_file_prefix='./run2/run2' SolverOptions/TimeStepping/delta_t='5e-5' SolverOptions/TimeStepping/n_timesteps='250' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./run2/run2.log
+
+mkdir -p run3;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./run2/run2.249.xdr' vis-options/vis_output_file_prefix='./run3/run3' SolverOptions/TimeStepping/delta_t='1e-4' SolverOptions/TimeStepping/n_timesteps='500' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./run3/run3.log
+
+mkdir -p run4;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./run3/run3.499.xdr' vis-options/vis_output_file_prefix='./run4/run4' SolverOptions/TimeStepping/delta_t='2e-4' SolverOptions/TimeStepping/n_timesteps='250' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./run4/run4.log
+
+mkdir -p run5;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./run4/run4.249.xdr' vis-options/vis_output_file_prefix='./run5/run5' SolverOptions/TimeStepping/delta_t='1e-4' SolverOptions/TimeStepping/n_timesteps='50' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./run5/run5.log
+
+mkdir -p run_steady;
+$GRINS_RUN $GRINS $STEADY_INPUT restart-options/restart_file='./run5/run5.49.xdr'  $GRINS_SOLVER_OPTIONS 2>&1 tee ./run_steady/run_steady.log
