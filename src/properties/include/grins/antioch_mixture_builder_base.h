@@ -172,17 +172,59 @@ namespace GRINS
     }
 
     void parse_nasa_data
-    ( const GetPot & /*input*/, const std::string & /*material*/, Antioch::ParsingType /*parsing_type*/,
-      Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA7CurveFit<libMesh::Real> > & /*nasa_mixture*/ )
+    ( const GetPot & input, const std::string & material, Antioch::ParsingType parsing_type,
+      Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA7CurveFit<libMesh::Real> > & nasa_mixture )
     {
-      libmesh_not_implemented();
+      switch(parsing_type)
+      {
+      case(Antioch::ASCII):
+        {
+          libmesh_error_msg("ERROR: ASCII Parsing of NASA7 not implemented. Use NASA9 instead for ASCII parser!");
+          break;
+        }
+      case(Antioch::XML):
+        {
+          std::unique_ptr<Antioch::XMLParser<libMesh::Real> > parser = this->build_xml_parser(input,material);
+          libmesh_assert(parser->is_nasa7_curve_fit_type());
+          parser->read_thermodynamic_data(nasa_mixture);
+          break;
+        }
+      case(Antioch::CHEMKIN):
+        {
+          libmesh_not_implemented();
+          break;
+        }
+      default:
+        libmesh_error_msg("ERROR: Invalid Antioch parsing type!");
+      }
     }
 
     void parse_nasa_data
-    ( const GetPot & /*input*/, const std::string & /*material*/, Antioch::ParsingType /*parsing_type*/,
-      Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA9CurveFit<libMesh::Real> > & /*nasa_mixture*/ )
+    ( const GetPot & input, const std::string & material, Antioch::ParsingType parsing_type,
+      Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA9CurveFit<libMesh::Real> > & nasa_mixture )
     {
-      libmesh_not_implemented();
+      switch(parsing_type)
+      {
+      case(Antioch::ASCII):
+        {
+          libmesh_error_msg("ERROR: ASCII Parsing of NASA7 not implemented. Use NASA9 instead for ASCII parser!");
+          break;
+        }
+      case(Antioch::XML):
+        {
+          std::unique_ptr<Antioch::XMLParser<libMesh::Real> > parser = this->build_xml_parser(input,material);
+          libmesh_assert(!parser->is_nasa7_curve_fit_type());
+          parser->read_thermodynamic_data(nasa_mixture);
+          break;
+        }
+      case(Antioch::CHEMKIN):
+        {
+          libmesh_not_implemented();
+          break;
+        }
+      default:
+        libmesh_error_msg("ERROR: Invalid Antioch parsing type!");
+      }
     }
 
     //! Helper function for parsing the chemical species
