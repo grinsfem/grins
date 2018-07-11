@@ -134,28 +134,48 @@ namespace GRINS
     }
 
     void parse_nasa_data
-    ( Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & nasa_mixture,
-      const GetPot & input, const std::string & material)
+    ( const GetPot & input, const std::string & material, Antioch::ParsingType parsing_type,
+      Antioch::NASAThermoMixture<libMesh::Real,Antioch::CEACurveFit<libMesh::Real> > & nasa_mixture )
     {
-      std::string prefix(this->antioch_prefix(material));
-      std::string cea_data_filename = input( prefix+"/cea_data", "default" );
+      switch(parsing_type)
+      {
+      case(Antioch::ASCII):
+        {
+          std::string prefix(this->antioch_prefix(material));
+          std::string cea_data_filename = input( prefix+"/cea_data", "default" );
 
-      if( cea_data_filename == std::string("default") )
-        cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
+          if( cea_data_filename == std::string("default") )
+            cea_data_filename = Antioch::DefaultInstallFilename::thermo_data();
 
-      Antioch::read_nasa_mixture_data( nasa_mixture, cea_data_filename, Antioch::ASCII, true );
+          Antioch::read_nasa_mixture_data( nasa_mixture, cea_data_filename, Antioch::ASCII, false );
+
+          break;
+        }
+      case(Antioch::XML):
+        {
+          libmesh_error_msg("ERROR: XML Parsing of CEA not implemented. Use NASA7 or NASA9 instead!");
+          break;
+        }
+      case(Antioch::CHEMKIN):
+        {
+          libmesh_error_msg("ERROR: ChemKin Parsing of CEA not implemented. Use NASA7!");
+          break;
+        }
+      default:
+        libmesh_error_msg("ERROR: Invalid Antioch parsing type!");
+      }
     }
 
     void parse_nasa_data
-    ( Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA7CurveFit<libMesh::Real> > & /*nasa_mixture*/,
-      const GetPot & /*input*/, const std::string & /*material*/)
+    ( const GetPot & /*input*/, const std::string & /*material*/, Antioch::ParsingType /*parsing_type*/,
+      Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA7CurveFit<libMesh::Real> > & /*nasa_mixture*/ )
     {
       libmesh_not_implemented();
     }
 
     void parse_nasa_data
-    ( Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA9CurveFit<libMesh::Real> > & /*nasa_mixture*/,
-      const GetPot & /*input*/, const std::string & /*material*/)
+    ( const GetPot & /*input*/, const std::string & /*material*/, Antioch::ParsingType /*parsing_type*/,
+      Antioch::NASAThermoMixture<libMesh::Real,Antioch::NASA9CurveFit<libMesh::Real> > & /*nasa_mixture*/ )
     {
       libmesh_not_implemented();
     }
@@ -189,7 +209,9 @@ namespace GRINS
     std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> >
       nasa_mixture( new Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit>(chem_mix) );
 
-    this->parse_nasa_data( *nasa_mixture, input, material);
+    Antioch::ParsingType parsing_type = this->get_antioch_parsing_type(input,material);
+
+    this->parse_nasa_data( input, material, parsing_type, *nasa_mixture);
 
     return nasa_mixture;
   }
