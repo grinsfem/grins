@@ -53,6 +53,13 @@
 // C++
 #include <string>
 
+// Antioch forward declarations
+namespace Antioch
+{
+  template<typename Scalar>
+  class XMLParser;
+}
+
 // libMesh forward declarations
 class GetPot;
 
@@ -197,6 +204,15 @@ namespace GRINS
     //! Helper function to encapsulate parsing prefix
     std::string antioch_prefix( const std::string & material ) const
     { return std::string("Materials/"+material+"/GasMixture/Antioch"); }
+
+    //! Helper function to build an XML parser when we need it.
+    /*! Builds an XMLParser using the chemical_data input option and the gas_mixture option.
+      Currently, not every *single* XMLParser is initialized this way, but most are.
+      Hopefully in the future we can stream line this a bit, but for now with
+      the current interface, we're building an XML parser several times, so let's
+      put that in one place. */
+    std::unique_ptr<Antioch::XMLParser<libMesh::Real> >
+    build_xml_parser( const GetPot & input, const std::string & material ) const;
 
   };
 

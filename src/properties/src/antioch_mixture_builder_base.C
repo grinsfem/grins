@@ -128,14 +128,8 @@ namespace GRINS
         }
       case(Antioch::XML):
         {
-          std::string chem_data_option(prefix+"/"+MaterialsParsing::chemical_data_option());
-          std::string chem_data_filename = input(chem_data_option,std::string("DIE!"));
-
-          MaterialsParsing::check_for_input_option(input,gas_mixture_option);
-          std::string gas_mixture = input(gas_mixture_option,"DIE!");
-
-          Antioch::XMLParser<libMesh::Real> parser(chem_data_filename, gas_mixture, verbose_read);
-          Antioch::read_reaction_set_data<libMesh::Real>( verbose_read, *reaction_set, &parser );
+          std::unique_ptr<Antioch::XMLParser<libMesh::Real> > parser = this->build_xml_parser(input,material);
+          Antioch::read_reaction_set_data<libMesh::Real>( verbose_read, *reaction_set, parser.get() );
           break;
         }
       case(Antioch::CHEMKIN):
@@ -189,17 +183,8 @@ namespace GRINS
         }
       case(Antioch::XML):
         {
-          std::string chem_data_option(prefix+"/"+MaterialsParsing::chemical_data_option());
-          std::string chem_data_filename = input(chem_data_option,std::string("DIE!"));
-
-          std::string gas_mixture_option(prefix+"/gas_mixture");
-          MaterialsParsing::check_for_input_option(input,gas_mixture_option);
-
-          std::string gas_mixture = input(gas_mixture_option,"DIE!");
-
-          Antioch::XMLParser<libMesh::Real> parser(chem_data_filename, gas_mixture, false);
-          species_names = parser.species_list();
-
+          std::unique_ptr<Antioch::XMLParser<libMesh::Real> > parser = this->build_xml_parser(input,material);
+          species_names = parser->species_list();
           break;
         }
       case(Antioch::CHEMKIN):
@@ -280,6 +265,22 @@ namespace GRINS
     return parsing_type;
   }
 
+  std::unique_ptr<Antioch::XMLParser<libMesh::Real> >
+  AntiochMixtureBuilderBase::build_xml_parser( const GetPot & input, const std::string & material ) const
+  {
+    std::string prefix(this->antioch_prefix(material));
+
+    std::string chem_data_option(prefix+"/"+MaterialsParsing::chemical_data_option());
+    std::string chem_data_filename = input(chem_data_option,std::string("DIE!"));
+
+    std::string gas_mixture_option(prefix+"/gas_mixture");
+    MaterialsParsing::check_for_input_option(input,gas_mixture_option);
+
+    std::string gas_mixture = input(gas_mixture_option,"DIE!");
+
+    return std::unique_ptr<Antioch::XMLParser<libMesh::Real> >
+      ( new Antioch::XMLParser<libMesh::Real>(chem_data_filename, gas_mixture, false) );
+  }
 
 } // end namespace GRINS
 
