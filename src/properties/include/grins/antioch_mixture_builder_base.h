@@ -45,6 +45,7 @@
 #include "antioch/nasa_mixture_parsing.h"
 #include "antioch/ideal_gas_thermo.h"
 #include "antioch/stat_mech_thermo.h"
+#include "antioch/xml_parser.h"
 
 // libMesh
 #include "libmesh/auto_ptr.h" // std::unique_ptr
@@ -53,18 +54,13 @@
 // C++
 #include <string>
 
-// Antioch forward declarations
-namespace Antioch
-{
-  template<typename Scalar>
-  class XMLParser;
-}
-
 // libMesh forward declarations
 class GetPot;
 
 namespace GRINS
 {
+  enum ThermoEnum {NASA7 = 0, NASA9, CEA, INVALID};
+
   //! Base class building Antioch mixture wrappers
   /*! This class only worries about building the kinetics
     and the thermo associated with kinetics. Subclasses
@@ -91,6 +87,8 @@ namespace GRINS
     std::unique_ptr<Antioch::ReactionSet<libMesh::Real> >
     build_reaction_set( const GetPot & input, const std::string & material,
                         const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
+
+    ThermoEnum get_thermo_type( const GetPot & input, const std::string & material ) const;
 
     template<typename NASACurveFit>
     std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,NASACurveFit> >
@@ -252,6 +250,44 @@ namespace GRINS
     return std::unique_ptr<AntiochMixture<NASACurveFit> >
       ( new AntiochMixture<NASACurveFit>
         (chem_mixture,reaction_set,nasa_mixture,min_T,clip_negative_rho) );
+  }
+
+  inline
+  ThermoEnum AntiochMixtureBuilderBase::get_thermo_type( const GetPot & input,
+                                                         const std::string & material ) const
+  {
+    ThermoEnum thermo_type = ThermoEnum::INVALID;
+
+    Antioch::ParsingType parsing_type = this->get_antioch_parsing_type(input,material);
+    switch(parsing_type)
+      {
+      case(Antioch::ASCII):
+        {
+          // ASCII Parsing is only CEA, so it'd better be CEA
+          thermo_type = ThermoEnum::CEA;
+          break;
+        }
+        case(Antioch::XML):
+        {
+          // XML can be NASA7 or NASA9, so we query the XML file to see which is in there.
+          std::unique_ptr<Antioch::XMLParser<libMesh::Real> > parser = this->build_xml_parser(input,material);
+          if( parser->is_nasa7_curve_fit_type() )
+            thermo_type = ThermoEnum::NASA7;
+          else
+            thermo_type = ThermoEnum::NASA9;
+          break;
+        }
+      case(Antioch::CHEMKIN):
+        {
+          // ChemKin is NASA7 by definition of ChemKin format.
+          thermo_type = ThermoEnum::NASA7;
+          break;
+        }
+      default:
+        libmesh_error_msg("ERROR: Invalid Antioch parsing type!");
+      }
+
+    return thermo_type;
   }
 
 } // end namespace GRINS
