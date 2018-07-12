@@ -217,6 +217,7 @@ ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone_cea_data.dat
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone_species_data.dat
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/restart.xdr
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/restart_steady.in
+ozone_DATA += $(top_srcdir)/examples/ozone_flame/restart_amr.in
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/README
 ozone_SCRIPTS = $(top_builddir)/examples/ozone_flame/run.sh
 
