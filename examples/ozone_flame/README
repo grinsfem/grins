@@ -1,17 +1,28 @@
 This examples shows cold start a simple ozone flame and run it to steady state,
 with the final run taking the steady state calculation on a coarse grid as an
 initial guess for several steps of adaptive mesh refinement to resolve the
-solution.
+solution. We include examples of using both Antioch and Cantera. In the Antioch
+case, we use constant transport as an academic illustration of the importance
+of transport properties on the flame speed; hence the inlet velocity is much
+lower than the more realistic transport models used in Cantera.
 
-In particular, we leverage the capability to override options in the input file
+run.sh corresponds to the Antioch case and crun.sh corresponds to the Cantera
+case.
+
+We leverage the capability to override options in the input file
 at the command line. This way, for all the timestepping runs, we can reuse the
 same input file and only update the options we wish. Switching to a steady state
 solve changes a few more options, so we use a separate input file for that.
-Running the run.sh script with `export GRINS_RUN="mpiexec -np 16` on a Haswell
-workstation with 16 cores takes a little over an hour.
+This example also illustrates how to keep common sections in a separate file
+and reuse them using the [include <file>] syntax in GetPot. common_input.in
+holds common sections between the steady/unsteady and Antioch/Cantera
+cases and then each child only specifies the sections needed.
 
-We also provide the file
-restart.xdr so you can directly execute the steady state run, restarting from the
-same time instance you'd hit in the run.sh script. Note the mesh is very coarse,
-the idea is to get to steady state where we can then leverage adaptive mesh
-refinement to better resolve the calculation.
+Running the run.sh script with `export GRINS_RUN="mpiexec -np 16` on a Haswell
+workstation with 16 cores takes a little over an hour. Similarly for crun.sh
+although we don't currently do AMR on the Cantera example.
+
+We also provide the file restart.xdr so you can directly execute the steady
+state run for Antioch, restarting from the same time instance you'd hit in the
+run.sh script. Note the mesh is very coarse, the idea is to get to steady state
+where we can then leverage adaptive mesh refinement to better resolve the calculation.
