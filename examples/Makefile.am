@@ -210,7 +210,8 @@ EXTRA_DIST += $(transientamr_DATA)
 # Ozone Flame Example
 #=======================================================================
 ozonedir = $(prefix)/examples/ozone_flame
-ozone_DATA  = $(top_srcdir)/examples/ozone_flame/ozone_antioch.in
+ozone_DATA  = $(top_srcdir)/examples/ozone_flame/common_input.in
+ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone_antioch.in
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone_cantera.in
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/cantera_steady.in
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone.xml

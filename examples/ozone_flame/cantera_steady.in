@@ -6,15 +6,6 @@
    Uvalue = '64000'
 []
 
-# Solver Options
-[SolverOptions]
-   [./TimeStepping]
-      solver_type = 'libmesh_euler_solver'
-      delta_t = '5.0e-6'
-      n_timesteps = '500'
-      theta = '1.0'
-[]
-
 [Materials]
   [./OzoneGas]
      [./ThermodynamicPressure]
