@@ -361,6 +361,7 @@ AC_CONFIG_LINKS([test/input_files/air_5sp_test.xml:test/input_files/air_5sp_test
 AC_CONFIG_LINKS([test/input_files/air.xml:test/input_files/air.xml])
 AC_CONFIG_LINKS([test/input_files/elements.xml:test/input_files/elements.xml])
 AC_CONFIG_LINKS([test/input_files/ozone_flame_antioch_constant_restart.xdr:test/input_files/ozone_flame_antioch_constant_restart.xdr])
+AC_CONFIG_LINKS([test/input_files/ozone_flame_cantera_restart.xdr:test/input_files/ozone_flame_cantera_restart.xdr])
 AC_CONFIG_LINKS([test/input_files/ozone.xml:test/input_files/ozone.xml])
 AC_CONFIG_LINKS([test/input_files/ozone_cea_data.dat:test/input_files/ozone_cea_data.dat])
 AC_CONFIG_LINKS([test/input_files/ozone_species_data.dat:test/input_files/ozone_species_data.dat])

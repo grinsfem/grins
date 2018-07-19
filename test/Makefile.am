@@ -289,6 +289,7 @@ TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_pow
 TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall.sh
 TESTS += regression/reacting_low_mach_antioch_kinetics_theory.sh
 TESTS += regression/ozone_flame_antioch_constant.sh
+TESTS += regression/ozone_flame_cantera.sh
 
 TESTS += regression/ozone_flame_antioch_kinetics_theory.sh
 XFAIL_TESTS += regression/ozone_flame_antioch_kinetics_theory.sh
