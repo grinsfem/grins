@@ -6,6 +6,7 @@ AM_TESTS_ENVIRONMENT += GRINS_TEST_INPUT_DIR=$(top_srcdir)/test/input_files; exp
 AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export GRINS_TEST_DATA_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
 AM_TESTS_ENVIRONMENT += GRINS_ANTIOCH_ENABLED=@HAVE_ANTIOCH@; export GRINS_ANTIOCH_ENABLED;
+AM_TESTS_ENVIRONMENT += GRINS_CANTERA_ENABLED=@HAVE_CANTERA@; export GRINS_CANTERA_ENABLED;
 
 AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
@@ -274,7 +275,6 @@ TESTS += regression/hot_cylinder.sh
 TESTS += regression/hot_cylinder_petsc_diff.sh
 
 TESTS += regression/reacting_low_mach_cantera.sh
-XFAIL_TESTS += regression/reacting_low_mach_cantera.sh
 
 TESTS += regression/reacting_low_mach_antioch_statmech_constant.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_constant_prandtl.sh
