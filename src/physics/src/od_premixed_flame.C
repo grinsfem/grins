@@ -299,7 +299,7 @@ namespace GRINS
 	libMesh::Real T, M_dot;
 	libMesh::Gradient Grad_T;
 
-	libMesh::Real R, k, cp, rho, p0, mu;
+	libMesh::Real R, k, cp, rho, p0, mu, M_mix;
 	Evaluator gas_evaluator( *(this->_gas_mixture) );
 
 	T = context.interior_value(this->_temp_vars.T(),qp);
@@ -336,7 +336,9 @@ namespace GRINS
 				      mu, k, D );
 	
 	omega_dot.resize(this->_n_species);
-	
+
+	M_mix = gas_evaluator.M_mix(mass_fractions);
+
 	gas_evaluator.omega_dot( T, rho, mass_fractions, omega_dot );
 	
 	gas_evaluator.cp_s(T, p0, mass_fractions, cp_s);
@@ -345,11 +347,22 @@ namespace GRINS
 	//Energy equation Residual
 	libMesh::Real chem_term = 0.0;
 	libMesh::Real Sum = 0.0;
+	libMesh::Real SpeciesGradSum = 0.0;
+	libMesh::Real SpeciesSum = 0.0;
 	for ( unsigned int s=0; s< this->_n_species; s++ )
 	  {
+	    SpeciesGradSum += Grad_mass_fractions[s](0)/gas_evaluator.M(s);
 	    chem_term +=h[s]*omega_dot[s];
 	    Sum += rho*D[s]*Grad_mass_fractions[s](0)*Grad_T(0)*cp_s[s];
 	  }
+
+	for (unsigned int s =0; s < this->_n_species;s++)
+	  {
+	    SpeciesSum+= D[s]*Grad_mass_fractions[s](0);
+	    SpeciesSum-=M_mix*mass_fractions[s]*D[s]*SpeciesGradSum;
+	  }
+	    
+
 	for (unsigned int i=0;i != n_T_dofs; i++ )
 	  {
 	    FT(i) += ( ( -cp*M_dot *Grad_T(0) - chem_term + Sum )*T_phi[i][qp]
@@ -364,7 +377,7 @@ namespace GRINS
 	      context.get_elem_residual(this->_species_vars.species(s)); //R_{s}
 	    
 	    const libMesh::Real term1 = -M_dot*Grad_mass_fractions[s](0) + omega_dot[s];
-	    const libMesh::Real term2 = -rho*D[s]*Grad_mass_fractions[s](0);
+	    const libMesh::Real term2 = -rho*D[s]*Grad_mass_fractions[s](0)+M_mix*rho*D[s]*SpeciesGradSum*mass_fractions[s]+rho*mass_fractions[s]*SpeciesSum;
 	    
 	    for (unsigned int i =0;i != n_s_dofs;i++)
 	      {
