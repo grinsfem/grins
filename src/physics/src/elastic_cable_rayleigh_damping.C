@@ -28,10 +28,12 @@
 // GRINS
 #include "grins/physics_naming.h"
 #include "grins/elasticity_tensor.h"
+#include "grins/multiphysics_sys.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/quadrature.h"
+#include "libmesh/first_order_unsteady_solver.h"
 
 namespace GRINS
 {
@@ -59,6 +61,23 @@ namespace GRINS
                         +PhysicsNaming::elastic_cable()+".");
 
     this->parse_enabled_subdomains(input,PhysicsNaming::elastic_cable());
+  }
+
+  template<typename StressStrainLaw>
+  void ElasticCableRayleighDamping<StressStrainLaw>::auxiliary_init
+  ( MultiphysicsSystem & system )
+  {
+    if( !this->is_steady() )
+      {
+        // Currently, we don't support first order time solvers
+        const libMesh::TimeSolver & raw_time_solver = system.get_time_solver();
+
+        const libMesh::FirstOrderUnsteadySolver * time_solver =
+          dynamic_cast<const libMesh::FirstOrderUnsteadySolver *>(&raw_time_solver);
+
+        if( time_solver )
+          libmesh_error_msg("ERROR: First order time solvers not supported for ElasticCableRayleighDamping!");
+      }
   }
 
   template<typename StressStrainLaw>
