@@ -6,15 +6,6 @@
    Uvalue = '28000'
 []
 
-# Solver Options
-[SolverOptions]
-   [./TimeStepping]
-      solver_type = 'libmesh_euler_solver'
-      delta_t = '5.0e-6'
-      n_timesteps = '500'
-      theta = '1.0'
-[]
-
 [Materials]
   [./OzoneGas]
      [./ThermodynamicPressure]
@@ -45,6 +36,22 @@
      [./LewisNumber]
         value = '1.0'
      [../]
+[]
+
+[Strategies]
+   [./MeshAdaptivity]
+      mesh_adaptive = 'true'
+      absolute_global_tolerance = '0.0'
+      plot_cell_errors = 'false'
+      max_refinement_steps = '6'
+      refine_percentage = '0.15'
+      coarsen_percentage = '0.9'
+      refinement_strategy = 'elem_fraction'
+   [../]
+
+   [./ErrorEstimation]
+      estimator_type = 'kelly'
+   [../]
 []
 
 # Include things common between steady/unsteady and Antioch/Cantera

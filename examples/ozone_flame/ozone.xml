@@ -113,7 +113,7 @@
            <b>-1.0</b>
            <E units="kJ/mol">0.0</E>
         </Arrhenius>
-        <efficiencies O3="0.92" O2="0.94" O="1.13"></efficiencies>
+        <efficiencies default="1.0"> O3:0.92    O2:0.94   O:1.13 </efficiencies>
       </rateCoeff>
       <reactants>O:2.0</reactants>
       <products>O2:1.0</products>
@@ -128,7 +128,7 @@
            <b>0.0</b>
            <E units="kJ/mol">-4.234</E>
         </Arrhenius>
-        <efficiencies O3="0.92" O2="0.94" O="1.13"></efficiencies>
+        <efficiencies default="1.0"> O3:0.92    O2:0.94   O:1.13 </efficiencies>
       </rateCoeff>
       <reactants>O2:1.0 O:1.0</reactants>
       <products>O3:1.0</products>

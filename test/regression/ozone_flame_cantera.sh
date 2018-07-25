@@ -4,15 +4,15 @@ set -e
 
 PROG="${GRINS_BUILDSRC_DIR}/grins"
 
-INPUT="${GRINS_TEST_INPUT_DIR}/reacting_low_mach_cantera_regression.in"
+INPUT="${GRINS_TEST_INPUT_DIR}/ozone_flame_cantera_regression.in"
 
-PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 10 -sub_pc_type ilu -sub_pc_factor_shift_type nonzero -sub_pc_factor_levels 10"
+PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 10 -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
 
 # Solution output from GRINS run
-SOLNDATA="./reacting_low_mach_cantera_regression.xda"
+SOLNDATA="./ozone_flame_cantera_regression.xda"
 
 # Gold data used for regression comparsion
-GOLDDATA="${GRINS_TEST_DATA_DIR}/reacting_low_mach_cantera_regression.xdr"
+GOLDDATA="${GRINS_TEST_DATA_DIR}/ozone_flame_cantera_regression.xdr"
 
 if [ $GRINS_CANTERA_ENABLED == 1 ]; then
    # First run the case with grins
@@ -21,9 +21,10 @@ if [ $GRINS_CANTERA_ENABLED == 1 ]; then
    # Now run the test part to make sure we're getting the correct thing
    ${GRINS_TEST_DIR}/regression_testing_app \
       input=$INPUT \
-      vars='u v p T w_N w_N2' \
+      system_name='Ozone' \
+      vars='Ux Uy p T Y_O Y_O2 Y_O3' \
       norms='L2 H1' \
-      tol='2.0e-7' \
+      tol='3.0e-6' \
       gold-data=$GOLDDATA \
       soln-data=$SOLNDATA
 

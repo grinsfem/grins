@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
           libMesh::EquationSystems::READ_DATA |
           libMesh::EquationSystems::READ_ADDITIONAL_DATA);
 
-  std::string system_name = "GRINS-TEST";
+  std::string system_name = command_line("system_name","GRINS-TEST");
 
   // Now build up the gold data
   libMesh::EquationSystems es_ref(*mesh);
