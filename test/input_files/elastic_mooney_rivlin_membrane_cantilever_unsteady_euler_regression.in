@@ -1,0 +1,114 @@
+
+# Materials options
+[Materials]
+   [./TestMaterial]
+     [./MembraneThickness]
+        value = '0.05'
+     [../StressStrainLaw]
+        model = 'incompressible_hyperelasticity'
+        strain_energy = 'mooney_rivlin'
+        [./MooneyRivlin]
+           C1 = '24'
+           C2 = '1.5'
+     [../../Density]
+        value = '1.0'
+[]
+
+# Options related to all Physics
+[Physics]
+
+   enabled_physics = 'ElasticMembrane
+                      ParsedSourceTerm'
+
+   [./ElasticMembrane]
+      material = 'TestMaterial'
+   [../]
+
+   [./ParsedSourceTerm]
+     [./Function]
+         value = '0.001'
+      [../Variables]
+         names = 'dot_Uy'
+         FE_types = 'LAGRANGE'
+         FE_orders = 'FIRST' 
+   [../]
+[]
+
+[BoundaryConditions]
+   bc_ids = '3 0:1:2'
+   bc_id_name_map = 'Left OtherWalls'
+
+   [./Left]
+      [./Displacement]
+         type = 'pinned'
+      [../]
+   [../]
+
+   [./OtherWalls]
+      [./Displacement]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+[]
+
+[Variables]
+   [./Displacement]
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD4'
+      x_min = '0.0'
+      x_max = '10.0'
+      y_min = '0.0'
+      y_max = '1.0'
+
+      n_elems_x = '10'
+      n_elems_y = '3'
+[]
+
+[SolverOptions]
+   [./TimeStepping]
+      solver_type = 'libmesh_euler_solver'
+      theta='0.5'
+      delta_t = '1.5'
+      n_timesteps = '100'
+   [../]
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  '50'
+   max_linear_iterations = '2500'
+
+   verify_analytic_jacobians = '1.0e-6'
+   relative_residual_tolerance = '1.0e-11'
+   relative_step_tolerance = '1.0e-11'
+   use_numerical_jacobians_only = 'false'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'elastic_mooney_rivlin_membrane_cantilever_unsteady_euler_regression'
+   output_format = 'xda.gz'
+   timesteps_per_vis = '100'
+[]
+
+# Options for print info to the screen
+[screen-options]
+   system_name = 'GRINS-TEST'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+   print_element_jacobians = 'false'
+   print_element_residuals = 'false'
+[]

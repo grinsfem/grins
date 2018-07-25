@@ -74,13 +74,14 @@ namespace GRINS
 
     // Tell the system to march velocity forward in time, but
     // leave p as a constraint only
-    system->time_evolving(_flow_vars.u(), 1);
+
+    system->time_evolving(_flow_vars.u(),1);
 
     if (dim > 1)
-      system->time_evolving(_flow_vars.v(), 1);
+      system->time_evolving(_flow_vars.v(),1);
 
     if (dim == 3)
-      system->time_evolving(_flow_vars.w(), 1);
+      system->time_evolving(_flow_vars.w(),1);
   }
 
   template<class Mu>
