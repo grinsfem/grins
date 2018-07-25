@@ -1926,14 +1926,14 @@
            </floatArray>
         </NASA9>
       </thermo>
-      <transport model="Pecos">
+      <transport model="gas_transport">
         <string title="geometry">atom</string>
-        <LJ_welldepth units="K">80.000</LJ_welldepth>
-        <LJ_diameter units="A">2.750</LJ_diameter>
+        <LJ_welldepth units="K">71.400</LJ_welldepth>
+        <LJ_diameter units="A">3.300</LJ_diameter>
         <dipoleMoment units="Debye">0.000</dipoleMoment>
         <polarizability units="A3">0.000</polarizability>
         <rotRelax>0.000</rotRelax>
-      </transport> 
+      </transport>
     </species>
   
     <!-- species N+    -->
@@ -1998,13 +1998,13 @@
            </floatArray>
         </NASA9>
       </thermo>
-      <transport model="Pecos">
+      <transport model="gas_transport">
         <string title="geometry">linear</string>
-        <LJ_welldepth units="K">232.400</LJ_welldepth>
-        <LJ_diameter units="A">3.830</LJ_diameter>
+        <LJ_welldepth units="K">97.530</LJ_welldepth>
+        <LJ_diameter units="A">3.620</LJ_diameter>
         <dipoleMoment units="Debye">0.000</dipoleMoment>
-        <polarizability units="A3">0.000</polarizability>                                                                                                                                                                                  
-        <rotRelax>1.000</rotRelax>
+        <polarizability units="A3">1.760</polarizability>
+        <rotRelax>4.000</rotRelax>
       </transport>
     </species>
   
@@ -2215,14 +2215,14 @@
            </floatArray>
         </NASA9>
       </thermo>
-      <transport model="Pecos">
+      <transport model="gas_transport">
         <string title="geometry">linear</string>
-        <LJ_welldepth units="K">232.400</LJ_welldepth>
-        <LJ_diameter units="A">3.830</LJ_diameter>
+        <LJ_welldepth units="K">97.530</LJ_welldepth>
+        <LJ_diameter units="A">3.620</LJ_diameter>
         <dipoleMoment units="Debye">0.000</dipoleMoment>
-        <polarizability units="A3">0.000</polarizability>
-        <rotRelax>1.000</rotRelax>
-      </transport> 
+        <polarizability units="A3">1.760</polarizability>
+        <rotRelax>4.000</rotRelax>
+      </transport>
     </species>
   
     <!-- species NO+    -->
@@ -2398,14 +2398,14 @@
            </floatArray>
         </NASA9>
       </thermo>
-      <transport model="Pecos">
+      <transport model="gas_transport">
         <string title="geometry">linear</string>
-        <LJ_welldepth units="K">232.400</LJ_welldepth>
-        <LJ_diameter units="A">3.830</LJ_diameter>
+        <LJ_welldepth units="K">107.400</LJ_welldepth>
+        <LJ_diameter units="A">3.460</LJ_diameter>
         <dipoleMoment units="Debye">0.000</dipoleMoment>
-        <polarizability units="A3">0.000</polarizability>
-        <rotRelax>1.000</rotRelax>
-      </transport> 
+        <polarizability units="A3">1.600</polarizability>
+        <rotRelax>3.800</rotRelax>
+      </transport>
     </species>
   
     <!-- species O2+    -->
