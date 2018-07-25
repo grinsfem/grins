@@ -3,7 +3,6 @@
   [./2SpeciesNGas]
      [./GasMixture]
         thermochemistry_library = 'cantera'
-        species   = 'N2 N'
 
         [./Cantera]
            gas_mixture = 'air2sp'

@@ -90,7 +90,6 @@
 
      [./GasMixture]
         thermochemistry_library = 'cantera'
-        species = 'O O2 O3'
 
         [./Cantera]
            chemical_data = './input_files/ozone.xml'
