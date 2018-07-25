@@ -23,10 +23,10 @@
      [./GasMixture]
         thermochemistry_library = 'cantera'
         species = 'O O2 O3'
-        kinetics_data = 'ozone.xml'
 
         [./Cantera]
            gas_mixture = 'ozone'
+           chemical_data = 'ozone.xml'
         [../]
      [../]
 []

@@ -21,7 +21,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="MixTransport"/>
+    <transport model="Mix"/>
   </phase>
 
   <!-- species definitions     -->

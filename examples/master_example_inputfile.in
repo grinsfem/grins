@@ -176,20 +176,28 @@
         # Species in this gas mixture
         species = 'N2 N C CN'
 
-        # Path to file containing kinetics data.
-        # For Cantera, this may also contain all other thermochemistry data.
-        kinetics_data = 'datafile.xml'
-
         [./Cantera]
-           # Specify the mixture to be used. This is the "mixture"
-           # given in the kinetics_data file. The user must set this
+           # Specify the mixture to be used. This is the "mixture" or "phase"
+           # given in the chemical_data file. The user must set this
            # since the Cantera data file may contain more than one mixture.
            gas_mixture = 'air4sp'
+
+           # Path to file containing thermochemical and transport data.
+           # This is the only file Cantera will look for so all data
+           # must be present in the Cantera XML format.
+           # You may wish to consider looking at Cantera's .cti format
+           # and then using Cantera-deployed tools to convert to .xml format.
+           # If you have a ChemKin file, Cantera deploys a ck2cti tool
+           # to convert to cti, then you can convert to XML.
+           chemical_data = 'datafile.xml'
+        [../]
+     [../]
+   [../]
 
    # Arbitrary material name. Here we describe input parameters related
    # to the Antioch thermochemistry library. These are used for reacting
    # flow Physics. Note that units here *must* be SI.
-   [../../../AntiochMaterial]
+   [./AntiochMaterial]
       [./GasMixture]
          # Notify that we're using Antioch
          thermochemistry_library = 'antioch'

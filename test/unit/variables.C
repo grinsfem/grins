@@ -59,6 +59,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_variable_builder );
     CPPUNIT_TEST( test_var_constraint );
     CPPUNIT_TEST( test_variable_arbitrary_names );
+    CPPUNIT_TEST( test_variable_species_from_cantera );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -122,6 +123,26 @@ namespace GRINSTesting
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
+    }
+
+    void test_variable_species_from_cantera()
+    {
+#ifdef GRIN_HAVE_CANTERA
+      std::string filename =
+        std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_species_cantera.in";
+
+      this->setup_multiphysics_system(filename);
+
+      GRINS::VariableBuilder::build_variables((*_input),(*_system));
+
+      const GRINS::FEVariablesBase& species_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable("SpeciesMassFractions");
+
+        const std::vector<std::string>& var_names = species_vars.active_var_names();
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O"),  var_names[0] );
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O2"), var_names[1] );
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O3"), var_names[2] );
+#endif // GRIN_HAVE_CANTERA
     }
 
   private:

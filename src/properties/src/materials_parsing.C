@@ -22,6 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
+#include "grins_config.h"
+
 // These functions
 #include "grins/materials_parsing.h"
 
@@ -29,6 +31,10 @@
 #include "grins/common.h"
 #include "grins/physics_naming.h"
 #include "grins/parameter_user.h"
+
+#ifdef GRINS_HAVE_CANTERA
+#include "grins/cantera_mixture.h"
+#endif //#ifdef GRINS_HAVE_CANTERA
 
 namespace GRINS
 {
@@ -101,7 +107,8 @@ namespace GRINS
   {
     std::string material = MaterialsParsing::material_name( input, physics );
 
-    std::string thermochem_lib_option("Materials/"+material+"/GasMixture/thermochemistry_library");
+    std::string thermochem_lib_option =
+      MaterialsParsing::thermochem_lib_input_string(material);
 
     MaterialsParsing::check_for_input_option(input,thermochem_lib_option);
 
@@ -178,6 +185,7 @@ namespace GRINS
     species_names.reserve(n_species);
     for( unsigned int i = 0; i < n_species; i++ )
       species_names.push_back( input( option, "DIE!", i ) );
+
   }
 
   void MaterialsParsing::parse_species_varnames( const GetPot & input,
@@ -185,14 +193,62 @@ namespace GRINS
                                                  const std::string & prefix,
                                                  std::vector<std::string>& species_varnames )
   {
+    // We're going to use the chemistry libraries to figure out the species
+    // names, so we need to figure out which chemistry library the user
+    // asked for
+    std::string thermochem_lib_option =
+      MaterialsParsing::thermochem_lib_input_string(material);
+
+    MaterialsParsing::check_for_input_option(input,thermochem_lib_option);
+
+    std::string thermochem_lib = input( thermochem_lib_option, std::string("DIE!") );
+
     std::vector<std::string> species_names;
-    MaterialsParsing::parse_chemical_species(input,material,species_names);
+
+    // For Cantera, build the mixture and then extract the species names,
+    // populate species_names, and then prefix them below
+    if( thermochem_lib == std::string("cantera") )
+      {
+#ifdef GRINS_HAVE_CANTERA
+        // First check if the user still lists the species manually
+        // and warn them we're igoring it
+        std::string old_option("Materials/"+material+"/GasMixture/species");
+        if( input.have_variable(old_option) )
+          {
+            std::string warning = "WARNING: option "+old_option+" is ignored!\n";
+            warning += "          Species names are parsed from the Cantera ";
+            warning += MaterialsParsing::chemical_data_option()+" file.\n";
+            grins_warning(warning);
+          }
+
+        // Now build a cantera mixture and populate the species_names
+        CanteraMixture cantera(input,material);
+
+        unsigned int n_species = cantera.n_species();
+        species_names.reserve(n_species);
+
+        for( unsigned int s = 0; s < n_species; s++ )
+          species_names.push_back( cantera.species_name(s) );
+#else
+        libmesh_error_msg("ERROR: GRINS not compiled with Cantera! Reconfigure GRINS to use Cantera!");
+#endif // GRINS_HAVE_CANTERA
+      }
+
+    // For Antioch, for now we're falling back to having the user
+    // specify the species explicitly
+    else if( thermochem_lib == std::string("antioch") )
+      {
+        MaterialsParsing::parse_chemical_species(input,material,species_names);
+      }
+    else
+      libmesh_error_msg("ERROR: Invalid thermochem_lib value "+thermochem_lib+"!");
+
     unsigned int n_species = species_names.size();
     species_varnames.reserve(n_species);
 
     for( unsigned int i = 0; i < n_species; i++ )
       {
-        std::string var_name = prefix+species_names[i];
+        std::string var_name(prefix+species_names[i]);
         species_varnames.push_back(var_name);
       }
   }
@@ -219,6 +275,11 @@ namespace GRINS
   {
     std::string option("Materials/"+material+"/GasMixture/kinetics_data");
     MaterialsParsing::check_for_input_option(input,option);
+
+    std::string warning = "WARNING: option "+option+"is DEPRECATED!\n";
+    warning += "         kinetics_data moved to thermochemistry section\n";
+    warning += "         and renamed chemical_data!";
+    grins_warning_once(warning);
 
     std::string filename = input(option, "DIE!");
 

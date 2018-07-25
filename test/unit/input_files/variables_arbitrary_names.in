@@ -39,6 +39,7 @@
 [Materials]
   [./2SpeciesNGas]
      [./GasMixture]
+        thermochemistry_library = 'antioch'
         species   = 'N2 N'
 []
 
