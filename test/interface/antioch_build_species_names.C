@@ -65,6 +65,9 @@ namespace GRINSTesting
       text += "gas_mixture = '"+mixture+"'\n";
       return text;
     }
+
+    libMesh::Real tol()
+    { return std::numeric_limits<libMesh::Real>::epsilon() * 10; }
   };
 
   //! Test AntiochMixtureBuilderBase::build_species_names for different parsing formats
@@ -542,8 +545,6 @@ namespace GRINSTesting
       }
     }
 
-    libMesh::Real tol()
-    { return std::numeric_limits<libMesh::Real>::epsilon() * 10; }
 
   };
 
