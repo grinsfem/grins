@@ -31,6 +31,7 @@
 
 //GRINS
 #include "grins/antioch_mixture_builder_base.h"
+#include "grins/antioch_mixture_averaged_transport_mixture_builder.h"
 
 namespace GRINSTesting
 {
@@ -545,11 +546,120 @@ namespace GRINSTesting
       }
     }
 
+  };
 
+  //! Test AntiochMixtureBuilderBase::build_reaction_set for different parsing formats
+  class AntiochBuilderFormatTransportTest : public CppUnit::TestCase,
+                                            public AntiochBuilderFormatTestBase,
+                                            public GRINS::AntiochMixtureAveragedTransportMixtureBuilder
+  {
+  public:
+
+    CPPUNIT_TEST_SUITE( AntiochBuilderFormatTransportTest );
+
+    CPPUNIT_TEST( test_ascii );
+
+    CPPUNIT_TEST_SUITE_END();
+
+  public:
+
+    void test_ascii()
+    {
+      std::string inputfile = this->setup_ascii_transport_input("ozone_species_data.dat",
+                                                                "ozone_transport_data.dat");
+      std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > mixture;
+      std::unique_ptr<Antioch::TransportMixture<libMesh::Real> > transport_mixture;
+
+      this->do_work( inputfile, mixture, transport_mixture );
+
+      this->check_ozone_transport(*transport_mixture);
+    }
+
+  private:
+
+    void do_work( const std::string & inputfile,
+                  std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > & mixture,
+                  std::unique_ptr<Antioch::TransportMixture<libMesh::Real> > & transport_mixture )
+    {
+      std::stringstream inputstream;
+      inputstream << inputfile;
+
+      GetPot input(inputstream);
+
+      mixture = this->build_chem_mix(input,"TestMaterial");
+      transport_mixture = this->build_transport_mixture(input,"TestMaterial",*mixture);
+    }
+
+    std::string setup_ascii_transport_input( const std::string & chemical_data_filename,
+                                             const std::string & transport_filename )
+    {
+      std::string text = this->setup_ascii_input(chemical_data_filename);
+      text += "transport_data = './input_files/"+transport_filename+"'\n";
+
+      return text;
+    }
+
+    void check_ozone_transport(const Antioch::TransportMixture<libMesh::Real> & transport_mixture)
+    {
+      CPPUNIT_ASSERT_EQUAL(3,(int)transport_mixture.n_species());
+
+      // Check O Data
+      {
+        std::vector<libMesh::Real> exact_data(5);
+        exact_data[0] = 80.; // LJ_depth
+        exact_data[1] = 2.75; // LJ_diameter
+        exact_data[2] = 0.; // dipole moment
+        exact_data[3] = 0.; // polarizability
+        exact_data[4] = 0.; // rotational relaxation
+
+        const Antioch::TransportSpecies<libMesh::Real> & species = transport_mixture.transport_species(0);
+
+        this->check_transport_speces(species,exact_data);
+      }
+
+      // Check O2 Data
+      {
+        std::vector<libMesh::Real> exact_data(5);
+        exact_data[0] = 107.4; // LJ_depth
+        exact_data[1] = 3.458; // LJ_diameter
+        exact_data[2] = 0.; // dipole moment
+        exact_data[3] = 1.6; // polarizability
+        exact_data[4] = 3.8; // rotational relaxation
+
+        const Antioch::TransportSpecies<libMesh::Real> & species = transport_mixture.transport_species(1);
+
+        this->check_transport_speces(species,exact_data);
+      }
+
+      // Check O3 Data
+      {
+        std::vector<libMesh::Real> exact_data(5);
+        exact_data[0] = 180.; // LJ_depth
+        exact_data[1] = 4.1; // LJ_diameter
+        exact_data[2] = 0.; // dipole moment
+        exact_data[3] = 0.; // polarizability
+        exact_data[4] = 2.; // rotational relaxation
+
+        const Antioch::TransportSpecies<libMesh::Real> & species = transport_mixture.transport_species(2);
+
+        this->check_transport_speces(species,exact_data);
+      }
+    }
+
+    void check_transport_speces(const Antioch::TransportSpecies<libMesh::Real> & species,
+                                const std::vector<libMesh::Real> & exact_data)
+    {
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(exact_data[0], species.LJ_depth(), this->tol());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(exact_data[1], species.LJ_diameter(), this->tol());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(exact_data[2], species.dipole_moment(), this->tol());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(exact_data[3], species.polarizability(), this->tol());
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(exact_data[4], species.rotational_relaxation(), this->tol());
+    }
   };
 
   CPPUNIT_TEST_SUITE_REGISTRATION( AntiochBuilderFormatSpeciesNameTest );
   CPPUNIT_TEST_SUITE_REGISTRATION( AntiochBuilderFormatKineticsTest );
+  CPPUNIT_TEST_SUITE_REGISTRATION( AntiochBuilderFormatTransportTest );
 
 } // end namespace GRINSTesting
 
