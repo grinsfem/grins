@@ -52,7 +52,9 @@
                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >
 
 #define INSTANTIATE_ANTIOCH_TRANSPORT(class_name)                       \
-  INSTANTIATE_ANTIOCH_TRANSPORT_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>)
+  INSTANTIATE_ANTIOCH_TRANSPORT_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>); \
+  INSTANTIATE_ANTIOCH_TRANSPORT_RAW(class_name,Antioch::NASA7CurveFit<libMesh::Real>); \
+  INSTANTIATE_ANTIOCH_TRANSPORT_RAW(class_name,Antioch::NASA9CurveFit<libMesh::Real>)
 
 #ifdef ANTIOCH_HAVE_GSL
 #define INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,curve_fit) \
@@ -68,7 +70,9 @@
                                    Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >
 
 #define INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(class_name)       \
-  INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>)
+  INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>); \
+  INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,Antioch::NASA7CurveFit<libMesh::Real>); \
+  INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,Antioch::NASA9CurveFit<libMesh::Real>)
 
 #endif // ANTIOCH_HAVE_GSL
 

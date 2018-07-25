@@ -12,10 +12,14 @@ namespace GRINSPrivate
   // Need typedefs for these because the commas in the template arguments screw up the C preprocessor
   // when putting the full types in the argument list
   typedef Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> CEAIdealGasThermo;
+  typedef Antioch::IdealGasThermo<Antioch::NASA7CurveFit<libMesh::Real>,libMesh::Real> NASA7IdealGasThermo;
+  typedef Antioch::IdealGasThermo<Antioch::NASA9CurveFit<libMesh::Real>,libMesh::Real> NASA9IdealGasThermo;
   typedef Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner> KineticsViscosity;
   typedef Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> BinaryDiffusion;
   typedef Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real> KineticsConductivityStatMech;
   typedef Antioch::KineticsTheoryThermalConductivity<CEAIdealGasThermo,libMesh::Real> KineticsConductivityCEA;
+  typedef Antioch::KineticsTheoryThermalConductivity<NASA7IdealGasThermo,libMesh::Real> KineticsConductivityNASA7;
+  typedef Antioch::KineticsTheoryThermalConductivity<NASA9IdealGasThermo,libMesh::Real> KineticsConductivityNASA9;
 }
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_RAW(class_name,curve_fit,conductivity) \
@@ -58,6 +62,30 @@ namespace GRINSPrivate
                                                                           GRINSPrivate::CEAIdealGasThermo, \
                                                                           viscosity, \
                                                                           Antioch::EuckenThermalConductivity<GRINSPrivate::CEAIdealGasThermo>, \
+                                                                          Antioch::ConstantLewisDiffusivity<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_RAW(class_name, \
+                                                                          Antioch::NASA7CurveFit<libMesh::Real>, \
+                                                                          Antioch::StatMechThermodynamics<libMesh::Real>, \
+                                                                          viscosity, \
+                                                                          Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >, \
+                                                                          Antioch::ConstantLewisDiffusivity<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_RAW(class_name, \
+                                                                          Antioch::NASA7CurveFit<libMesh::Real>, \
+                                                                          GRINSPrivate::NASA7IdealGasThermo, \
+                                                                          viscosity, \
+                                                                          Antioch::EuckenThermalConductivity<GRINSPrivate::NASA7IdealGasThermo>, \
+                                                                          Antioch::ConstantLewisDiffusivity<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_RAW(class_name, \
+                                                                          Antioch::NASA9CurveFit<libMesh::Real>, \
+                                                                          Antioch::StatMechThermodynamics<libMesh::Real>, \
+                                                                          viscosity, \
+                                                                          Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >, \
+                                                                          Antioch::ConstantLewisDiffusivity<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_RAW(class_name, \
+                                                                          Antioch::NASA9CurveFit<libMesh::Real>, \
+                                                                          GRINSPrivate::NASA9IdealGasThermo, \
+                                                                          viscosity, \
+                                                                          Antioch::EuckenThermalConductivity<GRINSPrivate::NASA9IdealGasThermo>, \
                                                                           Antioch::ConstantLewisDiffusivity<libMesh::Real>)
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_KINETICS_THEORY_RAW(class_name) \
@@ -72,6 +100,30 @@ namespace GRINSPrivate
                                                                           GRINSPrivate::CEAIdealGasThermo, \
                                                                           GRINSPrivate::KineticsViscosity, \
                                                                           GRINSPrivate::KineticsConductivityCEA, \
+                                                                          GRINSPrivate::BinaryDiffusion); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_RAW(class_name, \
+                                                                          Antioch::NASA7CurveFit<libMesh::Real>, \
+                                                                          Antioch::StatMechThermodynamics<libMesh::Real>, \
+                                                                          GRINSPrivate::KineticsViscosity, \
+                                                                          GRINSPrivate::KineticsConductivityStatMech, \
+                                                                          GRINSPrivate::BinaryDiffusion); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_RAW(class_name, \
+                                                                          Antioch::NASA7CurveFit<libMesh::Real>, \
+                                                                          GRINSPrivate::NASA7IdealGasThermo, \
+                                                                          GRINSPrivate::KineticsViscosity, \
+                                                                          GRINSPrivate::KineticsConductivityNASA7, \
+                                                                          GRINSPrivate::BinaryDiffusion); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_RAW(class_name, \
+                                                                          Antioch::NASA9CurveFit<libMesh::Real>, \
+                                                                          Antioch::StatMechThermodynamics<libMesh::Real>, \
+                                                                          GRINSPrivate::KineticsViscosity, \
+                                                                          GRINSPrivate::KineticsConductivityStatMech, \
+                                                                          GRINSPrivate::BinaryDiffusion); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_ONLY_RAW(class_name, \
+                                                                          Antioch::NASA9CurveFit<libMesh::Real>, \
+                                                                          GRINSPrivate::NASA9IdealGasThermo, \
+                                                                          GRINSPrivate::KineticsViscosity, \
+                                                                          GRINSPrivate::KineticsConductivityNASA9, \
                                                                           GRINSPrivate::BinaryDiffusion)
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTURE_ONLY(class_name) \
@@ -97,6 +149,30 @@ namespace GRINSPrivate
                                                                                    GRINSPrivate::CEAIdealGasThermo, \
                                                                                    viscosity, \
                                                                                    Antioch::EuckenThermalConductivity<GRINSPrivate::CEAIdealGasThermo>, \
+                                                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_RAW(class_name, \
+                                                                                   Antioch::NASA7CurveFit<libMesh::Real>, \
+                                                                                   Antioch::StatMechThermodynamics<libMesh::Real>, \
+                                                                                   viscosity, \
+                                                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >, \
+                                                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_RAW(class_name, \
+                                                                                   Antioch::NASA7CurveFit<libMesh::Real>, \
+                                                                                   GRINSPrivate::NASA7IdealGasThermo, \
+                                                                                   viscosity, \
+                                                                                   Antioch::EuckenThermalConductivity<GRINSPrivate::NASA7IdealGasThermo>, \
+                                                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_RAW(class_name, \
+                                                                                   Antioch::NASA9CurveFit<libMesh::Real>, \
+                                                                                   Antioch::StatMechThermodynamics<libMesh::Real>, \
+                                                                                   viscosity, \
+                                                                                   Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >, \
+                                                                                   Antioch::ConstantLewisDiffusivity<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_RAW(class_name, \
+                                                                                   Antioch::NASA9CurveFit<libMesh::Real>, \
+                                                                                   GRINSPrivate::NASA9IdealGasThermo, \
+                                                                                   viscosity, \
+                                                                                   Antioch::EuckenThermalConductivity<GRINSPrivate::NASA9IdealGasThermo>, \
                                                                                    Antioch::ConstantLewisDiffusivity<libMesh::Real>)
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_KINETICS_THEORY_RAW(class_name) \
@@ -111,6 +187,30 @@ namespace GRINSPrivate
                                                                                    GRINSPrivate::CEAIdealGasThermo, \
                                                                                    GRINSPrivate::KineticsViscosity, \
                                                                                    GRINSPrivate::KineticsConductivityCEA, \
+                                                                                   GRINSPrivate::BinaryDiffusion); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_RAW(class_name, \
+                                                                                   Antioch::NASA7CurveFit<libMesh::Real>, \
+                                                                                   Antioch::StatMechThermodynamics<libMesh::Real>, \
+                                                                                   GRINSPrivate::KineticsViscosity, \
+                                                                                   GRINSPrivate::KineticsConductivityStatMech, \
+                                                                                   GRINSPrivate::BinaryDiffusion); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_RAW(class_name, \
+                                                                                   Antioch::NASA7CurveFit<libMesh::Real>, \
+                                                                                   GRINSPrivate::NASA7IdealGasThermo, \
+                                                                                   GRINSPrivate::KineticsViscosity, \
+                                                                                   GRINSPrivate::KineticsConductivityNASA7, \
+                                                                                   GRINSPrivate::BinaryDiffusion); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_RAW(class_name, \
+                                                                                   Antioch::NASA9CurveFit<libMesh::Real>, \
+                                                                                   Antioch::StatMechThermodynamics<libMesh::Real>, \
+                                                                                   GRINSPrivate::KineticsViscosity, \
+                                                                                   GRINSPrivate::KineticsConductivityStatMech, \
+                                                                                   GRINSPrivate::BinaryDiffusion); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTUREAVERAGED_MIXTURE_AND_EVALUATOR_RAW(class_name, \
+                                                                                   Antioch::NASA9CurveFit<libMesh::Real>, \
+                                                                                   GRINSPrivate::NASA9IdealGasThermo, \
+                                                                                   GRINSPrivate::KineticsViscosity, \
+                                                                                   GRINSPrivate::KineticsConductivityNASA9, \
                                                                                    GRINSPrivate::BinaryDiffusion)
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTURE_AND_EVALUATOR(class_name) \
