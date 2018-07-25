@@ -559,6 +559,7 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( test_ascii );
     CPPUNIT_TEST( test_xml_air5sp );
+    CPPUNIT_TEST( test_xml_air9sp );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -585,6 +586,17 @@ namespace GRINSTesting
       this->do_work( inputfile, mixture, transport_mixture );
 
       this->check_air5sp_transport(*transport_mixture);
+    }
+
+    void test_xml_air9sp()
+    {
+      std::string inputfile = this->setup_xml_input("air.xml","air9sp_CO2");
+      std::unique_ptr<Antioch::ChemicalMixture<libMesh::Real> > mixture;
+      std::unique_ptr<Antioch::TransportMixture<libMesh::Real> > transport_mixture;
+
+      this->do_work( inputfile, mixture, transport_mixture );
+
+      this->check_air9sp_transport(*transport_mixture);
     }
 
   private:
@@ -663,6 +675,72 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_EQUAL(5,(int)transport_mixture.n_species());
 
       this->check_air5sp_only(transport_mixture);
+    }
+
+    void check_air9sp_transport(const Antioch::TransportMixture<libMesh::Real> & transport_mixture)
+    {
+      CPPUNIT_ASSERT_EQUAL(9,(int)transport_mixture.n_species());
+
+      // Check first 5 species
+      this->check_air5sp_only(transport_mixture);
+
+      // Now check remaining 4 species
+
+      // Check CO2 Data
+      {
+        std::vector<libMesh::Real> exact_data(5);
+        exact_data[0] = 244.; // LJ_depth
+        exact_data[1] = 3.76; // LJ_diameter
+        exact_data[2] = 0.; // dipole moment
+        exact_data[3] = 2.65; // polarizability
+        exact_data[4] = 2.1; // rotational relaxation
+
+        const Antioch::TransportSpecies<libMesh::Real> & species = transport_mixture.transport_species(5);
+
+        this->check_transport_speces(species,exact_data);
+      }
+
+      // Check CO Data
+      {
+        std::vector<libMesh::Real> exact_data(5);
+        exact_data[0] = 98.1; // LJ_depth
+        exact_data[1] = 3.65; // LJ_diameter
+        exact_data[2] = 0.; // dipole moment
+        exact_data[3] = 1.95; // polarizability
+        exact_data[4] = 1.8; // rotational relaxation
+
+        const Antioch::TransportSpecies<libMesh::Real> & species = transport_mixture.transport_species(6);
+
+        this->check_transport_speces(species,exact_data);
+      }
+
+      // Check CN Data
+      {
+        std::vector<libMesh::Real> exact_data(5);
+        exact_data[0] = 75.; // LJ_depth
+        exact_data[1] = 3.86; // LJ_diameter
+        exact_data[2] = 0.; // dipole moment
+        exact_data[3] = 0.; // polarizability
+        exact_data[4] = 1.; // rotational relaxation
+
+        const Antioch::TransportSpecies<libMesh::Real> & species = transport_mixture.transport_species(7);
+
+        this->check_transport_speces(species,exact_data);
+      }
+
+      // Check C Data
+      {
+        std::vector<libMesh::Real> exact_data(5);
+        exact_data[0] = 71.4; // LJ_depth
+        exact_data[1] = 3.3; // LJ_diameter
+        exact_data[2] = 0.; // dipole moment
+        exact_data[3] = 0.; // polarizability
+        exact_data[4] = 0.; // rotational relaxation
+
+        const Antioch::TransportSpecies<libMesh::Real> & species = transport_mixture.transport_species(8);
+
+        this->check_transport_speces(species,exact_data);
+      }
     }
 
     void check_air5sp_only(const Antioch::TransportMixture<libMesh::Real> & transport_mixture)
