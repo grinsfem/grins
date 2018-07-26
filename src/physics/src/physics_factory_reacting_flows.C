@@ -116,17 +116,50 @@ namespace GRINS
                            const std::string & conductivity_model, const std::string & viscosity_model,
                            std::unique_ptr<Physics> & new_physics )
   {
+    AntiochMixtureBuilderBase builder;
+
     if( (thermo_model == AntiochOptions::stat_mech_thermo_model()) )
       {
-        this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
-                                                  Antioch::StatMechThermodynamics<libMesh::Real> >
-          (input,physics_name,material,diffusivity_model,
-           conductivity_model,viscosity_model,
-           new_physics);
+        ThermoEnum thermo_type = builder.get_thermo_type(input,material);
+        switch(thermo_type)
+          {
+          case(NASA7):
+            {
+              this->build_mix_avged_physics_with_thermo<Antioch::NASA7CurveFit<libMesh::Real>,
+                                                        Antioch::StatMechThermodynamics<libMesh::Real> >
+                (input,physics_name,material,diffusivity_model,
+                 conductivity_model,viscosity_model,
+                 new_physics);
+
+              break;
+            }
+          case(NASA9):
+            {
+              this->build_mix_avged_physics_with_thermo<Antioch::NASA9CurveFit<libMesh::Real>,
+                                                        Antioch::StatMechThermodynamics<libMesh::Real> >
+                (input,physics_name,material,diffusivity_model,
+                 conductivity_model,viscosity_model,
+                 new_physics);
+
+              break;
+            }
+          case(CEA):
+            {
+              this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
+                                                        Antioch::StatMechThermodynamics<libMesh::Real> >
+                (input,physics_name,material,diffusivity_model,
+                 conductivity_model,viscosity_model,
+                 new_physics);
+
+              break;
+            }
+          case(INVALID):
+          default:
+            libmesh_error_msg("ERROR: Invalid thermo type for thermo_model!");
+          }
       }
     else if( thermo_model == AntiochOptions::ideal_gas_thermo_model() )
       {
-        AntiochMixtureBuilderBase builder;
         ThermoEnum thermo_type = builder.get_thermo_type(input,material);
         switch(thermo_type)
           {
