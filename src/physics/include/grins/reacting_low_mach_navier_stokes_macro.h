@@ -26,7 +26,9 @@ namespace GRINSPrivate
   template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<curve_fit,GRINS::conductivity> >
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_CURVEFIT_RAW(class_name,conductivity) \
-  template class GRINS::class_name<GRINS::AntiochConstantTransportMixture<Antioch::CEACurveFit<libMesh::Real>,GRINS::conductivity> >
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>,conductivity); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_RAW(class_name,Antioch::NASA7CurveFit<libMesh::Real>,conductivity); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_RAW(class_name,Antioch::NASA9CurveFit<libMesh::Real>,conductivity)
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE(class_name) \
   INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_CURVEFIT_RAW(class_name,ConstantConductivity); \
@@ -39,7 +41,11 @@ namespace GRINSPrivate
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_CURVEFIT_THERMO_RAW(class_name,conductivity) \
   INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>,conductivity,Antioch::StatMechThermodynamics<libMesh::Real>); \
-  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>,conductivity,GRINSPrivate::CEAIdealGasThermo)
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>,conductivity,GRINSPrivate::CEAIdealGasThermo); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::NASA7CurveFit<libMesh::Real>,conductivity,Antioch::StatMechThermodynamics<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::NASA7CurveFit<libMesh::Real>,conductivity,GRINSPrivate::NASA7IdealGasThermo); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::NASA9CurveFit<libMesh::Real>,conductivity,Antioch::StatMechThermodynamics<libMesh::Real>); \
+  INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_RAW(class_name,Antioch::NASA9CurveFit<libMesh::Real>,conductivity,GRINSPrivate::NASA9IdealGasThermo)
 
 #define INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR(class_name) \
   INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR_CURVEFIT_THERMO_RAW(class_name,ConstantConductivity); \
