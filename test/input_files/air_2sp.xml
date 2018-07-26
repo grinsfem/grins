@@ -515,8 +515,8 @@
       </thermo>
       <transport model="gas_transport">
         <string title="geometry">atom</string>
-        <LJ_welldepth units="K">80.000</LJ_welldepth>
-        <LJ_diameter units="A">2.750</LJ_diameter>
+        <LJ_welldepth units="K">71.400</LJ_welldepth>
+        <LJ_diameter units="A">3.298</LJ_diameter>
         <dipoleMoment units="Debye">0.000</dipoleMoment>
         <polarizability units="A3">0.000</polarizability>
         <rotRelax>0.000</rotRelax>
@@ -556,11 +556,11 @@
       </thermo>
       <transport model="gas_transport">
         <string title="geometry">linear</string>
-        <LJ_welldepth units="K">232.400</LJ_welldepth>
-        <LJ_diameter units="A">3.830</LJ_diameter>
+        <LJ_welldepth units="K">97.53</LJ_welldepth>
+        <LJ_diameter units="A">3.621</LJ_diameter>
         <dipoleMoment units="Debye">0.000</dipoleMoment>
-        <polarizability units="A3">0.000</polarizability>
-        <rotRelax>1.000</rotRelax>
+        <polarizability units="A3">1.76</polarizability>
+        <rotRelax>4.000</rotRelax>
       </transport>
     </species>
  

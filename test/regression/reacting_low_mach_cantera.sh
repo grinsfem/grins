@@ -12,7 +12,7 @@ PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 10 -sub_pc_type ilu -sub_pc_factor_s
 SOLNDATA="./reacting_low_mach_cantera_regression.xda"
 
 # Gold data used for regression comparsion
-GOLDDATA="${GRINS_TEST_DATA_DIR}/reacting_low_mach_cantera_regression.xdr"
+GOLDDATA="${GRINS_TEST_DATA_DIR}/reacting_low_mach_cantera_regression.xda.gz"
 
 if [ $GRINS_CANTERA_ENABLED == 1 ]; then
    # First run the case with grins
