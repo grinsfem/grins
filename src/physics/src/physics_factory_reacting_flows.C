@@ -2,6 +2,7 @@
 #include "grins/physics_factory_reacting_flows.h"
 
 // GRINS
+#include "grins/common.h"
 #include "grins/materials_parsing.h"
 #include "grins/cantera_mixture.h"
 #include "grins/cantera_evaluator.h"
@@ -123,8 +124,57 @@ namespace GRINS
            conductivity_model,viscosity_model,
            new_physics);
       }
+    else if( thermo_model == AntiochOptions::ideal_gas_thermo_model() )
+      {
+        AntiochMixtureBuilderBase builder;
+        ThermoEnum thermo_type = builder.get_thermo_type(input,material);
+        switch(thermo_type)
+          {
+          case(NASA7):
+            {
+              this->build_mix_avged_physics_with_thermo<Antioch::NASA7CurveFit<libMesh::Real>,
+                                                        Antioch::IdealGasThermo<Antioch::NASA7CurveFit<libMesh::Real>,libMesh::Real> >
+                (input,physics_name,material,diffusivity_model,
+                 conductivity_model,viscosity_model,
+                 new_physics);
+
+              break;
+            }
+          case(NASA9):
+            {
+              this->build_mix_avged_physics_with_thermo<Antioch::NASA9CurveFit<libMesh::Real>,
+                                                        Antioch::IdealGasThermo<Antioch::NASA9CurveFit<libMesh::Real>,libMesh::Real> >
+                (input,physics_name,material,diffusivity_model,
+                 conductivity_model,viscosity_model,
+                 new_physics);
+
+              break;
+            }
+          case(CEA):
+            {
+              this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
+                                                        Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >
+                (input,physics_name,material,diffusivity_model,
+                 conductivity_model,viscosity_model,
+                 new_physics);
+
+              break;
+            }
+          case(INVALID):
+          default:
+            libmesh_error_msg("ERROR: Invalid thermo type for thermo_model!");
+          }
+      }
     else if( (thermo_model == AntiochOptions::cea_nasa_model()) )
       {
+        {
+          std::string msg = "WARNING: Specifying thermo_model = "+AntiochOptions::cea_nasa_model();
+          msg += "is DEPREACATED!\n";
+          msg += "         You should specify either "+AntiochOptions::stat_mech_thermo_model();
+          msg += "or "+AntiochOptions::ideal_gas_thermo_model()+"\n";
+          grins_warning(msg);
+        }
+
         this->build_mix_avged_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                                   Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >
           (input,physics_name,material,diffusivity_model,
