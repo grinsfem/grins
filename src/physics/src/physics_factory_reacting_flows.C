@@ -237,14 +237,85 @@ namespace GRINS
       libmesh_error_msg("Error: For constant transport_model, diffusivity model must be constant_lewis!");
 
 
+    AntiochMixtureBuilderBase builder;
+    ThermoEnum thermo_type = builder.get_thermo_type(input,material);
+
     if( thermo_model == AntiochOptions::stat_mech_thermo_model() )
       {
-        this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
-                                              Antioch::StatMechThermodynamics<libMesh::Real> >
-          (input,physics_name,material,conductivity_model,new_physics);
+        switch(thermo_type)
+          {
+          case(NASA7):
+            {
+              this->build_const_physics_with_thermo<Antioch::NASA7CurveFit<libMesh::Real>,
+                                                    Antioch::StatMechThermodynamics<libMesh::Real> >
+                (input,physics_name,material,conductivity_model,new_physics);
+
+              break;
+            }
+          case(NASA9):
+            {
+              this->build_const_physics_with_thermo<Antioch::NASA9CurveFit<libMesh::Real>,
+                                                    Antioch::StatMechThermodynamics<libMesh::Real> >
+                (input,physics_name,material,conductivity_model,new_physics);
+
+              break;
+            }
+          case(CEA):
+            {
+              this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
+                                                    Antioch::StatMechThermodynamics<libMesh::Real> >
+                (input,physics_name,material,conductivity_model,new_physics);
+
+              break;
+            }
+          case(INVALID):
+          default:
+            libmesh_error_msg("ERROR: Invalid thermo type for thermo_model!");
+          }
+      }
+    else if( thermo_model == AntiochOptions::ideal_gas_thermo_model() )
+      {
+        switch(thermo_type)
+          {
+          case(NASA7):
+            {
+              this->build_const_physics_with_thermo<Antioch::NASA7CurveFit<libMesh::Real>,
+                                                    Antioch::IdealGasThermo<Antioch::NASA7CurveFit<libMesh::Real> > >
+                (input,physics_name,material,conductivity_model,new_physics);
+
+              break;
+            }
+          case(NASA9):
+            {
+              this->build_const_physics_with_thermo<Antioch::NASA9CurveFit<libMesh::Real>,
+                                                    Antioch::IdealGasThermo<Antioch::NASA9CurveFit<libMesh::Real> > >
+                (input,physics_name,material,conductivity_model,new_physics);
+
+              break;
+            }
+          case(CEA):
+            {
+              this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
+                                                    Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real> > >
+                (input,physics_name,material,conductivity_model,new_physics);
+
+              break;
+            }
+          case(INVALID):
+          default:
+            libmesh_error_msg("ERROR: Invalid thermo type for thermo_model!");
+          }
       }
     else if( thermo_model == AntiochOptions::cea_nasa_model() )
       {
+        {
+          std::string msg = "WARNING: Specifying thermo_model = "+AntiochOptions::cea_nasa_model();
+          msg += "is DEPREACATED!\n";
+          msg += "         You should specify either "+AntiochOptions::stat_mech_thermo_model();
+          msg += "or "+AntiochOptions::ideal_gas_thermo_model()+"\n";
+          grins_warning(msg);
+        }
+
         this->build_const_physics_with_thermo<Antioch::CEACurveFit<libMesh::Real>,
                                               Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >
           (input,physics_name,material,conductivity_model,new_physics);
