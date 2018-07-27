@@ -1,0 +1,31 @@
+#!/bin/sh
+
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+DEFAULT_SOLVER_OPTIONS="-ksp_type gmres -pc_type asm -pc_asm_overlap 10 -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS:$DEFAULT_SOLVER_OPTIONS}
+
+GRINS=@prefix@/bin/grins
+INPUT=@prefix@/examples/ozone_flame/ozone_cantera.in
+
+STEADY_INPUT=@prefix@/examples/ozone_flame/cantera_steady.in
+
+mkdir -p crun0;
+$GRINS_RUN $GRINS $INPUT vis-options/vis_output_file_prefix='./crun0/crun0' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./crun0/crun0.log
+
+mkdir -p crun1;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./crun0/crun0.499.xdr' vis-options/vis_output_file_prefix='./crun1/crun1' SolverOptions/TimeStepping/delta_t='1e-5' SolverOptions/TimeStepping/n_timesteps='1000' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./crun1/crun1.log
+
+mkdir -p crun2;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./crun1/crun1.999.xdr' vis-options/vis_output_file_prefix='./crun2/crun2' SolverOptions/TimeStepping/delta_t='5e-5' SolverOptions/TimeStepping/n_timesteps='250' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./crun2/crun2.log
+
+mkdir -p crun3;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./crun2/crun2.249.xdr' vis-options/vis_output_file_prefix='./crun3/crun3' SolverOptions/TimeStepping/delta_t='1e-4' SolverOptions/TimeStepping/n_timesteps='500' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./crun3/crun3.log
+
+mkdir -p crun4;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./crun3/crun3.499.xdr' vis-options/vis_output_file_prefix='./crun4/crun4' SolverOptions/TimeStepping/delta_t='2e-4' SolverOptions/TimeStepping/n_timesteps='250' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./crun4/crun4.log
+
+mkdir -p crun5;
+$GRINS_RUN $GRINS $INPUT restart-options/restart_file='./crun4/crun4.249.xdr' vis-options/vis_output_file_prefix='./crun5/crun5' SolverOptions/TimeStepping/delta_t='1e-4' SolverOptions/TimeStepping/n_timesteps='50' $GRINS_SOLVER_OPTIONS 2>&1 | tee ./crun5/crun5.log
+
+mkdir -p crun_steady;
+$GRINS_RUN $GRINS $STEADY_INPUT restart-options/restart_file='./crun5/crun5.49.xdr'  $GRINS_SOLVER_OPTIONS 2>&1 tee ./crun_steady/crun_steady.log

@@ -105,20 +105,19 @@ namespace GRINS
     //! Helper function to check for option and error out if it's not found.
     static void check_for_input_option( const GetPot & input, const std::string & option );
 
-    //! Helper function for parsing the chemical species
-    /*! The user-provided vector will populated with the chemical
-      species names in the input file. "Physics/Chemistry/species" is
-      deprecated in favor of "Material/"+material+"/GasMixture/species" */
-    static void parse_chemical_species( const GetPot & input,
-                                        const std::string & material,
-                                        std::vector<std::string>& species_names );
-
     //! Helper function for parsing the chemical species and setting variable name
-    /*! The user-provided vector will populated with the chemical
-      species variable names based on the species name the input file. The variable
-      name will used for adding the variable to the libMesh System.
-      "Physics/Chemistry/species" is deprecated in favor of
-      "Material/"+material+"/GasMixture/species" */
+    /*! This function will parse the thermochemistry library requested by the
+        user and then use the corresponding thermochemistry object to parse
+        the datafiles to ascertain the requested species names. As such,
+        this function could be very inefficient if called repeatedly so it should
+        only be called if *absolutely necessary*, essentially if the
+        MultiphysicsSystem has not been constructed.
+
+        Deprecated functionality is explicitly setting the species names
+        in the GRINS inptu file.
+        The user-provided vector will populated with the chemical
+        species variable names based on the species name the input file. The variable
+        name will used for adding the variable to the libMesh System. */
     static void parse_species_varnames( const GetPot & input,
                                         const std::string & material,
                                         const std::string & prefix,
@@ -129,6 +128,14 @@ namespace GRINS
 
     static std::string parse_chemical_kinetics_datafile_name( const GetPot & input,
                                                               const std::string & material );
+
+    static std::string chemical_data_option()
+    { return std::string("chemical_data"); }
+
+  private:
+
+    static std::string thermochem_lib_input_string( const std::string & material )
+    { return std::string("Materials/"+material+"/GasMixture/thermochemistry_library"); }
 
   };
 
@@ -147,6 +154,8 @@ namespace GRINS
     if( !input.have_variable(option) )
       libmesh_error_msg("ERROR: Could not find required input parameter "+option+"!");
   }
+
+
 
 } // end namespace GRINS
 

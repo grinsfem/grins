@@ -32,10 +32,14 @@
 
 // Antioch
 #include "antioch/cea_curve_fit.h"
+#include "antioch/nasa9_curve_fit.h"
+#include "antioch/nasa7_curve_fit.h"
 
 // This class
 #include "antioch_kinetics.C"
 
+template class GRINS::AntiochKinetics<Antioch::NASA7CurveFit<libMesh::Real> >;
+template class GRINS::AntiochKinetics<Antioch::NASA9CurveFit<libMesh::Real> >;
 template class GRINS::AntiochKinetics<Antioch::CEACurveFit<libMesh::Real> >;
 
 #endif //GRINS_HAVE_ANTIOCH

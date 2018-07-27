@@ -138,7 +138,9 @@ namespace GRINS
     // Set whether the problem we're solving is steady or not
     // Since the variable is static, just call one Physics class
     {
-      (_physics_list.begin()->second)->set_is_steady((this->time_solver)->is_steady());
+      PhysicsListIter physics_iter = _physics_list.begin();
+      if (physics_iter != _physics_list.end() )
+        (physics_iter->second)->set_is_steady((this->time_solver)->is_steady());
     }
 
     // Next, call parent init_data function to intialize everything.

@@ -59,6 +59,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_variable_builder );
     CPPUNIT_TEST( test_var_constraint );
     CPPUNIT_TEST( test_variable_arbitrary_names );
+    CPPUNIT_TEST( test_variable_species_from_cantera );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -78,7 +79,6 @@ namespace GRINSTesting
 
       this->test_all_variables( GRINS::VariablesParsing::velocity_section(),
                                 GRINS::VariablesParsing::temperature_section(),
-                                GRINS::VariablesParsing::species_mass_fractions_section(),
                                 GRINS::VariablesParsing::pressure_section(),
                                 GRINS::VariablesParsing::single_var_section() );
 
@@ -116,7 +116,6 @@ namespace GRINSTesting
 
       this->test_all_variables( "MySpeed",
                                 "TestingIsSoHot",
-                                "MassFractions",
                                 "SoMuchPressure",
                                 "ForeverAlone" );
 
@@ -124,16 +123,56 @@ namespace GRINSTesting
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
 
+    void test_variable_species_from_cantera()
+    {
+#ifdef GRIN_HAVE_CANTERA
+      std::string filename =
+        std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_species_cantera.in";
+
+      this->setup_multiphysics_system(filename);
+
+      GRINS::VariableBuilder::build_variables((*_input),(*_system));
+
+      const GRINS::FEVariablesBase& species_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable("SpeciesMassFractions");
+
+        const std::vector<std::string>& var_names = species_vars.active_var_names();
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O"),  var_names[0] );
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O2"), var_names[1] );
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O3"), var_names[2] );
+#endif // GRIN_HAVE_CANTERA
+    }
+
+    void test_variable_species_from_antioch()
+    {
+#ifdef GRIN_HAVE_ANTIOCH
+      std::string filename =
+        std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/variables_species_antioch.in";
+
+      this->setup_multiphysics_system(filename);
+
+      GRINS::VariableBuilder::build_variables((*_input),(*_system));
+
+      // We're also testing the arbitrary naming of species variables with this test
+      const GRINS::FEVariablesBase& species_vars =
+          GRINS::GRINSPrivate::VariableWarehouse::get_variable("Barf");
+
+        const std::vector<std::string>& var_names = species_vars.active_var_names();
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O"),  var_names[0] );
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O2"), var_names[1] );
+        CPPUNIT_ASSERT_EQUAL( std::string("Y_O3"), var_names[2] );
+#endif // GRIN_HAVE_ANTIOCH
+    }
+
   private:
 
     void test_all_variables( const std::string& velocity_name,
                              const std::string& temp_name,
-                             const std::string& species_name,
                              const std::string& press_name,
                              const std::string& single_var_name )
     {
       // There should be 7 variables generated from that input file
-      CPPUNIT_ASSERT_EQUAL((unsigned int)7,_system->n_vars());
+      CPPUNIT_ASSERT_EQUAL((unsigned int)5,_system->n_vars());
 
       // Check Velocity variables
       {
@@ -157,18 +196,6 @@ namespace GRINSTesting
 
         // Verify the FE part
         this->test_temp_fe(*_system);
-      }
-
-      // Check SpeciesMassFractions variables
-      {
-        const GRINS::FEVariablesBase& species_vars =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(species_name);
-
-        const std::vector<std::string>& var_names = species_vars.active_var_names();
-        this->test_species_var_names(var_names);
-
-        // Verify the FE part
-        this->test_species_fe(*_system);
       }
 
       // Check Pressure variable

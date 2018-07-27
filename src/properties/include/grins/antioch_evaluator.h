@@ -40,7 +40,7 @@
 #include "antioch/temp_cache.h"
 #include "antioch/cea_evaluator.h"
 #include "antioch/stat_mech_thermo.h"
-#include "antioch/ideal_gas_micro_thermo.h"
+#include "antioch/ideal_gas_thermo.h"
 
 namespace GRINS
 {
@@ -57,9 +57,11 @@ namespace GRINS
   {
   public:
 
+    AntiochEvaluator() = delete;
+
     AntiochEvaluator( const AntiochMixture<KineticsThermoCurveFit>& mixture );
 
-    virtual ~AntiochEvaluator(){};
+    virtual ~AntiochEvaluator() = default;
 
     // Chemistry
     libMesh::Real M( unsigned int species ) const;
@@ -80,13 +82,22 @@ namespace GRINS
     std::string species_name( unsigned int species_index ) const;
 
     // Thermo
-    libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
-  
-    void cp_s( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y, std::vector<libMesh::Real>& Cp_s );
 
-    libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
+    libMesh::Real cp( const libMesh::Real & T, const libMesh::Real P, const std::vector<libMesh::Real> & Y )
+    { return this->specialized_cp(T,P,Y,*_thermo); }
 
-    libMesh::Real h_s( const libMesh::Real& T, unsigned int species );
+    void cp_s( const libMesh::Real & T,
+               const libMesh::Real P,
+               const std::vector<libMesh::Real> & Y,
+               std::vector<libMesh::Real> & cp_s )
+    { this->specialized_cp_s(T,P,Y,*_thermo,cp_s); }
+
+
+    libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y )
+    { return this->specialized_cv(T,P,Y,*_thermo); }
+
+    libMesh::Real h_s( const libMesh::Real & T, unsigned int species )
+    { return this->specialized_h_s(T,species,*_thermo); }
 
     // Kinetics
     void omega_dot( const libMesh::Real& T, libMesh::Real rho,
@@ -120,30 +131,80 @@ namespace GRINS
       of Antioch::TempCache! */
     void check_and_reset_temp_cache( const libMesh::Real& T );
 
-    /* Below we will specialize the specialized_build_* functions to the appropriate type.
-       This way, we can control how the cached transport objects get constructed
-       based on the template type. This is achieved by the dummy types forcing operator
-       overloading for each of the specialized types. */
-    void build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture )
-    { specialized_build_thermo( mixture, _thermo, thermo_type<Thermo>() ); }
-
   private:
 
-    AntiochEvaluator();
-
-    void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
-                                   std::unique_ptr<Antioch::StatMechThermodynamics<libMesh::Real> >& thermo,
-                                   thermo_type<Antioch::StatMechThermodynamics<libMesh::Real> > )
+    // StatMechThermodynamics methods
+    libMesh::Real specialized_cp( const libMesh::Real & T,
+                                  const libMesh::Real /*P*/,
+                                  const std::vector<libMesh::Real> & Y,
+                                  const Antioch::StatMechThermodynamics<libMesh::Real> & thermo )
     {
-      thermo.reset( new Antioch::StatMechThermodynamics<libMesh::Real>( mixture.chemical_mixture() ) );
+      return thermo.cp( T, T, Y );
     }
 
-    void specialized_build_thermo( const AntiochMixture<KineticsThermoCurveFit> & mixture,
-                                   std::unique_ptr<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real> > & thermo,
-                                   thermo_type<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>, libMesh::Real> > )
+    void specialized_cp_s( const libMesh::Real & T,
+                           const libMesh::Real /*P*/,
+                           const std::vector<libMesh::Real> & Y,
+                           const Antioch::StatMechThermodynamics<libMesh::Real> & thermo,
+                           std::vector<libMesh::Real> & cp_s )
     {
-      _nasa_evaluator.reset( new Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>( mixture.nasa_mixture() ) );
-      thermo.reset( new Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,KineticsThermoCurveFit>,libMesh::Real>( *_nasa_evaluator, mixture.chemical_mixture() ) );
+      libmesh_assert_equal_to(_chem.n_species(), Y.size());
+      libmesh_assert_equal_to(Y.size(), cp_s.size());
+
+      for(unsigned int s = 0; s < Y.size(); s++)
+        cp_s[s] = thermo.cv(s, T, T) + this->R(s);
+    }
+
+    libMesh::Real specialized_cv( const libMesh::Real & T,
+                                  const libMesh::Real /*P*/,
+                                  const std::vector<libMesh::Real> & Y,
+                                  const Antioch::StatMechThermodynamics<libMesh::Real> & thermo )
+    { return thermo.cv( T, T, Y ); }
+
+    libMesh::Real specialized_h_s( const libMesh::Real & T, unsigned int species,
+                                   const Antioch::StatMechThermodynamics<libMesh::Real> & thermo )
+    { return thermo.h_tot( species, T ) + this->_chem.h_stat_mech_ref_correction(species); }
+
+
+
+    // IdealGasThermo methods
+    libMesh::Real specialized_cp( const libMesh::Real & T,
+                                  const libMesh::Real /*P*/,
+                                  const std::vector<libMesh::Real> & Y,
+                                  const Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> & /*thermo*/ )
+    {
+      this->check_and_reset_temp_cache(T);
+      return this->_nasa_evaluator->cp( *_temp_cache, Y );
+    }
+
+    void specialized_cp_s( const libMesh::Real & T,
+                           const libMesh::Real /*P*/,
+                           const std::vector<libMesh::Real> & Y,
+                           const Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> & /*thermo*/,
+                           std::vector<libMesh::Real> & cp_s )
+    {
+      libmesh_assert_equal_to(_chem.n_species(), Y.size());
+      libmesh_assert_equal_to(Y.size(), cp_s.size());
+
+      this->check_and_reset_temp_cache(T);
+      for(unsigned int s = 0; s < Y.size(); s++)
+        cp_s[s] = _nasa_evaluator->cp( *_temp_cache, s );
+    }
+
+    libMesh::Real specialized_cv( const libMesh::Real & T,
+                                  const libMesh::Real /*P*/,
+                                  const std::vector<libMesh::Real> & Y,
+                                  const Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> & /*thermo*/ )
+    {
+      this->check_and_reset_temp_cache(T);
+      return this->_nasa_evaluator->cv( *_temp_cache, Y );
+    }
+
+    libMesh::Real specialized_h_s( const libMesh::Real & T, unsigned int species,
+                                   const Antioch::IdealGasThermo<KineticsThermoCurveFit,libMesh::Real> & /*thermo*/ )
+    {
+      this->check_and_reset_temp_cache(T);
+      return this->_nasa_evaluator->h( *_temp_cache, species );
     }
 
   };

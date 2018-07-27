@@ -1,0 +1,58 @@
+
+# Knobs that we can turn. We must put these before the include since
+# reference these in the common_input.in file
+[OzoneKnobs]
+   Tmax = '700.0'
+   Uvalue = '28000'
+[]
+
+[Materials]
+  [./OzoneGas]
+     [./ThermodynamicPressure]
+        value = '1e5' #[Pa]
+     [../]
+     [./GasMixture]
+        thermochemistry_library = 'antioch'
+        species = 'O O2 O3'
+        kinetics_data = 'ozone.xml'
+
+        [./Antioch]
+           transport_model = 'constant'
+           thermo_model = 'cea'
+           viscosity_model = 'constant'
+           thermal_conductivity_model = 'constant'
+           mass_diffusivity_model = 'constant_lewis'
+           cea_data = 'ozone_cea_data.dat'
+           species_data = 'ozone_species_data.dat'
+        [../]
+     [../]
+
+     [./Viscosity]
+        value = '1.0e-5'
+     [../]
+     [./ThermalConductivity]
+        value = '0.02'
+     [../]
+     [./LewisNumber]
+        value = '1.0'
+     [../]
+[]
+
+[Strategies]
+   [./MeshAdaptivity]
+      mesh_adaptive = 'true'
+      absolute_global_tolerance = '0.0'
+      plot_cell_errors = 'false'
+      max_refinement_steps = '6'
+      refine_percentage = '0.15'
+      coarsen_percentage = '0.9'
+      refinement_strategy = 'elem_fraction'
+   [../]
+
+   [./ErrorEstimation]
+      estimator_type = 'kelly'
+   [../]
+[]
+
+# Include things common between steady/unsteady and Antioch/Cantera
+[include common_input.in]

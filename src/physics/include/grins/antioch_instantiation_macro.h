@@ -41,18 +41,20 @@
                                    Antioch::EuckenThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real> >, \
                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >; \
   template class GRINS::class_name<curve_fit,                           \
-                                   Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,curve_fit>, libMesh::Real>, \
+                                   Antioch::IdealGasThermo<curve_fit,libMesh::Real>, \
                                    Antioch::SutherlandViscosity<libMesh::Real>, \
-                                   Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,curve_fit>, libMesh::Real> >, \
+                                   Antioch::EuckenThermalConductivity<Antioch::IdealGasThermo<curve_fit,libMesh::Real> >, \
                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >; \
   template class GRINS::class_name<curve_fit,                           \
-                                   Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,curve_fit>, libMesh::Real>, \
+                                   Antioch::IdealGasThermo<curve_fit,libMesh::Real>, \
                                    Antioch::BlottnerViscosity<libMesh::Real>, \
-                                   Antioch::EuckenThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,curve_fit>, libMesh::Real> >, \
+                                   Antioch::EuckenThermalConductivity<Antioch::IdealGasThermo<curve_fit,libMesh::Real> >, \
                                    Antioch::ConstantLewisDiffusivity<libMesh::Real> >
 
 #define INSTANTIATE_ANTIOCH_TRANSPORT(class_name)                       \
-  INSTANTIATE_ANTIOCH_TRANSPORT_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>)
+  INSTANTIATE_ANTIOCH_TRANSPORT_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>); \
+  INSTANTIATE_ANTIOCH_TRANSPORT_RAW(class_name,Antioch::NASA7CurveFit<libMesh::Real>); \
+  INSTANTIATE_ANTIOCH_TRANSPORT_RAW(class_name,Antioch::NASA9CurveFit<libMesh::Real>)
 
 #ifdef ANTIOCH_HAVE_GSL
 #define INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,curve_fit) \
@@ -62,13 +64,15 @@
                                    Antioch::KineticsTheoryThermalConductivity<Antioch::StatMechThermodynamics<libMesh::Real>,libMesh::Real>, \
                                    Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >; \
   template class GRINS::class_name<curve_fit,                           \
-                                   Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,curve_fit>, libMesh::Real>, \
+                                   Antioch::IdealGasThermo<curve_fit,libMesh::Real>, \
                                    Antioch::KineticsTheoryViscosity<libMesh::Real,Antioch::GSLSpliner>, \
-                                   Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real,curve_fit> >,libMesh::Real>, \
+                                   Antioch::KineticsTheoryThermalConductivity<Antioch::IdealGasThermo<curve_fit,libMesh::Real>, libMesh::Real>, \
                                    Antioch::MolecularBinaryDiffusion<libMesh::Real,Antioch::GSLSpliner> >
 
 #define INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT(class_name)       \
-  INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>)
+  INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,Antioch::CEACurveFit<libMesh::Real>); \
+  INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,Antioch::NASA7CurveFit<libMesh::Real>); \
+  INSTANTIATE_ANTIOCH_KINETICS_THEORY_TRANSPORT_RAW(class_name,Antioch::NASA9CurveFit<libMesh::Real>)
 
 #endif // ANTIOCH_HAVE_GSL
 

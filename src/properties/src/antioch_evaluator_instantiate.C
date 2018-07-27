@@ -32,14 +32,21 @@
 
 // Antioch
 #include "antioch/nasa_evaluator.h"
+#include "antioch/nasa9_curve_fit.h"
+#include "antioch/nasa7_curve_fit.h"
 #include "antioch/cea_curve_fit.h"
 #include "antioch/stat_mech_thermo.h"
-#include "antioch/ideal_gas_micro_thermo.h"
+#include "antioch/ideal_gas_thermo.h"
 
 // This class
 #include "antioch_evaluator.C"
 
+template class GRINS::AntiochEvaluator<Antioch::NASA7CurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >;
+template class GRINS::AntiochEvaluator<Antioch::NASA9CurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >;
 template class GRINS::AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Antioch::StatMechThermodynamics<libMesh::Real> >;
-template class GRINS::AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>, Antioch::IdealGasMicroThermo<Antioch::NASAEvaluator<libMesh::Real, Antioch::CEACurveFit<libMesh::Real> >, libMesh::Real> >;
+
+template class GRINS::AntiochEvaluator<Antioch::NASA7CurveFit<libMesh::Real>, Antioch::IdealGasThermo<Antioch::NASA7CurveFit<libMesh::Real>,libMesh::Real> >;
+template class GRINS::AntiochEvaluator<Antioch::NASA9CurveFit<libMesh::Real>, Antioch::IdealGasThermo<Antioch::NASA9CurveFit<libMesh::Real>,libMesh::Real> >;
+template class GRINS::AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>, Antioch::IdealGasThermo<Antioch::CEACurveFit<libMesh::Real>,libMesh::Real> >;
 
 #endif //GRINS_HAVE_ANTIOCH

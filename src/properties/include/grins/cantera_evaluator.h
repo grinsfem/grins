@@ -205,6 +205,16 @@ namespace GRINS
   }
 
   inline
+  void CanteraEvaluator::cp_s( const libMesh::Real& T,
+				 const libMesh::Real P,
+				 const std::vector<libMesh::Real>& Y,
+				 std::vector<libMesh::Real>& Cp_s)
+  {
+    _thermo.cp_s(T,P,Y,Cp_s);
+    return;
+  }
+
+  inline
   libMesh::Real CanteraEvaluator::cv( const libMesh::Real& T,
                                       const libMesh::Real P,
                                       const std::vector<libMesh::Real>& Y )

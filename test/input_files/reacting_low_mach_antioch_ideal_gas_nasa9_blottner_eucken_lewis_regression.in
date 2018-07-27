@@ -1,0 +1,151 @@
+# Options related to all Physics
+[Materials]
+  [./2SpeciesNGas]
+     [./GasMixture]
+        thermochemistry_library = 'antioch'
+
+        [./Antioch]
+           chemical_data = './input_files/air_2sp.xml'
+           gas_mixture = 'air2sp'
+           transport_model = 'mixture_averaged'
+           thermo_model = 'ideal_gas'
+           viscosity_model = 'blottner'
+           thermal_conductivity_model = 'eucken'
+           mass_diffusivity_model = 'constant_lewis'
+
+   [../../ThermodynamicPressure]
+      value = '10' #[Pa]
+   [../LewisNumber]
+      value = '1.4'
+[]
+
+[Physics]
+
+   enabled_physics = 'ReactingLowMachNavierStokes'
+
+   [./ReactingLowMachNavierStokes]
+
+      material = '2SpeciesNGas'
+
+      ic_ids = '0'
+      ic_types = 'parsed'
+      ic_variables = 'T:w_N:w_N2:u'
+      ic_values = '{300.0}{0.4}{0.6}{1.0-y^2}'
+[]
+
+[BoundaryConditions]
+   bc_ids = '0:2 3 1'
+   bc_id_name_map = 'Walls Inlet Outlet'
+
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '300'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '1-y^2'
+         v = '0.0'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '300'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'constant_dirichlet'
+         w_N2 = '0.6'
+         w_N  = '0.4'
+      [../]
+   [../]
+
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+      [./Temperature]
+         type = 'homogeneous_neumann'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+[]
+
+[Variables]
+   [./SpeciesMassFractions]
+      names = 'w_'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+      material = '2SpeciesNGas'
+   [../]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+   [./Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../]
+   [./Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+[]
+
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+       dimension = '2'
+       element_type = 'QUAD9'
+       x_min = '0.0'
+       x_max = '50.0'
+       y_min = '-1.0'
+       y_max = '1.0'
+       n_elems_x = '25'
+       n_elems_y = '5'
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 15
+max_linear_iterations = 500
+
+relative_step_tolerance = 1.0e-8
+relative_residual_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'true'
+
+# Visualization options
+[vis-options]
+output_vis = 'true'
+vis_output_file_prefix = 'reacting_low_mach_antioch_ideal_gas_nasa9_blottner_eucken_lewis_regression'
+output_format = 'xda'
+[]
+
+# Options for print info to the screen
+[screen-options]
+
+system_name = 'GRINS-TEST'
+
+print_equation_system_info = true
+print_mesh_info = true
+print_log_info = true
+solver_verbose = true
+solver_quiet = false
+
+print_element_jacobians = 'false'
+
+[]

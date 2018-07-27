@@ -35,34 +35,18 @@
 
 namespace GRINS
 {
-  template<typename Thermo, typename Conductivity>
-  AntiochConstantTransportEvaluator<Thermo,Conductivity>::AntiochConstantTransportEvaluator( const AntiochConstantTransportMixture<Conductivity>& mixture )
-    : AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Thermo>( mixture ),
-    _mu( mixture.mu() ),
-    _conductivity( mixture.conductivity() ),
-    _diffusivity( mixture.diffusivity() )
-  {
-    return;
-  }
-
-  template<typename Thermo, typename Conductivity>
-  AntiochConstantTransportEvaluator<Thermo,Conductivity>::~AntiochConstantTransportEvaluator()
-  {
-    return;
-  }
-
-  template<typename Thermo, typename Conductivity>
-  libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::mu( const libMesh::Real /*T*/,
-                                                                            const libMesh::Real /*P*/,
-                                                                            const std::vector<libMesh::Real>& /*Y*/ )
+  template<typename KT, typename Thermo, typename Conductivity>
+  libMesh::Real AntiochConstantTransportEvaluator<KT,Thermo,Conductivity>::mu( const libMesh::Real /*T*/,
+                                                                               const libMesh::Real /*P*/,
+                                                                               const std::vector<libMesh::Real>& /*Y*/ )
   {
     return _mu;
   }
 
-  template<typename Thermo, typename Conductivity>
-  libMesh::Real AntiochConstantTransportEvaluator<Thermo,Conductivity>::k( const libMesh::Real T,
-                                                                           const libMesh::Real /*P*/,
-                                                                           const std::vector<libMesh::Real>& Y )
+  template<typename KT, typename Thermo, typename Conductivity>
+  libMesh::Real AntiochConstantTransportEvaluator<KT,Thermo,Conductivity>::k( const libMesh::Real T,
+                                                                              const libMesh::Real /*P*/,
+                                                                              const std::vector<libMesh::Real>& Y )
   {
     // Second T is dummy
     const libMesh::Real cp = this->cp( T, T, Y );
@@ -70,13 +54,13 @@ namespace GRINS
     return _conductivity( _mu, cp );
   }
 
-  template<typename Thermo, typename Conductivity>
-  void AntiochConstantTransportEvaluator<Thermo,Conductivity>::mu_and_k_and_D( const libMesh::Real /*T*/,
-                                                                               const libMesh::Real rho,
-                                                                               const libMesh::Real cp,
-                                                                               const std::vector<libMesh::Real>& /*Y*/,
-                                                                               libMesh::Real& mu, libMesh::Real& k,
-                                                                               std::vector<libMesh::Real>& D )
+  template<typename KT, typename Thermo, typename Conductivity>
+  void AntiochConstantTransportEvaluator<KT,Thermo,Conductivity>::mu_and_k_and_D( const libMesh::Real /*T*/,
+                                                                                  const libMesh::Real rho,
+                                                                                  const libMesh::Real cp,
+                                                                                  const std::vector<libMesh::Real>& /*Y*/,
+                                                                                  libMesh::Real& mu, libMesh::Real& k,
+                                                                                  std::vector<libMesh::Real>& D )
   {
     mu = _mu;
 

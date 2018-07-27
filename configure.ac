@@ -339,6 +339,7 @@ AC_CONFIG_LINKS([test/grids/mixed_dim_symmetric_square.exo:test/grids/mixed_dim_
 AC_CONFIG_LINKS([test/grids/poiseuille_verification.e:test/grids/poiseuille_verification.e])
 AC_CONFIG_LINKS([test/grids/mixed_quad_tri_square_mesh.xda:test/grids/mixed_quad_tri_square_mesh.xda])
 AC_CONFIG_LINKS([test/grids/cylinder.exo:test/grids/cylinder.exo])
+AC_CONFIG_LINKS([test/grids/one_elem_overlap.exo:test/grids/one_elem_overlap.exo])
 
 dnl-------------------------------------------------------------------------
 dnl Generate symlinks to allow tests to read restarts without having to
@@ -360,6 +361,7 @@ AC_CONFIG_LINKS([test/input_files/air_5sp_test.xml:test/input_files/air_5sp_test
 AC_CONFIG_LINKS([test/input_files/air.xml:test/input_files/air.xml])
 AC_CONFIG_LINKS([test/input_files/elements.xml:test/input_files/elements.xml])
 AC_CONFIG_LINKS([test/input_files/ozone_flame_antioch_constant_restart.xdr:test/input_files/ozone_flame_antioch_constant_restart.xdr])
+AC_CONFIG_LINKS([test/input_files/ozone_flame_cantera_restart.xdr:test/input_files/ozone_flame_cantera_restart.xdr])
 AC_CONFIG_LINKS([test/input_files/ozone.xml:test/input_files/ozone.xml])
 AC_CONFIG_LINKS([test/input_files/ozone_cea_data.dat:test/input_files/ozone_cea_data.dat])
 AC_CONFIG_LINKS([test/input_files/ozone_species_data.dat:test/input_files/ozone_species_data.dat])
@@ -390,6 +392,7 @@ AC_CONFIG_FILES(examples/suspended_cable/run.sh,             [chmod +x examples/
 AC_CONFIG_FILES(examples/mixed_dim_inflating_sheet/run.sh,   [chmod +x examples/mixed_dim_inflating_sheet/run.sh])
 AC_CONFIG_FILES(examples/transient_amr/run.sh,   [chmod +x examples/transient_amr/run.sh])
 AC_CONFIG_FILES(examples/ozone_flame/run.sh,                 [chmod +x examples/ozone_flame/run.sh])
+AC_CONFIG_FILES(examples/ozone_flame/crun.sh,                 [chmod +x examples/ozone_flame/crun.sh])
 AC_CONFIG_FILES(examples/spectroscopy/run.sh,                 [chmod +x examples/spectroscopy/run.sh])
 
 dnl-----------------------------------------------

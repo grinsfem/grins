@@ -6,6 +6,7 @@ AM_TESTS_ENVIRONMENT += GRINS_TEST_INPUT_DIR=$(top_srcdir)/test/input_files; exp
 AM_TESTS_ENVIRONMENT += GRINS_TEST_DATA_DIR=$(top_srcdir)/test/test_data; export GRINS_TEST_DATA_DIR;
 AM_TESTS_ENVIRONMENT += GRINS_LIBMESH_DIM=@LIBMESH_DIM@; export GRINS_LIBMESH_DIM;
 AM_TESTS_ENVIRONMENT += GRINS_ANTIOCH_ENABLED=@HAVE_ANTIOCH@; export GRINS_ANTIOCH_ENABLED;
+AM_TESTS_ENVIRONMENT += GRINS_CANTERA_ENABLED=@HAVE_CANTERA@; export GRINS_CANTERA_ENABLED;
 
 AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
@@ -114,7 +115,8 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/integrated_function_test.C \
                       unit/hitran_test.C \
                       unit/spectroscopic_absorption_test.C \
-                      unit/nonlinear_solver_options.C
+                      unit/nonlinear_solver_options.C \
+                      unit/overlapping_fluid_solid_mesh.C
 
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
@@ -139,7 +141,11 @@ interface_driver_SOURCES = interface/interface_driver.C \
                            interface/thermochem_test_common.h \
                            interface/air_5sp.C \
                            interface/antioch_mixture_builder_test.C \
-                           interface/absorption_coeff_testing.h
+                           interface/absorption_coeff_testing.h \
+                           interface/antioch_parsing_type.C \
+                           interface/antioch_build_species_names.C
+
+
 
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
 
@@ -273,7 +279,6 @@ TESTS += regression/hot_cylinder.sh
 TESTS += regression/hot_cylinder_petsc_diff.sh
 
 TESTS += regression/reacting_low_mach_cantera.sh
-XFAIL_TESTS += regression/reacting_low_mach_cantera.sh
 
 TESTS += regression/reacting_low_mach_antioch_statmech_constant.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_constant_prandtl.sh
@@ -287,7 +292,9 @@ TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arr
 TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall.sh
 TESTS += regression/reacting_low_mach_antioch_kinetics_theory.sh
+TESTS += regression/reacting_low_mach_antioch_ideal_gas_nasa9_blottner_eucken_lewis.sh
 TESTS += regression/ozone_flame_antioch_constant.sh
+TESTS += regression/ozone_flame_cantera.sh
 
 TESTS += regression/ozone_flame_antioch_kinetics_theory.sh
 XFAIL_TESTS += regression/ozone_flame_antioch_kinetics_theory.sh
@@ -304,6 +311,9 @@ TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_unifref.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_newmark.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners_rayleigh_damping_newmark.sh
 TESTS += regression/elastic_mooney_rivlin_membrane_cantilever_unsteady_rayleigh_damping.sh
+TESTS += regression/elastic_mooney_rivlin_membrane_cantilever_unsteady_newmark_regression.sh
+TESTS += regression/elastic_mooney_rivlin_membrane_cantilever_unsteady_euler_regression.sh
+
 TESTS += regression/extra_quadrature_order_laplace_arefee_amr.sh
 
 

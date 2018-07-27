@@ -1,9 +1,22 @@
 Version 0.9.0 (in progress)
    * C++11 compiler now required
    * Minimum libMesh git hash for this release is: 2d9b8bc
+   * Minimum Antioch git hash is now: e17822d
    * Use factory pattern for DiffSolver, now support
      specifying DiffSolver type in inputfile,
      add support for libMesh::PetscDiffSolver
+   * Refactor thermochemistry input options parsing.
+     See master_example_inputfile.in for details. Backward
+     compatibility with the input file will be maintained
+     for one release.
+   * Add Full support for Antioch XML parser for parsing
+     Antioch thermochemistry and transport data
+   * Update Cantera transport to respect transport model
+     specified in the XML file.
+   * Updated ozone_flame example with run scripts for both
+     Antioch and Cantera versions. Also updated to illustrate
+     overriding input options on the command line and AMR
+     for the final step.
 
 Version 0.8.0
    * Minimum libMesh git hash for this release is: 8be0a4e

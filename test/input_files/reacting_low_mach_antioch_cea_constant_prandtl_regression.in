@@ -3,12 +3,12 @@
   [./2SpeciesNGas]
      [./GasMixture]
         thermochemistry_library = 'antioch'
-        species   = 'N2 N'
-        kinetics_data = './input_files/air_2sp.xml'
 
         [./Antioch]
+           chemical_data = './input_files/air_2sp.xml'
+           gas_mixture = 'air2sp'
            transport_model = 'constant'
-           thermo_model = 'cea'
+           thermo_model = 'ideal_gas'
            viscosity_model = 'constant'
            thermal_conductivity_model = 'constant_prandtl'
            mass_diffusivity_model = 'constant_lewis'

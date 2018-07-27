@@ -173,53 +173,84 @@
         # Notify that we're using Cantera
         thermochemistry_library = 'cantera'
 
-        # Species in this gas mixture
-        species = 'N2 N C CN'
-
-        # Path to file containing kinetics data.
-        # For Cantera, this may also contain all other thermochemistry data.
-        kinetics_data = 'datafile.xml'
-
         [./Cantera]
-           # Specify the mixture to be used. This is the "mixture"
-           # given in the kinetics_data file. The user must set this
+           # Specify the mixture to be used. This is the "mixture" or "phase"
+           # given in the chemical_data file. The user must set this
            # since the Cantera data file may contain more than one mixture.
            gas_mixture = 'air4sp'
+
+           # Path to file containing thermochemical and transport data.
+           # This is the only file Cantera will look for so all data
+           # must be present in the Cantera XML format.
+           # You may wish to consider looking at Cantera's .cti format
+           # and then using Cantera-deployed tools to convert to .xml format.
+           # If you have a ChemKin file, Cantera deploys a ck2cti tool
+           # to convert to cti, then you can convert to XML.
+           chemical_data = 'datafile.xml'
+        [../]
+     [../]
+   [../]
 
    # Arbitrary material name. Here we describe input parameters related
    # to the Antioch thermochemistry library. These are used for reacting
    # flow Physics. Note that units here *must* be SI.
-   [../../../AntiochMaterial]
+   # Although we support ASCII input to Antioch, XML format is much preferred.
+   # The parsing type is determined by the suffix on the chemical data file:
+   # .dat --> ASCII
+   # .xml --> XML
+   # .chemkin --> CHEMKIN (not yet supported)
+   [./AntiochMaterial]
       [./GasMixture]
          # Notify that we're using Antioch
          thermochemistry_library = 'antioch'
 
-         # Species in this gas mixture
-         species = 'N2 N C CN'
-
-         # Path to file containing kinetics data.
-         kinetics_data = 'datafile.xml'
-
          # Antioch model specification
          [./Antioch]
 
+           # For XML, we assume you have all kinetics, thermo, and transport data
+           # (modulo Blotter or Sutherland data, which are specified in separate files).
+           # For the thermo, we will query the XML file to determine whether it's NASA7
+           # or NASA9. NASA models are always used for the chemistry and if
+           # thermo_model (see below) is ideal_gas, then that NASA model will
+           # also be used there.
+           chemical_data = 'datafile.xml'
+
+           # Specify the mixture to be used. This is the "mixture" or "phase"
+           # given in the chemical_data file if it's an xml file.
+           # The user must set this when using an XML file since the data file
+           # may contain more than one mixture. If using ASCII parsing, this
+           # variable is not used and not needed.
+           gas_mixture = 'air4sp'
+
+           
            # The type of transport model. Currently accepted values
            # are: constant, mixture_averaged
            transport_model = 'constant'
 
            # Model used for computing thermodynamic quantities.
-           # Currently accepted values are: cea, stat_mech
-           # Note: CEA data is internally used to the kinetics
-           #       calculation and this option will not effect that.
-           thermo_model = 'cea'
+           # Currently accepted values are: ideal_gas, stat_mech
+           #
+           # ideal_gas corresponds to assuming electronic states are not populated
+           # and vibrational are partially populated and computed by taking the NASA
+           # curve fit value for the total and subtracting the translational and
+           # vibrational energy. This is a common model in combustion applications.
+           #
+           # stat_mech will use statistical mechanics relations to compute translational,
+           # rotational, vibrational, and electronic energies. Note these strongly depend
+           # on having the correct modes/degenercies for vibrational and electronic states
+           # for each species.
+           thermo_model = 'ideal_gas'
 
            # Model used for computing viscosity.
            # Currently accepted values are:
            #   constant (only valid with transport_model = constant)
            #   blottner (transport_model = mixture_averaged, requires blottner_data)
            #   sutherland (transport_model = mixture_averaged, requires sutherland_data),
-           #   kinetics_theory (transport_model = mixture_averaged, requires transport_data, requires
-           #                    thermal_conductivity_model and mass_diffusivity_model to  be kinetics_theory)
+           #   kinetics_theory (* transport_model = mixture_averaged,
+           #                    * requires transport_data if using ASCII parsing or have data in XML file
+           #                      if using XML parsing
+           #                    * requires thermal_conductivity_model and mass_diffusivity_model
+           #                      to  be kinetics_theory)
            #
            # For viscosity_model = 'constant', the viscosity value
            # will be parsed from [Materials/material-name/Viscosity/value]
@@ -230,8 +261,11 @@
            #   constant (only valid with transport_model = constant)
            #   constant_prandtl
            #   eucken (transport_model = mixture_averaged, requires thermo_model = stat_mech)
-           #   kinetics_theory (transport_model = mixture_averaged, requires transport_data, requires
-           #                    viscosity_model and mass_diffusivity_model to be kinetics_theory)
+           #   kinetics_theory (* transport_model = mixture_averaged,
+           #                    * requires transport_data if using ASCII parsing or have data in XML file
+           #                      if using XML parsing 
+           #                    * requires viscosity_model and mass_diffusivity_model
+           #                      to be kinetics_theory)
            #
            # For thermal_conductivity_model = 'constant', the conductivity value
            # will be parsed from [Materials/material-name/ThermalConductivity/value]
@@ -243,8 +277,11 @@
            # Model used for computing mass diffusivity
            # Currently accepted values are:
            #   constant_lewis (transport_model = mixture_averaged, constant)
-           #   kinetics_theory (transport_model = mixture_averaged, requires transport_data, requires
-           #                    viscosity_model and thermal_conductivity_model to be kinetics_theory)
+           #   kinetics_theory (* transport_model = mixture_averaged,
+           #                    * requires transport_data if using ASCII parsing or have data in XML file
+           #                      if using XML parsing
+           #                    * requires viscosity_model and thermal_conductivity_model
+           #                      to be kinetics_theory)
            #
            # For  mass_diffusivity_model = 'constant_lewis', the lewis number
            # will be parsed from [Materials/material-name/LewisNumber/value]

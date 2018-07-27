@@ -210,15 +210,19 @@ EXTRA_DIST += $(transientamr_DATA)
 # Ozone Flame Example
 #=======================================================================
 ozonedir = $(prefix)/examples/ozone_flame
-ozone_DATA  = $(top_srcdir)/examples/ozone_flame/ozone_antioch.in
+ozone_DATA  = $(top_srcdir)/examples/ozone_flame/common_input.in
+ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone_antioch.in
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone_cantera.in
+ozone_DATA += $(top_srcdir)/examples/ozone_flame/cantera_steady.in
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone.xml
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone_cea_data.dat
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/ozone_species_data.dat
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/restart.xdr
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/restart_steady.in
+ozone_DATA += $(top_srcdir)/examples/ozone_flame/restart_amr.in
 ozone_DATA += $(top_srcdir)/examples/ozone_flame/README
-ozone_SCRIPTS = $(top_builddir)/examples/ozone_flame/run.sh
+ozone_SCRIPTS  = $(top_builddir)/examples/ozone_flame/run.sh
+ozone_SCRIPTS += $(top_builddir)/examples/ozone_flame/crun.sh
 
 EXTRA_DIST += $(ozone_DATA)
 

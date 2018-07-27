@@ -34,6 +34,9 @@
 
 namespace GRINS
 {
+  // Forward declarations
+  class MultiphysicsSystem;
+
   class AssemblyContext : public libMesh::FEMContext
   {
   public:
@@ -46,6 +49,10 @@ namespace GRINS
 
     const CachedValues & get_cached_values() const
     { return _cached_values; }
+
+    MultiphysicsSystem & get_multiphysics_system();
+
+    const MultiphysicsSystem & get_multiphysics_system() const;
 
   protected:
 

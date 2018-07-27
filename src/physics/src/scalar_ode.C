@@ -50,7 +50,7 @@ namespace GRINS
 
   void ScalarODE::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
-    system->time_evolving(this->scalar_ode_var(), 1);
+    system->time_evolving(this->scalar_ode_var(),1);
 
     // FIXME: this doesn't fit here at all, but it's the only time
     // we've clearly got a System to grab hold of with all it's

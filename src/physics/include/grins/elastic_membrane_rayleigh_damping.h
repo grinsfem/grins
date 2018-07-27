@@ -40,6 +40,9 @@ namespace GRINS
 
     virtual ~ElasticMembraneRayleighDamping(){};
 
+    //! Error out if using libMesh::FirstOrderUnsteadySolver
+    virtual void auxiliary_init( MultiphysicsSystem & system );
+
     //! Time dependent part(s) of physics for element interiors
     virtual void damping_residual( bool compute_jacobian,
                                    AssemblyContext & context );

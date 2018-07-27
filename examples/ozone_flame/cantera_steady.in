@@ -1,0 +1,26 @@
+
+# Knobs that we can turn. We must put these before the include since
+# reference these in the common_input.in file
+[OzoneKnobs]
+   Tmax = '700.0'
+   Uvalue = '64000'
+[]
+
+[Materials]
+  [./OzoneGas]
+     [./ThermodynamicPressure]
+        value = '1e5' #[Pa]
+     [../]
+     [./GasMixture]
+        thermochemistry_library = 'cantera'
+        species = 'O O2 O3'
+        kinetics_data = 'ozone.xml'
+
+        [./Cantera]
+           gas_mixture = 'ozone'
+        [../]
+     [../]
+[]
+
+# Include things common between steady/unsteady and Antioch/Cantera
+[include common_input.in]

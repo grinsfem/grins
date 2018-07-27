@@ -3,10 +3,10 @@
   [./4SpeciesNGas]
      [./GasMixture]
         thermochemistry_library = 'antioch'
-        species   = 'N2 N C CN'
-        kinetics_data = './input_files/air_4sp.xml'
 
         [./Antioch]
+           chemical_data = './input_files/air_4sp.xml'
+           gas_mixture = 'air4sp'
            transport_model = 'mixture_averaged'
            thermo_model = 'stat_mech'
            viscosity_model = 'blottner'

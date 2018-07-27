@@ -106,6 +106,8 @@ namespace GRINS
 
     std::string parse_mixture( const GetPot& input, const std::string& material );
 
+    std::string parse_chem_file( const GetPot& input, const std::string& material );
+
   private:
 
     CanteraMixture();

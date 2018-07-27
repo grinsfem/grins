@@ -23,7 +23,7 @@
     </state>
     <thermo model="IdealGas"/>
     <kinetics model="GasKinetics"/>
-    <transport model="MixTransport"/>
+    <transport model="Mix"/>
   </phase>
 
   <!-- park_jaffe_partridge_JTHT_2001 - Park, Jaffe, Partridge "Chemical-Kinetic Parameters of Hyperbolic Earth Entry," JTHT, Vol 15, No 1, pp 76-90, 2001. -->
@@ -492,7 +492,7 @@
     <species name="N">
       <atomArray>N:1 </atomArray>
       <thermo>
-        <NASA9 Tmax="1000." Tmin="0." P0="100000.">
+        <NASA9 Tmax="1000." Tmin="1." P0="100000.">
            <floatArray name="coeffs" size="9">
               0.00000000e+00, 0.00000000e+00, 2.50000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 5.61046378e+04, 4.19390932e+00
            </floatArray>
@@ -513,10 +513,10 @@
            </floatArray>
         </NASA9>
       </thermo>
-      <transport model="Pecos">
+      <transport model="gas_transport">
         <string title="geometry">atom</string>
-        <LJ_welldepth units="K">80.000</LJ_welldepth>
-        <LJ_diameter units="A">2.750</LJ_diameter>
+        <LJ_welldepth units="K">71.400</LJ_welldepth>
+        <LJ_diameter units="A">3.298</LJ_diameter>
         <dipoleMoment units="Debye">0.000</dipoleMoment>
         <polarizability units="A3">0.000</polarizability>
         <rotRelax>0.000</rotRelax>
@@ -528,7 +528,7 @@
     <species name="N2">
       <atomArray>N:2 </atomArray>
       <thermo>
-        <NASA9 Tmax="200." Tmin="0." P0="100000.">
+        <NASA9 Tmax="200." Tmin="1." P0="100000.">
            <floatArray name="coeffs" size="9">
               0.00000000e+00, 0.00000000e+00, 3.50080109e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, -1.04381074e+03, 3.09890983e+00
            </floatArray>
@@ -554,13 +554,13 @@
            </floatArray>
         </NASA9>
       </thermo>
-      <transport model="Pecos">
+      <transport model="gas_transport">
         <string title="geometry">linear</string>
-        <LJ_welldepth units="K">232.400</LJ_welldepth>
-        <LJ_diameter units="A">3.830</LJ_diameter>
+        <LJ_welldepth units="K">97.53</LJ_welldepth>
+        <LJ_diameter units="A">3.621</LJ_diameter>
         <dipoleMoment units="Debye">0.000</dipoleMoment>
-        <polarizability units="A3">0.000</polarizability>
-        <rotRelax>1.000</rotRelax>
+        <polarizability units="A3">1.76</polarizability>
+        <rotRelax>4.000</rotRelax>
       </transport>
     </species>
  

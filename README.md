@@ -38,11 +38,10 @@ Optional Packages
 -----------------
 
 To enable the reacting low Mach Navier-Stokes physics class, GRINS must be compiled with
-an external chemistry library. While [Cantera](http://code.google.com/p/cantera/) is
-partially supported, [Antioch](https://github.com/libantioch/antioch) is fully
-supported.
+an external chemistry library. Both [Cantera](http://code.google.com/p/cantera/) and
+[Antioch](https://github.com/libantioch/antioch) are fully supported.
 
-The current required minimum hash for using Antioch is libantioch/antioch@ad78595 (libantioch/antioch#240).
+The current required minimum hash for using Antioch is libantioch/antioch@e17822d (libantioch/antioch#265).
 
 
 Building GRINS 
