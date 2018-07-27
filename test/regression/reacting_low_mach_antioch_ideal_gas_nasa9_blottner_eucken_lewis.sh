@@ -23,7 +23,7 @@ if [ $GRINS_ANTIOCH_ENABLED == 1 ]; then
       input=$INPUT \
       vars='u v p T w_N w_N2' \
       norms='L2 H1' \
-      tol='1.5e-8' \
+      tol='3.1e-5' \
       gold-data=$GOLDDATA \
       soln-data=$SOLNDATA
 

@@ -23,7 +23,7 @@ if [ $GRINS_CANTERA_ENABLED == 1 ]; then
       input=$INPUT \
       vars='u v p T w_N w_N2' \
       norms='L2 H1' \
-      tol='2.0e-7' \
+      tol='2.2e-6' \
       gold-data=$GOLDDATA \
       soln-data=$SOLNDATA
 
