@@ -27,6 +27,7 @@
 
 //GRINS
 #include "grins/elastic_membrane_base.h"
+#include "grins/elasticity_tensor.h"
 
 namespace GRINS
 {
@@ -70,6 +71,16 @@ namespace GRINS
                         libMesh::Gradient & grad_u,
                         libMesh::Gradient & grad_v,
                         libMesh::Gradient & grad_w );
+
+
+    //! Precompute stress and elasticity
+    void get_stress_and_elasticity( const AssemblyContext & context,
+                                    unsigned int qp,
+                                    const libMesh::Gradient & grad_u,
+                                    const libMesh::Gradient & grad_v,
+                                    const libMesh::Gradient & grad_w,
+                                    libMesh::TensorValue<libMesh::Real> & tau,
+                                    ElasticityTensor & C );
 
   private:
 

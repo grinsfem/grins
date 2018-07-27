@@ -182,25 +182,16 @@ namespace GRINS
         libMesh::Gradient grad_u, grad_v,grad_w;
         this->get_grad_disp(context, qp, grad_u,grad_v,grad_w);
 
+        // Compute stress and elasticity tensors
+        libMesh::TensorValue<libMesh::Real> tau;
+        ElasticityTensor C;
+        this->get_stress_and_elasticity(context,qp,grad_u,grad_v,grad_w,tau,C);
 
         libMesh::RealGradient grad_x( dxdxi[qp](0), dxdeta[qp](0) );
         libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
         libMesh::RealGradient grad_z( dxdxi[qp](2), dxdeta[qp](2) );
 
-        libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
-        libMesh::Real lambda_sq = 0;
-
-        this->compute_metric_tensors( qp, *(this->get_fe(context)), context,
-                                      grad_u, grad_v, grad_w,
-                                      a_cov, a_contra, A_cov, A_contra,
-                                      lambda_sq );
-
         const unsigned int manifold_dim = 2; // The manifold dimension is always 2 for this physics
-
-        // Compute stress and elasticity tensors
-        libMesh::TensorValue<libMesh::Real> tau;
-        ElasticityTensor C;
-        this->_stress_strain_law.compute_stress_and_elasticity(manifold_dim,a_contra,a_cov,A_contra,A_cov,tau,C);
 
         libMesh::Real jac = JxW[qp];
 
@@ -585,6 +576,28 @@ namespace GRINS
         if( this->_disp_vars.dim() == 3 )
           grad_w += (*w_coeffs)(d)*u_gradphi;
       }
+  }
+
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::get_stress_and_elasticity( const AssemblyContext & context,
+                                                                    unsigned int qp,
+                                                                    const libMesh::Gradient & grad_u,
+                                                                    const libMesh::Gradient & grad_v,
+                                                                    const libMesh::Gradient & grad_w,
+                                                                    libMesh::TensorValue<libMesh::Real> & tau,
+                                                                    ElasticityTensor & C )
+  {
+    libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
+    libMesh::Real lambda_sq = 0;
+
+    this->compute_metric_tensors( qp, *(this->get_fe(context)), context,
+                                  grad_u, grad_v, grad_w,
+                                  a_cov, a_contra, A_cov, A_contra,
+                                  lambda_sq );
+
+    // Compute stress tensor
+    const unsigned int dim = 2; // The membrane dimension is always 2 for this physics
+    this->_stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
   }
 
 } // end namespace GRINS
