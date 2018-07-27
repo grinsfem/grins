@@ -173,31 +173,15 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& dphi_deta =
       this->get_fe(context)->get_dphideta();
 
-    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( u_var );
-    const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( v_var );
-    const libMesh::DenseSubVector<libMesh::Number>* w_coeffs = NULL;
-
-    if( this->_disp_vars.dim() == 3 )
-      w_coeffs = &context.get_elem_solution( w_var );
-
     // Need these to build up the covariant and contravariant metric tensors
     const std::vector<libMesh::RealGradient>& dxdxi  = this->get_fe(context)->get_dxyzdxi();
     const std::vector<libMesh::RealGradient>& dxdeta = this->get_fe(context)->get_dxyzdeta();
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        // Gradients are w.r.t. master element coordinates
-        libMesh::Gradient grad_u, grad_v, grad_w;
+        libMesh::Gradient grad_u, grad_v,grad_w;
+        this->get_grad_disp(context, qp, grad_u,grad_v,grad_w);
 
-        for( unsigned int d = 0; d < n_u_dofs; d++ )
-          {
-            libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
-            grad_u += u_coeffs(d)*u_gradphi;
-            grad_v += v_coeffs(d)*u_gradphi;
-
-            if( this->_disp_vars.dim() == 3 )
-              grad_w += (*w_coeffs)(d)*u_gradphi;
-          }
 
         libMesh::RealGradient grad_x( dxdxi[qp](0), dxdeta[qp](0) );
         libMesh::RealGradient grad_y( dxdxi[qp](1), dxdeta[qp](1) );
@@ -568,6 +552,38 @@ namespace GRINS
               }
           } // is_stress
 
+      }
+  }
+
+  template<typename StressStrainLaw>
+  void ElasticMembrane<StressStrainLaw>::get_grad_disp( const AssemblyContext & context,
+                                                        unsigned int qp,
+                                                        libMesh::Gradient & grad_u,
+                                                        libMesh::Gradient & grad_v,
+                                                        libMesh::Gradient & grad_w )
+  {
+    const int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
+
+    // All shape function gradients are w.r.t. master element coordinates
+    const std::vector<std::vector<libMesh::Real> > & dphi_dxi  = this->get_fe(context)->get_dphidxi();
+    const std::vector<std::vector<libMesh::Real> > & dphi_deta = this->get_fe(context)->get_dphideta();
+
+    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( this->_disp_vars.u() );
+    const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( this->_disp_vars.v() );
+    const libMesh::DenseSubVector<libMesh::Number>* w_coeffs = NULL;
+
+    if( this->_disp_vars.dim() == 3 )
+      w_coeffs = &context.get_elem_solution( this->_disp_vars.w() );
+
+    // Compute gradients  w.r.t. master element coordinates
+    for( int d = 0; d < n_u_dofs; d++ )
+      {
+        libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
+        grad_u += u_coeffs(d)*u_gradphi;
+        grad_v += v_coeffs(d)*u_gradphi;
+
+        if( this->_disp_vars.dim() == 3 )
+          grad_w += (*w_coeffs)(d)*u_gradphi;
       }
   }
 

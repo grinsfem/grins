@@ -64,6 +64,13 @@ namespace GRINS
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
 
+    //! Precompute data needed for get_stress inline function
+    void get_grad_disp( const AssemblyContext & context,
+                        unsigned int qp,
+                        libMesh::Gradient & grad_u,
+                        libMesh::Gradient & grad_v,
+                        libMesh::Gradient & grad_w );
+
   private:
 
     ElasticMembrane();
@@ -77,7 +84,7 @@ namespace GRINS
     //! Index from registering this quantity for postprocessing. Each component will have it's own index.
     std::vector<unsigned int> _strain_indices;
 
-  };
+  }; //end class ElasticMembrane
 
 } // end namespace GRINS
 
