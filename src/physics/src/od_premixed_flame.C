@@ -525,15 +525,14 @@ namespace GRINS
     //TODO:: make this specified in input file probably
     if( context.has_side_boundary_id( 0 ))
       {
-	//Still integrating, can probably just get rid of this stuff.
 	const std::vector<libMesh::Real> &JxW =
-	  context.get_element_fe(this->_temp_vars.T())->get_JxW();
+	  context.get_side_fe(this->_temp_vars.T())->get_JxW();
 	
 	// The Mass Flux shape functions at interior quadrature points.
 	const std::vector<std::vector<libMesh::Real> >& M_phi =
-	  context.get_element_fe(this->_mass_flux_vars.var())->get_phi();
+	  context.get_side_fe(this->_mass_flux_vars.var())->get_phi();
 
-	unsigned int n_qpoints = context.get_element_qrule().n_points();
+	unsigned int n_qpoints = context.get_side_qrule().n_points();
 
 	const unsigned int n_M_dofs =
 	  context.get_dof_indices(this->_mass_flux_vars.var()).size();
@@ -544,6 +543,8 @@ namespace GRINS
 
 	for(unsigned int qp=0; qp!=n_qpoints; qp++)
 	  {
+	    libMesh::Real jac = JxW[qp];
+
 	    //Defining and grabbing all the variables we'll need
 	    libMesh::Real T, M_dot;
 	    libMesh::Gradient Grad_T;
@@ -551,10 +552,10 @@ namespace GRINS
 	    libMesh::Real R, k, cp, rho, p0, mu;
 	    Evaluator gas_evaluator( *(this->_gas_mixture) );
 	    
-	    T = context.interior_value(this->_temp_vars.T(),qp);
-	    Grad_T = context.interior_gradient(this->_temp_vars.T(), qp);
+	    T = context.side_value(this->_temp_vars.T(),qp);
+	    Grad_T = context.side_gradient(this->_temp_vars.T(), qp);
 	
-	    M_dot = context.interior_value(this->_mass_flux_vars.var(), qp);
+	    M_dot = context.side_value(this->_mass_flux_vars.var(), qp);
 	    
 	    p0 = this->get_p0();
 	    
@@ -568,7 +569,7 @@ namespace GRINS
 	    
 	    for (unsigned int s = 0; s < this->_n_species; s++)
 	      {
-		mass_fractions[s] = std::max( context.interior_value(this->_species_vars.species(s),qp),0.0);
+		mass_fractions[s] = std::max( context.side_value(this->_species_vars.species(s),qp),0.0);
 		h_i[s] = gas_evaluator.h_s( this->_Ti, s );
 		h_u[s] = gas_evaluator.h_s( this->_Tu, s );
 	      }
@@ -589,7 +590,7 @@ namespace GRINS
 	    
 	    for(unsigned int i=0; i != n_M_dofs; i++)
 	      {
-		libMesh::Real jac = JxW[qp];
+
 		Fm(i) += (M_dot*Enth_Diff - k*Grad_T(0))*M_phi[i][qp]*jac;
 	      }
 	  }
