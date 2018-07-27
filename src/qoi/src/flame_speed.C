@@ -69,7 +69,8 @@ namespace GRINS
   {
     //grab the pressure value
     this->parse_Pressure(input);
-
+    this->set_parameter
+      ( _T_unburnt, input,"QoI/FlameSpeed/Unburnt_Temperature" , -1.0 );
     //figure out the chemistry
      std::string material = input("QoI/FlameSpeed/material","DIE!");
      _chemistry.reset( new Chemistry(input,material));
@@ -81,7 +82,7 @@ namespace GRINS
     if( num_bcs <= 0 )
       {
         std::cerr << "Error: Must specify at least one boundary id to compute"
-                  << " average Nusselt number." << std::endl
+                  << " Flame Speed" << std::endl
                   << "Found: " << num_bcs << std::endl;
         libmesh_error();
       }
@@ -137,7 +138,6 @@ namespace GRINS
       return;
     
     libMesh::Number& qoi = context.get_qois()[qoi_index];
-    libMesh::Real T = context.side_value(this->_temp_vars->T(),0);
     libMesh::Real p0 = this->_P0;
     libMesh::Real Mdot = context.side_value(this->_mass_flux_vars->var(),0);
 
@@ -149,7 +149,7 @@ namespace GRINS
       }
     libMesh::Real Rmix = _chemistry->R_mix(mass_fractions);
 
-    qoi += Mdot/(this->rho(T,p0, Rmix));
+    qoi += Mdot/(this->rho(_T_unburnt,p0, Rmix));
   } //end side_qoi
 
 
