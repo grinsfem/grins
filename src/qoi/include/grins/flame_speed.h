@@ -62,7 +62,6 @@ namespace GRINS
 
     virtual void init_context( AssemblyContext& context );
 
-    libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
     libMesh::Real M_dot( const libMesh::Point& p, const AssemblyContext& c ) const;
     void mass_fractions( const libMesh::Point& p, const AssemblyContext& c,
                          std::vector<libMesh::Real>& mass_fracs ) const;
@@ -86,6 +85,7 @@ namespace GRINS
     std::shared_ptr<Chemistry> _chemistry;
 
     libMesh::Real _P0;
+    libMesh::Real _T_unburnt;
 
   private:
 
@@ -110,11 +110,7 @@ namespace GRINS
 				     const AssemblyContext& c ) const
   { return c.point_value(_mass_flux_vars->var(),p); }
   
-  template< typename Chemistry>
-    inline
-    libMesh::Real FlameSpeed<Chemistry>::T( const libMesh::Point& p,
-				 const AssemblyContext& c ) const
-  { return c.point_value(_temp_vars->T(),p); }
+ 
   template< typename Chemistry>
     inline
     bool FlameSpeed<Chemistry>::assemble_on_interior() const
