@@ -32,6 +32,10 @@
 #include "grins/physics_naming.h"
 #include "grins/parameter_user.h"
 
+#ifdef GRINS_HAVE_ANTIOCH
+#include "grins/antioch_mixture_builder_base.h"
+#endif // GRINS_HAVE_ANTIOCH
+
 #ifdef GRINS_HAVE_CANTERA
 #include "grins/cantera_mixture.h"
 #endif //#ifdef GRINS_HAVE_CANTERA
@@ -169,25 +173,6 @@ namespace GRINS
       libmesh_error_msg("ERROR: Detected non-positive "+property+"!");
   }
 
-  void MaterialsParsing::parse_chemical_species( const GetPot & input,
-                                                 const std::string & material,
-                                                 std::vector<std::string>& species_names )
-  {
-    // Clear out anything the user might've put in there.
-    species_names.clear();
-
-    std::string option("Materials/"+material+"/GasMixture/species");
-    MaterialsParsing::check_for_input_option(input,option);
-
-    // Read variable naming info
-    unsigned int n_species = input.vector_variable_size(option);
-
-    species_names.reserve(n_species);
-    for( unsigned int i = 0; i < n_species; i++ )
-      species_names.push_back( input( option, "DIE!", i ) );
-
-  }
-
   void MaterialsParsing::parse_species_varnames( const GetPot & input,
                                                  const std::string & material,
                                                  const std::string & prefix,
@@ -238,7 +223,12 @@ namespace GRINS
     // specify the species explicitly
     else if( thermochem_lib == std::string("antioch") )
       {
-        MaterialsParsing::parse_chemical_species(input,material,species_names);
+#ifdef GRINS_HAVE_ANTIOCH
+        AntiochMixtureBuilderBase builder;
+        builder.build_species_names(input,material,species_names);
+#else
+        libmesh_error_msg("ERROR: GRINS not compiled with Antioch! Reconfigure GRINS to use Antioch!");
+#endif // GRINS_HAVE_ANTIOCH
       }
     else
       libmesh_error_msg("ERROR: Invalid thermochem_lib value "+thermochem_lib+"!");

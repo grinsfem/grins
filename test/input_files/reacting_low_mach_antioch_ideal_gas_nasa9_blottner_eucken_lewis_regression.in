@@ -8,7 +8,7 @@
            chemical_data = './input_files/air_2sp.xml'
            gas_mixture = 'air2sp'
            transport_model = 'mixture_averaged'
-           thermo_model = 'stat_mech'
+           thermo_model = 'ideal_gas'
            viscosity_model = 'blottner'
            thermal_conductivity_model = 'eucken'
            mass_diffusivity_model = 'constant_lewis'
@@ -27,32 +27,43 @@
 
       material = '2SpeciesNGas'
 
-      # Gravity vector
-      g = '0.0 0.0' #[m/s^2]
-
       ic_ids = '0'
       ic_types = 'parsed'
       ic_variables = 'T:w_N:w_N2:u'
       ic_values = '{300.0}{0.4}{0.6}{1.0-y^2}'
-
-      enable_thermo_press_calc = 'false'
-      pin_pressure = 'false'
 []
 
 [BoundaryConditions]
-   bc_ids = '0 1 2 3'
-   bc_id_name_map = 'Bottom Outlet Top Inlet'
+   bc_ids = '0:2 3 1'
+   bc_id_name_map = 'Walls Inlet Outlet'
 
-   [./Bottom]
+   [./Walls]
       [./Velocity]
          type = 'no_slip'
       [../]
       [./Temperature]
          type = 'isothermal'
-         T = '300.0'
+         T = '300'
       [../]
       [./SpeciesMassFractions]
          type = 'homogeneous_neumann'
+      [../]
+   [../]
+
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '1-y^2'
+         v = '0.0'
+      [../]
+      [./Temperature]
+         type = 'isothermal'
+         T = '300'
+      [../]
+      [./SpeciesMassFractions]
+         type = 'constant_dirichlet'
+         w_N2 = '0.6'
+         w_N  = '0.4'
       [../]
    [../]
 
@@ -61,45 +72,10 @@
          type = 'homogeneous_neumann'
       [../]
       [./Temperature]
-         type = 'adiabatic'
+         type = 'homogeneous_neumann'
       [../]
       [./SpeciesMassFractions]
          type = 'homogeneous_neumann'
-      [../]
-   [../]
-
-      [./Top]
-      [./Velocity]
-         type = 'no_slip'
-      [../]
-      [./Temperature]
-         type = 'isothermal'
-         T = '300.0'
-      [../]
-      [./SpeciesMassFractions]
-         type = 'gas_recombination_catalytic_wall'
-         catalytic_reaction = 'N->N2'
-         catalycity_type = 'constant'
-         [./ConstantCatalycity]
-            gamma = '0.001'
-         [../]
-      [../]
-   [../]
-
-   [./Inlet]
-      [./Velocity]
-         type = 'parsed_dirichlet'
-         u = '(1-y^2)'
-         v = '0.0'
-      [../]
-      [./Temperature]
-         type = 'isothermal'
-         T = '300.0'
-      [../]
-      [./SpeciesMassFractions]
-         type = 'constant_dirichlet'
-         w_N2 = '0.6'
-         w_N  = '0.4'
       [../]
    [../]
 []
@@ -128,6 +104,7 @@
    [../]
 []
 
+
 # Mesh related options
 [Mesh]
    [./Generation]
@@ -143,31 +120,25 @@
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-   max_nonlinear_iterations = 100
-   max_linear_iterations = 2500
-   verify_analytic_jacobians = '0.0'
-   initial_linear_tolerance = 1.0e-8
-   minimum_linear_tolerance = 1.0e-8
-   relative_step_tolerance = 1.0e-10
-   use_numerical_jacobians_only = 'true'
-[]
+max_nonlinear_iterations = 15
+max_linear_iterations = 500
+
+relative_step_tolerance = 1.0e-8
+relative_residual_tolerance = 1.0e-10
+
+use_numerical_jacobians_only = 'true'
 
 # Visualization options
 [vis-options]
-output_vis = 'false'
-
-vis_output_file_prefix = 'nitridation'
-
-output_residual = 'false'
-
-output_format = 'ExodusII'
-
-#output_vars = 'rho_mix mole_fractions'
+output_vis = 'true'
+vis_output_file_prefix = 'reacting_low_mach_antioch_ideal_gas_nasa9_blottner_eucken_lewis_regression'
+output_format = 'xda'
+[]
 
 # Options for print info to the screen
 [screen-options]
 
-system_name = 'GRINS'
+system_name = 'GRINS-TEST'
 
 print_equation_system_info = true
 print_mesh_info = true
@@ -177,8 +148,4 @@ solver_quiet = false
 
 print_element_jacobians = 'false'
 
-[]
-
-[QoI]
-  forward_sensitivity_parameters = 'BoundaryConditions/Top/SpeciesMassFractions/ConstantCatalycity/gamma'
 []

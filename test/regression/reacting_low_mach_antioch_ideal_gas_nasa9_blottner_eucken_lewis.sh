@@ -1,20 +1,20 @@
-#!/bin/bash
+#!/bin/bash                                                                                                                                                                                                                                   
 
 set -e
 
 PROG="${GRINS_BUILDSRC_DIR}/grins"
 
-INPUT="${GRINS_TEST_INPUT_DIR}/reacting_low_mach_cantera_regression.in"
+INPUT="${GRINS_TEST_INPUT_DIR}/reacting_low_mach_antioch_ideal_gas_nasa9_blottner_eucken_lewis_regression.in"
 
 PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 10 -sub_pc_type ilu -sub_pc_factor_shift_type nonzero -sub_pc_factor_levels 10"
 
 # Solution output from GRINS run
-SOLNDATA="./reacting_low_mach_cantera_regression.xda"
+SOLNDATA="./reacting_low_mach_antioch_ideal_gas_nasa9_blottner_eucken_lewis_regression.xda"
 
 # Gold data used for regression comparsion
-GOLDDATA="${GRINS_TEST_DATA_DIR}/reacting_low_mach_cantera_regression.xda.gz"
+GOLDDATA="${GRINS_TEST_DATA_DIR}/reacting_low_mach_antioch_ideal_gas_nasa9_blottner_eucken_lewis_regression.xdr"
 
-if [ $GRINS_CANTERA_ENABLED == 1 ]; then
+if [ $GRINS_ANTIOCH_ENABLED == 1 ]; then
    # First run the case with grins
    ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT $PETSC_OPTIONS
 
@@ -23,7 +23,7 @@ if [ $GRINS_CANTERA_ENABLED == 1 ]; then
       input=$INPUT \
       vars='u v p T w_N w_N2' \
       norms='L2 H1' \
-      tol='2.2e-6' \
+      tol='3.1e-5' \
       gold-data=$GOLDDATA \
       soln-data=$SOLNDATA
 

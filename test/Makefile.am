@@ -141,7 +141,11 @@ interface_driver_SOURCES = interface/interface_driver.C \
                            interface/thermochem_test_common.h \
                            interface/air_5sp.C \
                            interface/antioch_mixture_builder_test.C \
-                           interface/absorption_coeff_testing.h
+                           interface/absorption_coeff_testing.h \
+                           interface/antioch_parsing_type.C \
+                           interface/antioch_build_species_names.C
+
+
 
 antioch_mixture_averaged_transport_evaluator_regression_SOURCES = interface/antioch_mixture_averaged_transport_evaluator_regression.C
 
@@ -288,6 +292,7 @@ TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arr
 TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall.sh
 TESTS += regression/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_gassolid_catalytic_wall.sh
 TESTS += regression/reacting_low_mach_antioch_kinetics_theory.sh
+TESTS += regression/reacting_low_mach_antioch_ideal_gas_nasa9_blottner_eucken_lewis.sh
 TESTS += regression/ozone_flame_antioch_constant.sh
 TESTS += regression/ozone_flame_cantera.sh
 

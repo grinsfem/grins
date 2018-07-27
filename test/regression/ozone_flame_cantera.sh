@@ -24,7 +24,7 @@ if [ $GRINS_CANTERA_ENABLED == 1 ]; then
       system_name='Ozone' \
       vars='Ux Uy p T Y_O Y_O2 Y_O3' \
       norms='L2 H1' \
-      tol='3.0e-6' \
+      tol='2.0e-5' \
       gold-data=$GOLDDATA \
       soln-data=$SOLNDATA
 

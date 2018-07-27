@@ -56,13 +56,13 @@ namespace GRINS
   public:
 
     AntiochConstantTransportEvaluator( const AntiochConstantTransportMixture<KineticsThermoCurveFit,Conductivity>& mixture )
-      : AntiochEvaluator<Antioch::CEACurveFit<libMesh::Real>,Thermo>( mixture ),
+      : AntiochEvaluator<KineticsThermoCurveFit,Thermo>( mixture ),
       _mu( mixture.mu() ),
       _conductivity( mixture.conductivity() ),
       _diffusivity( mixture.diffusivity() )
     {}
 
-    virtual ~AntiochConstantTransportEvaluator(){}
+    virtual ~AntiochConstantTransportEvaluator() = default;
 
     libMesh::Real mu( const libMesh::Real /*T*/,
                       const libMesh::Real /*P*/,

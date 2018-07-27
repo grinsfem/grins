@@ -36,20 +36,48 @@ namespace GRINS
   build_transport_mixture( const GetPot & input, const std::string & material,
                            const Antioch::ChemicalMixture<libMesh::Real> & chem_mix )
   {
-    std::string transport_data_filename =
-      input( "Materials/"+material+"/GasMixture/Antioch/transport_data", "default" );
+    std::unique_ptr<Antioch::TransportMixture<libMesh::Real> > trans_mix;
 
-    if( transport_data_filename == std::string("default") )
-      transport_data_filename = Antioch::DefaultInstallFilename::transport_mixture();
+    Antioch::ParsingType parsing_type = this->get_antioch_parsing_type(input,material);
 
-    bool verbose_transport_read =
-      input( "Materials/"+material+"/GasMixture/Antioch/verbose_transport_read", false );
+    switch(parsing_type)
+      {
+      case(Antioch::ASCII):
+          {
+            std::string prefix(this->antioch_prefix(material));
 
-    return std::unique_ptr<Antioch::TransportMixture<libMesh::Real> >
-      ( new Antioch::TransportMixture<libMesh::Real>( chem_mix,
-                                                      transport_data_filename,
-                                                      verbose_transport_read,
-                                                      Antioch::ParsingType::ASCII ) );
+            bool verbose_transport_read =
+              input( prefix+"/verbose_transport_read", false );
+
+            std::string transport_data_filename =
+              input( prefix+"/transport_data", "default" );
+
+            if( transport_data_filename == std::string("default") )
+              transport_data_filename = Antioch::DefaultInstallFilename::transport_mixture();
+
+            trans_mix.reset( new Antioch::TransportMixture<libMesh::Real>( chem_mix,
+                                                                           transport_data_filename,
+                                                                           verbose_transport_read,
+                                                                           Antioch::ParsingType::ASCII ) );
+
+            break;
+          }
+      case(Antioch::XML):
+        {
+          std::unique_ptr<Antioch::XMLParser<libMesh::Real> > parser = this->build_xml_parser(input,material);
+          trans_mix.reset( new Antioch::TransportMixture<libMesh::Real>(chem_mix, parser.get()) );
+          break;
+        }
+      case(Antioch::CHEMKIN):
+        {
+          libmesh_not_implemented();
+          break;
+        }
+      default:
+        libmesh_error_msg("ERROR: Invalid Antioch parsing type!");
+      }
+
+    return trans_mix;
   }
 
 } // end namespace GRINS

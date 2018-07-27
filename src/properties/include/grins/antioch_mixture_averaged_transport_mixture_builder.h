@@ -46,8 +46,6 @@ namespace GRINS
     std::unique_ptr<AntiochMixtureAveragedTransportMixture<KineticsThermoCurveFit,Thermo,Viscosity,Conductivity,Diffusivity> >
     build_mixture( const GetPot & input, const std::string & material );
 
-  private:
-
     std::unique_ptr<Antioch::TransportMixture<libMesh::Real> >
     build_transport_mixture( const GetPot& input, const std::string& material,
                              const Antioch::ChemicalMixture<libMesh::Real> & chem_mix );
@@ -68,6 +66,14 @@ namespace GRINS
     build_diffusivity( const GetPot& input, const std::string& material,
                        const Antioch::TransportMixture<libMesh::Real> & trans_mix )
     { return specialized_build_diffusivity( input, material, trans_mix, diffusivity_type<Diffusivity>() ); }
+
+    template<typename Conductivity, typename Thermo>
+    std::unique_ptr<Antioch::MixtureConductivity<Conductivity,libMesh::Real> >
+    build_conductivity( const Antioch::TransportMixture<libMesh::Real> & trans_mix,
+                        const Thermo & thermo )
+    { return specialized_build_conductivity<Thermo>(trans_mix, thermo, conductivity_type<Conductivity>() ); }
+
+  private:
 
     std::unique_ptr<Antioch::MixtureViscosity<Antioch::SutherlandViscosity<libMesh::Real>,libMesh::Real> >
     specialized_build_viscosity( const GetPot& input,
@@ -150,6 +156,35 @@ namespace GRINS
     }
 #endif // ANTIOCH_HAVE_GSL
 
+    template<typename Thermo>
+    std::unique_ptr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> >
+    specialized_build_conductivity(const Antioch::TransportMixture<libMesh::Real> & trans_mix,
+                                   const Thermo & thermo,
+                                   conductivity_type<Antioch::EuckenThermalConductivity<Thermo> > )
+    {
+      std::unique_ptr<Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real> >
+        conductivity( new Antioch::MixtureConductivity<Antioch::EuckenThermalConductivity<Thermo>,libMesh::Real>(trans_mix) );
+      Antioch::build_eucken_thermal_conductivity<Thermo,libMesh::Real>(*(conductivity.get()),thermo);
+
+      return conductivity;
+    }
+
+#ifdef ANTIOCH_HAVE_GSL
+    template<typename Thermo>
+    std::unique_ptr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> >
+    specialized_build_conductivity(const Antioch::TransportMixture<libMesh::Real> & trans_mix,
+                                   const Thermo & thermo,
+                                   conductivity_type<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real> > )
+    {
+      std::unique_ptr<Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real> >
+      conductivity( new Antioch::MixtureConductivity<Antioch::KineticsTheoryThermalConductivity<Thermo,libMesh::Real>,libMesh::Real>(trans_mix));
+
+      Antioch::build_kinetics_theory_thermal_conductivity<Thermo,libMesh::Real>(*(conductivity.get()), thermo);
+
+      return conductivity;
+    }
+#endif // ANTIOCH_HAVE_GSL
+
   };
 
 
@@ -165,8 +200,11 @@ namespace GRINS
     std::unique_ptr<Antioch::ReactionSet<libMesh::Real> > reaction_set =
       this->build_reaction_set(input,material,*chem_mix);
 
-    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KT> > kinetics_thermo =
+    std::unique_ptr<Antioch::NASAThermoMixture<libMesh::Real,KT> > nasa_mix =
       this->build_nasa_thermo_mix<KT>(input,material,*chem_mix);
+
+    std::unique_ptr<T> gas_thermo =
+      this->build_gas_thermo<KT,T>( *chem_mix, *nasa_mix );
 
     std::unique_ptr<Antioch::TransportMixture<libMesh::Real> > trans_mix =
       this->build_transport_mixture(input,material,*chem_mix);
@@ -177,6 +215,9 @@ namespace GRINS
     std::unique_ptr<Antioch::MixtureViscosity<V,libMesh::Real> > visc =
       this->build_viscosity<V>(input,material,*trans_mix);
 
+    std::unique_ptr<Antioch::MixtureConductivity<C,libMesh::Real> > cond =
+      this->build_conductivity<C>(*trans_mix, *gas_thermo);
+
     std::unique_ptr<Antioch::MixtureDiffusion<D,libMesh::Real> > diff =
       this->build_diffusivity<D>(input,material,*trans_mix);
 
@@ -185,7 +226,9 @@ namespace GRINS
 
     return std::unique_ptr<AntiochMixtureAveragedTransportMixture<KT,T,V,C,D> >
       ( new AntiochMixtureAveragedTransportMixture<KT,T,V,C,D>
-        (chem_mix, reaction_set, kinetics_thermo, trans_mix, wilke_mix, visc, diff, min_T, clip_negative_rho) );
+        (chem_mix, reaction_set, nasa_mix, gas_thermo,
+         trans_mix, wilke_mix, visc, cond, diff,
+         min_T, clip_negative_rho) );
   }
 
 } // end namespace GRINS
