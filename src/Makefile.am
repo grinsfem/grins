@@ -16,9 +16,6 @@ if ANTIOCH_ENABLED
    bin_PROGRAMS += antioch_thermo_tables
    bin_PROGRAMS += antioch_kinetic_rates
    bin_PROGRAMS += antioch_transport_values
-if CANTERA_ENABLED
-   bin_PROGRAMS += chemistry_comparison
-endif
 endif
 
 #----------------------------------------------
@@ -622,13 +619,6 @@ if ANTIOCH_ENABLED
 
    antioch_transport_values_SOURCES = apps/antioch_transport_values.C
    antioch_transport_values_LDADD = libgrins.la
-endif
-
-if ANTIOCH_ENABLED
-if CANTERA_ENABLED
-   chemistry_comparison_SOURCES = apps/chemistry_comparison.C
-   chemistry_comparison_LDADD = libgrins.la
-endif
 endif
 
 #--------------------------------------
