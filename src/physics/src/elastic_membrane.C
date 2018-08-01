@@ -306,45 +306,21 @@ namespace GRINS
       {
         unsigned int n_qpoints = context.get_element_qrule().n_points();
 
-        const unsigned int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
+        const std::vector<libMesh::Real> & JxW = context.get_element_fe(this->_lambda_sq_var)->get_JxW();
 
-        const std::vector<libMesh::Real> &JxW = context.get_element_fe(this->_lambda_sq_var)->get_JxW();
-
-        libMesh::DenseSubVector<libMesh::Number>& Fl = context.get_elem_residual(this->_lambda_sq_var);
+        libMesh::DenseSubVector<libMesh::Number> & Fl = context.get_elem_residual(this->_lambda_sq_var);
 
         const std::vector<std::vector<libMesh::Real> >& phi =
           context.get_element_fe(this->_lambda_sq_var)->get_phi();
 
         const unsigned int n_lambda_sq_dofs = context.get_dof_indices(this->_lambda_sq_var).size();
 
-        const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( this->_disp_vars.u() );
-        const libMesh::DenseSubVector<libMesh::Number>& v_coeffs = context.get_elem_solution( this->_disp_vars.v() );
-        const libMesh::DenseSubVector<libMesh::Number>* w_coeffs = NULL;
-
-        if( this->_disp_vars.dim() == 3 )
-          w_coeffs = &context.get_elem_solution( this->_disp_vars.w() );
-
-        // All shape function gradients are w.r.t. master element coordinates
-        const std::vector<std::vector<libMesh::Real> >& dphi_dxi =
-          this->get_fe(context)->get_dphidxi();
-
-        const std::vector<std::vector<libMesh::Real> >& dphi_deta =
-          this->get_fe(context)->get_dphideta();
-
         for (unsigned int qp=0; qp != n_qpoints; qp++)
           {
             libMesh::Real jac = JxW[qp];
 
-            libMesh::Gradient grad_u, grad_v, grad_w;
-            for( unsigned int d = 0; d < n_u_dofs; d++ )
-              {
-                libMesh::RealGradient u_gradphi( dphi_dxi[d][qp], dphi_deta[d][qp] );
-                grad_u += u_coeffs(d)*u_gradphi;
-                grad_v += v_coeffs(d)*u_gradphi;
-
-                if( this->_disp_vars.dim() == 3 )
-                  grad_w += (*w_coeffs)(d)*u_gradphi;
-              }
+            libMesh::Gradient grad_u, grad_v,grad_w;
+            this->get_grad_disp(context, qp, grad_u,grad_v,grad_w);
 
             libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
             libMesh::Real lambda_sq = 0;
