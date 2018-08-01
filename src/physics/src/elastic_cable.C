@@ -138,7 +138,8 @@ namespace GRINS
           w_coeffs = &context.get_elem_solution( this->_disp_vars.w() );
 
         // Build new FE for the current point. We need this to build tensors at point.
-        std::unique_ptr<libMesh::FEGenericBase<libMesh::Real> > fe_new =  this->build_new_fe( &context.get_elem(), this->get_fe(context), point );
+        std::unique_ptr<libMesh::FEGenericBase<libMesh::Real> > fe_new =
+          this->build_new_fe( &context.get_elem(), this->get_fe(context), point );
 
         const std::vector<std::vector<libMesh::Real> >& dphi_dxi =  fe_new->get_dphidxi();
 
@@ -329,7 +330,8 @@ namespace GRINS
                   {
                     libMesh::RealGradient u_gradphi_J( dphi_dxi[j][qp] );
 
-                    const libMesh::Real diag_term = this->_A*jac*tau(0,0)*( u_gradphi_J(0)*u_gradphi_I(0))*context.get_elem_solution_derivative();
+                    const libMesh::Real diag_term =
+                      this->_A*jac*tau(0,0)*( u_gradphi_J(0)*u_gradphi_I(0))*context.get_elem_solution_derivative();
 
                     Kuu(i,j) += diag_term;
 
