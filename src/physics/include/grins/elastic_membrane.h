@@ -27,6 +27,7 @@
 
 //GRINS
 #include "grins/elastic_membrane_base.h"
+#include "grins/elasticity_tensor.h"
 
 namespace GRINS
 {
@@ -64,6 +65,23 @@ namespace GRINS
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
 
+    //! Precompute data needed for get_stress inline function
+    void get_grad_disp( const AssemblyContext & context,
+                        unsigned int qp,
+                        libMesh::Gradient & grad_u,
+                        libMesh::Gradient & grad_v,
+                        libMesh::Gradient & grad_w );
+
+
+    //! Precompute stress and elasticity
+    void get_stress_and_elasticity( const AssemblyContext & context,
+                                    unsigned int qp,
+                                    const libMesh::Gradient & grad_u,
+                                    const libMesh::Gradient & grad_v,
+                                    const libMesh::Gradient & grad_w,
+                                    libMesh::TensorValue<libMesh::Real> & tau,
+                                    ElasticityTensor & C );
+
   private:
 
     ElasticMembrane();
@@ -77,7 +95,7 @@ namespace GRINS
     //! Index from registering this quantity for postprocessing. Each component will have it's own index.
     std::vector<unsigned int> _strain_indices;
 
-  };
+  }; //end class ElasticMembrane
 
 } // end namespace GRINS
 

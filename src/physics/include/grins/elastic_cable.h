@@ -28,6 +28,7 @@
 
 //GRINS
 #include "grins/elastic_cable_base.h"
+#include "grins/elasticity_tensor.h"
 
 namespace GRINS
 {
@@ -62,6 +63,23 @@ namespace GRINS
                                                  const libMesh::Point& point,
                                                  libMesh::Real& value );
 
+    //! Precompute data needed for residual inline function
+    void get_grad_disp( const AssemblyContext & context,
+                        unsigned int qp,
+                        libMesh::Gradient & grad_u,
+                        libMesh::Gradient & grad_v,
+                        libMesh::Gradient & grad_w );
+
+
+    //! Precompute tau, needed for residual
+    void get_stress_and_elasticity( const AssemblyContext & context,
+                                    unsigned int qp,
+                                    const libMesh::Gradient & grad_u,
+                                    const libMesh::Gradient & grad_v,
+                                    const libMesh::Gradient & grad_w,
+                                    libMesh::TensorValue<libMesh::Real> & tau,
+                                    ElasticityTensor & C );
+
   private:
 
     ElasticCable();
@@ -75,7 +93,7 @@ namespace GRINS
     //! Index from registering this quantity. Each component will have it's own index.
     std::vector<unsigned int> _force_indices;
 
-  };
+  }; //end class ElasticCable
 
 } // end namespace GRINS
 

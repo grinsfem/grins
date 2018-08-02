@@ -138,7 +138,8 @@ namespace GRINS
           w_coeffs = &context.get_elem_solution( this->_disp_vars.w() );
 
         // Build new FE for the current point. We need this to build tensors at point.
-        std::unique_ptr<libMesh::FEGenericBase<libMesh::Real> > fe_new =  this->build_new_fe( &context.get_elem(), this->get_fe(context), point );
+        std::unique_ptr<libMesh::FEGenericBase<libMesh::Real> > fe_new =
+          this->build_new_fe( &context.get_elem(), this->get_fe(context), point );
 
         const std::vector<std::vector<libMesh::Real> >& dphi_dxi =  fe_new->get_dphidxi();
 
@@ -288,57 +289,22 @@ namespace GRINS
     // All shape function gradients are w.r.t. master element coordinates
     const std::vector<std::vector<libMesh::Real> >& dphi_dxi = this->get_fe(context)->get_dphidxi();
 
-    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( u_var );
-    const libMesh::DenseSubVector<libMesh::Number>* v_coeffs = NULL;
-    const libMesh::DenseSubVector<libMesh::Number>* w_coeffs = NULL;
-
-    if( this->_disp_vars.dim() >= 2 )
-      v_coeffs = &context.get_elem_solution( v_var );
-
-    if( this->_disp_vars.dim() == 3 )
-      w_coeffs = &context.get_elem_solution( w_var );
-
     // Need these to build up the covariant and contravariant metric tensors
     const std::vector<libMesh::RealGradient>& dxdxi  = this->get_fe(context)->get_dxyzdxi();
 
-    const unsigned int dim = 1; // The cable dimension is always 1 for this physics
-
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        // Gradients are w.r.t. master element coordinates
-        libMesh::Gradient grad_u, grad_v, grad_w;
+        libMesh::Real jac = JxW[qp];
+        libMesh::Gradient grad_u,grad_v,grad_w;
+        this->get_grad_disp(context, qp, grad_u,grad_v,grad_w);
 
-        for( unsigned int d = 0; d < n_u_dofs; d++ )
-          {
-            libMesh::RealGradient u_gradphi( dphi_dxi[d][qp] );
-            grad_u += u_coeffs(d)*u_gradphi;
-
-            if( this->_disp_vars.dim() >= 2 )
-              grad_v += (*v_coeffs)(d)*u_gradphi;
-
-            if( this->_disp_vars.dim() == 3 )
-              grad_w += (*w_coeffs)(d)*u_gradphi;
-          }
+        libMesh::TensorValue<libMesh::Real> tau;
+        ElasticityTensor C;
+        this->get_stress_and_elasticity(context,qp,grad_u,grad_v,grad_w,tau,C);
 
         libMesh::RealGradient grad_x( dxdxi[qp](0) );
         libMesh::RealGradient grad_y( dxdxi[qp](1) );
         libMesh::RealGradient grad_z( dxdxi[qp](2) );
-
-        libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
-        libMesh::Real lambda_sq = 0;
-
-        this->compute_metric_tensors( qp, *(this->get_fe(context)), context,
-                                      grad_u, grad_v, grad_w,
-                                      a_cov, a_contra, A_cov, A_contra,
-                                      lambda_sq );
-
-        // Compute stress tensor
-        libMesh::TensorValue<libMesh::Real> tau;
-        ElasticityTensor C;
-        this->_stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
-
-
-        libMesh::Real jac = JxW[qp];
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
@@ -364,7 +330,8 @@ namespace GRINS
                   {
                     libMesh::RealGradient u_gradphi_J( dphi_dxi[j][qp] );
 
-                    const libMesh::Real diag_term = this->_A*jac*tau(0,0)*( u_gradphi_J(0)*u_gradphi_I(0))*context.get_elem_solution_derivative();
+                    const libMesh::Real diag_term =
+                      this->_A*jac*tau(0,0)*( u_gradphi_J(0)*u_gradphi_I(0))*context.get_elem_solution_derivative();
 
                     Kuu(i,j) += diag_term;
 
@@ -413,6 +380,65 @@ namespace GRINS
               } // end i-loop
           } // end if(compute_jacobian)
       } // end qp loop
+  }
+
+  template<typename StressStrainLaw>
+  void ElasticCable<StressStrainLaw>::get_grad_disp( const AssemblyContext & context,
+                                                     unsigned int qp,
+                                                     libMesh::Gradient & grad_u,
+                                                     libMesh::Gradient & grad_v,
+                                                     libMesh::Gradient & grad_w )
+  {
+    const int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
+
+    // All shape function gradients are w.r.t. master element coordinates
+    const std::vector<std::vector<libMesh::Real> >& dphi_dxi = this->get_fe(context)->get_dphidxi();
+
+    const libMesh::DenseSubVector<libMesh::Number>& u_coeffs = context.get_elem_solution( this->_disp_vars.u() );
+    const libMesh::DenseSubVector<libMesh::Number>* v_coeffs = NULL;
+    const libMesh::DenseSubVector<libMesh::Number>* w_coeffs = NULL;
+
+    if( this->_disp_vars.dim() >= 2 )
+      v_coeffs = &context.get_elem_solution( this->_disp_vars.v() );
+
+    if( this->_disp_vars.dim() == 3 )
+      w_coeffs = &context.get_elem_solution( this->_disp_vars.w() );
+
+    // Compute gradients  w.r.t. master element coordinates
+    for( int d = 0; d < n_u_dofs; d++ )
+      {
+        libMesh::RealGradient u_gradphi( dphi_dxi[d][qp] );
+        grad_u += u_coeffs(d)*u_gradphi;
+
+        if( this->_disp_vars.dim() >= 2 )
+          grad_v += (*v_coeffs)(d)*u_gradphi;
+
+        if( this->_disp_vars.dim() == 3 )
+          grad_w += (*w_coeffs)(d)*u_gradphi;
+      }
+  }
+
+
+  template<typename StressStrainLaw>
+  void ElasticCable<StressStrainLaw>::get_stress_and_elasticity( const AssemblyContext & context,
+                                                                 unsigned int qp,
+                                                                 const libMesh::Gradient & grad_u,
+                                                                 const libMesh::Gradient & grad_v,
+                                                                 const libMesh::Gradient & grad_w,
+                                                                 libMesh::TensorValue<libMesh::Real> & tau,
+                                                                 ElasticityTensor & C )
+  {
+    libMesh::TensorValue<libMesh::Real> a_cov, a_contra, A_cov, A_contra;
+    libMesh::Real lambda_sq = 0;
+
+    this->compute_metric_tensors( qp, *(this->get_fe(context)), context,
+                                  grad_u, grad_v, grad_w,
+                                  a_cov, a_contra, A_cov, A_contra,
+                                  lambda_sq );
+
+    // Compute stress tensor
+    const unsigned int dim = 1; // The cable dimension is always 1 for this physics
+    this->_stress_strain_law.compute_stress_and_elasticity(dim,a_contra,a_cov,A_contra,A_cov,tau,C);
   }
 
 } // end namespace GRINS
