@@ -202,6 +202,9 @@ namespace GRINS
           {
             // Calculating QoI at a single wavenumber
 
+            // Output the QoI value normally
+            bool output_as_csv = false;
+
             libMesh::Real nu_desired;
             this->get_var_value<libMesh::Real>(input,nu_desired,"QoI/SpectroscopicAbsorption/desired_wavenumber",0.0);
 
@@ -213,11 +216,14 @@ namespace GRINS
             libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
             
-            qoi = new SpectroscopicAbsorption(input,qoi_name,absorb);
+            qoi = new SpectroscopicAbsorption(input,qoi_name,absorb,output_as_csv);
           }
         else if (num_wavenumbers == 3)
           {
             // Calculating QoI within a range of wavenumbers (i.e. absorption plot)
+
+            // Output wavenumber,absorption (ideally to a file) for easy plotting
+            bool output_as_csv = true;
 
             // We don't want to duplicate the last qoi
             do_final_add = false;
@@ -249,7 +255,7 @@ namespace GRINS
                 libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
                 
-                qoi = new SpectroscopicAbsorption(input,qoi_name,absorb);
+                qoi = new SpectroscopicAbsorption(input,qoi_name,absorb,output_as_csv);
                 qois->add_qoi( *qoi );
               }
           }

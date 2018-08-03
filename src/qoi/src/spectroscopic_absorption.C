@@ -42,8 +42,11 @@
 
 namespace GRINS
 {
-  SpectroscopicAbsorption::SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb)
-    : IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >(input,2 /* QGauss order */,absorb,"SpectroscopicAbsorption",qoi_name)
+  SpectroscopicAbsorption::SpectroscopicAbsorption( const GetPot & input, const std::string & qoi_name,
+                                                    std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb,
+                                                    bool output_as_csv)
+    : IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >(input,2 /* QGauss order */,absorb,"SpectroscopicAbsorption",qoi_name),
+      _output_as_csv(output_as_csv)
   {}
 
   QoIBase * SpectroscopicAbsorption::clone() const
@@ -75,6 +78,24 @@ namespace GRINS
     _multiphysics_system->assemble_qoi(qs);
 
     derivatives.scale(100.0 * (1.0-QoIBase::_qoi_value));
+  }
+
+  void SpectroscopicAbsorption::output_qoi(std::ostream & out) const
+  {
+    if (_output_as_csv)
+      {
+        const AbsorptionCoeffBase & abs = libMesh::cast_ref<const AbsorptionCoeffBase &>(this->get_function());
+        libMesh::Real nu = abs.get_wavenumber();
+
+        out << std::setprecision(16)
+            << std::scientific
+            << nu << ","
+            << _qoi_value << std::endl;
+      }
+    else
+      {
+        QoIBase::output_qoi(out);
+      }
   }
 
 } //namespace GRINS

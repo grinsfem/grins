@@ -109,6 +109,11 @@ namespace GRINS
     {
       return *(_f.get());
     }
+    
+    const Function & get_function() const
+    {
+      return *(_f.get());
+    }
 
   private:
     //! Quadrature order
