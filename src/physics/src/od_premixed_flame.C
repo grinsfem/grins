@@ -187,7 +187,10 @@ namespace GRINS
 	      {
 		this->_u_index = postprocessing.register_quantity( name );
 	      }
-		
+	     else if(name == std::string("mu") )
+	      {
+		this->_mu_index = postprocessing.register_quantity( name);
+	      }
 	    //time for species specific values
 
 	      else if(name == std::string("mole_fractions") )
@@ -226,6 +229,7 @@ namespace GRINS
 		    this->_Ds_index[s] = postprocessing.register_quantity( "D_"+this->_gas_mixture->species_name(s) );
 		  }
 	      }
+	   
 	      /* else if( name == std::string("cp_s") )
 	      {
 		this->_cp_s_index.resize(this->n_species());
@@ -246,7 +250,8 @@ namespace GRINS
                           << "                              cp" << std::endl
                           << "                              mole_fractions" << std::endl
                           << "                              omega_dot" << std::endl
-			  << "                              u" << std::endl;
+			  << "                              u" << std::endl
+		          << "                              mu" << std::endl;
                 libmesh_error();
 	      }
 	  }
@@ -658,6 +663,30 @@ namespace GRINS
 	value = M_dot/rho;
 	
       }
+    else if ( quantity_index == this->_mu_index )
+      {
+ 	 
+	std::vector<libMesh::Real> Y( this->_n_species );
+	
+	libMesh::Real T = this->T(point,context);
+	
+	this->mass_fractions(point,context, Y );
+	  
+	libMesh::Real p0 = this->get_p0();
+	
+	libMesh::Real cp = gas_evaluator.cp( T, p0, Y );
+	
+	libMesh::Real rho = this->rho( T, p0, gas_evaluator.R_mix(Y) );
+	
+	libMesh::Real mu, k;
+	std::vector<libMesh::Real> D( this->_n_species );
+	
+	gas_evaluator.mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
+	
+	value = mu;
+	return;
+      }
+  
     //now onto the species dependent stuff
     
     else 

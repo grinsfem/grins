@@ -97,7 +97,8 @@ namespace GRINS
     //!Index from registering this quantity
     unsigned int _u_index;
     //!Index from registering this quantity
-    
+    unsigned int _mu_index;
+
     libMesh::Number _p0;
     libMesh::Number _Ti;
     libMesh::Number _Tu;
