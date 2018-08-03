@@ -78,6 +78,11 @@ namespace GRINS
                     libMesh::Real desired_nu, const std::string & species,
                     libMesh::Real thermo_pressure);
 
+    libMesh::Real get_wavenumber() const
+    {
+      return _nu;
+    }
+
     void set_wavenumber(libMesh::Real new_nu)
     {
       _nu = new_nu;
