@@ -1,3 +1,22 @@
+======================================================
+  UPDATE: August 2018
+
+  You can now generate a full absorption plot without
+  having to use this example code.
+
+  Simply specify:
+    QoI/SpectroscopicAbsorption/desired_wavenumber = 'nu_min nu_max nu_step'
+    Display/QoI/default_file_prefix = 'prefix'
+
+  This method is much faster than the Spectroscopy example code, particularly
+  for large meshes and small nu_step sizes.
+  Note both wavenumber and absorption values will be output to 16 decimal places.
+
+  See 'opt_spectroscopy.in'
+
+======================================================
+
+
 This example utilizes the SpectroscopicAbsorption QoI to produce a plot of
 absorption vs wavenumber over a specified wavenumber range.
 Two values must be specified in the input file:

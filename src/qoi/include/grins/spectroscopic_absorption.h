@@ -51,6 +51,8 @@ namespace GRINS
 
     /*!
       @param absorb AbsorptionCoeff object
+      @param output_as_csv Flag for whether we should output QoI value in wavenumber,absorption CSV format
+        or in the normal QoIBase way
     */
     SpectroscopicAbsorption(const GetPot & input, const std::string & qoi_name,
                             std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb,
