@@ -53,9 +53,9 @@ namespace GRINS
                                               libMesh::Real nu_min, libMesh::Real nu_max,
                                               libMesh::Real desired_nu, const std::string & species,
                                               libMesh::Real thermo_pressure)
-    : _chemistry(chem),
+    : AbsorptionCoeffBase(desired_nu),
+      _chemistry(chem),
       _hitran(hitran),
-      _nu(desired_nu),
       _T_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>("Temperature")),
       _P_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<PressureFEVariable>("Pressure")),
       _Y_var(GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>("SpeciesMassFractions")),
