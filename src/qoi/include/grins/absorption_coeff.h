@@ -31,6 +31,7 @@
 #include "libmesh/auto_ptr.h"
 
 // GRINS
+#include "grins/absorption_coeff_base.h"
 #include "grins/assembly_context.h"
 #include "grins/hitran.h"
 #include "grins/single_variable.h"
@@ -60,7 +61,7 @@ namespace GRINS
     A chemistry library (Antioch or Cantera) is also required.
   */
   template<typename Chemistry>
-  class AbsorptionCoeff : public FEMFunctionAndDerivativeBase<libMesh::Real>
+  class AbsorptionCoeff : public AbsorptionCoeffBase
   {
   public:
 
@@ -77,11 +78,6 @@ namespace GRINS
                     libMesh::Real nu_min, libMesh::Real nu_max,
                     libMesh::Real desired_nu, const std::string & species,
                     libMesh::Real thermo_pressure);
-
-    void set_wavenumber(libMesh::Real new_nu)
-    {
-      _nu = new_nu;
-    }
 
     //! Calculate the absorption coefficient at a quadratue point
     virtual libMesh::Real operator()(const libMesh::FEMContext & context, const libMesh::Point & qp_xyz, const libMesh::Real t);
@@ -108,9 +104,6 @@ namespace GRINS
 
     //! HITRAN
     std::shared_ptr<HITRAN> _hitran;
-
-    //! Desired wavenumber [cm^-1]
-    libMesh::Real _nu;
 
     PrimitiveTempFEVariables & _T_var;
     PressureFEVariable & _P_var;

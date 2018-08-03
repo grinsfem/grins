@@ -51,8 +51,12 @@ namespace GRINS
 
     /*!
       @param absorb AbsorptionCoeff object
+      @param output_as_csv Flag for whether we should output QoI value in wavenumber,absorption CSV format
+        or in the normal QoIBase way
     */
-    SpectroscopicAbsorption(const GetPot & input,const std::string & qoi_name,std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb);
+    SpectroscopicAbsorption(const GetPot & input, const std::string & qoi_name,
+                            std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb,
+                            bool output_as_csv);
 
     virtual QoIBase * clone() const;
 
@@ -64,7 +68,12 @@ namespace GRINS
     //! Override DifferentiableQoI's empty implementation to add chain rule (QoI is exponential)
     virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index);
 
+    // Allow for outputting in CSV format
+    virtual void output_qoi(std::ostream & out) const;
+
   private:
+
+    bool _output_as_csv;
 
     SpectroscopicAbsorption();
 

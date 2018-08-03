@@ -114,7 +114,7 @@
     hitran_data_file = './CO_data.dat'
     hitran_partition_function_file = './CO_partition_function.dat'
     partition_temperatures = '295 900 1'
-    desired_wavenumber = '2172.758825'
+    desired_wavenumber = '2171.0 2174.0 0.01'
     min_wavenumber = '2170'
     max_wavenumber = '2175'
     calc_thermo_pressure = 'false'
@@ -127,11 +127,6 @@
   [../]
 []
 
-[SpectroscopyExample]
-  wavenumber_range = '2171.0 2174.0 0.01'
-  output_prefix = 'example_data'
-[]
-
 [linear-nonlinear-solver]
    max_nonlinear_iterations =  25
    max_linear_iterations = 2500
@@ -142,8 +137,8 @@
 []
 
 [Output]
-   [./Display]
-      print_qoi = 'true'
+   [./QoI]
+      default_file_prefix = 'example_data'
    [../]
 []
 

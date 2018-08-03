@@ -232,6 +232,7 @@ EXTRA_DIST += $(ozone_DATA)
 spectroscopydir = $(prefix)/examples/spectroscopy
 spectroscopy_PROGRAMS = spec
 spectroscopy_DATA  = $(top_srcdir)/examples/spectroscopy/spectroscopy.in
+spectroscopy_DATA += $(top_srcdir)/examples/spectroscopy/opt_spectroscopy.in
 spectroscopy_DATA += $(top_srcdir)/examples/spectroscopy/CO_data.dat
 spectroscopy_DATA += $(top_srcdir)/examples/spectroscopy/CO_O_O2.xml
 spectroscopy_DATA += $(top_srcdir)/examples/spectroscopy/CO_partition_function.dat
