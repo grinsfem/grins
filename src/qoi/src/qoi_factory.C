@@ -99,6 +99,8 @@ namespace GRINS
   {
     QoIBase* qoi = NULL;
 
+    bool do_final_add = true;
+
     if( qoi_name == avg_nusselt )
       {
         qoi = new AverageNusseltNumber( avg_nusselt );
@@ -172,36 +174,86 @@ namespace GRINS
         if (!calc_thermo_pressure)
           thermo_pressure = input("Materials/"+material+"/ThermodynamicPressure/value", 0.0 );
 
-        libMesh::Real nu_desired;
-        this->get_var_value<libMesh::Real>(input,nu_desired,"QoI/SpectroscopicAbsorption/desired_wavenumber",0.0);
 
-        libMesh::Real nu_min;
-        this->get_var_value<libMesh::Real>(input,nu_min,"QoI/SpectroscopicAbsorption/min_wavenumber",0.0);
-
-        libMesh::Real nu_max;
-        this->get_var_value<libMesh::Real>(input,nu_max,"QoI/SpectroscopicAbsorption/max_wavenumber",0.0);
+        // These options are for the linecenter wavenumbers included in the calculation of kv
+        libMesh::Real nu_data_min,nu_data_max;
+        this->get_var_value<libMesh::Real>(input,nu_data_min,"QoI/SpectroscopicAbsorption/min_wavenumber",0.0);
+        this->get_var_value<libMesh::Real>(input,nu_data_max,"QoI/SpectroscopicAbsorption/max_wavenumber",0.0);
 
         ChemistryBuilder chem_builder;
-
         std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb;
 
 #if GRINS_HAVE_ANTIOCH
         std::unique_ptr<AntiochChemistry> chem_ptr;
         chem_builder.build_chemistry(input,material,chem_ptr);
         std::shared_ptr<AntiochChemistry> chem(chem_ptr.release());
-
-        absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure) );
 #elif GRINS_HAVE_CANTERA
         std::unique_ptr<CanteraMixture> chem_ptr;
         chem_builder.build_chemistry(input,material,chem_ptr);
         std::shared_ptr<CanteraMixture> chem(chem_ptr.release());
-
-        absorb.reset( new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_min,nu_max,nu_desired,species,thermo_pressure) );
 #else
         libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
 
-        qoi = new SpectroscopicAbsorption(input,qoi_name,absorb);
+        // This is the wavenumber of the "laser" or a range of wavenumbers to scan over
+        std::string desired_wavenumber_var = "QoI/SpectroscopicAbsorption/desired_wavenumber";
+        unsigned int num_wavenumbers = input.vector_variable_size(desired_wavenumber_var);
+        if (num_wavenumbers == 1)
+          {
+            // Calculating QoI at a single wavenumber
+
+            libMesh::Real nu_desired;
+            this->get_var_value<libMesh::Real>(input,nu_desired,"QoI/SpectroscopicAbsorption/desired_wavenumber",0.0);
+
+#if GRINS_HAVE_ANTIOCH
+            absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
+#elif GRINS_HAVE_CANTERA
+            absorb.reset( new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
+#else
+            libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
+#endif
+            
+            qoi = new SpectroscopicAbsorption(input,qoi_name,absorb);
+          }
+        else if (num_wavenumbers == 3)
+          {
+            // Calculating QoI within a range of wavenumbers (i.e. absorption plot)
+
+            // We don't want to duplicate the last qoi
+            do_final_add = false;
+            
+            libMesh::Real min_nu = input(desired_wavenumber_var,0.0,0);
+            libMesh::Real max_nu = input(desired_wavenumber_var,0.0,1);
+            libMesh::Real step_nu = input(desired_wavenumber_var,0.0,2);
+            
+            // sanity check the given range
+            if ( (min_nu>max_nu) || (step_nu>(max_nu-min_nu)) )
+              {
+                std::stringstream ss;
+                ss <<"Invalid specification of desired_wavenumber range:" <<std::endl
+                   <<"nu_min: " <<min_nu <<std::endl
+                   <<"nu_max: " <<max_nu <<std::endl
+                   <<"nu_step: " <<step_nu <<std::endl;
+                libmesh_error_msg(ss.str());
+              }
+            
+            for (libMesh::Real nu = min_nu; nu <= max_nu; nu += step_nu)
+              {            
+                libMesh::Real nu_desired = nu;
+            
+#if GRINS_HAVE_ANTIOCH
+                absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
+#elif GRINS_HAVE_CANTERA
+                absorb.reset( new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
+#else
+                libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
+#endif
+                
+                qoi = new SpectroscopicAbsorption(input,qoi_name,absorb);
+                qois->add_qoi( *qoi );
+              }
+          }
+
       }
 
     else
@@ -212,7 +264,8 @@ namespace GRINS
 
     libmesh_assert(qoi);
 
-    qois->add_qoi( *qoi );
+    if (do_final_add)
+      qois->add_qoi( *qoi );
 
     return;
   }
