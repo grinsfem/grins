@@ -73,6 +73,10 @@ namespace GRINS
     /*! If it is, we need to potentially initialize the acceleration */
     bool _is_second_order_in_time;
 
+    bool _zero_initial_velocity;
+
+    bool _recompute_accel;
+
   };
 
   template <typename T>

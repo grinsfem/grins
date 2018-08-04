@@ -147,4 +147,14 @@ namespace GRINS
     return time_stepper;
   }
 
+  bool TimeSteppingParsing::parse_zero_initial_velocity( const GetPot & input )
+  {
+    return input( "TimeStepping/NewmarkSolver/zero_initial_velocity", false );
+  }
+
+  bool TimeSteppingParsing::parse_recompute_accel( const GetPot & input )
+  {
+    return input( "TimeStepping/NewmarkSolver/recompute_accel", false );
+  }
+
 } // end namespace GRINS

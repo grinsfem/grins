@@ -44,6 +44,7 @@
 #include "libmesh/twostep_time_solver.h"
 #include "libmesh/newmark_solver.h"
 #include "libmesh/function_base.h"
+#include "libmesh/zero_function.h"
 
 // C++
 #include <ctime>
@@ -59,7 +60,9 @@ namespace GRINS
       _theta( TimeSteppingParsing::parse_theta(input) ),
       _deltat( TimeSteppingParsing::parse_deltat(input) ),
       _adapt_time_step_options(input),
-      _is_second_order_in_time(false)
+      _is_second_order_in_time(false),
+      _zero_initial_velocity( TimeSteppingParsing::parse_zero_initial_velocity(input) ),
+      _recompute_accel( TimeSteppingParsing::parse_recompute_accel(input) )
   {}
 
   void UnsteadySolver::init_time_solver(MultiphysicsSystem* system)
@@ -231,8 +234,16 @@ namespace GRINS
 
     libMesh::NewmarkSolver& time_solver = libMesh::cast_ref<libMesh::NewmarkSolver&>(base_time_solver);
 
+    if( _zero_initial_velocity )
+      {
+        libMesh::ZeroFunction<libMesh::Number> zero;
+        time_solver.project_initial_rate( &zero );
+      }
+
     // If there's a restart, the acceleration should already be there
-    if( context.have_restart )
+    // unless the user reset the initial velocity to zero or asked to recompute
+    // the acceleration.
+    if( context.have_restart && !_zero_initial_velocity && !_recompute_accel )
       time_solver.set_initial_accel_avail(true);
 
     // Otherwise, we need to compute it

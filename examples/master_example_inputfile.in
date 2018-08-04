@@ -433,6 +433,7 @@
       # Current valid options are:
       #   libmesh_euler_solver
       #   libmesh_euler2_solver
+      #   libmesh_newmark
       solver_type = 'libmesh_euler_solver'
 
       # This sets the time step size. There is no default.
@@ -454,6 +455,25 @@
       # The value of theta should be between 0.0 and 1.0
       # The default value if not specified is theta = '0.5'
       theta = '1.0'
+    [../]
+
+    [./NewmarkSolver]
+
+        # Occasionally, when restarting using a Newmark
+        # solver, we may wish to zero out the velocity
+        # instead of using the velocit read in from the
+        # restart file.
+        #
+        # default value if not specified: false
+        zero_initial_velocity = 'true'
+
+        # Force a recomputation of the initial acceleration
+        # used in the computation of the solution of the first
+        # timestep.
+        #
+        # default value if not specified: false
+        recompute_accel = 'true'
+    [../]
 []
 
 # The block below illustrates specifying options for "strategies"
