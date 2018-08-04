@@ -499,6 +499,7 @@ include_HEADERS += qoi/include/grins/integrated_function.h
 include_HEADERS += qoi/include/grins/qoi_output.h
 include_HEADERS += qoi/include/grins/qoi_options.h
 include_HEADERS += qoi/include/grins/hitran.h
+include_HEADERS += qoi/include/grins/absorption_coeff_base.h
 include_HEADERS += qoi/include/grins/absorption_coeff.h
 include_HEADERS += qoi/include/grins/spectroscopic_absorption.h
 include_HEADERS += qoi/include/grins/fem_function_and_derivative_base.h
