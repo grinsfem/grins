@@ -179,6 +179,9 @@ namespace GRINS
     static PhysicsName elastic_membrane_constant_pressure()
     { return "ElasticMembraneConstantPressure"+suffix(); }
 
+    static PhysicsName elastic_membrane_parsed_pressure()
+    { return "ElasticMembraneParsedPressure"+suffix(); }
+
     static PhysicsName elastic_cable_constant_gravity()
     { return "ElasticCableConstantGravity"+suffix(); }
 
