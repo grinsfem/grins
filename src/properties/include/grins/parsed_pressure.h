@@ -23,41 +23,48 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_PARSED_VISCOSITY_H
-#define GRINS_PARSED_VISCOSITY_H
+#ifndef GRINS_PARSED_PRESSURE_H
+#define GRINS_PARSED_PRESSURE_H
 
 //GRINS
-#include "grins/viscosity_base.h"
-#include "grins/assembly_context.h"
-#include "grins/parameter_user.h"
+#include "grins/common.h"
 #include "grins/parsed_property_base.h"
+#include "grins/parameter_user.h"
 
+// libMesh
+#include "libmesh/getpot.h"
 class GetPot;
 
 namespace GRINS
 {
-  class ParsedViscosity : public ParsedPropertyBase<ParsedViscosity>,
-                          public ParameterUser,
-                          public ViscosityBase
+  //! Class to manage spatially varying pressure parameter from parsed function input
+  class ParsedPressure : public ParsedPropertyBase<ParsedPressure>,
+                         public ParameterUser
   {
   public:
 
-    //! Constructor with specified material
-    /*! Will look in the input file for [Materials/material/Viscosity/value]
-      for the value of viscosity. */
-    ParsedViscosity( const GetPot& input, const std::string& material );
+    //! This will parse the input for <section>/pressure
+    ParsedPressure( const GetPot & input, const std::string & section );
 
-    //! Deprecated constructor
-    ParsedViscosity( const GetPot& input );
+    ParsedPressure() = delete;
 
-    virtual ~ParsedViscosity();
-
-
-  private:
-
-    ParsedViscosity();
+    virtual ~ParsedPressure() = default;
   };
+
+  inline
+  ParsedPressure::ParsedPressure( const GetPot & input, const std::string & section )
+    : ParsedPropertyBase(),
+      ParameterUser("ParsedPressure")
+  {
+    std::string var = section+"/pressure";
+
+    if( !input.have_variable(var) )
+      libmesh_error_msg("Error: Must supply input pressure using key "+var+"!\n");
+
+    this->set_parameter(this->_func, input, var, "DIE!" );
+  }
 
 } // end namespace GRINS
 
-#endif // GRINS_CONSTANT_VISCOSITY_H
+
+#endif // GRINS_PARSED_PRESSURE_H

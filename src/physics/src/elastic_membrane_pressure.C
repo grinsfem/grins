@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/elastic_membrane_constant_pressure.h"
+#include "grins/elastic_membrane_pressure.h"
 
 // GRINS
 #include "grins_config.h"
@@ -38,37 +38,26 @@
 
 namespace GRINS
 {
-  ElasticMembraneConstantPressure::ElasticMembraneConstantPressure( const GRINS::PhysicsName& physics_name, const GetPot& input )
+
+  template<typename PressureType>
+  ElasticMembranePressure<PressureType>::ElasticMembranePressure( const std::string & physics_name,
+                                                                  const GetPot & input )
     : ElasticMembraneAbstract(physics_name,input),
-      _pressure(0.0)
+      _pressure(new PressureType(input,"Physics/"+physics_name) )
   {
-    if( !input.have_variable("Physics/"+physics_name+"/pressure") )
-      {
-        std::cerr << "Error: Must input pressure for "+physics_name+"." << std::endl
-                  << "       Please set Physics/"+physics_name+"/pressure." << std::endl;
-        libmesh_error();
-      }
-
-    this->set_parameter
-      (_pressure, input, "Physics/"+physics_name+"/pressure", _pressure );
-
-    // If the user specified enabled subdomains in this Physics section,
-    // that's an error; we're slave to ElasticMembrane.
-    if( input.have_variable("Physics/"+PhysicsNaming::elastic_membrane_constant_pressure()+"/enabled_subdomains" ) )
-      libmesh_error_msg("ERROR: Cannot specify subdomains for "
-                        +PhysicsNaming::elastic_membrane_constant_pressure()
-                        +"! Must specify subdomains through "
-                        +PhysicsNaming::elastic_membrane()+".");
-
-    this->parse_enabled_subdomains(input,PhysicsNaming::elastic_membrane());
+    this->check_subdomain_consistency(input);
 
     if( this->_disp_vars.dim() != 3 )
-      libmesh_error_msg("ERROR: ElasticMembraneConstantPressure only valid for three dimensions! Make sure you have three components in your Displacement type variable.");
+      {
+        std::string msg = "ERROR: ElasticMembraneConstantPressure only valid for three dimensions!\n";
+        msg += "       Make sure you have three components in your Displacement type variable.\n";
+        libmesh_error_msg(msg);
+      }
   }
 
-  void ElasticMembraneConstantPressure::element_time_derivative
-  ( bool compute_jacobian,
-    AssemblyContext & context )
+  template<typename PressureType>
+  void ElasticMembranePressure<PressureType>::element_time_derivative
+  ( bool compute_jacobian, AssemblyContext & context )
   {
     unsigned int u_var = this->_disp_vars.u();
     unsigned int v_var = this->_disp_vars.v();
@@ -141,23 +130,28 @@ namespace GRINS
 
         libMesh::RealGradient A_3 = A_1.cross(A_2);
 
+        // Compute pressure at this quadrature point
+        libMesh::Real press = (*_pressure)(context,qp);
+
+        // Small optimization
+        libMesh::Real p_over_sa = press/sqrt_a;
+
         /* The formula here is actually
            P*\sqrt{\frac{A}{a}}*A_3, where A_3 is a unit vector
            But, |A_3| = \sqrt{A} so the normalizing part kills
            the \sqrt{A} in the numerator, so we can leave it out
            and *not* normalize A_3.
         */
-        libMesh::RealGradient traction = _pressure/sqrt_a*A_3;
-
-        libMesh::Real jac = JxW[qp];
+        libMesh::RealGradient traction = p_over_sa*A_3;
 
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) -= traction(0)*u_phi[i][qp]*jac;
+            // Small optimization
+            libMesh::Real phi_times_jac = u_phi[i][qp]*JxW[qp];
 
-            Fv(i) -= traction(1)*u_phi[i][qp]*jac;
-
-            Fw(i) -= traction(2)*u_phi[i][qp]*jac;
+            Fu(i) -= traction(0)*phi_times_jac;
+            Fv(i) -= traction(1)*phi_times_jac;
+            Fw(i) -= traction(2)*phi_times_jac;
 
             if( compute_jacobian )
               {
@@ -165,35 +159,41 @@ namespace GRINS
                   {
                     libMesh::RealGradient u_gradphi( dphi_dxi[j][qp], dphi_deta[j][qp] );
 
-                    const libMesh::Real dt0_dv = _pressure/sqrt_a*(u_gradphi(0)*A_2(2) - A_1(2)*u_gradphi(1));
-                    const libMesh::Real dt0_dw = _pressure/sqrt_a*(A_1(1)*u_gradphi(1) - u_gradphi(0)*A_2(1));
+                    const libMesh::Real dt0_dv = p_over_sa*(u_gradphi(0)*A_2(2) - A_1(2)*u_gradphi(1));
+                    const libMesh::Real dt0_dw = p_over_sa*(A_1(1)*u_gradphi(1) - u_gradphi(0)*A_2(1));
 
-                    const libMesh::Real dt1_du = _pressure/sqrt_a*(A_1(2)*u_gradphi(1) - u_gradphi(0)*A_2(2));
-                    const libMesh::Real dt1_dw = _pressure/sqrt_a*(u_gradphi(0)*A_2(0) - A_1(0)*u_gradphi(1));
+                    const libMesh::Real dt1_du = p_over_sa*(A_1(2)*u_gradphi(1) - u_gradphi(0)*A_2(2));
+                    const libMesh::Real dt1_dw = p_over_sa*(u_gradphi(0)*A_2(0) - A_1(0)*u_gradphi(1));
 
-                    const libMesh::Real dt2_du = _pressure/sqrt_a*(u_gradphi(0)*A_2(1) - A_1(1)*u_gradphi(1));
-                    const libMesh::Real dt2_dv = _pressure/sqrt_a*(A_1(0)*u_gradphi(1) - u_gradphi(0)*A_2(0));
+                    const libMesh::Real dt2_du = p_over_sa*(u_gradphi(0)*A_2(1) - A_1(1)*u_gradphi(1));
+                    const libMesh::Real dt2_dv = p_over_sa*(A_1(0)*u_gradphi(1) - u_gradphi(0)*A_2(0));
 
-                    Kuv(i,j) -= dt0_dv*u_phi[i][qp]*jac;
-                    Kuw(i,j) -= dt0_dw*u_phi[i][qp]*jac;
+                    Kuv(i,j) -= dt0_dv*phi_times_jac;
+                    Kuw(i,j) -= dt0_dw*phi_times_jac;
 
-                    Kvu(i,j) -= dt1_du*u_phi[i][qp]*jac;
-                    Kvw(i,j) -= dt1_dw*u_phi[i][qp]*jac;
+                    Kvu(i,j) -= dt1_du*phi_times_jac;
+                    Kvw(i,j) -= dt1_dw*phi_times_jac;
 
-                    Kwu(i,j) -= dt2_du*u_phi[i][qp]*jac;
-                    Kwv(i,j) -= dt2_dv*u_phi[i][qp]*jac;
+                    Kwu(i,j) -= dt2_du*phi_times_jac;
+                    Kwv(i,j) -= dt2_dv*phi_times_jac;
                   }
               }
           }
       }
-
-    return;
   }
 
-  void ElasticMembraneConstantPressure::reset_pressure( libMesh::Real pressure_in )
+  template<typename PressureType>
+  void ElasticMembranePressure<PressureType>::check_subdomain_consistency(const GetPot & input)
   {
-    _pressure = pressure_in;
-    return;
+    // If the user specified enabled subdomains in this Physics section,
+    // that's an error; we're slave to ElasticMembrane.
+    if( input.have_variable("Physics/"+PhysicsNaming::elastic_membrane_constant_pressure()+"/enabled_subdomains" ) )
+      libmesh_error_msg("ERROR: Cannot specify subdomains for "
+                        +PhysicsNaming::elastic_membrane_constant_pressure()
+                        +"! Must specify subdomains through "
+                        +PhysicsNaming::elastic_membrane()+".");
+
+    this->parse_enabled_subdomains(input,PhysicsNaming::elastic_membrane());
   }
 
 } // end namespace GRINS

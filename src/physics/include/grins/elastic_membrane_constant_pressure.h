@@ -26,30 +26,33 @@
 #define GRINS_ELASTIC_MEMBRANE_CONSTANT_PRESSURE_H
 
 //GRINS
-#include "grins/elastic_membrane_abstract.h"
+#include "grins/elastic_membrane_pressure.h"
+#include "grins/constant_pressure.h"
 
 namespace GRINS
 {
-  class ElasticMembraneConstantPressure : public ElasticMembraneAbstract
+  //! Specific subclass of ElasticMembranePressure for ConstantPressure
+  /*! Mostly syntactic sugar except to add reset_pressure function
+      for scalar pressures. */
+  class ElasticMembraneConstantPressure : public ElasticMembranePressure<ConstantPressure>
   {
   public:
 
-    ElasticMembraneConstantPressure( const GRINS::PhysicsName& physics_name,
-                                     const GetPot& input );
+    ElasticMembraneConstantPressure( const std::string & physics_name,
+                                     const GetPot & input )
+      : ElasticMembranePressure<ConstantPressure>(physics_name,input)
+    {}
 
-    virtual ~ElasticMembraneConstantPressure(){};
+    ElasticMembraneConstantPressure() = delete;
 
-    //! Time dependent part(s) of physics for element interiors
-    virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+    virtual ~ElasticMembraneConstantPressure() = default;
 
-    void reset_pressure( libMesh::Real pressure_in );
+    void reset_pressure( libMesh::Real pressure_in )
+    {
+      ConstantPressure * constant_press_ptr = libMesh::cast_ptr<ConstantPressure *>(_pressure.get());
+      constant_press_ptr->reset_value(pressure_in);
+    }
 
-  private:
-
-    ElasticMembraneConstantPressure();
-
-    libMesh::Real _pressure;
   };
 
 } // end namespace GRINS

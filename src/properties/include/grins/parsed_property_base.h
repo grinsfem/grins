@@ -26,14 +26,10 @@
 #define GRINS_PARSED_PROPERTY_BASE_H
 
 //GRINS
-#include "grins/assembly_context.h"
-#include "grins/parameter_user.h"
+#include "grins/property_base.h"
 
 // libMesh
-#include "libmesh/libmesh_common.h"
-#include "libmesh/fem_system.h"
 #include "libmesh/parsed_function.h"
-#include "libmesh/point.h"
 
 // C++
 #include <string>
@@ -44,18 +40,18 @@ namespace GRINS
   /*! This class contains the basic interface and functionality. Subclasses
     should only need to handle the parsing of the function-string and
     create the ParsedFunction in the local _func variable. */
-  class ParsedPropertyBase
+  template<typename DerivedType>
+  class ParsedPropertyBase : public PropertyBase<DerivedType>
   {
   public:
 
     ParsedPropertyBase() : _func("") {};
-    virtual ~ParsedPropertyBase(){};
-
-    libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
-
-    libMesh::Real operator()( const libMesh::Point& p, const libMesh::Real time );
+    virtual ~ParsedPropertyBase() = default;
 
     virtual void init(libMesh::FEMSystem* /*system*/){};
+
+    // So we can make implementations private
+    friend class PropertyBase<DerivedType>;
 
   protected:
 
@@ -63,16 +59,23 @@ namespace GRINS
     /*! The ParsedFunction used is built through a string argument.
       This function checks if the string is "0". This is useful
       for cases where the function must not be zero. */
-    bool check_func_nonzero( const std::string& function ) const;
+    bool check_func_nonzero( const std::string & function ) const;
 
     // User specified parsed function
     libMesh::ParsedFunction<libMesh::Number> _func;
 
+  private:
+
+    libMesh::Real op_context_impl(AssemblyContext & context, unsigned int qp) const;
+
+    libMesh::Real op_point_impl(const libMesh::Point & p, const libMesh::Real time);
+
   };
 
   /* ------------------------- Inline Functions -------------------------*/
+  template<typename DerivedType>
   inline
-  libMesh::Real ParsedPropertyBase::operator()(AssemblyContext& context, unsigned int qp) const
+  libMesh::Real ParsedPropertyBase<DerivedType>::op_context_impl(AssemblyContext& context, unsigned int qp) const
   {
     // FIXME: We should be getting the variable index to get the qps from the context
     // not hardcode it to be 0
@@ -88,12 +91,24 @@ namespace GRINS
     return value;
   }
 
+  template<typename DerivedType>
   inline
-  libMesh::Real ParsedPropertyBase::operator()( const libMesh::Point& p, const libMesh::Real time )
+  libMesh::Real ParsedPropertyBase<DerivedType>::op_point_impl( const libMesh::Point& p, const libMesh::Real time )
   {
     return _func(p,time);
   }
 
+  template<typename DerivedType>
+  inline
+  bool ParsedPropertyBase<DerivedType>::check_func_nonzero( const std::string & function ) const
+  {
+    bool is_nonzero = true;
+
+    if (function == std::string("0"))
+      is_nonzero = false;
+
+    return is_nonzero;
+  }
 } // end namespace GRINS
 
 #endif // GRINS_PARSED_PROPERTY_BASE_H

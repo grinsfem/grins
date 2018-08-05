@@ -116,7 +116,8 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/hitran_test.C \
                       unit/spectroscopic_absorption_test.C \
                       unit/nonlinear_solver_options.C \
-                      unit/overlapping_fluid_solid_mesh.C
+                      unit/overlapping_fluid_solid_mesh.C \
+                      unit/parsed_property.C
 
 antioch_mixture_SOURCES = unit/antioch_mixture.C
 arrhenius_catalycity_SOURCES = unit/arrhenius_catalycity.C
@@ -304,6 +305,7 @@ TESTS += regression/3d_low_mach_jacobians_xz.sh
 TESTS += regression/3d_low_mach_jacobians_yz.sh
 TESTS += regression/elastic_mooney_rivlin_sheet.sh
 TESTS += regression/elastic_mooney_rivlin_inflating_sheet.sh
+TESTS += regression/elastic_mooney_rivlin_inflating_sheet_parsed_pressure.sh
 TESTS += regression/suspended_cable_test.sh
 TESTS += regression/elastic_mooney_rivlin_circle_hookean_stiffeners.sh
 TESTS += regression/elastic_mooney_rivlin_square_hookean_stiffeners.sh

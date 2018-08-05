@@ -39,7 +39,6 @@
 #include "grins/scalar_ode.h"
 #include "grins/boussinesq_buoyancy.h"
 #include "grins/axisym_boussinesq_buoyancy.h"
-#include "grins/elastic_membrane_constant_pressure.h"
 #include "grins/constant_source_term.h"
 #include "grins/parsed_source_term.h"
 #include "grins/convection_diffusion.h"
@@ -75,6 +74,9 @@
 
 #include "grins/elastic_membrane.h"
 #include "grins/elastic_membrane_rayleigh_damping.h"
+#include "grins/elastic_membrane_constant_pressure.h"
+#include "grins/elastic_membrane_pressure.h"
+#include "grins/parsed_pressure.h"
 
 #include "grins/low_mach_navier_stokes.h"
 #include "grins/low_mach_navier_stokes_braack_stab.h"
@@ -94,7 +96,10 @@ namespace GRINS
       grins_factory_axi_boussinesq(PhysicsNaming::axisymmetric_boussinesq_buoyancy());
 
     static PhysicsFactoryBasic<ElasticMembraneConstantPressure>
-      grins_factory_elastic_membrane_pressure(PhysicsNaming::elastic_membrane_constant_pressure());
+      grins_factory_elastic_membrane_constant_pressure(PhysicsNaming::elastic_membrane_constant_pressure());
+
+    static PhysicsFactoryBasic<ElasticMembranePressure<ParsedPressure> >
+      grins_factory_elastic_membrane_parsed_pressure(PhysicsNaming::elastic_membrane_parsed_pressure());
 
     // This one needs to die and just have the parsed version
     static PhysicsFactoryBasic<ConstantSourceTerm>

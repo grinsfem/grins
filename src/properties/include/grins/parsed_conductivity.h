@@ -34,7 +34,7 @@ class GetPot;
 
 namespace GRINS
 {
-  class ParsedConductivity : public ParsedPropertyBase,
+  class ParsedConductivity : public ParsedPropertyBase<ParsedConductivity>,
                              public ParameterUser
   {
   public:

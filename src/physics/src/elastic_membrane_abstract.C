@@ -43,6 +43,7 @@ namespace GRINS
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
+    this->get_fe(context)->get_xyz();
     this->get_fe(context)->get_dphidxi();
     this->get_fe(context)->get_dphideta();
 

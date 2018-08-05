@@ -22,42 +22,26 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifndef GRINS_CONSTANT_PRESSURE_H
+#define GRINS_CONSTANT_PRESSURE_H
 
-#ifndef GRINS_PARSED_VISCOSITY_H
-#define GRINS_PARSED_VISCOSITY_H
-
-//GRINS
-#include "grins/viscosity_base.h"
-#include "grins/assembly_context.h"
-#include "grins/parameter_user.h"
-#include "grins/parsed_property_base.h"
-
-class GetPot;
+#include "grins/constant_property_base.h"
 
 namespace GRINS
 {
-  class ParsedViscosity : public ParsedPropertyBase<ParsedViscosity>,
-                          public ParameterUser,
-                          public ViscosityBase
+  //! ConstantPressure companion to ParsedPressure
+  class ConstantPressure : public ConstantPropertyBase<ConstantPressure>
   {
   public:
+    ConstantPressure( const GetPot & input, const std::string & section )
+      : ConstantPropertyBase<ConstantPressure>(input,section+"/pressure","ConstantPressure")
+    {}
 
-    //! Constructor with specified material
-    /*! Will look in the input file for [Materials/material/Viscosity/value]
-      for the value of viscosity. */
-    ParsedViscosity( const GetPot& input, const std::string& material );
+    ConstantPressure() = delete;
 
-    //! Deprecated constructor
-    ParsedViscosity( const GetPot& input );
-
-    virtual ~ParsedViscosity();
-
-
-  private:
-
-    ParsedViscosity();
+    virtual ~ConstantPressure() = default;
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_CONSTANT_VISCOSITY_H
+#endif // GRINS_CONSTANT_PRESSURE_H

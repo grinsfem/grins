@@ -22,20 +22,41 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/parsed_property_base.h"
+#ifndef GRINS_ELASTIC_MEMBRANE_PRESSURE_H
+#define GRINS_ELASTIC_MEMBRANE_PRESSURE_H
+
+//GRINS
+#include "grins/elastic_membrane_abstract.h"
+#include "grins/property_base.h"
 
 namespace GRINS
 {
-  bool ParsedPropertyBase::check_func_nonzero( const std::string& function ) const
+  template<typename PressureType>
+  class ElasticMembranePressure : public ElasticMembraneAbstract
   {
-    bool is_nonzero = true;
+  public:
 
-    if (function == std::string("0"))
-      {
-        is_nonzero = false;
-      }
+    ElasticMembranePressure( const std::string & physics_name,
+                             const GetPot & input );
 
-    return is_nonzero;
-  }
+    ElasticMembranePressure() = delete;
+
+    virtual ~ElasticMembranePressure() = default;
+
+    //! Time dependent part(s) of physics for element interiors
+    virtual void element_time_derivative( bool compute_jacobian,
+                                          AssemblyContext & context ) override;
+
+  protected:
+
+    std::unique_ptr<PropertyBase<PressureType>> _pressure;
+
+  private:
+
+    void check_subdomain_consistency(const GetPot & input);
+
+  };
+
 } // end namespace GRINS
+
+#endif // GRINS_ELASTIC_MEMBRANE_PRESSURE_H
