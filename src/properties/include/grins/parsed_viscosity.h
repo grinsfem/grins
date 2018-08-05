@@ -36,7 +36,7 @@ class GetPot;
 
 namespace GRINS
 {
-  class ParsedViscosity : public ParsedPropertyBase,
+  class ParsedViscosity : public ParsedPropertyBase<ParsedViscosity>,
                           public ParameterUser,
                           public ViscosityBase
   {

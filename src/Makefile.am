@@ -148,7 +148,6 @@ libgrins_la_SOURCES += physics/src/physics_factory_initializer.C
 libgrins_la_SOURCES += physics/src/overlapping_fluid_solid_map.C
 
 # src/properties files
-libgrins_la_SOURCES += properties/src/parsed_property_base.C
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
 libgrins_la_SOURCES += properties/src/parsed_conductivity.C
 libgrins_la_SOURCES += properties/src/constant_prandtl_conductivity.C
