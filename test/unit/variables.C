@@ -60,6 +60,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_var_constraint );
     CPPUNIT_TEST( test_variable_arbitrary_names );
     CPPUNIT_TEST( test_variable_species_from_cantera );
+    CPPUNIT_TEST( test_variable_species_from_antioch );
 
     CPPUNIT_TEST_SUITE_END();
 
