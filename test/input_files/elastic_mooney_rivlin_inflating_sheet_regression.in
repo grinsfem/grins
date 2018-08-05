@@ -73,13 +73,9 @@ use_numerical_jacobians_only = 'false'
 
 # Visualization options
 [vis-options]
-output_vis = 'false'
-
-vis_output_file_prefix = 'sheet'
-
-output_residual = 'false'
-
-output_format = 'ExodusII xdr'
+   output_vis = 'true'
+   vis_output_file_prefix = 'elastic_mooney_rivlin_inflating_sheet_regression'
+   output_format = 'xda'
 []
 
 # Options for print info to the screen

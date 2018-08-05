@@ -1,9 +1,29 @@
 #!/bin/bash
 
-PROG="${GRINS_TEST_DIR}/elastic_sheet_regression"
+set -e
 
-INPUT="${GRINS_TEST_INPUT_DIR}/elastic_mooney_rivlin_inflating_sheet_regression.in ${GRINS_TEST_DATA_DIR}/elastic_mooney_rivlin_inflating_sheet_regression.xdr"
+INPUT="${GRINS_TEST_INPUT_DIR}/elastic_mooney_rivlin_inflating_sheet_regression.in"
 
 PETSC_OPTIONS="-pc_factor_levels 4 -sub_pc_factor_levels 4"
 
-${LIBMESH_RUN:-} $PROG $INPUT $PETSC_OPTIONS 
+# Solution output from GRINS run
+SOLNDATA="./elastic_mooney_rivlin_inflating_sheet_regression.xda"
+
+# Gold data used for regression comparsion
+GOLDDATA="${GRINS_TEST_DATA_DIR}/elastic_mooney_rivlin_inflating_sheet_regression.xdr"
+
+# First run the case with grins
+${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT $PETSC_OPTIONS
+
+# Now run the test part to make sure we're getting the correct thing
+${GRINS_TEST_DIR}/regression_testing_app \
+                 input=$INPUT \
+                 system_name='StretchedElasticSheet' \
+                 vars='u v w' \
+                 norms='L2 H1' \
+                 tol='5.0e-8' \
+                 gold-data=$GOLDDATA \
+                 soln-data=$SOLNDATA
+
+# Now remove the test turd
+rm $SOLNDATA
