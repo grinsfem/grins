@@ -129,7 +129,6 @@ libgrins_la_SOURCES += physics/src/elastic_membrane_base.C
 libgrins_la_SOURCES += physics/src/elastic_membrane.C
 libgrins_la_SOURCES += physics/src/elastic_membrane_rayleigh_damping.C
 libgrins_la_SOURCES += physics/src/elastic_membrane_pressure.C
-libgrins_la_SOURCES += physics/src/elastic_membrane_constant_pressure.C
 libgrins_la_SOURCES += physics/src/elastic_cable_abstract.C
 libgrins_la_SOURCES += physics/src/elastic_cable_base.C
 libgrins_la_SOURCES += physics/src/elastic_cable.C
