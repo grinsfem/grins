@@ -451,6 +451,7 @@ include_HEADERS += properties/include/grins/constant_prandtl_conductivity.h
 include_HEADERS += properties/include/grins/constant_specific_heat.h
 include_HEADERS += properties/include/grins/constant_viscosity.h
 include_HEADERS += properties/include/grins/parsed_viscosity.h
+include_HEADERS += properties/include/grins/parsed_pressure.h
 include_HEADERS += properties/include/grins/spalart_allmaras_viscosity.h
 include_HEADERS += properties/include/grins/turbulent_viscosity_macro.h
 include_HEADERS += properties/include/grins/constant_source_func.h
