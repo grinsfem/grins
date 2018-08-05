@@ -444,6 +444,7 @@ include_HEADERS += physics/include/grins/overlapping_fluid_solid_map.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
+include_HEADERS += properties/include/grins/property_base.h
 include_HEADERS += properties/include/grins/parsed_property_base.h
 include_HEADERS += properties/include/grins/constant_conductivity.h
 include_HEADERS += properties/include/grins/parsed_conductivity.h
