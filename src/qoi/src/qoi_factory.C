@@ -139,7 +139,7 @@ namespace GRINS
         std::shared_ptr<libMesh::FunctionBase<libMesh::Real> >
           f( new libMesh::ParsedFunction<libMesh::Real>(function) );
 
-        RayfireMesh * rayfire = new RayfireMesh(input,"IntegratedFunction");
+        std::shared_ptr<RayfireMesh> rayfire( new RayfireMesh(input,"IntegratedFunction") );
 
         qoi =  new IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >(p_level,f,rayfire,qoi_name);
       }
@@ -197,7 +197,7 @@ namespace GRINS
         libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
 
-        RayfireMesh * rayfire = new RayfireMesh(input,"SpectroscopicAbsorption");
+        std::shared_ptr<RayfireMesh> rayfire( new RayfireMesh(input,"SpectroscopicAbsorption") );
 
         // This is the wavenumber of the "laser" or a range of wavenumbers to scan over
         std::string desired_wavenumber_var = "QoI/SpectroscopicAbsorption/desired_wavenumber";

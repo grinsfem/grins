@@ -42,8 +42,8 @@
 
 namespace GRINS
 {
-  SpectroscopicAbsorption::SpectroscopicAbsorption( std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb,
-                                                    RayfireMesh * rayfire, const std::string & qoi_name, bool output_as_csv)
+  SpectroscopicAbsorption::SpectroscopicAbsorption( const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
+                                                    const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv)
     : IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >(2 /* QGauss order */,absorb,rayfire,qoi_name),
       _output_as_csv(output_as_csv)
   {}

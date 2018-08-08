@@ -93,99 +93,91 @@ namespace GRINS
       libmesh_error_msg("ERROR: cannot specify spherical azimuthal angle phi for Rayfire, only 2D is currently supported");
   }
 
-  RayfireMesh::RayfireMesh(const RayfireMesh & original) :
-    _dim(original._dim),
-    _origin(original._origin),
-    _theta(original._theta),
-    _phi(original._phi),
-    _output_filename(original._output_filename)
-  {
-    if (original._mesh.get())
-      this->_mesh.reset( new libMesh::Mesh( *((original._mesh).get()) ) );
-
-    this->_elem_id_map = original._elem_id_map;
-  }
-
   void RayfireMesh::init(const libMesh::MeshBase& mesh_base)
   {
-    // consistency check
-    if(mesh_base.mesh_dimension() != _dim)
-      {
-        std::stringstream ss;
-        ss <<"The supplied mesh object is " <<mesh_base.mesh_dimension()
-           <<"D, but the RayfireMesh object was created with the "
-           <<_dim <<"D constructor";
+    // check if rayfire has already been initialized
+    if (_elem_id_map.size() == 0)
+    {
+      // consistency check
+      if(mesh_base.mesh_dimension() != _dim)
+        {
+          std::stringstream ss;
+          ss <<"The supplied mesh object is " <<mesh_base.mesh_dimension()
+             <<"D, but the RayfireMesh object was created with the "
+             <<_dim <<"D constructor";
 
-        libmesh_error_msg(ss.str());
-      }
+          libmesh_error_msg(ss.str());
+        }
 
-    _mesh.reset( new libMesh::Mesh(mesh_base.comm(),(unsigned char)1) );
+      _mesh.reset( new libMesh::Mesh(mesh_base.comm(),(unsigned char)1) );
 
-    libMesh::Point start_point(_origin);
+      libMesh::Point start_point(_origin);
 
-    // get first element
-    const libMesh::Elem* start_elem = this->get_start_elem(mesh_base);
+      // get first element
+      const libMesh::Elem* start_elem = this->get_start_elem(mesh_base);
 
-    if (!start_elem)
-      libmesh_error_msg("Origin is not on mesh");
+      if (!start_elem)
+        libmesh_error_msg("Origin is not on mesh");
 
-    // ensure the origin is on a boundary element
-    // AND on the boundary of said element
-    this->check_origin_on_boundary(start_elem);
+      // ensure the origin is on a boundary element
+      // AND on the boundary of said element
+      this->check_origin_on_boundary(start_elem);
 
-    // add the origin point to the point list
-    libMesh::Node * start_node = _mesh->add_point(start_point);
-    libMesh::Node * end_node = NULL;
+      // add the origin point to the point list
+      libMesh::Node * start_node = _mesh->add_point(start_point);
+      libMesh::Node * end_node = NULL;
 
-    libMesh::Point end_point;
+      libMesh::Point end_point;
 
-    const libMesh::Elem* next_elem;
-    const libMesh::Elem* prev_elem = start_elem;
+      const libMesh::Elem* next_elem;
+      const libMesh::Elem* prev_elem = start_elem;
 
-    do
-      {
-        // calculate the end point and
-        // get the next elem in the rayfire
-        next_elem = this->get_next_elem(prev_elem,start_point,end_point);
+      do
+        {
+          // calculate the end point and
+          // get the next elem in the rayfire
+          next_elem = this->get_next_elem(prev_elem,start_point,end_point);
 
 #ifndef NDEBUG
-        // make sure we are only picking up active elements
-        if (next_elem)
-          libmesh_assert( next_elem->active() );
+          // make sure we are only picking up active elements
+          if (next_elem)
+            libmesh_assert( next_elem->active() );
 #endif
 
-        // add end point as node on the rayfire mesh
-        end_node = _mesh->add_point(end_point);
-        libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
-        elem->set_node(0) = start_node;
-        elem->set_node(1) = end_node;
+          // add end point as node on the rayfire mesh
+          end_node = _mesh->add_point(end_point);
+          libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
+          elem->set_node(0) = start_node;
+          elem->set_node(1) = end_node;
 
-        // warn if rayfire elem is shorter than TOLERANCE
-        if ( (start_point-end_point).norm() < libMesh::TOLERANCE)
-          {
-            std::stringstream ss;
-            ss  <<"********\n"
-                <<"WARNING\n"
-                <<"Detected rayfire element shorter than TOLERANCE\n"
-                <<"Element ID: " <<prev_elem->id() <<", rayfire element length: " <<(start_point-end_point).norm();
+          // warn if rayfire elem is shorter than TOLERANCE
+          if ( (start_point-end_point).norm() < libMesh::TOLERANCE)
+            {
+              std::stringstream ss;
+              ss  <<"********\n"
+                  <<"WARNING\n"
+                  <<"Detected rayfire element shorter than TOLERANCE\n"
+                  <<"Element ID: " <<prev_elem->id() <<", rayfire element length: " <<(start_point-end_point).norm();
 
-            libmesh_warning(ss.str());
-          }
+              libmesh_warning(ss.str());
+            }
 
-        // add new rayfire elem to the map
-        _elem_id_map[prev_elem->id()] = elem->id();
+          // add new rayfire elem to the map
+          _elem_id_map[prev_elem->id()] = elem->id();
 
-        start_point = end_point;
-        start_node = end_node;
-        prev_elem = next_elem;
-      } while(next_elem);
+          start_point = end_point;
+          start_node = end_node;
+          prev_elem = next_elem;
+        } while(next_elem);
 
-    _mesh->prepare_for_use();
+      _mesh->prepare_for_use();
 
-    if ( !(_output_filename.empty()) )
-    {
-      libMesh::NameBasedIO io(*(_mesh.get()));
-      io.write(_output_filename);
+      if ( !(_output_filename.empty()) )
+      {
+        libMesh::NameBasedIO io(*(_mesh.get()));
+        io.write(_output_filename);
+      }
+
     }
 
   }
@@ -210,6 +202,10 @@ namespace GRINS
 
   void RayfireMesh::reinit(const libMesh::MeshBase& mesh_base)
   {
+    // we don't want to reinit() multiple times
+    // at the same AMR level
+    bool do_reinit = true;
+
     // store the elems to be refined until later
     // so we don't mess with the _elem_id_map while we
     // iterate over it
@@ -225,13 +221,25 @@ namespace GRINS
     std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
       {
-        const libMesh::Elem* main_elem = mesh_base.elem_ptr(it->first);
+        const libMesh::Elem * main_elem = mesh_base.elem_ptr(it->first);
         libmesh_assert(main_elem);
+        
+        libMesh::Elem * rayfire_elem = _mesh->elem_ptr(it->second);
+        libmesh_assert(rayfire_elem);
 
         if (main_elem->parent())
           {
             if (main_elem->parent()->refinement_flag() == libMesh::Elem::RefinementState::JUST_COARSENED)
-              elems_to_coarsen.push_back(main_elem);
+              {
+                // if the rayfire_elem is INACTIVE, then we have already done a reinit() at this AMR level
+                if (rayfire_elem->refinement_flag() == libMesh::Elem::RefinementState::INACTIVE)
+                  {
+                    do_reinit = false;
+                    break;
+                  }
+                else
+                  elems_to_coarsen.push_back(main_elem);
+              }
           }
 
         libMesh::Elem::RefinementState state = main_elem->refinement_flag();
@@ -240,17 +248,29 @@ namespace GRINS
           {
             if (main_elem->has_children())
               if (main_elem->child_ptr(0)->refinement_flag() == libMesh::Elem::RefinementState::JUST_REFINED)
-                elems_to_refine.push_back(std::pair<const libMesh::Elem*, libMesh::Elem*>(main_elem,_mesh->elem_ptr(it->second)));
+                {
+                  // if the rayfire_elem is INACTIVE, then we have already done a reinit() at this AMR level
+                  if (rayfire_elem->refinement_flag() == libMesh::Elem::RefinementState::INACTIVE)
+                    {
+                      do_reinit = false;
+                      break;
+                    }
+                  else
+                    elems_to_refine.push_back(std::pair<const libMesh::Elem *, libMesh::Elem *>(main_elem,rayfire_elem));
+                }
           }
       }
 
-    // refine the elements that need it
-    for (unsigned int i=0; i<elems_to_refine.size(); i++)
-      this->refine(elems_to_refine[i].first, elems_to_refine[i].second);
+    if (do_reinit)
+      {
+        // refine the elements that need it
+        for (unsigned int i=0; i<elems_to_refine.size(); i++)
+          this->refine(elems_to_refine[i].first, elems_to_refine[i].second);
 
-    // coarsen the elements that need it
-    for (unsigned int i=0; i<elems_to_coarsen.size(); i++)
-      this->coarsen(elems_to_coarsen[i]);
+        // coarsen the elements that need it
+        for (unsigned int i=0; i<elems_to_coarsen.size(); i++)
+          this->coarsen(elems_to_coarsen[i]);
+      }
 
   }
 

@@ -91,12 +91,6 @@ namespace GRINS
     */
     RayfireMesh(const GetPot & input, const std::string & qoi_string);
 
-    //! Copy Constructor
-    /*!
-      Required to deep-copy _mesh and _elem_id_map
-    */
-    RayfireMesh(const RayfireMesh & original);
-
     //! Enable rayfire output after init()
     void enable_rayfire_output(std::string & filename)
     {

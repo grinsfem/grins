@@ -57,16 +57,10 @@ namespace GRINS
     /*!
       @param p_level The desired Gauss Quadrature level
       @param f A FunctionBase or FEMFunctionBase object for evaluting the QoI
-      @param rayfire A RayfireMesh object (will be initialized in init()) <b>Ownership will be taken by an internal std::unique_ptr</b>
+      @param rayfire A RayfireMesh object (will be initialized in init())
       @param qoi_name Passed to the QoIBase
     */
-    IntegratedFunction(unsigned int p_level, std::shared_ptr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name);
-
-    //! Copy Constructor
-    /*!
-      Required to deep-copy the UniquePtr RayfireMesh object
-    */
-    IntegratedFunction(const IntegratedFunction & original);
+    IntegratedFunction(unsigned int p_level, const std::shared_ptr<Function> & f, const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name);
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
     virtual QoIBase* clone() const;
@@ -80,9 +74,6 @@ namespace GRINS
                               const unsigned int qoi_index );
 
     //! Compute the qoi derivative with respect to the solution.
-    /*!
-      Currently not implemented
-    */
     virtual void element_qoi_derivative( AssemblyContext & context,
                                          const unsigned int qoi_index );
 
@@ -117,7 +108,7 @@ namespace GRINS
     std::shared_ptr<Function> _f;
 
     //! Pointer to RayfireMesh object
-    std::unique_ptr<RayfireMesh> _rayfire;
+    std::shared_ptr<RayfireMesh> _rayfire;
 
     //! Compute the value of a QoI at a QP
     libMesh::Real qoi_value(Function & f, AssemblyContext & context, const libMesh::Point & xyz);

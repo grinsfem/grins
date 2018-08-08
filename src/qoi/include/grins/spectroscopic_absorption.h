@@ -54,8 +54,8 @@ namespace GRINS
       @param output_as_csv Flag for whether we should output QoI value in wavenumber,absorption CSV format
         or in the normal QoIBase way
     */
-    SpectroscopicAbsorption(std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb,
-                            RayfireMesh * rayfire, const std::string & qoi_name, bool output_as_csv);
+    SpectroscopicAbsorption(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
+                            const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv);
 
     virtual QoIBase * clone() const;
 
