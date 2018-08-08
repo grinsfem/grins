@@ -62,12 +62,6 @@ namespace GRINS
     */
     IntegratedFunction(unsigned int p_level, std::shared_ptr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name);
 
-    //! Constructor
-    /*!
-      Used by the QoIFactory. Passes GetPot through to RayfireMesh for construction
-    */
-    IntegratedFunction(const GetPot & input, unsigned int p_level, std::shared_ptr<Function> f, const std::string & input_qoi_string, const std::string & qoi_name);
-
     //! Copy Constructor
     /*!
       Required to deep-copy the UniquePtr RayfireMesh object
