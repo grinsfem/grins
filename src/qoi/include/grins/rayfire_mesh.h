@@ -97,6 +97,12 @@ namespace GRINS
     */
     RayfireMesh(const RayfireMesh & original);
 
+    //! Enable rayfire output after init()
+    void enable_rayfire_output(std::string & filename)
+    {
+      _output_filename = filename;
+    }
+
     //! Initialization
     /*!
       This function performs the rayfire and assembles the 1D mesh.
@@ -149,6 +155,10 @@ namespace GRINS
 
     //! Map of main mesh elem_id to rayfire mesh elem_id
     std::map<libMesh::dof_id_type,libMesh::dof_id_type> _elem_id_map;
+
+    //! Filename to output rayfire after init()
+    //! Defaults to empty string (no output)
+    std::string _output_filename;
 
     //! User should never call the default constructor
     RayfireMesh();

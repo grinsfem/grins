@@ -35,6 +35,7 @@
 #include "libmesh/edge_edge2.h"
 #include "libmesh/enum_elem_type.h"
 #include "libmesh/fe.h"
+#include "libmesh/namebased_io.h"
 
 namespace GRINS
 {
@@ -42,7 +43,8 @@ namespace GRINS
     _dim(3),
     _origin(origin),
     _theta(theta),
-    _phi(phi)
+    _phi(phi),
+    _output_filename("")
   {
     libmesh_not_implemented();
   }
@@ -52,7 +54,8 @@ namespace GRINS
     _dim(2),
     _origin(origin),
     _theta(theta),
-    _phi(-7.0) // bounds on angles are +/- 2pi
+    _phi(-7.0), // bounds on angles are +/- 2pi
+    _output_filename("")
   {
     if (std::abs(_theta) > 2.0*Constants::pi)
       libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
@@ -60,7 +63,8 @@ namespace GRINS
 
   RayfireMesh::RayfireMesh(const GetPot & input, const std::string & qoi_string) :
     _dim(2),
-    _phi(-7.0)
+    _phi(-7.0),
+    _output_filename(input("QoI/"+qoi_string+"/Rayfire/output_filename",""))
   {
     unsigned int rayfire_dim = input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin");
 
@@ -93,7 +97,8 @@ namespace GRINS
     _dim(original._dim),
     _origin(original._origin),
     _theta(original._theta),
-    _phi(original._phi)
+    _phi(original._phi),
+    _output_filename(original._output_filename)
   {
     if (original._mesh.get())
       this->_mesh.reset( new libMesh::Mesh( *((original._mesh).get()) ) );
@@ -174,6 +179,14 @@ namespace GRINS
         start_node = end_node;
         prev_elem = next_elem;
       } while(next_elem);
+
+    _mesh->prepare_for_use();
+
+    if ( !(_output_filename.empty()) )
+    {
+      libMesh::NameBasedIO io(*(_mesh.get()));
+      io.write(_output_filename);
+    }
 
   }
 
