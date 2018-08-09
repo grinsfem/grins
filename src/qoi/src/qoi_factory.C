@@ -139,7 +139,9 @@ namespace GRINS
         std::shared_ptr<libMesh::FunctionBase<libMesh::Real> >
           f( new libMesh::ParsedFunction<libMesh::Real>(function) );
 
-        qoi =  new IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >(input,p_level,f,"IntegratedFunction",integrated_function);
+        std::shared_ptr<RayfireMesh> rayfire( new RayfireMesh(input,"IntegratedFunction") );
+
+        qoi =  new IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >(p_level,f,rayfire,qoi_name);
       }
 
     else if ( qoi_name == spectroscopic_absorption )
@@ -195,6 +197,8 @@ namespace GRINS
         libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
 
+        std::shared_ptr<RayfireMesh> rayfire( new RayfireMesh(input,"SpectroscopicAbsorption") );
+
         // This is the wavenumber of the "laser" or a range of wavenumbers to scan over
         std::string desired_wavenumber_var = "QoI/SpectroscopicAbsorption/desired_wavenumber";
         unsigned int num_wavenumbers = input.vector_variable_size(desired_wavenumber_var);
@@ -216,7 +220,7 @@ namespace GRINS
             libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
             
-            qoi = new SpectroscopicAbsorption(input,qoi_name,absorb,output_as_csv);
+            qoi = new SpectroscopicAbsorption(absorb,rayfire,qoi_name,output_as_csv);
           }
         else if (num_wavenumbers == 3)
           {
@@ -255,7 +259,7 @@ namespace GRINS
                 libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
 #endif
                 
-                qoi = new SpectroscopicAbsorption(input,qoi_name,absorb,output_as_csv);
+                qoi = new SpectroscopicAbsorption(absorb,rayfire,qoi_name,output_as_csv);
                 qois->add_qoi( *qoi );
               }
           }

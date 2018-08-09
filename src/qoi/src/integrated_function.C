@@ -45,32 +45,12 @@
 namespace GRINS
 {
   template<typename Function>
-  IntegratedFunction<Function>::IntegratedFunction(unsigned int p_level, std::shared_ptr<Function> f, RayfireMesh * rayfire, const std::string & qoi_name) :
+  IntegratedFunction<Function>::IntegratedFunction(unsigned int p_level, const std::shared_ptr<Function> & f, const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name) :
     QoIBase(qoi_name),
     _p_level(p_level),
     _f(f),
     _rayfire(rayfire)
   {}
-
-  template<typename Function>
-  IntegratedFunction<Function>::IntegratedFunction(const GetPot & input, unsigned int p_level, std::shared_ptr<Function> f, const std::string & input_qoi_string, const std::string & qoi_name) :
-    QoIBase(qoi_name),
-    _p_level(p_level),
-    _f(f)
-  {
-    _rayfire.reset(new RayfireMesh(input,input_qoi_string));
-  }
-
-  template<typename Function>
-  IntegratedFunction<Function>::IntegratedFunction(const IntegratedFunction & original) :
-    QoIBase(original),
-    _p_level(original._p_level),
-    _f(original._f),
-    _multiphysics_system(original._multiphysics_system)
-  {
-    // call RayfireMesh copy constructor
-    this->_rayfire.reset(new RayfireMesh( *((original._rayfire).get())) );
-  }
 
   template<typename Function>
   QoIBase* IntegratedFunction<Function>::clone() const
