@@ -159,6 +159,7 @@ namespace GRINS
 
             libMesh::err << *it << std::endl;
           }
+        libMesh::err << "Hint: Try --warn-only-unused-var if this is intentional." << std::endl;
         libMesh::err << "==========================================================" << std::endl;
 
         if( !warning_only )
