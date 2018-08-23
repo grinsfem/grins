@@ -197,44 +197,55 @@ namespace GRINS
     //! Walks a short distance along the rayfire and checks if elem contains that point
     bool rayfire_in_elem(const libMesh::Point& end_point, const libMesh::Elem* elem);
 
-    //! Iterative solver for calculating the intersection point of the rayfire on the side of an elem
+    //! Find the intersection point of the rayfire and a side of cur_elem. Returns libMesh::invalid_uint if no intersection is found
+    unsigned int calculate_intersection_point(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+
+    //! Edges of 2D FIRST order elements can be represented in point-slope form, so there is an analytical solution for the intersection point
+    unsigned int intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+
+    //! Edges of 2D SECOND order elements can be nonlinear, so use a standard Newton iterative solver to find the intersection point
     /*!
-      The rayfire line can be represented in point-slope form:
+      Knowing the starting point \f$(x_r,y_r)\f$ of the rayfire on the current element,
+      the rayfire line can be parameterized as
 
-      y-y0 = m(x-x0)
+      \f$ x = x_r + L*cos(\theta) \f$
 
-      where m is the slope and (x0,y0) is the known initial_point. To find the intersection point,
-      we will use a parametric representation of the edge utilizing the shape functions as such:
+      \f$ y = y_r + L*sin(\theta) \f$
 
-      X(&xi;) = sum( x<SUB>j</SUB> &phi;<SUB>j</SUB>(&xi;) )
+      We can also represent a point \f$(X,Y)\f$ on a given edge of the element as a function of
+      the reference coordinate \f$\xi\f$ along that edge
 
-      Y(&xi;) = sum( y<SUB>j</SUB> &phi;<SUB>j</SUB>(&xi;) )
+      \f$ X = \sum_i x_i \phi_i(\xi) \f$
 
-      where x<SUB>j</SUB> and y<SUB>j</SUB> are the node x- and y-coordinates, respectively,
-      and &phi;<SUB>j</SUB> is the value of shape function j at reference coordinate &xi;
+      \f$ Y = \sum_i y_i \phi_i(\xi) \f$
 
-      The intersection point is then where the x and y coordinates from the point-slope equation
-      equal the X and Y coordinates from the parametric equations for the given edge, respectively.
-      We can then form a residual by substituting the parametric coordinates into the point slope
-      form and bringing all terms to one side of the equation as:
+      At the intersection point of the rayfire line and the edge,
+      \f$x=X\f$ and \f$y=Y\f$ so we can form a residual vector
 
-      f = 0 = m(X(&xi;)-x0) - (Y(&xi;)-y0)
+      \f$ F = F(L,\xi) = \begin{bmatrix}
+                            x_r + L*cos(\theta) - \sum_i x_i \phi_i(\xi) \\
+                            y_r + L*sin(\theta) - \sum_i y_i \phi_i(\xi)
+                          \end{bmatrix}
+            = 0
+      \f$
 
-      The residual is then a function of a single parameter, namely the reference coordinate &xi;.
-      The derivative is rather trivial and can be expressed as
+      with Jacobian \f$J\f$
 
-      df = m*dX - dY
+      \f$ J = \begin{bmatrix}
+                cos(\theta) & - \sum_i x_i \frac{d \phi_i}{d\xi} \\
+                sin(\theta) & - \sum_i y_i \frac{d \phi_i}{d\xi}
+              \end{bmatrix}
+      \f$
 
-      where
-
-      dX = sum( x<SUB>j</SUB> d&phi;<SUB>j</SUB>/d&xi; )
-
-      dY = sum( y<SUB>j</SUB> d&phi;<SUB>j</SUB>/d&xi; )
-
-      @param[out] intersection_point The calculated intersection point (only set if convergence is achieved)
-      @return Whether or not the solver converged before hitting the iteration limit
+      Then we can use a Newton iteration
+      \f$ \begin{bmatrix}
+                \Delta L \\
+                \Delta \xi
+              \end{bmatrix}
+          = \delta = - J^{-1} F\f$
+      and converge when \f$|| \delta || <\f$ libMesh::TOLERANCE
     */
-    bool newton_solve_intersection(libMesh::Point& initial_point, const libMesh::Elem* edge_elem, libMesh::Point& intersection_point);
+    unsigned int intersection_2D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
 
     //! Refinement of a rayfire element whose main mesh counterpart was refined
     void refine(const libMesh::Elem* main_elem, libMesh::Elem* rayfire_elem);

@@ -357,31 +357,20 @@ namespace GRINS
   {
     libmesh_assert(cur_elem);
 
-    libMesh::Point intersection_point;
+    unsigned int intersection_side = this->calculate_intersection_point(start_point,cur_elem,next_point);
 
-    // loop over all sides of the elem and check each one for intersection
-    for (unsigned int s=0; s<cur_elem->n_sides(); s++)
+    if (intersection_side == libMesh::invalid_uint)
       {
-        std::unique_ptr<const libMesh::Elem> edge_elem = cur_elem->build_edge_ptr(s);
+        std::stringstream ss;
+        ss  <<"ERROR: Could not find next element along rayfire" <<std::endl
+            <<"Current element ID: " <<cur_elem->id() <<std::endl
+            <<"Current point: " <<start_point <<std::endl;
 
-        // Using the default tol can cause a false positive when start_point is near a node,
-        // causing this loop to skip over an otherwise valid edge to check
-        if (edge_elem->contains_point(start_point,libMesh::TOLERANCE*0.1))
-          continue;
+        libmesh_error_msg(ss.str());
+      }
 
-        bool converged = this->newton_solve_intersection(start_point,edge_elem.get(),intersection_point);
-
-        if (converged)
-          {
-            if ( this->check_valid_point(intersection_point,start_point,*edge_elem,next_point) )
-              return this->get_correct_neighbor(start_point,intersection_point,cur_elem,s,same_parent);
-          }
-        else
-          continue;
-
-      } // for s
-
-    return NULL; // no intersection
+    // will return NULL if intersection_side is a mesh boundary
+    return this->get_correct_neighbor(start_point,next_point,cur_elem,intersection_side,same_parent);
   }
 
 
@@ -571,80 +560,248 @@ namespace GRINS
   }
 
 
-  bool RayfireMesh::newton_solve_intersection(libMesh::Point& initial_point, const libMesh::Elem* edge_elem, libMesh::Point& intersection_point)
+  unsigned int RayfireMesh::calculate_intersection_point(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point)
   {
-    libmesh_assert(edge_elem);
+    libmesh_assert(cur_elem);
 
-    unsigned int iter_max = 20; // max iterations
+    unsigned int intersect_side = libMesh::invalid_uint;
 
-    // the number of shape functions needed for the edge_elem
-    unsigned int n_sf = libMesh::FE<1,libMesh::LAGRANGE>::n_shape_functions(edge_elem->type(),edge_elem->default_order());
+    switch(cur_elem->dim())
+      {
+        case 2:
+          switch(cur_elem->default_order())
+            {
+              case libMesh::Order::FIRST:
+                intersect_side = this->intersection_2D_first_order(initial_point,cur_elem,intersection_point);
+                break;
+              case libMesh::Order::SECOND:
+                intersect_side = this->intersection_2D_second_order(initial_point,cur_elem,intersection_point);
+                break;
+              default:
+                libmesh_error_msg("Unknown/unsupported 2D element order");
+                break;
+            }
+          break;
+        default:
+          libmesh_error_msg("Unknown/unsupported element dim");
+      }
 
-    // starting point on the elem
-    libMesh::Real x0 = initial_point(0);
-    libMesh::Real y0 = initial_point(1);
+    return intersect_side;
+  }
 
-    // shape functions and derivatives w.r.t reference coordinate
-    std::vector<libMesh::Real> phi(n_sf);
-    std::vector<libMesh::Real> dphi(n_sf);
 
-    // Newton iteration step
-    libMesh::Real d_xi;
+  unsigned int RayfireMesh::intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point)
+  {
+    libmesh_assert(cur_elem);
+    libmesh_assert_equal_to(cur_elem->dim(),2);
+    libmesh_assert(cur_elem->default_order() == libMesh::Order::FIRST);
 
-    // tan(theta) is the slope, so precompute since it is used repeatedly
+    // return value
+    unsigned int intersect_side = libMesh::invalid_uint;
+
+    // precompute repeated term
     libMesh::Real tan_theta = std::tan(_theta);
 
-    // Initial guess is center of the edge_elem
-    libMesh::Real xi = 0.0;
+    // cos(theta)==0 when tan(theta)==Inf
+    // Truncating pi can result in tan(theta) being very large but not Inf,
+    // so we can check cos(theta)<TOLERANCE to identify vertical rayfires
+    libMesh::Real cos_theta = std::cos(_theta);
 
-    // Newton iteration
-    for(unsigned int it=0; it<iter_max; it++)
+    // rayfire starting points
+    libMesh::Real xr = initial_point(0);
+    libMesh::Real yr = initial_point(1);
+
+    for (unsigned int s=0; s<cur_elem->n_sides(); ++s)
       {
-        // Get the shape function and derivative values at the reference coordinate
-        // phi.size() == dphi.size()
-        for(unsigned int i=0; i<phi.size(); i++)
+        std::unique_ptr<const libMesh::Elem> edge_elem = cur_elem->build_edge_ptr(s);
+
+        // using the default tol can cause a false positive when start_point is near a node,
+        // causing this loop to skip over an otherwise valid edge to check
+        if (edge_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
+          continue;
+
+        // since cur_elem is first order, the sides are always linear
+        // and can be represented in point-slope form
+        libMesh::Real x0 = (edge_elem->node_ref(0))(0);
+        libMesh::Real y0 = (edge_elem->node_ref(0))(1);
+        libMesh::Real x1 = (edge_elem->node_ref(1))(0);
+        libMesh::Real y1 = (edge_elem->node_ref(1))(1);
+
+        // slope of edge
+        libMesh::Real m = (y1-y0)/(x1-x0);
+
+        // intersection point
+        libMesh::Real x_hat;
+        libMesh::Real y_hat;
+
+        if ( std::abs(cos_theta) < libMesh::TOLERANCE )
           {
-            phi[i] = libMesh::FE<1,libMesh::LAGRANGE>::shape(edge_elem->type(),
-                                                             edge_elem->default_order(),
-                                                             i,
-                                                             xi);
-
-            dphi[i] = libMesh::FE<1,libMesh::LAGRANGE>::shape_deriv(edge_elem->type(),
-                                                                    edge_elem->default_order(),
-                                                                    i,
-                                                                    0, // const unsigned int libmesh_dbg_varj
-                                                                    xi);
-          } // for i
-
-        libMesh::Real X=0.0, Y=0.0, dX=0.0, dY=0.0;
-
-        for(unsigned int i=0; i<phi.size(); i++)
-          {
-            X  += (*(edge_elem->node_ptr(i)))(0) * phi[i];
-            dX += (*(edge_elem->node_ptr(i)))(0) * dphi[i];
-            Y  += (*(edge_elem->node_ptr(i)))(1) * phi[i];
-            dY += (*(edge_elem->node_ptr(i)))(1) * dphi[i];
-          }
-
-        libMesh::Real  f = tan_theta*(X-x0) - (Y-y0);
-        libMesh::Real df = tan_theta*(dX) - dY;
-
-        d_xi = f/df;
-
-        if(std::abs(d_xi) < libMesh::TOLERANCE)
-          {
-            // convergence
-            intersection_point(0) = X;
-            intersection_point(1) = Y;
-            return true;
+            // rayfire is vertical, so we know x_hat == xr
+            x_hat = xr;
+            y_hat = y0 + m*(x_hat-x0);
           }
         else
-          xi -= d_xi;
+          {
+            if ( std::isinf(m) )
+              {
+                // edge is vertical, so we already know the x coordinate of the intersection
+                x_hat = x0;
+              }
+            else
+              {
+                if ( std::abs(tan_theta - m) < libMesh::TOLERANCE )
+                  continue; // rayfire is parallel to this edge
 
-      } // for it
+                x_hat = ( xr*tan_theta - yr + y0 - m*x0 )/( tan_theta - m );
+              }
 
-    // no convergence
-    return false;
+            y_hat = yr + (x_hat-xr)*tan_theta;
+
+          }
+
+        libMesh::Point intersect(x_hat,y_hat);
+
+        if (edge_elem->contains_point(intersect,libMesh::TOLERANCE*0.1))
+          {
+            intersect_side = s;
+
+            intersection_point(0) = intersect(0);
+            intersection_point(1) = intersect(1);
+            break;
+          }
+
+      }
+
+    return intersect_side;
+  }
+
+
+  unsigned int RayfireMesh::intersection_2D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point)
+  {
+    libmesh_assert(cur_elem);
+    libmesh_assert_equal_to(cur_elem->dim(),2);
+    libmesh_assert(cur_elem->default_order() == libMesh::Order::SECOND);
+
+    // return value
+    unsigned int intersect_side = libMesh::invalid_uint;
+
+    // based on limit from libMesh::FEInterface::inverse_map()
+    unsigned int iter_max = 20;
+
+    // precompute repeated terms
+    libMesh::Real sin_theta = std::sin(_theta);
+    libMesh::Real cos_theta = std::cos(_theta);
+
+    // rayfire starting points
+    libMesh::Real xr = initial_point(0);
+    libMesh::Real yr = initial_point(1);
+
+    for (unsigned int s=0; s<cur_elem->n_sides(); ++s)
+      {
+        std::unique_ptr<const libMesh::Elem> edge_elem = cur_elem->build_edge_ptr(s);
+
+        // using the default tol can cause a false positive when start_point is near a node,
+        // causing this loop to skip over an otherwise valid edge to check
+        if (edge_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
+          continue;
+
+        // the number of shape functions needed for the edge_elem
+        unsigned int n_sf = libMesh::FE<1,libMesh::LAGRANGE>::n_shape_functions(edge_elem->type(),edge_elem->default_order());
+
+        // shape functions and derivatives w.r.t reference coordinate
+        std::vector<libMesh::Real> phi(n_sf);
+        std::vector<libMesh::Real> dphi(n_sf);
+
+        // Initial xi guess is center of the edge_elem
+        libMesh::Real xi = 0.0;
+
+        // Initial L guess
+        libMesh::Real L = std::abs(xr-(edge_elem->node_ref(2))(0));
+
+        // Newton iteration
+        for(unsigned int it=0; it<iter_max; it++)
+          {
+            // Get the shape function and derivative values at the reference coordinate
+            // phi.size() == dphi.size()
+            for(unsigned int i=0; i<phi.size(); i++)
+              {
+                phi[i] = libMesh::FE<1,libMesh::LAGRANGE>::shape(edge_elem->type(),
+                                                                 edge_elem->default_order(),
+                                                                 i,
+                                                                 xi);
+
+                dphi[i] = libMesh::FE<1,libMesh::LAGRANGE>::shape_deriv(edge_elem->type(),
+                                                                        edge_elem->default_order(),
+                                                                        i,
+                                                                        0, // const unsigned int libmesh_dbg_varj
+                                                                        xi);
+              } // for i
+
+            libMesh::Real X = 0.0;
+            libMesh::Real Y = 0.0;
+            libMesh::Real dX_dxi = 0.0;
+            libMesh::Real dY_dxi = 0.0;
+
+            for(unsigned int i=0; i<phi.size(); i++)
+              {
+                X  += (*(edge_elem->node_ptr(i)))(0) * phi[i];
+                Y  += (*(edge_elem->node_ptr(i)))(1) * phi[i];
+                dX_dxi += (*(edge_elem->node_ptr(i)))(0) * dphi[i];
+                dY_dxi += (*(edge_elem->node_ptr(i)))(1) * dphi[i];
+              }
+
+          libMesh::DenseVector<libMesh::Real> F(2);
+          F(0) = xr + L*cos_theta - X;
+          F(1) = yr + L*sin_theta - Y;
+
+          // Jacobian entries
+          libMesh::Real a = cos_theta;
+          libMesh::Real b = -dX_dxi;
+          libMesh::Real c = sin_theta;
+          libMesh::Real d = -dY_dxi;
+
+          libMesh::Real J_det = a*d - b*c;
+
+          // inverse of the Jacobian
+          libMesh::DenseMatrix<libMesh::Real> J_inv(2,2);
+          J_inv(0,0) =  d;
+          J_inv(0,1) = -b;
+          J_inv(1,0) = -c;
+          J_inv(1,1) =  a;
+          J_inv *= 1.0/J_det;
+
+          // delta will be the newton step
+          libMesh::DenseVector<libMesh::Real> delta(2);
+          J_inv.vector_mult(delta,F);
+
+          // check for convergence
+          if ( delta.l2_norm() < libMesh::TOLERANCE )
+            {
+              libMesh::Point intersect(X,Y);
+
+              // newton solver converged, now make sure it converged to a point on the edge_elem
+              if (edge_elem->contains_point(intersect,libMesh::TOLERANCE*0.1))
+              {
+                intersect_side = s;
+
+                intersection_point(0) = intersect(0);
+                intersection_point(1) = intersect(1);
+              }
+              break; // break out of 'for it'
+            }
+          else
+            {
+              L  -= delta(0);
+              xi -= delta(1);
+            }
+        } //for it
+
+        if (intersect_side != libMesh::invalid_uint)
+          break; // break out of 'for s'
+
+      } // for s
+
+    return intersect_side;
   }
 
 
