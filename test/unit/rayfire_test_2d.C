@@ -40,6 +40,8 @@
 #include "grins/rayfire_mesh.h"
 #include "grins/math_constants.h"
 
+#include "rayfire_test_base.h"
+
 // libMesh
 #include "libmesh/elem.h"
 #include "libmesh/getpot.h"
@@ -53,7 +55,8 @@
 
 namespace GRINSTesting
 {
-  class RayfireTest2D : public CppUnit::TestCase
+  class RayfireTest2D : public CppUnit::TestCase,
+                        public GRINSTesting::RayfireTestBase
   {
   public:
     CPPUNIT_TEST_SUITE( RayfireTest2D );
@@ -100,8 +103,7 @@ namespace GRINSTesting
 
       mesh->prepare_for_use();
 
-      run_test_on_all_point_combinations(pts,mesh);
-
+      this->run_test_on_all_point_combinations(pts,mesh);
     }
 
     void quad9_all_sides()
@@ -134,8 +136,7 @@ namespace GRINSTesting
 
       mesh->prepare_for_use();
 
-      run_test_on_all_point_combinations(pts,mesh);
-
+      this->run_test_on_all_point_combinations(pts,mesh);
     }
 
     void test_slanted_quad4()
@@ -163,8 +164,7 @@ namespace GRINSTesting
 
       mesh->prepare_for_use();
 
-      run_test_on_all_point_combinations(pts,mesh);
-
+      this->run_test_on_all_point_combinations(pts,mesh);
     }
 
     void test_vertical_fire()
@@ -309,8 +309,7 @@ namespace GRINSTesting
 
       mesh->prepare_for_use();
 
-      run_test_on_all_point_combinations(pts,mesh);
-
+      this->run_test_on_all_point_combinations(pts,mesh);
     }
 
     void quadratic_top_quad9()
@@ -343,75 +342,7 @@ namespace GRINSTesting
 
       mesh->prepare_for_use();
 
-      run_test_on_all_point_combinations(pts,mesh);
-
-    }
-
-
-  private:
-
-    void run_test(libMesh::Point& origin, libMesh::Real theta, libMesh::Node& calc_end_node, unsigned int n_elem, unsigned int exit_elem, std::string elem_type, unsigned int dim)
-    {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_"+elem_type+"_"+std::to_string(n_elem)+"elem_"+std::to_string(dim)+"D.in";
-      GetPot input(filename);
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
-
-      // ensure the mesh has the desired number of elements
-      CPPUNIT_ASSERT_EQUAL(n_elem,mesh->n_elem());
-
-      run_test_with_mesh(mesh,origin,theta,calc_end_node,exit_elem);
-    }
-
-    void run_test_on_all_point_combinations(std::vector<libMesh::Point> pts, std::shared_ptr<libMesh::UnstructuredMesh> mesh)
-    {
-      // iterate over the starting points
-      for(unsigned int i=0; i<pts.size(); i++)
-        {
-          libMesh::Point start_point = pts[i];
-
-          // iterate over all the intersection points
-          for(unsigned int j=0; j<pts.size(); j++)
-            {
-              if(j==i)
-                continue;
-
-              libMesh::Point end_point = pts[j];
-
-              libMesh::Real theta = calc_theta(start_point,end_point);
-
-              // run the test
-              this->run_test_with_mesh(mesh,start_point,theta,end_point,0);
-            }
-
-        }
-
-    }
-
-    void run_test_with_mesh(std::shared_ptr<libMesh::UnstructuredMesh> mesh, libMesh::Point& origin, libMesh::Real theta, libMesh::Point& calc_end_point, unsigned int exit_elem)
-    {
-      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
-      rayfire->init(*mesh);
-
-      const libMesh::Elem* original_elem = mesh->elem_ptr(exit_elem);
-
-      const libMesh::Elem* rayfire_elem = rayfire->map_to_rayfire_elem(original_elem->id());
-
-      if (!rayfire_elem)
-        libmesh_error_msg("Attempted to map an element that is not in the Rayfire");
-
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(0), (*(rayfire_elem->node_ptr(1)))(0),libMesh::TOLERANCE);
-      CPPUNIT_ASSERT_DOUBLES_EQUAL(calc_end_point(1), (*(rayfire_elem->node_ptr(1)))(1),libMesh::TOLERANCE);
-    }
-
-    std::shared_ptr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input )
-    {
-      GRINS::MeshBuilder mesh_builder;
-      return mesh_builder.build( input, *TestCommWorld );
-    }
-
-    libMesh::Real calc_theta(libMesh::Point& start, libMesh::Point end)
-    {
-      return std::atan2( (end(1)-start(1)), (end(0)-start(0)) );
+      this->run_test_on_all_point_combinations(pts,mesh);
     }
 
   };
