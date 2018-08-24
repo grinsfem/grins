@@ -590,16 +590,12 @@ namespace GRINS
 		Enth_Diff += _Inflow_Species[s]*(h_i[s]-h_u[s]);
 	      }
 	    
-	    for(unsigned int i=0; i != n_M_dofs; i++)
+	      for(unsigned int i=0; i != n_M_dofs; i++)
 	      {
 	     
 		Fm(i) += (M_dot*Enth_Diff - k*Grad_T(0))*M_phi[i][qp]*jac;
-	      }
+		}
 
-	    /*   for(unsigned int i =0; i !=n_T_dofs;i++)
-	       {
-		 Ft(i) -= M_dot*Enth_Diff*T_phi[i][qp]*jac;
-		 }*/
 	  }
       }
   }
@@ -796,7 +792,7 @@ namespace GRINS
 
 	    for( unsigned int s =0; s< n_species(); s++)
 	      {
-		if(quantity_index == this->_Ds_index[s] )
+		if(quantity_index == this->_cp_s_index[s] )
 		  {
 		    std::vector<libMesh::Real> cp_s(this->_n_species);
 		    std::vector<libMesh::Real> Y(this->_n_species);
