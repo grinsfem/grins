@@ -68,6 +68,8 @@ namespace GRINSTesting
     CPPUNIT_TEST( test_quad9_2D );
     CPPUNIT_TEST( fire_through_vertex );
     CPPUNIT_TEST( origin_between_elems );
+    CPPUNIT_TEST( quad4_off_origin );
+    CPPUNIT_TEST( quadratic_top_quad9 );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -280,6 +282,69 @@ namespace GRINSTesting
 
       this->run_test(origin,theta,calc_end_node,9,8,"quad4",2);
       this->run_test(origin,theta,calc_end_node,9,8,"quad9",2);
+    }
+
+    void quad4_off_origin()
+    {
+      // vector of intersection points
+      std::vector<libMesh::Point> pts(4);
+      pts[0] = libMesh::Point(1.4,0.8);
+      pts[1] = libMesh::Point(2.2,1.3);
+      pts[2] = libMesh::Point(2.0,2.25);
+      pts[3] = libMesh::Point(1.3,1.6);
+
+      // create the mesh (single trapezoidal QUAD4 element)
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(2);
+
+      mesh->add_point( libMesh::Point(1.0,1.0),0 );
+      mesh->add_point( libMesh::Point(2.0,0.5),1 );
+      mesh->add_point( libMesh::Point(2.5,2.5),2 );
+      mesh->add_point( libMesh::Point(1.5,2.0),3 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad4 );
+      for (unsigned int n=0; n<4; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      run_test_on_all_point_combinations(pts,mesh);
+
+    }
+
+    void quadratic_top_quad9()
+    {
+      // vector of intersection points
+      std::vector<libMesh::Point> pts(4);
+      pts[0] = libMesh::Point(0.25,0.0);
+      pts[1] = libMesh::Point(1.0,0.333);
+      pts[2] = libMesh::Point(0.25,1.375);
+      pts[3] = libMesh::Point(0.0,0.875);
+
+      // create a non-rectangular QUAD9
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(2);
+
+      mesh->add_point( libMesh::Point(0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0),1 );
+      mesh->add_point( libMesh::Point(1.0,1.0),2 );
+      mesh->add_point( libMesh::Point(0.0,1.0),3 );
+      mesh->add_point( libMesh::Point(0.5,0.0),4 );
+      mesh->add_point( libMesh::Point(1.0,0.5),5 );
+      mesh->add_point( libMesh::Point(0.5,1.5),6 );
+      mesh->add_point( libMesh::Point(0.0,0.5),7 );
+      mesh->add_point( libMesh::Point(0.5,0.5),8 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad9 );
+      for (unsigned int n=0; n<9; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      run_test_on_all_point_combinations(pts,mesh);
+
     }
 
 
