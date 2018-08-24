@@ -57,8 +57,7 @@ namespace GRINS
     _phi(-7.0), // bounds on angles are +/- 2pi
     _output_filename("")
   {
-    if (std::abs(_theta) > 2.0*Constants::pi)
-      libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
+    this->validate_rayfire_angles();
   }
 
   RayfireMesh::RayfireMesh(const GetPot & input, const std::string & qoi_string) :
@@ -86,11 +85,10 @@ namespace GRINS
     else
       libmesh_error_msg("ERROR: Spherical azimuthal angle theta must be given for Rayfire");
 
-    if (std::abs(_theta) > 2.0*Constants::pi)
-      libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
-
     if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
       libmesh_error_msg("ERROR: cannot specify spherical polar angle phi for Rayfire, only 2D is currently supported");
+
+    this->validate_rayfire_angles();
   }
 
   void RayfireMesh::init(const libMesh::MeshBase & mesh_base)
@@ -276,6 +274,12 @@ namespace GRINS
 
 
   // private functions
+
+  void RayfireMesh::validate_rayfire_angles()
+  {
+    if (std::abs(_theta) > 2.0*Constants::pi)
+      libmesh_error_msg("Please supply a theta value between -2pi and 2pi");
+  }
 
   void RayfireMesh::check_origin_on_boundary(const libMesh::Elem * start_elem)
   {

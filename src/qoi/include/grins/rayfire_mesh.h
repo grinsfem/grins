@@ -158,6 +158,8 @@ namespace GRINS
     //! User should never call the default constructor
     RayfireMesh();
 
+    void validate_rayfire_angles();
+
     //! Private function to get a rayfire elem from main_mesh elem ID
     /*!
       Does not return a const pointer, and is used within this class to simplify
