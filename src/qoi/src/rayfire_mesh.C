@@ -586,6 +586,20 @@ namespace GRINS
                 break;
             }
           break;
+        case 3:
+          switch(cur_elem->default_order())
+            {
+              case libMesh::Order::FIRST:
+                intersect_side = this->intersection_3D_first_order(initial_point,cur_elem,intersection_point);
+                break;
+              case libMesh::Order::SECOND:
+                intersect_side = this->intersection_3D_second_order(initial_point,cur_elem,intersection_point);
+                break;
+              default:
+                libmesh_error_msg("Unknown/unsupported 3D element order");
+                break;
+            }
+          break;
         default:
           libmesh_error_msg("Unknown/unsupported element dim");
       }
@@ -806,6 +820,89 @@ namespace GRINS
       } // for s
 
     return intersect_side;
+  }
+
+
+  unsigned int RayfireMesh::intersection_3D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point)
+  {
+    libmesh_assert(cur_elem);
+    libmesh_assert_equal_to(cur_elem->dim(),3);
+    libmesh_assert(cur_elem->default_order() == libMesh::Order::FIRST);
+
+    // return value
+    unsigned int intersect_side = libMesh::invalid_uint;
+
+    // precompute repeated terms
+    libMesh::Real cos_theta = std::cos(_theta);
+    libMesh::Real sin_theta = std::sin(_theta);
+    libMesh::Real sin_phi   = std::sin(_phi);
+    libMesh::Real cos_phi   = std::cos(_phi);
+
+    // rayfire starting points
+    libMesh::Real xr = initial_point(0);
+    libMesh::Real yr = initial_point(1);
+    libMesh::Real zr = initial_point(2);
+
+    for (unsigned int s=0; s<cur_elem->n_sides(); ++s)
+      {
+        std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
+
+        // using the default tol can cause a false positive when start_point is near a node,
+        // causing this loop to skip over an otherwise valid side to check
+        if (side_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
+          continue;
+
+        // since cur_elem is first order,
+        // the sides can be represented in point-slope form
+
+        libMesh::Point P0(side_elem->node_ref(0));
+        libMesh::Point P1(side_elem->node_ref(1));
+        libMesh::Point P2(side_elem->node_ref(2));
+
+        libMesh::Point u(P1-P0);
+        libMesh::Point v(P2-P0);
+        libMesh::Point w = u.cross(v);
+        
+        libMesh::Real a = w(0);
+        libMesh::Real b = w(1);
+        libMesh::Real c = w(2);
+        
+        libMesh::Real x0 = P0(0);
+        libMesh::Real y0 = P0(1);
+        libMesh::Real z0 = P0(2);
+        
+        // length of rayfire at intersection
+        libMesh::Real L = - ( a*(xr-x0) + b*(yr-y0) + c*(zr-z0) )/( a*cos_theta*sin_phi + b*sin_theta*sin_phi + c*cos_phi );
+        
+        libMesh::Real x_hat = xr + L*cos_theta*sin_phi;
+        libMesh::Real y_hat = yr + L*sin_theta*sin_phi;
+        libMesh::Real z_hat = zr + L*cos_phi;
+
+        // intersection point
+        libMesh::Point intersect(x_hat,y_hat,z_hat);
+
+        if (side_elem->contains_point(intersect,libMesh::TOLERANCE*0.1))
+          {
+            intersect_side = s;
+
+            intersection_point(0) = intersect(0);
+            intersection_point(1) = intersect(1);
+            intersection_point(2) = intersect(2);
+            break;
+          }
+
+      }
+
+    return intersect_side;
+  }
+
+  unsigned int RayfireMesh::intersection_3D_second_order(libMesh::Point & /*initial_point*/, const libMesh::Elem * cur_elem, libMesh::Point & /*intersection_point*/)
+  {
+    libmesh_assert(cur_elem);
+    libmesh_assert_equal_to(cur_elem->dim(),3);
+    libmesh_assert(cur_elem->default_order() == libMesh::Order::SECOND);
+
+    libmesh_error_msg("3D second order meshes are not currently supported by RayfireMesh");
   }
 
 
