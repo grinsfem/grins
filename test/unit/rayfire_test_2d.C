@@ -53,10 +53,10 @@
 
 namespace GRINSTesting
 {
-  class RayfireTest : public CppUnit::TestCase
+  class RayfireTest2D : public CppUnit::TestCase
   {
   public:
-    CPPUNIT_TEST_SUITE( RayfireTest );
+    CPPUNIT_TEST_SUITE( RayfireTest2D );
 
     CPPUNIT_TEST( quad4_all_sides );
     CPPUNIT_TEST( quad9_all_sides );
@@ -416,7 +416,7 @@ namespace GRINSTesting
 
   };
 
-  CPPUNIT_TEST_SUITE_REGISTRATION( RayfireTest );
+  CPPUNIT_TEST_SUITE_REGISTRATION( RayfireTest2D );
 
 } // end namespace GRINSTesting
 

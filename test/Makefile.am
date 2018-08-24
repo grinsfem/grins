@@ -110,7 +110,7 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/variables.C \
                       unit/builder_helper.C \
                       unit/default_bc_builder.C \
-                      unit/rayfire_test.C \
+                      unit/rayfire_test_2d.C \
                       unit/rayfireAMR_test.C \
                       unit/integrated_function_test.C \
                       unit/hitran_test.C \
