@@ -190,7 +190,7 @@ namespace GRINSTesting
 
       libMesh::Real theta = GRINS::Constants::pi/2.0;
 
-      this->run_test_with_mesh(mesh,start_point,theta,end_point,0);
+      this->run_test_with_mesh(mesh,start_point,theta,-1.0,end_point,0);
     }
 
     void test_quad4_5elem()

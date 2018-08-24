@@ -55,7 +55,7 @@ namespace GRINSTesting
       // ensure the mesh has the desired number of elements
       CPPUNIT_ASSERT_EQUAL(n_elem,mesh->n_elem());
 
-      this->run_test_with_mesh(mesh,origin,theta,calc_end_node,exit_elem);
+      this->run_test_with_mesh(mesh,origin,theta,-1.0,calc_end_node,exit_elem);
     }
 
     void run_test_on_all_point_combinations(std::vector<libMesh::Point> pts, std::shared_ptr<libMesh::UnstructuredMesh> mesh)
@@ -74,18 +74,27 @@ namespace GRINSTesting
               libMesh::Point end_point = pts[j];
 
               libMesh::Real theta = calc_theta(start_point,end_point);
+              libMesh::Real phi = -1.0;
+              if (mesh->mesh_dimension() == 3)
+                phi = this->calc_phi(start_point,end_point);
 
               // run the test
-              this->run_test_with_mesh(mesh,start_point,theta,end_point,0);
+              this->run_test_with_mesh(mesh,start_point,theta,phi,end_point,0);
             }
 
         }
 
     }
 
-    void run_test_with_mesh(std::shared_ptr<libMesh::UnstructuredMesh> mesh, libMesh::Point & origin, libMesh::Real theta, libMesh::Point & calc_end_point, unsigned int exit_elem)
+    void run_test_with_mesh(std::shared_ptr<libMesh::UnstructuredMesh> mesh, libMesh::Point & origin, libMesh::Real theta,
+                            libMesh::Real phi, libMesh::Point & calc_end_point, unsigned int exit_elem)
     {
-      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
+      std::shared_ptr<GRINS::RayfireMesh> rayfire;
+      if (mesh->mesh_dimension() == 2)
+        rayfire.reset( new GRINS::RayfireMesh(origin,theta) );
+      else
+        rayfire.reset( new GRINS::RayfireMesh(origin,theta,phi) );
+
       rayfire->init(*mesh);
 
       const libMesh::Elem * original_elem = mesh->elem_ptr(exit_elem);
@@ -107,6 +116,12 @@ namespace GRINSTesting
     libMesh::Real calc_theta(libMesh::Point & start, libMesh::Point & end)
     {
       return std::atan2( (end(1)-start(1)), (end(0)-start(0)) );
+    }
+
+    libMesh::Real calc_phi(libMesh::Point & start, libMesh::Point & end)
+    {
+      libMesh::Real L = (end-start).norm();
+      return std::acos( (end(2)-start(2))/L );
     }
     
   };
