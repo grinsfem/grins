@@ -84,13 +84,13 @@ namespace GRINS
     if (input.have_variable("QoI/"+qoi_string+"/Rayfire/theta"))
       _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
     else
-      libmesh_error_msg("ERROR: Spherical polar angle theta must be given for Rayfire");
+      libmesh_error_msg("ERROR: Spherical azimuthal angle theta must be given for Rayfire");
 
     if (std::abs(_theta) > 2.0*Constants::pi)
       libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
 
     if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
-      libmesh_error_msg("ERROR: cannot specify spherical azimuthal angle phi for Rayfire, only 2D is currently supported");
+      libmesh_error_msg("ERROR: cannot specify spherical polar angle phi for Rayfire, only 2D is currently supported");
   }
 
   void RayfireMesh::init(const libMesh::MeshBase& mesh_base)

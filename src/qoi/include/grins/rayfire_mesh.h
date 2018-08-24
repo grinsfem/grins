@@ -42,10 +42,11 @@ namespace GRINS
     This class performs a rayfire across a given mesh.
     The user supplies an origin point on the mesh boundary,
     and spherical angle(s) theta (and phi for 3D) to describe the direction of the rayfire.
-    As is standard in spherical coordinates, theta is the angle from the x-axis in the xy-plane,
-    with counterclockwise being positive. -2&pi; &le; theta &le; +2&pi;.
-    Phi is the angle from the xy-plane, with phi>0 being in the positive half of the z-plane.
-    -&pi; &le; phi &le; +&pi;
+    As is standard in spherical coordinates, theta is the azimuthal angle from
+    the positive x-axis in the xy-plane, with counterclockwise being positive;
+    \f$-2\pi \leq \theta \leq +2\pi\f$.
+    Phi is the polar angle from the positive z-axis, with \f$\phi = \pi/2\f$ being the xy-plane;
+    \f$ 0 \leq \phi \leq \pi \f$.
 
     Starting at the given origin point, this class will walk in a straight line
     across the mesh in the prescribed direction. On each element along the line,
@@ -71,7 +72,7 @@ namespace GRINS
       This is restricted to 2D meshes. The init() function must
       be called to perform the actual rayfire.
       @param origin Origin point (x,y) of the rayfire on mesh boundary
-      @param theta Spherical polar angle (in radians)
+      @param theta Spherical azimuthal angle (in radians)
     */
     RayfireMesh(libMesh::Point& origin, libMesh::Real theta);
 
@@ -80,8 +81,8 @@ namespace GRINS
       This is restricted to 3D meshes. The init() function must
       be called to perform the actual rayfire.
       @param origin Origin point (x,y,z) of the rayfire on mesh boundary
-      @param theta  Spherical polar angle (in radians)
-      @param phi    Spherical azimuthal angle (in radians)
+      @param theta  Spherical azimuthal angle (in radians)
+      @param phi    Spherical polar angle (in radians)
     */
     RayfireMesh(libMesh::Point& origin, libMesh::Real theta, libMesh::Real phi);
 
@@ -138,11 +139,11 @@ namespace GRINS
     //! Origin point
     libMesh::Point _origin;
 
-    //! Rayfire Spherical polar angle (in radians)
-    libMesh::Real   _theta;
+    //! Spherical azimuthal angle (in radians)
+    libMesh::Real _theta;
 
-    //! Rayfire Spherical azimuthal angle (in radians)
-    libMesh::Real   _phi;
+    //! Spherical polar angle (in radians)
+    libMesh::Real _phi;
 
     //! Internal 1D mesh of EDGE2 elements
     std::unique_ptr<libMesh::Mesh> _mesh;
