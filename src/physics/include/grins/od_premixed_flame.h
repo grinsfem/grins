@@ -33,13 +33,12 @@ namespace GRINS
 
     void mass_fractions( const libMesh::Point& p, const AssemblyContext& c,
                          std::vector<libMesh::Real>& mass_fracs ) const;
+
     unsigned int n_species() const;
 
     const Mixture & gas_mixture() const;
 
-
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
-    libMesh::Real get_p0() const;
 
     
     //Register postprocessing variables for OD Premixed Flame 
@@ -100,12 +99,7 @@ namespace GRINS
     unsigned int _mu_index;
 
     libMesh::Number _p0;
-    libMesh::Number _Ti;
     libMesh::Number _Tu;
-
-    //libMesh::Point _T_Fixed_Loc;
-    //libMesh::Number _T_Fixed;
-    //libMesh::Number _Penalty_Tol;
 
     //! Index from registering this quantity. Each species will have it's own index.
     std::vector<unsigned int> _mole_fractions_index;
@@ -119,8 +113,8 @@ namespace GRINS
     //! Index from registering this quantity. Each species will have it's own index.
     std::vector<unsigned int> _Ds_index;
 
-    /* //! Index from registering this quantity. Each species will have it's own index.
-       std::vector<unsigned int> _cp_s_index;*/                
+    //! Index from registering this quantity. Each species will have it's own index.
+    std::vector<unsigned int> _cp_s_index;               
 
  
   private:
@@ -179,16 +173,11 @@ namespace GRINS
   
   template< typename Mixture, typename Evaluator>
     inline
-    libMesh::Real ODPremixedFlame<Mixture,Evaluator>::get_p0() const
-    {return _p0;}
-
-  template< typename Mixture, typename Evaluator>
-    inline
     const Mixture & ODPremixedFlame<Mixture,Evaluator>::gas_mixture() const
-  {
-    return *_gas_mixture;
-  }
-    
+    {
+      return *_gas_mixture;
+    }
+  
   
 } // namespace Grins
 

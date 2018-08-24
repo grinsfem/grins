@@ -41,20 +41,13 @@ namespace GRINS
       _rho_index(0),
       _k_index(0),           
       _cp_index(0),
-      _u_index(0)
+      _u_index(0),
+      _mu_index(0)
   {
     this->set_parameter                    
       (_fixed_rho_value, input,
-
        "Physics/"+PhysicsNaming::od_premixed_flame()+"/fixed_rho_value", 0.0 );
-    //Parsing the Temperature at the Inflow, can probably make a better error message, or just initialize the value as something else
-    this->set_parameter(_Ti, input, 
-	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Inlet_Temperature", 0.0);
-    if(_Ti == 0)
-      {
-	std::cout << "Initial Boundary Temperature not set in the input!!" << std::endl;
-	libmesh_not_implemented();
-      }
+
 
     //Parsing the Unburnt Temperature
     this->set_parameter(_Tu, input, 
@@ -65,7 +58,7 @@ namespace GRINS
 	libmesh_not_implemented();
       }
 
-    //Initial Inflow Equivalence ration
+    //Initial Inflow Equivalence ratio
     _Inflow_Species.resize(this->_n_species);
     for (unsigned int s = 0; s < this->_n_species; s++)
 	  {
@@ -73,22 +66,12 @@ namespace GRINS
 				+_gas_mixture->species_name(s), 0.0); 
 	  }
     
-    //Remenants of failed attempts
-    /*this->_T_Fixed_Loc = input("Physics/"+PhysicsNaming::od_premixed_flame()+"/T_Fixed_Loc", 0.0);
-   
-    this->set_parameter
-      (_T_Fixed,input,"Physics/"+PhysicsNaming::od_premixed_flame()+"/T_Fixed",0.0 );
-
-    this->set_parameter
-      (_Penalty_Tol,input,"Physics/"+PhysicsNaming::od_premixed_flame()+"/Penalty_Tol",1.0e-8 );
-    */
     this->read_input_options(input);
                                                                       
     this->check_var_subdomain_consistency(_mass_flux_vars);
     this->check_var_subdomain_consistency(_temp_vars);
     this->check_var_subdomain_consistency(_species_vars);
 
-   
     this->_ic_handler = new GenericICHandler( physics_name, input );
   }
 
@@ -230,36 +213,42 @@ namespace GRINS
 		  }
 	      }
 	   
-	      /* else if( name == std::string("cp_s") )
+	    else if( name == std::string("cp_s") )
 	      {
 		this->_cp_s_index.resize(this->n_species());
 		
 		for(unsigned int s=0;s < this->n_species(); s++)
 		  {
-		    this ->_cps_index[s] = postprocessing.register_quantity( "cp_"+this->_gas_mixture->species_name(s) );
+		    this ->_cp_s_index[s] = postprocessing.register_quantity( "cp_"+this->_gas_mixture->species_name(s) );
 		  }
-		  }*/
+	      }
 	    else
 	      {
 		std::cerr << "Error: Invalid output_vars value for ODPremixedFlame " << std::endl
-                          << "       Found " << name << std::endl
-                          << "       Acceptable values are: rho" << std::endl
-                          << "                              D_s" << std::endl
-                          << "                              k" << std::endl
+			  << "       Found " << name << std::endl
+			  << "       Acceptable values are: rho" << std::endl
+			  << "                              D_s" << std::endl
+			  << "                              k" << std::endl
 			  << "                              h_s" << std::endl
-                          << "                              cp" << std::endl
-                          << "                              mole_fractions" << std::endl
-                          << "                              omega_dot" << std::endl
+			  << "                              cp" << std::endl
+			  << "                              mole_fractions" << std::endl
+			  << "                              omega_dot" << std::endl
 			  << "                              u" << std::endl
-		          << "                              mu" << std::endl;
+			  << "                              mu" << std::endl
+		          << "                              cp_s" << std::endl;
                 libmesh_error();
 	      }
 	  }
       }
     
     return;
-  }    //end post processing vars
+  }   //end post processing vars
   
+
+
+
+
+
 
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::element_time_derivative
@@ -271,7 +260,7 @@ namespace GRINS
     //Convenience
     const VariableIndex s0_var = this->_species_vars.species(0);
     
-    // The number of local degrees of freedom in each variable                                  //Variables are Species, Mass flux, and Temperature
+    // The number of local degrees of freedom in each variable                                  
     const unsigned int n_s_dofs = context.get_dof_indices(s0_var).size();
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
     
@@ -299,12 +288,13 @@ namespace GRINS
     //species set in residual calculations since the need of a for loop
     
     unsigned int n_qpoints = context.get_element_qrule().n_points();
+    
     for(unsigned int qp = 0;qp != n_qpoints;qp++)
       {
 	libMesh::Real T, M_dot;
 	libMesh::Gradient Grad_T;
 
-	libMesh::Real R, k, cp, rho, p0, mu, M_mix;
+	libMesh::Real R, k, cp, rho, p0, mu;
 	Evaluator gas_evaluator( *(this->_gas_mixture) );
 
 	T = context.interior_value(this->_temp_vars.T(),qp);
@@ -312,7 +302,7 @@ namespace GRINS
 	
 	M_dot = context.interior_value(this->_mass_flux_vars.var(), qp);
 	
-	p0 = this->get_p0();
+	p0 = this->_p0;
 	
 	
 	std::vector<libMesh::Real> mass_fractions, h, D, omega_dot, cp_s;
@@ -342,36 +332,31 @@ namespace GRINS
 	
 	omega_dot.resize(this->_n_species);
 
-	M_mix = gas_evaluator.M_mix(mass_fractions);
-
 	gas_evaluator.omega_dot( T, rho, mass_fractions, omega_dot );
 	
 	gas_evaluator.cp_s(T, p0, mass_fractions, cp_s);
 	libMesh::Real jac = JxW[qp];
 	
-	//Energy equation Residual
+
 	libMesh::Real chem_term = 0.0;
-	libMesh::Real Sum = 0.0;
-	libMesh::Real SpeciesGradSum = 0.0;
-	libMesh::Real SpeciesSum = 0.0;
+	libMesh::Real Velocity_Correction_Sum = 0.0;
+	libMesh::Real Energy_Species_velocity_Sum=0.0;
 	for ( unsigned int s=0; s< this->_n_species; s++ )
 	  {
-	    SpeciesGradSum += Grad_mass_fractions[s](0)/gas_evaluator.M(s);
 	    chem_term +=h[s]*omega_dot[s];
-	    Sum += rho*D[s]*Grad_mass_fractions[s](0)*Grad_T(0)*cp_s[s];
+	    Velocity_Correction_Sum += D[s]*Grad_mass_fractions[s](0);
 	  }
 
 	for (unsigned int s =0; s < this->_n_species;s++)
 	  {
-	    SpeciesSum+= D[s]*Grad_mass_fractions[s](0);
-	    SpeciesSum-=M_mix*mass_fractions[s]*D[s]*SpeciesGradSum;
+	    Energy_Species_velocity_Sum +=cp_s[s]*(Grad_mass_fractions[s](0)*D[s] - mass_fractions[s]*Velocity_Correction_Sum);
 	  }
 	    
-
+	//Energy equation Residual
 	for (unsigned int i=0;i != n_T_dofs; i++ )
 	  {
-	    FT(i) += ( ( -cp*M_dot *Grad_T(0) - chem_term + Sum )*T_phi[i][qp]
-		       -k*Grad_T(0)*T_dphi[i][qp](0))*jac;
+	    FT(i) += ( ( -cp * M_dot * Grad_T(0) - chem_term - rho * Grad_T(0) * Energy_Species_velocity_Sum ) * T_phi[i][qp]
+		       - k * Grad_T(0) * T_dphi[i][qp](0))*jac;
 	    
 	  }
 	
@@ -381,12 +366,12 @@ namespace GRINS
 	    libMesh::DenseSubVector<libMesh::Number> &Fs =
 	      context.get_elem_residual(this->_species_vars.species(s)); //R_{s}
 	    
-	    const libMesh::Real term1 = -M_dot*Grad_mass_fractions[s](0) + omega_dot[s];
-	    const libMesh::Real term2 = -rho*D[s]*Grad_mass_fractions[s](0)+M_mix*rho*D[s]*SpeciesGradSum*mass_fractions[s]+rho*mass_fractions[s]*SpeciesSum;
+	    const libMesh::Real Normal_Term = -M_dot*Grad_mass_fractions[s](0) + omega_dot[s];
+	    const libMesh::Real Weakend_Term = -rho*D[s]*Grad_mass_fractions[s](0)+rho*mass_fractions[s]*Velocity_Correction_Sum;
 	    
 	    for (unsigned int i =0;i != n_s_dofs;i++)
 	      {
-		Fs(i) += ( term1 * s_phi[i][qp] + term2 * s_dphi[i][qp](0) )*jac;
+		Fs(i) += ( Normal_Term * s_phi[i][qp] + Weakend_Term * s_dphi[i][qp](0) )*jac;
 	      }
 	  }
       } // end of quadrature loop
@@ -396,10 +381,19 @@ namespace GRINS
 
 
 
+
+
+
+
+
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::mass_residual
   (bool compute_jacobian, AssemblyContext & context )
   {
+    if( compute_jacobian ) 
+      libmesh_not_implemented();
+    
     const VariableIndex s0_var = this->_species_vars.species(0);
     const unsigned int n_s_dofs = context.get_dof_indices(s0_var).size();
     const unsigned int n_T_dofs = context.get_dof_indices(this->_temp_vars.T()).size();
@@ -432,12 +426,12 @@ namespace GRINS
 	std::vector<libMesh::Real> mass_fractions(this->n_species());
         for(unsigned int s=0; s < this->_n_species; s++ )
 	  {
- mass_fractions[s] = context.interior_value(this->_species_vars.species(s), qp);
+	    mass_fractions[s] = context.interior_value(this->_species_vars.species(s), qp);
 	  }
 
 	Evaluator gas_evaluator(*(this-> _gas_mixture));
 	const libMesh::Real R_mix = gas_evaluator.R_mix(mass_fractions);
-        const libMesh::Real p0 = this->get_p0();
+        const libMesh::Real p0 = this->_p0;
         const libMesh::Real rho = this->rho(T, p0, R_mix);
         const libMesh::Real cp = gas_evaluator.cp(T,p0,mass_fractions);
 
@@ -464,13 +458,14 @@ namespace GRINS
 	  {
 	    F_T(i) -= rho*cp*T_dot*T_phi[i][qp]*jac;
 	  }
-	
-	if( compute_jacobian ) 
-	  libmesh_not_implemented();
-
 
       } // end Quadrature loop
-  }                   //end Mass Residual
+  } // end Mass Residual
+
+
+
+
+
 
 
 
@@ -505,25 +500,19 @@ namespace GRINS
 	  Fm(i) += dMdx(0)*M_phi[i][qp]*jac;
       }
 
-    /*if( context.get_elem().contains_point(_T_Fixed_Loc) )
-      {
-	libMesh::Real T =  context.point_value(this->_temp_vars.T(),_T_Fixed_Loc);
-	for(unsigned int qp=0; qp!=n_qpoints; qp++)
-	  {
-	    libMesh::Real jac = JxW[qp];
-	    
-	    for(unsigned int i=0; i != n_M_dofs; i++)
-	      Fm(i) += 1/(this->_Penalty_Tol) * (T - this->_T_Fixed) * M_phi[i][qp]*jac;
-	  }
-	  }*/
-
   }   //end Element Constraint
+
+
+
+
+
 
 
 
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::side_time_derivative( bool compute_jacobian, AssemblyContext & context)
-  { if(compute_jacobian)
+  { 
+    if(compute_jacobian)
       libmesh_not_implemented();
     
     //Check if were on the right boundary,
@@ -546,6 +535,14 @@ namespace GRINS
 	libMesh::DenseSubVector<libMesh::Number> & Fm =
 	  context.get_elem_residual(this->_mass_flux_vars.var()); // R_{M}
 
+
+
+	libMesh::DenseSubVector<libMesh::Number> & Ft = context.get_elem_residual(this->_temp_vars.T());
+	const unsigned int n_T_dofs =
+	  context.get_dof_indices(this->_temp_vars.T()).size();
+	const std::vector<std::vector<libMesh::Real> >& T_phi =
+	  context.get_side_fe(this->_temp_vars.T())->get_phi();
+
 	for(unsigned int qp=0; qp!=n_qpoints; qp++)
 	  {
 	    libMesh::Real jac = JxW[qp];
@@ -562,7 +559,7 @@ namespace GRINS
 	
 	    M_dot = context.side_value(this->_mass_flux_vars.var(), qp);
 	    
-	    p0 = this->get_p0();
+	    p0 = this->_p0;
 	    
 	    std::vector<libMesh::Real> mass_fractions, h_i, h_u, D;
 	
@@ -575,7 +572,7 @@ namespace GRINS
 	    for (unsigned int s = 0; s < this->_n_species; s++)
 	      {
 		mass_fractions[s] = std::max( context.side_value(this->_species_vars.species(s),qp),0.0);
-		h_i[s] = gas_evaluator.h_s( this->_Ti, s );
+		h_i[s] = gas_evaluator.h_s( T, s );
 		h_u[s] = gas_evaluator.h_s( this->_Tu, s );
 	      }
 	    //proccess to calculate k
@@ -595,14 +592,27 @@ namespace GRINS
 	    
 	    for(unsigned int i=0; i != n_M_dofs; i++)
 	      {
-
+	     
 		Fm(i) += (M_dot*Enth_Diff - k*Grad_T(0))*M_phi[i][qp]*jac;
 	      }
+
+	    /*   for(unsigned int i =0; i !=n_T_dofs;i++)
+	       {
+		 Ft(i) -= M_dot*Enth_Diff*T_phi[i][qp]*jac;
+		 }*/
 	  }
       }
   }
 
       
+
+
+
+
+
+
+
+
 
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::compute_postprocessed_quantity( unsigned int quantity_index, 
@@ -616,7 +626,7 @@ namespace GRINS
       {
 	std::vector<libMesh::Real> Y( this->_n_species );
 	libMesh::Real T = this->T(point,context);
-	libMesh::Real p0 = this->get_p0();
+	libMesh::Real p0 = this->_p0;
 	this->mass_fractions( point, context, Y );
 	
 	value = this->rho(T,p0, gas_evaluator.R_mix(Y) );
@@ -626,7 +636,7 @@ namespace GRINS
 	std::vector<libMesh::Real> Y(this->_n_species );
 	libMesh::Real T = this->T(point,context);
 	this->mass_fractions( point,context, Y);
-	libMesh::Real p0 = this->get_p0();
+	libMesh::Real p0 = this->_p0;
 	
 	libMesh::Real cp = gas_evaluator.cp( T, p0, Y );
 	
@@ -646,7 +656,7 @@ namespace GRINS
 	std::vector<libMesh::Real> Y( this->_n_species );
 	libMesh::Real T = this->T(point,context);
 	this->mass_fractions( point, context, Y);
-	libMesh::Real p0 = this->get_p0();
+	libMesh::Real p0 = this->_p0;
 	
 	value = gas_evaluator.cp( T, p0, Y );
       }
@@ -656,7 +666,7 @@ namespace GRINS
 
 	std::vector<libMesh::Real> Y( this->_n_species );
 	libMesh::Real T = this->T(point,context);
-	libMesh::Real p0 = this->get_p0();
+	libMesh::Real p0 = this->_p0;
 	this->mass_fractions( point, context, Y );
 	libMesh::Real rho = this->rho(T,p0, gas_evaluator.R_mix(Y));
 
@@ -672,7 +682,7 @@ namespace GRINS
 	
 	this->mass_fractions(point,context, Y );
 	  
-	libMesh::Real p0 = this->get_p0();
+	libMesh::Real p0 = this->_p0;
 	
 	libMesh::Real cp = gas_evaluator.cp( T, p0, Y );
 	
@@ -739,7 +749,7 @@ namespace GRINS
 		    
 		    libMesh::Real T = this->T(point,context);
 		    
-		    libMesh::Real p0 = this->get_p0();
+		    libMesh::Real p0 = this->_p0;
 		    
 		    libMesh::Real rho = this->rho(T,p0, gas_evaluator.R_mix(Y) );
 		    
@@ -754,7 +764,7 @@ namespace GRINS
 
 	if( !this->_Ds_index.empty() )
 	  {
-	    libmesh_assert_equal_to( _Ds_index.size(), this->n_species() );
+	    libmesh_assert_equal_to( _Ds_index.size(), this->_n_species );
 
 	    for( unsigned int s = 0; s < this->n_species(); s++ )
 	      {
@@ -764,7 +774,7 @@ namespace GRINS
 		    
 		    libMesh::Real T = this->T(point,context);
 		    this->mass_fractions(point,context, Y );
-		    libMesh::Real p0 = this->get_p0();
+		    libMesh::Real p0 = this->_p0;
 
                     libMesh::Real cp = gas_evaluator.cp( T, p0, Y );
 
@@ -777,6 +787,25 @@ namespace GRINS
 
                     value = D[s];
                     return;
+		  }
+	      }
+	  }
+	if(!this-> _cp_s_index.empty() )
+	  {
+	    libmesh_assert_equal_to( _cp_s_index.size(), this->n_species() );
+
+	    for( unsigned int s =0; s< n_species(); s++)
+	      {
+		if(quantity_index == this->_Ds_index[s] )
+		  {
+		    std::vector<libMesh::Real> cp_s(this->_n_species);
+		    std::vector<libMesh::Real> Y(this->_n_species);
+		    libMesh::Real P = this->_p0;
+		    libMesh::Real T = this->T(point,context);
+		    this->mass_fractions(point,context, Y);
+		    gas_evaluator.cp_s(T,P,Y,cp_s);
+		    value = cp_s[s];
+		    return;
 		  }
 	      }
 	  }
