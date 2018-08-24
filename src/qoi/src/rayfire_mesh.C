@@ -39,7 +39,7 @@
 
 namespace GRINS
 {
-  RayfireMesh::RayfireMesh(libMesh::Point& origin, libMesh::Real theta, libMesh::Real phi) :
+  RayfireMesh::RayfireMesh(libMesh::Point & origin, libMesh::Real theta, libMesh::Real phi) :
     _dim(3),
     _origin(origin),
     _theta(theta),
@@ -50,7 +50,7 @@ namespace GRINS
   }
 
 
-  RayfireMesh::RayfireMesh(libMesh::Point& origin, libMesh::Real theta) :
+  RayfireMesh::RayfireMesh(libMesh::Point & origin, libMesh::Real theta) :
     _dim(2),
     _origin(origin),
     _theta(theta),
@@ -93,7 +93,7 @@ namespace GRINS
       libmesh_error_msg("ERROR: cannot specify spherical polar angle phi for Rayfire, only 2D is currently supported");
   }
 
-  void RayfireMesh::init(const libMesh::MeshBase& mesh_base)
+  void RayfireMesh::init(const libMesh::MeshBase & mesh_base)
   {
     // check if rayfire has already been initialized
     if (_elem_id_map.size() == 0)
@@ -114,7 +114,7 @@ namespace GRINS
       libMesh::Point start_point(_origin);
 
       // get first element
-      const libMesh::Elem* start_elem = this->get_start_elem(mesh_base);
+      const libMesh::Elem * start_elem = this->get_start_elem(mesh_base);
 
       if (!start_elem)
         libmesh_error_msg("Origin is not on mesh");
@@ -129,8 +129,8 @@ namespace GRINS
 
       libMesh::Point end_point;
 
-      const libMesh::Elem* next_elem;
-      const libMesh::Elem* prev_elem = start_elem;
+      const libMesh::Elem * next_elem;
+      const libMesh::Elem * prev_elem = start_elem;
 
       do
         {
@@ -146,7 +146,7 @@ namespace GRINS
 
           // add end point as node on the rayfire mesh
           end_node = _mesh->add_point(end_point);
-          libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
+          libMesh::Elem * elem = _mesh->add_elem(new libMesh::Edge2);
           elem->set_node(0) = start_node;
           elem->set_node(1) = end_node;
 
@@ -183,13 +183,13 @@ namespace GRINS
   }
 
 
-  const libMesh::Elem* RayfireMesh::map_to_rayfire_elem(const libMesh::dof_id_type elem_id)
+  const libMesh::Elem * RayfireMesh::map_to_rayfire_elem(const libMesh::dof_id_type elem_id)
   {
     return this->get_rayfire_elem(elem_id);
   }
 
 
-  void RayfireMesh::elem_ids_in_rayfire(std::vector<libMesh::dof_id_type>& id_vector) const
+  void RayfireMesh::elem_ids_in_rayfire(std::vector<libMesh::dof_id_type> & id_vector) const
   {
     std::map<libMesh::dof_id_type,libMesh::dof_id_type>::const_iterator it = _elem_id_map.begin();
     for(; it != _elem_id_map.end(); it++)
@@ -200,7 +200,7 @@ namespace GRINS
   }
 
 
-  void RayfireMesh::reinit(const libMesh::MeshBase& mesh_base)
+  void RayfireMesh::reinit(const libMesh::MeshBase & mesh_base)
   {
     // we don't want to reinit() multiple times
     // at the same AMR level
@@ -209,11 +209,11 @@ namespace GRINS
     // store the elems to be refined until later
     // so we don't mess with the _elem_id_map while we
     // iterate over it
-    std::vector<std::pair<const libMesh::Elem*,libMesh::Elem*> > elems_to_refine;
+    std::vector<std::pair<const libMesh::Elem *,libMesh::Elem *> > elems_to_refine;
 
     // same with elems to coarsen
     // store the main_mesh elem
-    std::vector<const libMesh::Elem*> elems_to_coarsen;
+    std::vector<const libMesh::Elem *> elems_to_coarsen;
 
     // iterate over all main elems along the rayfire and look for
     // refinement: INACTIVE parent with JUST_REFINED children
@@ -277,7 +277,7 @@ namespace GRINS
 
   // private functions
 
-  void RayfireMesh::check_origin_on_boundary(const libMesh::Elem* start_elem)
+  void RayfireMesh::check_origin_on_boundary(const libMesh::Elem * start_elem)
   {
     libmesh_assert(start_elem);
 
@@ -305,12 +305,12 @@ namespace GRINS
   }
 
 
-  const libMesh::Elem* RayfireMesh::get_start_elem(const libMesh::MeshBase& mesh_base)
+  const libMesh::Elem * RayfireMesh::get_start_elem(const libMesh::MeshBase & mesh_base)
   {
-    const libMesh::Elem* start_elem = NULL;
+    const libMesh::Elem * start_elem = NULL;
 
     std::unique_ptr<libMesh::PointLocatorBase> locator = mesh_base.sub_point_locator();
-    const libMesh::Elem* elem = (*locator)(_origin);
+    const libMesh::Elem * elem = (*locator)(_origin);
 
     // elem would be NULL if origin is not on mesh
     if (elem)
@@ -321,7 +321,7 @@ namespace GRINS
           {
             for (unsigned int i=0; i<elem->n_neighbors(); i++)
               {
-                const libMesh::Elem* neighbor_elem = elem->neighbor_ptr(i);
+                const libMesh::Elem * neighbor_elem = elem->neighbor_ptr(i);
                 if (!neighbor_elem)
                   continue;
 
@@ -338,10 +338,10 @@ namespace GRINS
   }
 
 
-  libMesh::Elem* RayfireMesh::get_rayfire_elem(const libMesh::dof_id_type elem_id)
+  libMesh::Elem * RayfireMesh::get_rayfire_elem(const libMesh::dof_id_type elem_id)
   {
     // return value; set if valid rayfire elem is found
-    libMesh::Elem* retval = NULL;
+    libMesh::Elem * retval = NULL;
 
     std::map<libMesh::dof_id_type,libMesh::dof_id_type>::iterator it;
     it = _elem_id_map.find(elem_id);
@@ -353,7 +353,7 @@ namespace GRINS
   }
 
 
-  const libMesh::Elem* RayfireMesh::get_next_elem(const libMesh::Elem* cur_elem, libMesh::Point& start_point, libMesh::Point& next_point, bool same_parent)
+  const libMesh::Elem * RayfireMesh::get_next_elem(const libMesh::Elem * cur_elem, libMesh::Point & start_point, libMesh::Point & next_point, bool same_parent)
   {
     libmesh_assert(cur_elem);
 
@@ -374,7 +374,7 @@ namespace GRINS
   }
 
 
-  bool RayfireMesh::check_valid_point(libMesh::Point& intersection_point, libMesh::Point& start_point, const libMesh::Elem& edge_elem, libMesh::Point& next_point)
+  bool RayfireMesh::check_valid_point(libMesh::Point & intersection_point, libMesh::Point & start_point, const libMesh::Elem & edge_elem, libMesh::Point & next_point)
   {
     bool is_not_start = !(intersection_point.absolute_fuzzy_equals(start_point));
     bool is_on_edge = edge_elem.contains_point(intersection_point);
@@ -391,7 +391,7 @@ namespace GRINS
   }
 
 
-  bool RayfireMesh::rayfire_in_elem(const libMesh::Point& end_point, const libMesh::Elem* elem)
+  bool RayfireMesh::rayfire_in_elem(const libMesh::Point & end_point, const libMesh::Elem * elem)
   {
     libmesh_assert(elem);
 
@@ -451,7 +451,7 @@ namespace GRINS
   }
 
 
-  const libMesh::Elem* RayfireMesh::get_correct_neighbor(libMesh::Point & start_point, libMesh::Point & end_point, const libMesh::Elem * cur_elem, unsigned int side, bool same_parent)
+  const libMesh::Elem * RayfireMesh::get_correct_neighbor(libMesh::Point & start_point, libMesh::Point & end_point, const libMesh::Elem * cur_elem, unsigned int side, bool same_parent)
   {
     libmesh_assert(cur_elem);
     libmesh_assert(cur_elem->active());
@@ -515,7 +515,7 @@ namespace GRINS
 
             // next elem is not a neighbor,
             // so get all elems that share this vertex
-            std::set<const libMesh::Elem*> elem_set;
+            std::set<const libMesh::Elem *> elem_set;
             cur_elem->find_point_neighbors(*vertex,elem_set);
             std::set<const libMesh::Elem *>::const_iterator       it  = elem_set.begin();
             const std::set<const libMesh::Elem *>::const_iterator end = elem_set.end();
@@ -523,7 +523,7 @@ namespace GRINS
             // iterate over each elem
             for (; it != end; ++it)
               {
-                const libMesh::Elem* elem = *it;
+                const libMesh::Elem * elem = *it;
 
                 if (elem == cur_elem) // skip the current elem
                   continue;
@@ -805,7 +805,7 @@ namespace GRINS
   }
 
 
-  void RayfireMesh::refine(const libMesh::Elem* main_elem, libMesh::Elem* rayfire_elem)
+  void RayfireMesh::refine(const libMesh::Elem * main_elem, libMesh::Elem * rayfire_elem)
   {
     libmesh_assert(main_elem);
     libmesh_assert(rayfire_elem);
@@ -813,8 +813,8 @@ namespace GRINS
     libmesh_assert_equal_to(main_elem->refinement_flag(),libMesh::Elem::RefinementState::INACTIVE);
 
     // these nodes cannot change
-    libMesh::Node* start_node = rayfire_elem->node_ptr(0);
-    libMesh::Node* end_node   = rayfire_elem->node_ptr(1);
+    libMesh::Node * start_node = rayfire_elem->node_ptr(0);
+    libMesh::Node * end_node   = rayfire_elem->node_ptr(1);
 
     // set the rayfire_elem as INACTIVE
     rayfire_elem->set_refinement_flag(libMesh::Elem::RefinementState::INACTIVE);
@@ -860,8 +860,8 @@ namespace GRINS
     libMesh::Point start_point = *start_node;
     libMesh::Point end_point;
 
-    const libMesh::Elem* next_elem;
-    const libMesh::Elem* prev_elem = main_elem->child_ptr(start_child);
+    const libMesh::Elem * next_elem;
+    const libMesh::Elem * prev_elem = main_elem->child_ptr(start_child);
 
     // if prev_elem is INACTIVE, then more than one refinement
     // has taken place between reinit() calls and will
@@ -884,7 +884,7 @@ namespace GRINS
 
         // add end point as node on the rayfire mesh
         new_node = _mesh->add_point(end_point);
-        libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
+        libMesh::Elem * elem = _mesh->add_elem(new libMesh::Edge2);
 
         elem->set_node(0) = prev_node;
         elem->set_node(1) = new_node;
@@ -918,21 +918,21 @@ namespace GRINS
   }
 
 
-  void RayfireMesh::coarsen(const libMesh::Elem* child_elem)
+  void RayfireMesh::coarsen(const libMesh::Elem * child_elem)
   {
     libmesh_assert(child_elem);
 
     if (this->get_rayfire_elem(child_elem->id()))
       {
-        const libMesh::Elem* parent_elem = child_elem->parent();
+        const libMesh::Elem * parent_elem = child_elem->parent();
         libmesh_assert(parent_elem);
 
-        const libMesh::Node* start_node = NULL;
-        const libMesh::Node* end_node = NULL;
+        const libMesh::Node * start_node = NULL;
+        const libMesh::Node * end_node = NULL;
 
         for (unsigned int c=0; c<parent_elem->n_children(); c++)
           {
-            libMesh::Elem* rayfire_child = this->get_rayfire_elem(parent_elem->child_ptr(c)->id());
+            libMesh::Elem * rayfire_child = this->get_rayfire_elem(parent_elem->child_ptr(c)->id());
 
             if (rayfire_child)
               {
@@ -959,7 +959,7 @@ namespace GRINS
         libmesh_assert(end_node);
 
         // add a new rayfire elem
-        libMesh::Elem* elem = _mesh->add_elem(new libMesh::Edge2);
+        libMesh::Elem * elem = _mesh->add_elem(new libMesh::Edge2);
         elem->set_node(0) = _mesh->node_ptr(start_node->id());
         elem->set_node(1) = _mesh->node_ptr(end_node->id());
 
