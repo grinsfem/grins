@@ -111,12 +111,12 @@ namespace GRINSTesting
     //! A 10x10 mesh with selectively refined elements
     void large_2D_mesh()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem_2D.in";
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
       GetPot input_quad4(filename);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
       test_large_mesh(mesh);
 
-      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem_2D.in";
+      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem.in";
       GetPot input_quad9(filename);
       mesh = this->build_mesh(input_quad9);
       test_large_mesh(mesh);
@@ -125,7 +125,7 @@ namespace GRINSTesting
     //! Make sure refined elements not on the rayfire do not get added
     void refine_elem_not_on_rayfire()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem_2D.in";
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
       GetPot input(filename);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
 
@@ -165,12 +165,12 @@ namespace GRINSTesting
     //! Test of the coarsening functionality
     void coarsen_elements()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem_2D.in";
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
       GetPot input_quad4(filename);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
       test_coarsen(mesh);
 
-      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem_2D.in";
+      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem.in";
       GetPot input_quad9(filename);
       mesh = this->build_mesh(input_quad9);
       test_coarsen(mesh);
@@ -462,7 +462,7 @@ namespace GRINSTesting
     //! Mimics a run from restart
     void init_on_refined_mesh()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_9elem_2D.in";
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_9elem.in";
       GetPot input_quad4(filename);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
 

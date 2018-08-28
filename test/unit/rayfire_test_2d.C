@@ -65,10 +65,8 @@ namespace GRINSTesting
     CPPUNIT_TEST( quad9_all_sides );
     CPPUNIT_TEST( test_slanted_quad4 );
     CPPUNIT_TEST( test_vertical_fire );
-    CPPUNIT_TEST( test_quad4_5elem );
-    CPPUNIT_TEST( test_quad9_5elem );
-    CPPUNIT_TEST( test_quad4_2D );
-    CPPUNIT_TEST( test_quad9_2D );
+    CPPUNIT_TEST( test_5elem_inline );
+    CPPUNIT_TEST( test_9elem_3x3 );
     CPPUNIT_TEST( fire_through_vertex );
     CPPUNIT_TEST( origin_between_elems );
     CPPUNIT_TEST( quad4_off_origin );
@@ -169,6 +167,11 @@ namespace GRINSTesting
 
     void test_vertical_fire()
     {
+      // vector of intersection points
+      std::vector<libMesh::Point> pts(2);
+      pts[0] = libMesh::Point(0.3,0.0);
+      pts[1] = libMesh::Point(0.3,1.0);
+      
       // create the mesh (single square QUAD4 element)
       std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
 
@@ -185,103 +188,84 @@ namespace GRINSTesting
 
       mesh->prepare_for_use();
 
-      libMesh::Point start_point(0.3,0.0);
-      libMesh::Point end_point(0.3,1.0);
-
-      libMesh::Real theta = GRINS::Constants::pi/2.0;
-
-      this->run_test_with_mesh(mesh,start_point,theta,-1.0,end_point,0);
+      this->run_test_on_all_point_combinations(pts,mesh);
     }
 
-    void test_quad4_5elem()
+    void test_5elem_inline()
     {
       libMesh::Point origin = libMesh::Point(0,0.5);
 
-      libMesh::Node calc_end_node_straight = libMesh::Node(5.0,0.5);
-      this->run_test(origin,0.0,calc_end_node_straight,5,4,"quad4",1);
+      // end points
+      std::vector<libMesh::Point> pts(3);
+      pts[0] = libMesh::Point(5.0,0.5);
+      pts[1] = libMesh::Point(0.5/std::tan(0.15),1.0);
+      pts[2] = libMesh::Point(0.5/std::tan(0.15),0.0);
 
-      libMesh::Node calc_end_node_angle = libMesh::Node(0.5/std::tan(0.15),1.0);
-      this->run_test(origin,0.15,calc_end_node_angle,5,3,"quad4",1);
+      // exit_elem IDs
+      std::vector<unsigned int> exit_ids(3);
+      exit_ids[0] = 4;
+      exit_ids[1] = 3;
+      exit_ids[2] = 3;
 
-      libMesh::Node calc_end_node_neg_angle = libMesh::Node(0.5/std::tan(0.15),0.0);
-      this->run_test(origin,-0.15,calc_end_node_neg_angle,5,3,"quad4",1);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad4_5elem.in");
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad9_5elem.in");
     }
 
-    void test_quad9_5elem()
-    {
-      libMesh::Point origin = libMesh::Point(0,0.5);
-
-      libMesh::Node calc_end_node_straight = libMesh::Node(5.0,0.5);
-      this->run_test(origin,0.0,calc_end_node_straight,5,4,"quad9",1);
-
-      libMesh::Node calc_end_node_angle = libMesh::Node(0.5/std::tan(0.15),1.0);
-      this->run_test(origin,0.15,calc_end_node_angle,5,3,"quad9",1);
-
-      libMesh::Node calc_end_node_neg_angle = libMesh::Node(0.5/std::tan(0.15),0.0);
-      this->run_test(origin,-0.15,calc_end_node_neg_angle,5,3,"quad9",1);
-    }
-
-    void test_quad4_2D()
+    void test_9elem_3x3()
     {
       libMesh::Point origin = libMesh::Point(0.0,1.5);
 
-      libMesh::Node calc_end_node_straight = libMesh::Node(3.0,1.5);
-      this->run_test(origin,0.0,calc_end_node_straight,9,5,"quad4",2);
+       // end points
+      std::vector<libMesh::Point> pts(5);
+      pts[0] = libMesh::Point(3.0,1.5);
+      pts[1] = libMesh::Point(3.0,1.5+3.0*std::tan(0.15));
+      pts[2] = libMesh::Point(3.0,1.5+3.0*std::tan(-0.15));
+      pts[3] = libMesh::Point((3.0-1.5)/std::tan(1.0),3.0);
+      pts[4] = libMesh::Point((0.0-1.5)/std::tan(-1.0),0.0);
 
-      libMesh::Node calc_end_node_small_angle = libMesh::Node(3.0,1.5+3.0*std::tan(0.15));
-      this->run_test(origin,0.15,calc_end_node_small_angle,9,5,"quad4",2);
+      // exit_elem IDs
+      std::vector<unsigned int> exit_ids(5);
+      exit_ids[0] = 5;
+      exit_ids[1] = 5;
+      exit_ids[2] = 5;
+      exit_ids[3] = 6;
+      exit_ids[4] = 0;
 
-      libMesh::Node calc_end_node_small_neg_angle = libMesh::Node(3.0,1.5+3.0*std::tan(-0.15));
-      this->run_test(origin,-0.15,calc_end_node_small_neg_angle,9,5,"quad4",2);
-
-      libMesh::Node calc_end_node_large_angle = libMesh::Node( (3.0-1.5)/std::tan(1.0), 3.0);
-      this->run_test(origin,1.0,calc_end_node_large_angle,9,6,"quad4",2);
-
-      libMesh::Node calc_end_node_large_neg_angle = libMesh::Node( (0.0-1.5)/std::tan(-1.0), 0.0);
-      this->run_test(origin,-1.0,calc_end_node_large_neg_angle,9,0,"quad4",2);
-    }
-
-    void test_quad9_2D()
-    {
-      libMesh::Point origin = libMesh::Point(0.0,1.5);
-
-      libMesh::Node calc_end_node_straight = libMesh::Node(3.0,1.5);
-      this->run_test(origin,0.0,calc_end_node_straight,9,5,"quad9",2);
-
-      libMesh::Node calc_end_node_small_angle = libMesh::Node(3.0,1.5+3.0*std::tan(0.15));
-      this->run_test(origin,0.15,calc_end_node_small_angle,9,5,"quad9",2);
-
-      libMesh::Node calc_end_node_small_neg_angle = libMesh::Node(3.0,1.5+3.0*std::tan(-0.15));
-      this->run_test(origin,-0.15,calc_end_node_small_neg_angle,9,5,"quad9",2);
-
-      libMesh::Node calc_end_node_large_angle = libMesh::Node( (3.0-1.5)/std::tan(1.0), 3.0);
-      this->run_test(origin,1.0,calc_end_node_large_angle,9,6,"quad9",2);
-
-      libMesh::Node calc_end_node_large_neg_angle = libMesh::Node( (0.0-1.5)/std::tan(-1.0), 0.0);
-      this->run_test(origin,-1.0,calc_end_node_large_neg_angle,9,0,"quad9",2);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad4_9elem.in");
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad9_9elem.in");
     }
 
     void fire_through_vertex()
     {
       libMesh::Point origin = libMesh::Point(0.0,0.0);
 
-      libMesh::Node calc_end_node_straight = libMesh::Node(3.0,3.0);
+       // end points
+      std::vector<libMesh::Point> pts(1);
+      pts[0] = libMesh::Point(3.0,3.0);
 
-      // 3x3 QUAD4 mesh
-      this->run_test(origin,45.0*GRINS::Constants::pi/180.0,calc_end_node_straight,9,8,"quad4",2);
+      // exit_elem IDs
+      std::vector<unsigned int> exit_ids(1);
+      exit_ids[0] = 8;
 
-      // 3x3 QUAD9 mesh
-      this->run_test(origin,45.0*GRINS::Constants::pi/180.0,calc_end_node_straight,9,8,"quad9",2);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad4_9elem.in");
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad9_9elem.in");
     }
 
     void origin_between_elems()
     {
+      
       libMesh::Point origin = libMesh::Point(0.0,1.0);
-      libMesh::Node calc_end_node = libMesh::Node(3.0,3.0);
-      libMesh::Real theta = calc_theta(origin,calc_end_node);
 
-      this->run_test(origin,theta,calc_end_node,9,8,"quad4",2);
-      this->run_test(origin,theta,calc_end_node,9,8,"quad9",2);
+       // end points
+      std::vector<libMesh::Point> pts(1);
+      pts[0] = libMesh::Point(3.0,3.0);
+
+      // exit_elem IDs
+      std::vector<unsigned int> exit_ids(1);
+      exit_ids[0] = 8;
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad4_9elem.in");
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad9_9elem.in");
     }
 
     void quad4_off_origin()
