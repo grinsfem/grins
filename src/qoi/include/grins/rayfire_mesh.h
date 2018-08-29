@@ -204,7 +204,7 @@ namespace GRINS
     unsigned int calculate_intersection_point(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
 
     //! Edges of 2D FIRST order elements can be represented in point-slope form, so there is an analytical solution for the intersection point
-    unsigned int intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+    unsigned int intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point, unsigned int initial_side = libMesh::invalid_uint);
 
     //! Edges of 2D SECOND order elements can be nonlinear, so use a standard Newton iterative solver to find the intersection point
     /*!

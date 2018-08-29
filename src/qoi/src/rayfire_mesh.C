@@ -619,7 +619,7 @@ namespace GRINS
   }
 
 
-  unsigned int RayfireMesh::intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point)
+  unsigned int RayfireMesh::intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point, unsigned int initial_side)
   {
     libmesh_assert(cur_elem);
     libmesh_assert_equal_to(cur_elem->dim(),2);
@@ -642,12 +642,15 @@ namespace GRINS
 
     for (unsigned int s=0; s<cur_elem->n_sides(); ++s)
       {
+        if (s == initial_side)
+          continue;
+
         std::unique_ptr<const libMesh::Elem> edge_elem = cur_elem->build_edge_ptr(s);
 
-        // using the default tol can cause a false positive when start_point is near a node,
-        // causing this loop to skip over an otherwise valid edge to check
-        if (edge_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
-          continue;
+        // only do the contains_point() check if we don't know which edge has the initial_point
+        if (initial_side == libMesh::invalid_uint)
+          if (edge_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
+            continue;
 
         // since cur_elem is first order, the sides are always linear
         // and can be represented in point-slope form
