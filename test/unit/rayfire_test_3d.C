@@ -64,6 +64,8 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( hex8_all_sides );
     CPPUNIT_TEST( hex27_all_sides );
+    CPPUNIT_TEST( hex_5elem_inline );
+    CPPUNIT_TEST( hex_27elem_3x3x3 );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -160,6 +162,54 @@ namespace GRINSTesting
       mesh->prepare_for_use();
 
       this->run_test_on_all_point_combinations(pts,mesh);
+    }
+
+    void hex_5elem_inline()
+    {
+      libMesh::Point origin = libMesh::Point(0,0.5,0.5);
+
+      // end points
+      std::vector<libMesh::Point> pts(5);
+      pts[0] = libMesh::Point(5.0,0.5,0.5);    // right
+      pts[1] = libMesh::Point(3.75,0.0,0.25);  // front
+      pts[2] = libMesh::Point(1.25,0.77,1.0);  // top
+      pts[3] = libMesh::Point(2.22,1.0,0.667); // back
+      pts[4] = libMesh::Point(0.38,0.57,0.0);  // bottom
+
+      // exit_elem IDs
+      std::vector<unsigned int> exit_ids(5);
+      exit_ids[0] = 4;
+      exit_ids[1] = 3;
+      exit_ids[2] = 1;
+      exit_ids[3] = 2;
+      exit_ids[4] = 0;
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_5elem.in");
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_5elem.in");
+    }
+
+    void hex_27elem_3x3x3()
+    {
+      libMesh::Point origin = libMesh::Point(0.0,1.5,1.5);
+
+       // end points
+      std::vector<libMesh::Point> pts(5);
+      pts[0] = libMesh::Point(3.0,1.5,1.5);     // right
+      pts[1] = libMesh::Point(1.875,0.0,2.584); // front
+      pts[2] = libMesh::Point(1.1,2.67,3.0);    // top
+      pts[3] = libMesh::Point(2.75,3.0,0.25);   // back
+      pts[4] = libMesh::Point(2.23,2.59,0.0);   // bottom
+
+      // exit_elem IDs
+      std::vector<unsigned int> exit_ids(5);
+      exit_ids[0] = 14;
+      exit_ids[1] = 19;
+      exit_ids[2] = 25;
+      exit_ids[3] = 8;
+      exit_ids[4] = 8;
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_27elem.in");
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_27elem.in");
     }
 
   };
