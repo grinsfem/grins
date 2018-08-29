@@ -251,7 +251,7 @@ namespace GRINS
     unsigned int intersection_2D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
 
     //! Faces of 3D FIRST order elements are planes that can be represented in point-normal form, so there is an analytical solution for the intersection point
-    unsigned int intersection_3D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+    unsigned int intersection_3D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point, unsigned int initial_side = libMesh::invalid_uint);
 
     //! Faces of 3D SECOND order elements can be nonlinear, so use a standard Newton iterative solver to find the intersection point
     /*!
@@ -303,6 +303,9 @@ namespace GRINS
       and converge when \f$|| \delta || <\f$ libMesh::TOLERANCE
     */
     unsigned int intersection_3D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+
+    //! Create a FIRST order version of a SECOND order element
+    libMesh::Elem * copy_to_first_order(const libMesh::Elem * elem);
 
     //! Refinement of a rayfire element whose main mesh counterpart was refined
     void refine(const libMesh::Elem * main_elem, libMesh::Elem * rayfire_elem);
