@@ -66,6 +66,8 @@ namespace GRINSTesting
     CPPUNIT_TEST( hex27_all_sides );
     CPPUNIT_TEST( hex_5elem_inline );
     CPPUNIT_TEST( hex_27elem_3x3x3 );
+    CPPUNIT_TEST( fire_through_vertex );
+    CPPUNIT_TEST( origin_between_elems );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -207,6 +209,38 @@ namespace GRINSTesting
       exit_ids[2] = 25;
       exit_ids[3] = 8;
       exit_ids[4] = 8;
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_27elem.in");
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_27elem.in");
+    }
+
+    void fire_through_vertex()
+    {
+      libMesh::Point origin = libMesh::Point(0.0,0.0,0.0);
+
+       // end points
+      std::vector<libMesh::Point> pts(1);
+      pts[0] = libMesh::Point(3.0,3.0,3.0);
+
+      // exit_elem IDs
+      std::vector<unsigned int> exit_ids(1);
+      exit_ids[0] = 26;
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_27elem.in");
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_27elem.in");
+    }
+
+    void origin_between_elems()
+    {
+      libMesh::Point origin = libMesh::Point(0.0,1.0,1.0);
+
+       // end points
+      std::vector<libMesh::Point> pts(1);
+      pts[0] = libMesh::Point(3.0,3.0,3.0);
+
+      // exit_elem IDs
+      std::vector<unsigned int> exit_ids(1);
+      exit_ids[0] = 26;
 
       this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_27elem.in");
       this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_27elem.in");
