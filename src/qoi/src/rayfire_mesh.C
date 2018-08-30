@@ -323,6 +323,7 @@ namespace GRINS
           start_elem = elem;
         else
           {
+            bool found_elem = false;
             for (unsigned int i=0; i<elem->n_neighbors(); i++)
               {
                 const libMesh::Elem * neighbor_elem = elem->neighbor_ptr(i);
@@ -331,8 +332,37 @@ namespace GRINS
 
                 if (this->rayfire_in_elem(_origin,neighbor_elem))
                   {
+                    found_elem = true;
                     start_elem = neighbor_elem;
                     break;
+                  }
+              }
+            
+            if (!found_elem)
+              {
+                // start_elem is not a neighbor,
+                // so get all elems that share this vertex
+                std::set<const libMesh::Elem *> elem_set;
+                elem->find_point_neighbors(_origin,elem_set);
+                std::set<const libMesh::Elem *>::const_iterator       it  = elem_set.begin();
+                const std::set<const libMesh::Elem *>::const_iterator end = elem_set.end();
+
+                // iterate over each elem
+                for (; it != end; ++it)
+                  {
+                    const libMesh::Elem * e = *it;
+
+                    if (e == elem) // skip elem
+                      continue;
+
+                    if (elem->has_neighbor(e))
+                      continue; // skip neighbors or elem since we already checked those
+
+                    if (this->rayfire_in_elem(_origin,e))
+                      {
+                        start_elem = e;
+                        break;
+                      }
                   }
               }
           }
@@ -543,6 +573,9 @@ namespace GRINS
                 if (elem == cur_elem) // skip the current elem
                   continue;
 
+                if (cur_elem->has_neighbor(elem))
+                  continue;
+
                 if (this->rayfire_in_elem(end_point,elem))
                   return elem;
               }
@@ -550,6 +583,53 @@ namespace GRINS
           }
         else
           {
+            if (_dim == 3)
+              {
+                const libMesh::Elem * elem_edge = NULL;
+                std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(side,false);
+                
+                for (unsigned int s=0; s<side_elem->n_sides(); ++s)
+                  {
+                    std::unique_ptr<const libMesh::Elem> edge_elem = side_elem->build_edge_ptr(s);
+                    if (edge_elem->contains_point(end_point))
+                      {
+                        elem_edge = edge_elem.release();
+                        break;
+                      }
+                  }
+                  
+                if (elem_edge)
+                  {
+                    // end_point is on an edge, so look at the edge neighbors
+                    std::set<const libMesh::Elem *> elem_set;
+                    cur_elem->find_edge_neighbors(elem_edge->node_ref(0),elem_edge->node_ref(1),elem_set);
+                    std::set<const libMesh::Elem *>::const_iterator       it  = elem_set.begin();
+                    const std::set<const libMesh::Elem *>::const_iterator end = elem_set.end();
+
+                    // iterate over each elem
+                    for (; it != end; ++it)
+                      {
+                        const libMesh::Elem * elem = *it;
+
+                        if (elem == cur_elem) // skip the current elem
+                          continue;
+
+                        if (cur_elem->has_neighbor(elem))
+                          continue;
+
+                        if (this->rayfire_in_elem(end_point,elem))
+                          {
+                            if (same_parent)
+                                if (elem->parent())
+                                    if (elem->parent()->id() != cur_elem->parent()->id())
+                                      continue;
+
+                            return elem;
+                          }
+                      }
+                  }
+              }
+
             // check if side is a boundary
             if( !(cur_elem->neighbor_ptr(side)) )
               return NULL;
@@ -900,15 +980,16 @@ namespace GRINS
         // intersection point
         libMesh::Point intersect(x_hat,y_hat,z_hat);
 
-        if (side_elem->contains_point(intersect,libMesh::TOLERANCE*0.1))
-          {
-            intersect_side = s;
+        if (!initial_point.absolute_fuzzy_equals(intersect))
+          if (side_elem->contains_point(intersect,libMesh::TOLERANCE*0.1))
+            {
+              intersect_side = s;
 
-            intersection_point(0) = intersect(0);
-            intersection_point(1) = intersect(1);
-            intersection_point(2) = intersect(2);
-            break;
-          }
+              intersection_point(0) = intersect(0);
+              intersection_point(1) = intersect(1);
+              intersection_point(2) = intersect(2);
+              break;
+            }
 
       }
 
