@@ -85,21 +85,7 @@ namespace GRINSTesting
       pts[2] = libMesh::Point(1.0,0.25);
       pts[3] = libMesh::Point(0.321046307967165,1.0);
 
-      // create the mesh (single square QUAD4 element)
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-
-      mesh->set_mesh_dimension(2);
-
-      mesh->add_point( libMesh::Point(0.0,0.0),0 );
-      mesh->add_point( libMesh::Point(1.0,0.0),1 );
-      mesh->add_point( libMesh::Point(1.0,1.0),2 );
-      mesh->add_point( libMesh::Point(0.0,1.0),3 );
-
-      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad4 );
-      for (unsigned int n=0; n<4; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
-
-      mesh->prepare_for_use();
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad4_elem();
 
       this->run_test_on_all_point_combinations(pts,mesh);
     }
@@ -114,24 +100,8 @@ namespace GRINSTesting
       pts[3] = libMesh::Point(0.321046307967165,1.0);
 
       // create a non-rectangular QUAD9
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-
-      mesh->set_mesh_dimension(2);
-
-      mesh->add_point( libMesh::Point(0.0,0.0),0 );
-      mesh->add_point( libMesh::Point(1.0,0.0),1 );
-      mesh->add_point( libMesh::Point(1.0,1.0),2 );
-      mesh->add_point( libMesh::Point(0.0,1.0),3 );
-      mesh->add_point( libMesh::Point(0.5,0.0),4 );
-      mesh->add_point( libMesh::Point(1.5,0.5),5 );
-      mesh->add_point( libMesh::Point(0.5,1.0),6 );
-      mesh->add_point( libMesh::Point(0.0,0.5),7 );
-      mesh->add_point( libMesh::Point(0.5,0.5),8 );
-
-      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad9 );
-      for (unsigned int n=0; n<9; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
-
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad9_elem();
+      (mesh->node_ref(5))(0) = 1.5; // make right side non-linear
       mesh->prepare_for_use();
 
       this->run_test_on_all_point_combinations(pts,mesh);
@@ -172,21 +142,7 @@ namespace GRINSTesting
       pts[0] = libMesh::Point(0.3,0.0);
       pts[1] = libMesh::Point(0.3,1.0);
       
-      // create the mesh (single square QUAD4 element)
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-
-      mesh->set_mesh_dimension(2);
-
-      mesh->add_point( libMesh::Point(0.0,0.0),0 );
-      mesh->add_point( libMesh::Point(1.0,0.0),1 );
-      mesh->add_point( libMesh::Point(1.0,1.0),2 );
-      mesh->add_point( libMesh::Point(0.0,1.0),3 );
-
-      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad4 );
-      for (unsigned int n=0; n<4; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
-
-      mesh->prepare_for_use();
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad4_elem();
 
       this->run_test_on_all_point_combinations(pts,mesh);
     }

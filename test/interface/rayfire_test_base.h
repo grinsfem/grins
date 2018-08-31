@@ -39,6 +39,12 @@
 #include "libmesh/elem.h"
 #include "libmesh/getpot.h"
 #include "libmesh/serial_mesh.h"
+#include "libmesh/mesh_refinement.h"
+
+#include "libmesh/face_quad4.h"
+#include "libmesh/face_quad9.h"
+
+#include <tuple>
 
 namespace GRINSTesting
 {
@@ -128,7 +134,90 @@ namespace GRINSTesting
       libMesh::Real L = (end-start).norm();
       return std::acos( (end(2)-start(2))/L );
     }
-    
+
+    //! Build a single square QUAD4
+    std::shared_ptr<libMesh::UnstructuredMesh> build_square_quad4_elem()
+    {
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(2);
+
+      mesh->add_point( libMesh::Point(0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0),1 );
+      mesh->add_point( libMesh::Point(1.0,1.0),2 );
+      mesh->add_point( libMesh::Point(0.0,1.0),3 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad4 );
+      for (unsigned int n=0; n<4; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      return mesh;
+    }
+
+    //! Build a single square QUAD9
+    std::shared_ptr<libMesh::UnstructuredMesh> build_square_quad9_elem()
+    {
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(2);
+
+      mesh->add_point( libMesh::Point(0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0),1 );
+      mesh->add_point( libMesh::Point(1.0,1.0),2 );
+      mesh->add_point( libMesh::Point(0.0,1.0),3 );
+      mesh->add_point( libMesh::Point(0.5,0.0),4 );
+      mesh->add_point( libMesh::Point(1.0,0.5),5 );
+      mesh->add_point( libMesh::Point(0.5,1.0),6 );
+      mesh->add_point( libMesh::Point(0.0,0.5),7 );
+      mesh->add_point( libMesh::Point(0.5,0.5),8 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad9 );
+      for (unsigned int n=0; n<9; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      return mesh;
+    }
+
+    void amr_single_elem( std::shared_ptr<libMesh::UnstructuredMesh> & mesh,
+                          libMesh::Point & origin, libMesh::Point & end_point,
+                          std::vector<unsigned int> & children_in_rayfire,
+                          std::vector<unsigned int> & children_not_in_rayfire )
+    {
+      libMesh::Real theta = this->calc_theta(origin,end_point);
+
+      std::shared_ptr<GRINS::RayfireMesh> rayfire;
+      if (mesh->mesh_dimension() == 2)
+        rayfire.reset( new GRINS::RayfireMesh(origin,theta) );
+      else
+        {
+          libMesh::Real phi = this->calc_phi(origin,end_point);
+          rayfire.reset( new GRINS::RayfireMesh(origin,theta,phi) );
+        }
+
+      rayfire->init(*mesh);
+
+      libMesh::Elem * elem = mesh->elem_ptr(0);
+      CPPUNIT_ASSERT(elem);
+
+      elem->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+
+      libMesh::MeshRefinement mr(*mesh);
+      mr.refine_elements();
+
+      rayfire->reinit(*mesh);
+
+      for (unsigned int c=0; c<children_in_rayfire.size(); c++)
+        CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem->child_ptr(children_in_rayfire[c])->id()) );
+
+      for (unsigned int c=0; c<children_not_in_rayfire.size(); c++)
+        CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(elem->child_ptr(children_not_in_rayfire[c])->id()) );
+
+    }
+
   };
 
 } // namespace GRINSTesting
