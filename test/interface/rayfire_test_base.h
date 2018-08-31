@@ -43,6 +43,8 @@
 
 #include "libmesh/face_quad4.h"
 #include "libmesh/face_quad9.h"
+#include "libmesh/cell_hex8.h"
+#include "libmesh/cell_hex27.h"
 
 #include <tuple>
 
@@ -175,6 +177,81 @@ namespace GRINSTesting
 
       libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad9 );
       for (unsigned int n=0; n<9; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      return mesh;
+    }
+
+    //! Build a single square HEX8
+    std::shared_ptr<libMesh::UnstructuredMesh> build_square_hex8_elem()
+    {
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(3);
+
+      mesh->add_point( libMesh::Point(0.0,0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0,0.0),1 );
+      mesh->add_point( libMesh::Point(1.0,1.0,0.0),2 );
+      mesh->add_point( libMesh::Point(0.0,1.0,0.0),3 );
+      mesh->add_point( libMesh::Point(0.0,0.0,1.0),4 );
+      mesh->add_point( libMesh::Point(1.0,0.0,1.0),5 );
+      mesh->add_point( libMesh::Point(1.0,1.0,1.0),6 );
+      mesh->add_point( libMesh::Point(0.0,1.0,1.0),7 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex8 );
+      for (unsigned int n=0; n<8; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      return mesh;
+    }
+
+    //! Build a single square HEX27
+    std::shared_ptr<libMesh::UnstructuredMesh> build_square_hex27_elem()
+    {
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(3);
+
+      mesh->add_point( libMesh::Point(0.0,0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0,0.0),1 );
+      mesh->add_point( libMesh::Point(1.0,1.0,0.0),2 );
+      mesh->add_point( libMesh::Point(0.0,1.0,0.0),3 );
+
+      mesh->add_point( libMesh::Point(0.0,0.0,1.0),4 );
+      mesh->add_point( libMesh::Point(1.0,0.0,1.0),5 );
+      mesh->add_point( libMesh::Point(1.0,1.0,1.0),6 );
+      mesh->add_point( libMesh::Point(0.0,1.0,1.0),7 );
+
+      mesh->add_point( libMesh::Point(0.5,0.0,0.0),8 );
+      mesh->add_point( libMesh::Point(1.0,0.5,0.0),9 );
+      mesh->add_point( libMesh::Point(0.5,1.0,0.0),10 );
+      mesh->add_point( libMesh::Point(0.0,0.5,0.0),11 );
+
+      mesh->add_point( libMesh::Point(0.0,0.0,0.5),12 );
+      mesh->add_point( libMesh::Point(1.0,0.0,0.5),13 );
+      mesh->add_point( libMesh::Point(1.0,1.0,0.5),14 );
+      mesh->add_point( libMesh::Point(0.0,1.0,0.5),15 );
+
+      mesh->add_point( libMesh::Point(0.5,0.0,1.0),16 );
+      mesh->add_point( libMesh::Point(1.0,0.5,1.0),17 );
+      mesh->add_point( libMesh::Point(0.5,1.0,1.0),18 );
+      mesh->add_point( libMesh::Point(0.0,0.5,1.0),19 );
+
+      mesh->add_point( libMesh::Point(0.5,0.5,0.0),20 );
+      mesh->add_point( libMesh::Point(0.5,0.0,0.5),21 );
+      mesh->add_point( libMesh::Point(1.0,0.5,0.5),22 );
+      mesh->add_point( libMesh::Point(0.5,1.0,0.5),23 );
+      mesh->add_point( libMesh::Point(0.0,0.5,0.5),24 );
+      mesh->add_point( libMesh::Point(0.5,0.5,1.0),25 );
+
+      mesh->add_point( libMesh::Point(0.5,0.5,0.5),26 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex27 );
+      for (unsigned int n=0; n<27; n++)
         elem->set_node(n) = mesh->node_ptr(n);
 
       mesh->prepare_for_use();

@@ -113,6 +113,7 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/rayfire_test_2d.C \
                       unit/rayfire_test_3d.C \
                       unit/rayfireAMR_test_2d.C \
+                      unit/rayfireAMR_test_3d.C \
                       unit/integrated_function_test.C \
                       unit/hitran_test.C \
                       unit/spectroscopic_absorption_test.C \

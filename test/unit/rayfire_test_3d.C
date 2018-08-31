@@ -85,25 +85,7 @@ namespace GRINSTesting
       pts[5] = libMesh::Point(0.65,0.0,0.40); // front
 
       // create the mesh (single cube HEX8 element)
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-      
-      mesh->set_mesh_dimension(3);		
-
-      mesh->add_point( libMesh::Point(0.0,0.0,0.0),0 );
-      mesh->add_point( libMesh::Point(1.0,0.0,0.0),1 );
-      mesh->add_point( libMesh::Point(1.0,1.0,0.0),2 );
-      mesh->add_point( libMesh::Point(0.0,1.0,0.0),3 );
-      mesh->add_point( libMesh::Point(0.0,0.0,1.0),4 );
-      mesh->add_point( libMesh::Point(1.0,0.0,1.0),5 );
-      mesh->add_point( libMesh::Point(1.0,1.0,1.0),6 );
-      mesh->add_point( libMesh::Point(0.0,1.0,1.0),7 );	
-
-      libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex8 );		
-      for (unsigned int n=0; n<8; n++)		
-       elem->set_node(n) = mesh->node_ptr(n);		
-
-      mesh->prepare_for_use();
-
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_hex8_elem();
       this->run_test_on_all_point_combinations(pts,mesh);
     }
 
@@ -119,48 +101,8 @@ namespace GRINSTesting
       pts[5] = libMesh::Point(0.65,0.0,0.40);  // front
 
       // create the mesh (single HEX27 with non-linear side)
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-
-      mesh->set_mesh_dimension(3);
-
-      mesh->add_point( libMesh::Point(0.0,0.0,0.0),0 );
-      mesh->add_point( libMesh::Point(1.0,0.0,0.0),1 );
-      mesh->add_point( libMesh::Point(1.0,1.0,0.0),2 );
-      mesh->add_point( libMesh::Point(0.0,1.0,0.0),3 );
-
-      mesh->add_point( libMesh::Point(0.0,0.0,1.0),4 );
-      mesh->add_point( libMesh::Point(1.0,0.0,1.0),5 );
-      mesh->add_point( libMesh::Point(1.0,1.0,1.0),6 );
-      mesh->add_point( libMesh::Point(0.0,1.0,1.0),7 );
-
-      mesh->add_point( libMesh::Point(0.5,0.0,0.0),8 );
-      mesh->add_point( libMesh::Point(1.0,0.5,0.0),9 );
-      mesh->add_point( libMesh::Point(0.5,1.0,0.0),10 );
-      mesh->add_point( libMesh::Point(0.0,0.5,0.0),11 );
-
-      mesh->add_point( libMesh::Point(0.0,0.0,0.5),12 );
-      mesh->add_point( libMesh::Point(1.0,0.0,0.5),13 );
-      mesh->add_point( libMesh::Point(1.0,1.0,0.5),14 );
-      mesh->add_point( libMesh::Point(0.0,1.0,0.5),15 );
-
-      mesh->add_point( libMesh::Point(0.5,0.0,1.0),16 );
-      mesh->add_point( libMesh::Point(1.0,0.5,1.0),17 );
-      mesh->add_point( libMesh::Point(0.5,1.0,1.0),18 );
-      mesh->add_point( libMesh::Point(0.0,0.5,1.0),19 );
-
-      mesh->add_point( libMesh::Point(0.5,0.5,0.0),20 );
-      mesh->add_point( libMesh::Point(0.5,0.0,0.5),21 );
-      mesh->add_point( libMesh::Point(1.5,0.5,0.5),22 ); // non-linear
-      mesh->add_point( libMesh::Point(0.5,1.0,0.5),23 );
-      mesh->add_point( libMesh::Point(0.0,0.5,0.5),24 );
-      mesh->add_point( libMesh::Point(0.5,0.5,1.0),25 );
-
-      mesh->add_point( libMesh::Point(0.5,0.5,0.5),26 );
-
-      libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex27 );
-      for (unsigned int n=0; n<27; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
-
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_hex27_elem();
+      (mesh->node_ref(22))(0) = 1.5; // make right face non-linear
       mesh->prepare_for_use();
 
       this->run_test_on_all_point_combinations(pts,mesh);
