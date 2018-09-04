@@ -93,7 +93,7 @@ namespace GRINS
     RayfireMesh(const GetPot & input, const std::string & qoi_string);
 
     //! Enable rayfire output after init()
-    void enable_rayfire_output(std::string & filename)
+    void enable_rayfire_output(const std::string & filename)
     {
       _output_filename = filename;
     }
