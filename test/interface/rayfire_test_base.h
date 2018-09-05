@@ -45,6 +45,8 @@
 #include "libmesh/face_quad9.h"
 #include "libmesh/cell_hex8.h"
 #include "libmesh/cell_hex27.h"
+#include "libmesh/cell_tet4.h"
+#include "libmesh/cell_tet10.h"
 
 #include <tuple>
 
@@ -252,6 +254,54 @@ namespace GRINSTesting
 
       libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex27 );
       for (unsigned int n=0; n<27; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      return mesh;
+    }
+
+    //! Build a single TET4
+    std::shared_ptr<libMesh::UnstructuredMesh> build_tet4_elem()
+    {
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(3);
+
+      mesh->add_point( libMesh::Point(0.0,0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0,0.0),1 );
+      mesh->add_point( libMesh::Point(0.0,1.0,0.0),2 );
+      mesh->add_point( libMesh::Point(0.0,0.0,1.0),3 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Tet4 );
+      for (unsigned int n=0; n<4; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      return mesh;
+    }
+
+    //! Build a single TET10
+    std::shared_ptr<libMesh::UnstructuredMesh> build_tet10_elem()
+    {
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(3);
+
+      mesh->add_point( libMesh::Point(0.0,0.0,0.0),0 );
+      mesh->add_point( libMesh::Point(1.0,0.0,0.0),1 );
+      mesh->add_point( libMesh::Point(0.0,1.0,0.0),2 );
+      mesh->add_point( libMesh::Point(0.0,0.0,1.0),3 );
+      mesh->add_point( libMesh::Point(0.5,0.0,0.0),4 );
+      mesh->add_point( libMesh::Point(0.5,0.5,0.0),5 );
+      mesh->add_point( libMesh::Point(0.0,0.5,0.0),6 );
+      mesh->add_point( libMesh::Point(0.0,0.0,0.5),7 );
+      mesh->add_point( libMesh::Point(0.5,0.0,0.5),8 );
+      mesh->add_point( libMesh::Point(0.0,0.5,0.5),9 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Tet10 );
+      for (unsigned int n=0; n<10; n++)
         elem->set_node(n) = mesh->node_ptr(n);
 
       mesh->prepare_for_use();

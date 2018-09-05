@@ -50,6 +50,8 @@
 
 #include "libmesh/cell_hex8.h"
 #include "libmesh/cell_hex27.h"
+#include "libmesh/cell_tet4.h"
+#include "libmesh/cell_tet10.h"
 
 // Ignore warnings from auto_ptr in CPPUNIT_TEST_SUITE_END()
 #include <libmesh/ignore_warnings.h>
@@ -64,6 +66,8 @@ namespace GRINSTesting
 
     CPPUNIT_TEST( hex8_all_sides );
     CPPUNIT_TEST( hex27_all_sides );
+    CPPUNIT_TEST( tet4_all_sides );
+    CPPUNIT_TEST( tet10_all_sides );
     CPPUNIT_TEST( hex_5elem_inline );
     CPPUNIT_TEST( hex_27elem_3x3x3 );
     CPPUNIT_TEST( fire_through_vertex );
@@ -104,6 +108,36 @@ namespace GRINSTesting
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_hex27_elem();
       (mesh->node_ref(22))(0) = 1.5; // make right face non-linear
       mesh->prepare_for_use();
+
+      this->run_test_on_all_point_combinations(pts,mesh);
+    }
+
+    void tet4_all_sides()
+    {
+      // vector of intersection points
+      std::vector<libMesh::Point> pts(4);
+      pts[0] = libMesh::Point(0.11,0.17,0.0);
+      pts[1] = libMesh::Point(0.55,0.0,0.21);
+      pts[2] = libMesh::Point(0.0,0.83,0.04);
+      pts[3] = libMesh::Point(0.25,0.25,0.5);
+
+      // create the mesh (single TET4 element)
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_tet4_elem();
+
+      this->run_test_on_all_point_combinations(pts,mesh);
+    }
+
+    void tet10_all_sides()
+    {
+      // vector of intersection points
+      std::vector<libMesh::Point> pts(4);
+      pts[0] = libMesh::Point(0.11,0.17,0.0);
+      pts[1] = libMesh::Point(0.55,0.0,0.21);
+      pts[2] = libMesh::Point(0.0,0.83,0.04);
+      pts[3] = libMesh::Point(0.25,0.25,0.5);
+
+      // create the mesh (single TET10 element)
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_tet10_elem();
 
       this->run_test_on_all_point_combinations(pts,mesh);
     }

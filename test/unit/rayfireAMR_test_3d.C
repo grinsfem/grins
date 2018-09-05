@@ -65,6 +65,7 @@ namespace GRINSTesting
     CPPUNIT_TEST_SUITE( RayfireTestAMR3D );
 
     CPPUNIT_TEST( single_hex );
+    CPPUNIT_TEST( single_tet );
     CPPUNIT_TEST( through_vertex_postrefinment );
     CPPUNIT_TEST( near_vertex_postrefinement );
     CPPUNIT_TEST( refine_deformed_elem );
@@ -79,7 +80,6 @@ namespace GRINSTesting
     void single_hex()
     {
       libMesh::Point origin(0.0,0.1,0.0);
-      libMesh::Point mid_point(0.5,0.15,0.5);
       libMesh::Point end_point(1.0,0.2,1.0);
 
       std::vector<unsigned int> children_in_rayfire;
@@ -103,11 +103,36 @@ namespace GRINSTesting
       this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
     }
 
+    void single_tet()
+    {
+      libMesh::Point origin(0.0,0.1,0.0);
+      libMesh::Point end_point(0.25,0.25,0.5);
+
+      std::vector<unsigned int> children_in_rayfire;
+      children_in_rayfire.push_back(0);
+      children_in_rayfire.push_back(4);
+      children_in_rayfire.push_back(7);
+
+      std::vector<unsigned int> children_not_in_rayfire;
+      children_not_in_rayfire.push_back(1);
+      children_not_in_rayfire.push_back(2);
+      children_not_in_rayfire.push_back(3);
+      children_not_in_rayfire.push_back(5);
+      children_not_in_rayfire.push_back(6);
+
+      // TET4
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_tet4_elem();
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
+
+      // TET10
+      mesh = this->build_tet10_elem();
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
+    }
+
     //! After refinement, the rayfire will travel through a vertex
     void through_vertex_postrefinment()
     {
       libMesh::Point origin(0.0,0.0,0.0);
-      libMesh::Point mid_point(0.5,0.5,0.5);
       libMesh::Point end_point(1.0,1.0,1.0);
 
       std::vector<unsigned int> children_in_rayfire;
