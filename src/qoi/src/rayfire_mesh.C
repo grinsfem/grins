@@ -46,7 +46,7 @@ namespace GRINS
     _phi(phi),
     _output_filename("")
   {
-    libmesh_not_implemented();
+    this->validate_rayfire_angles();
   }
 
 
@@ -54,43 +54,30 @@ namespace GRINS
     _dim(2),
     _origin(origin),
     _theta(theta),
-    _phi(-7.0), // bounds on angles are +/- 2pi
+    _phi(-1.0), // bound on phi is [0,pi] 
     _output_filename("")
   {
-    if (std::abs(_theta) > 2.0*Constants::pi)
-      libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
+    this->validate_rayfire_angles();
   }
 
   RayfireMesh::RayfireMesh(const GetPot & input, const std::string & qoi_string) :
-    _dim(2),
-    _phi(-7.0),
+    _dim(input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin")),
     _output_filename(input("QoI/"+qoi_string+"/Rayfire/output_filename",""))
   {
-    unsigned int rayfire_dim = input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin");
-
-    if (rayfire_dim != 2)
-      libmesh_error_msg("ERROR: Only 2D Rayfires are currently supported");
-
-    if (!input.have_variable("QoI/"+qoi_string+"/Rayfire/origin"))
-      libmesh_error_msg("ERROR: No origin specified for Rayfire");
-
-    if (input.vector_variable_size("QoI/"+qoi_string+"/Rayfire/origin") != 2)
-      libmesh_error_msg("ERROR: Please specify a 2D point (x,y) for the rayfire origin");
+    if ( (_dim != 2) && (_dim != 3) )
+      libmesh_error_msg("ERROR: Please specify a 2D point (x,y) or a 3D point (x,y,z) for the rayfire origin");
 
     libMesh::Point origin;
     _origin(0) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 0);
     _origin(1) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 1);
+    if (_dim == 3)
+      _origin(2) = input("QoI/"+qoi_string+"/Rayfire/origin", 0.0, 2);
 
-    if (input.have_variable("QoI/"+qoi_string+"/Rayfire/theta"))
-      _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
-    else
-      libmesh_error_msg("ERROR: Spherical azimuthal angle theta must be given for Rayfire");
+    _theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0); // bound on theta is [-2pi,2pi]
 
-    if (std::abs(_theta) > 2.0*Constants::pi)
-      libmesh_error_msg("Please supply a theta value between -2*pi and 2*pi");
+    _phi = input("QoI/"+qoi_string+"/Rayfire/phi", -1.0); // bound on phi is [0,pi]
 
-    if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
-      libmesh_error_msg("ERROR: cannot specify spherical polar angle phi for Rayfire, only 2D is currently supported");
+    this->validate_rayfire_angles();
   }
 
   void RayfireMesh::init(const libMesh::MeshBase & mesh_base)
@@ -277,6 +264,23 @@ namespace GRINS
 
   // private functions
 
+  void RayfireMesh::validate_rayfire_angles()
+  {
+    if (std::abs(_theta) > 2.0*Constants::pi)
+      libmesh_error_msg("Please supply a theta value between -2pi and 2pi");
+
+    if (_dim == 3)
+      {
+        if ( (_phi < 0.0) || (_phi > Constants::pi) )
+          libmesh_error_msg("Please supply a phi value between 0 and pi");
+      }
+    else
+      {
+        if ( _phi != -1.0 )
+          libmesh_error_msg("You specified a 2D rayfire origin but also the 3D polar angle phi");
+      }
+  }
+
   void RayfireMesh::check_origin_on_boundary(const libMesh::Elem * start_elem)
   {
     libmesh_assert(start_elem);
@@ -295,9 +299,9 @@ namespace GRINS
         if ( start_elem->neighbor_ptr(s) )
           continue;
 
-        // we found a boundary elem, so make an edge and see if it contains the origin
-        std::unique_ptr<const libMesh::Elem> edge_elem = start_elem->build_edge_ptr(s);
-        valid |= edge_elem->contains_point(_origin);
+        // we found a boundary elem, so make an edge/face and see if it contains the origin
+        std::unique_ptr<const libMesh::Elem> side_elem = start_elem->build_side_ptr(s);
+        valid |= side_elem->contains_point(_origin);
       }
 
     if (!valid)
@@ -319,6 +323,7 @@ namespace GRINS
           start_elem = elem;
         else
           {
+            bool found_elem = false;
             for (unsigned int i=0; i<elem->n_neighbors(); i++)
               {
                 const libMesh::Elem * neighbor_elem = elem->neighbor_ptr(i);
@@ -327,8 +332,37 @@ namespace GRINS
 
                 if (this->rayfire_in_elem(_origin,neighbor_elem))
                   {
+                    found_elem = true;
                     start_elem = neighbor_elem;
                     break;
+                  }
+              }
+            
+            if (!found_elem)
+              {
+                // start_elem is not a neighbor,
+                // so get all elems that share this vertex
+                std::set<const libMesh::Elem *> elem_set;
+                elem->find_point_neighbors(_origin,elem_set);
+                std::set<const libMesh::Elem *>::const_iterator       it  = elem_set.begin();
+                const std::set<const libMesh::Elem *>::const_iterator end = elem_set.end();
+
+                // iterate over each elem
+                for (; it != end; ++it)
+                  {
+                    const libMesh::Elem * e = *it;
+
+                    if (e == elem) // skip elem
+                      continue;
+
+                    if (elem->has_neighbor(e))
+                      continue; // skip neighbors or elem since we already checked those
+
+                    if (this->rayfire_in_elem(_origin,e))
+                      {
+                        start_elem = e;
+                        break;
+                      }
                   }
               }
           }
@@ -403,11 +437,22 @@ namespace GRINS
     if ( elem->hmin() < libMesh::TOLERANCE )
       L = elem->hmin() * 0.1;
 
-    // parametric representation of rayfire line
-    libMesh::Real x = end_point(0) + L*std::cos(_theta);
-    libMesh::Real y = end_point(1) + L*std::sin(_theta);
+    libMesh::Point end;
 
-    return elem->contains_point(libMesh::Point(x,y));
+    if (_dim == 2)
+      {
+        // parametric representation of rayfire line
+        end(0) = end_point(0) + L*std::cos(_theta);
+        end(1) = end_point(1) + L*std::sin(_theta);
+      }
+    else
+      {
+        end(0) = end_point(0) + L*std::cos(_theta)*std::sin(_phi);
+        end(1) = end_point(1) + L*std::sin(_theta)*std::sin(_phi);
+        end(2) = end_point(2) + L*std::cos(_phi);
+      }
+
+    return elem->contains_point(end);
   }
 
 
@@ -528,6 +573,9 @@ namespace GRINS
                 if (elem == cur_elem) // skip the current elem
                   continue;
 
+                if (cur_elem->has_neighbor(elem))
+                  continue;
+
                 if (this->rayfire_in_elem(end_point,elem))
                   return elem;
               }
@@ -535,6 +583,53 @@ namespace GRINS
           }
         else
           {
+            if (_dim == 3)
+              {
+                const libMesh::Elem * elem_edge = NULL;
+                std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(side,false);
+                
+                for (unsigned int s=0; s<side_elem->n_sides(); ++s)
+                  {
+                    std::unique_ptr<const libMesh::Elem> edge_elem = side_elem->build_edge_ptr(s);
+                    if (edge_elem->contains_point(end_point))
+                      {
+                        elem_edge = edge_elem.release();
+                        break;
+                      }
+                  }
+                  
+                if (elem_edge)
+                  {
+                    // end_point is on an edge, so look at the edge neighbors
+                    std::set<const libMesh::Elem *> elem_set;
+                    cur_elem->find_edge_neighbors(elem_edge->node_ref(0),elem_edge->node_ref(1),elem_set);
+                    std::set<const libMesh::Elem *>::const_iterator       it  = elem_set.begin();
+                    const std::set<const libMesh::Elem *>::const_iterator end = elem_set.end();
+
+                    // iterate over each elem
+                    for (; it != end; ++it)
+                      {
+                        const libMesh::Elem * elem = *it;
+
+                        if (elem == cur_elem) // skip the current elem
+                          continue;
+
+                        if (cur_elem->has_neighbor(elem))
+                          continue;
+
+                        if (this->rayfire_in_elem(end_point,elem))
+                          {
+                            if (same_parent)
+                                if (elem->parent())
+                                    if (elem->parent()->id() != cur_elem->parent()->id())
+                                      continue;
+
+                            return elem;
+                          }
+                      }
+                  }
+              }
+
             // check if side is a boundary
             if( !(cur_elem->neighbor_ptr(side)) )
               return NULL;
@@ -582,6 +677,20 @@ namespace GRINS
                 break;
             }
           break;
+        case 3:
+          switch(cur_elem->default_order())
+            {
+              case libMesh::Order::FIRST:
+                intersect_side = this->intersection_3D_first_order(initial_point,cur_elem,intersection_point);
+                break;
+              case libMesh::Order::SECOND:
+                intersect_side = this->intersection_3D_second_order(initial_point,cur_elem,intersection_point);
+                break;
+              default:
+                libmesh_error_msg("Unknown/unsupported 3D element order");
+                break;
+            }
+          break;
         default:
           libmesh_error_msg("Unknown/unsupported element dim");
       }
@@ -590,7 +699,7 @@ namespace GRINS
   }
 
 
-  unsigned int RayfireMesh::intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point)
+  unsigned int RayfireMesh::intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point, unsigned int initial_side)
   {
     libmesh_assert(cur_elem);
     libmesh_assert_equal_to(cur_elem->dim(),2);
@@ -613,12 +722,15 @@ namespace GRINS
 
     for (unsigned int s=0; s<cur_elem->n_sides(); ++s)
       {
+        if (s == initial_side)
+          continue;
+
         std::unique_ptr<const libMesh::Elem> edge_elem = cur_elem->build_edge_ptr(s);
 
-        // using the default tol can cause a false positive when start_point is near a node,
-        // causing this loop to skip over an otherwise valid edge to check
-        if (edge_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
-          continue;
+        // only do the contains_point() check if we don't know which edge has the initial_point
+        if (initial_side == libMesh::invalid_uint)
+          if (edge_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
+            continue;
 
         // since cur_elem is first order, the sides are always linear
         // and can be represented in point-slope form
@@ -802,6 +914,270 @@ namespace GRINS
       } // for s
 
     return intersect_side;
+  }
+
+
+  unsigned int RayfireMesh::intersection_3D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem,
+                                                        libMesh::Point & intersection_point, unsigned int initial_side)
+  {
+    libmesh_assert(cur_elem);
+    libmesh_assert_equal_to(cur_elem->dim(),3);
+    libmesh_assert(cur_elem->default_order() == libMesh::Order::FIRST);
+
+    // return value
+    unsigned int intersect_side = libMesh::invalid_uint;
+
+    // precompute repeated terms
+    libMesh::Real cos_theta = std::cos(_theta);
+    libMesh::Real sin_theta = std::sin(_theta);
+    libMesh::Real sin_phi   = std::sin(_phi);
+    libMesh::Real cos_phi   = std::cos(_phi);
+
+    // rayfire starting points
+    libMesh::Real xr = initial_point(0);
+    libMesh::Real yr = initial_point(1);
+    libMesh::Real zr = initial_point(2);
+
+    for (unsigned int s=0; s<cur_elem->n_sides(); ++s)
+      {
+        if (s == initial_side)
+          continue;
+
+        std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
+
+        // if we don't know which side the initial_point is on, then do this check
+        // otherwise we can skip it
+        if (initial_side == libMesh::invalid_uint)
+          if (side_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
+            continue;
+
+        // since cur_elem is first order,
+        // the sides can be represented in point-slope form
+
+        libMesh::Point P0(side_elem->node_ref(0));
+        libMesh::Point P1(side_elem->node_ref(1));
+        libMesh::Point P2(side_elem->node_ref(2));
+
+        libMesh::Point u(P1-P0);
+        libMesh::Point v(P2-P0);
+        libMesh::Point w = u.cross(v);
+        
+        libMesh::Real a = w(0);
+        libMesh::Real b = w(1);
+        libMesh::Real c = w(2);
+        
+        libMesh::Real x0 = P0(0);
+        libMesh::Real y0 = P0(1);
+        libMesh::Real z0 = P0(2);
+        
+        // length of rayfire at intersection
+        libMesh::Real L = - ( a*(xr-x0) + b*(yr-y0) + c*(zr-z0) )/( a*cos_theta*sin_phi + b*sin_theta*sin_phi + c*cos_phi );
+        
+        libMesh::Real x_hat = xr + L*cos_theta*sin_phi;
+        libMesh::Real y_hat = yr + L*sin_theta*sin_phi;
+        libMesh::Real z_hat = zr + L*cos_phi;
+
+        // intersection point
+        libMesh::Point intersect(x_hat,y_hat,z_hat);
+
+        if (!initial_point.absolute_fuzzy_equals(intersect))
+          if (side_elem->contains_point(intersect,libMesh::TOLERANCE*0.1))
+            {
+              intersect_side = s;
+
+              intersection_point(0) = intersect(0);
+              intersection_point(1) = intersect(1);
+              intersection_point(2) = intersect(2);
+              break;
+            }
+
+      }
+
+    return intersect_side;
+  }
+
+  unsigned int RayfireMesh::intersection_3D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point)
+  {
+    libmesh_assert(cur_elem);
+    libmesh_assert_equal_to(cur_elem->dim(),3);
+    libmesh_assert(cur_elem->default_order() == libMesh::Order::SECOND);
+
+    // FIXME TA: there is probably a more efficient way to do determine which face has the initial_point
+    // figure out which side has the initial_point so we can skip it above
+    unsigned int skip_side = libMesh::invalid_uint;
+    for (unsigned int s=0; s<cur_elem->n_sides(); ++s)
+      {
+        std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
+
+        // using the default tol can cause a false positive when start_point is near a node,
+        // causing this loop to skip over an otherwise valid side to check
+        if (side_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
+          {
+            skip_side = s;
+            break;
+          }
+      }
+
+    if (skip_side == libMesh::invalid_uint)
+      libmesh_error_msg("Rayfire 3D second order solver was unable to determine which side contains the initial_point");
+
+    // Create a FIRST order version of the SECOND order cur_elem and use the analytic solve
+    // to identify the proper intersection side. Then use this newton solver to calculate
+    // the correct intersection point on the SECOND order face
+    libMesh::Elem * first_order_cur_elem = this->copy_to_first_order(cur_elem);
+    libMesh::Point dummy_intersection;
+    unsigned int intersect_side = this->intersection_3D_first_order(initial_point,first_order_cur_elem,dummy_intersection,skip_side);
+
+    if (intersect_side == libMesh::invalid_uint)
+      libmesh_error_msg("Rayfire 3D first order analytic solver failed to calculate intersection point");
+
+    bool converged = false;
+
+    // based on limit from libMesh::FEInterface::inverse_map()
+    unsigned int iter_max = 20;
+
+    // precompute repeated terms
+    libMesh::Real cos_theta = std::cos(_theta);
+    libMesh::Real sin_theta = std::sin(_theta);
+    libMesh::Real sin_phi   = std::sin(_phi);
+    libMesh::Real cos_phi   = std::cos(_phi);
+
+    // rayfire starting points
+    libMesh::Real xr = initial_point(0);
+    libMesh::Real yr = initial_point(1);
+    libMesh::Real zr = initial_point(2);
+
+    std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(intersect_side);
+
+    // the number of shape functions needed for the edge_elem
+    unsigned int n_sf = libMesh::FE<2,libMesh::LAGRANGE>::n_shape_functions(side_elem->type(),side_elem->default_order());
+
+    // shape functions and derivatives w.r.t reference coordinate
+    std::vector<libMesh::Real> phi(n_sf);
+    std::vector<libMesh::Real> dphi_dxi(n_sf);
+    std::vector<libMesh::Real> dphi_deta(n_sf);
+
+    // Initial xi guess is center of the edge_elem
+    libMesh::Real xi  = 0.0;
+    libMesh::Real eta = 0.0;
+
+    // Initial L guess
+    libMesh::Real L = std::abs(xr-(side_elem->node_ref(0))(0));
+
+    // Newton iteration
+    for(unsigned int it=0; it<iter_max; it++)
+      {
+        // Get the shape function and derivative values at the reference coordinate
+        // phi.size() == dphi.size()
+        for(unsigned int i=0; i<phi.size(); i++)
+          {
+            libMesh::Point ref_point(xi,eta);
+
+            phi[i] = libMesh::FE<2,libMesh::LAGRANGE>::shape(side_elem->type(),
+                                                             side_elem->default_order(),
+                                                             i,
+                                                             ref_point);
+
+            dphi_dxi[i] = libMesh::FE<2,libMesh::LAGRANGE>::shape_deriv(side_elem->type(),
+                                                                        side_elem->default_order(),
+                                                                        i,
+                                                                        0, // d()/dxi
+                                                                        ref_point);
+
+            dphi_deta[i] = libMesh::FE<2,libMesh::LAGRANGE>::shape_deriv( side_elem->type(),
+                                                                          side_elem->default_order(),
+                                                                          i,
+                                                                          1, // d()/deta
+                                                                          ref_point);
+          } // for i
+
+        libMesh::Real X = 0.0;
+        libMesh::Real Y = 0.0;
+        libMesh::Real Z = 0.0;
+        libMesh::Real dX_dxi = 0.0;
+        libMesh::Real dY_dxi = 0.0;
+        libMesh::Real dZ_dxi = 0.0;
+        libMesh::Real dX_deta = 0.0;
+        libMesh::Real dY_deta = 0.0;
+        libMesh::Real dZ_deta = 0.0;
+
+        for(unsigned int i=0; i<phi.size(); i++)
+          {
+            X += (*(side_elem->node_ptr(i)))(0) * phi[i];
+            Y += (*(side_elem->node_ptr(i)))(1) * phi[i];
+            Z += (*(side_elem->node_ptr(i)))(2) * phi[i];
+            dX_dxi += (*(side_elem->node_ptr(i)))(0) * dphi_dxi[i];
+            dY_dxi += (*(side_elem->node_ptr(i)))(1) * dphi_dxi[i];
+            dZ_dxi += (*(side_elem->node_ptr(i)))(2) * dphi_dxi[i];
+            dX_deta += (*(side_elem->node_ptr(i)))(0) * dphi_deta[i];
+            dY_deta += (*(side_elem->node_ptr(i)))(1) * dphi_deta[i];
+            dZ_deta += (*(side_elem->node_ptr(i)))(2) * dphi_deta[i];
+          }
+
+      libMesh::DenseVector<libMesh::Real> F(3);
+      F(0) = xr + L*cos_theta*sin_phi - X;
+      F(1) = yr + L*sin_theta*sin_phi - Y;
+      F(2) = zr + L*cos_phi - Z;
+
+      // Jacobian entries
+      libMesh::DenseMatrix<libMesh::Real> J(3,3);
+      J(0,0) = cos_theta*sin_phi;
+      J(0,1) = -dX_dxi;
+      J(0,2) = -dX_deta;
+      J(1,0) = sin_theta*sin_phi;
+      J(1,1) = -dY_dxi;
+      J(1,2) = -dY_deta;
+      J(2,0) = cos_phi;
+      J(2,1) = -dZ_dxi;
+      J(2,2) = -dZ_deta;
+
+      // delta will be the newton step
+      libMesh::DenseVector<libMesh::Real> delta(3);
+      J.lu_solve(F,delta);
+
+      // check for convergence
+      if ( delta.l2_norm() < libMesh::TOLERANCE )
+        {
+          libMesh::Point intersect(X,Y,Z);
+
+          // newton solver converged, now make sure it converged to a point on the edge_elem
+          if (side_elem->contains_point(intersect,libMesh::TOLERANCE*0.1))
+          {
+            converged = true;
+
+            intersection_point(0) = intersect(0);
+            intersection_point(1) = intersect(1);
+            intersection_point(2) = intersect(2);
+          }
+          break; // break out of 'for it'
+        }
+      else
+        {
+          L   -= delta(0);
+          xi  -= delta(1);
+          eta -= delta(2);
+        }
+    } //for it
+
+    if (!converged)
+      libmesh_error_msg("Rayfire 3D second order Newton solver failed to converge to intersection point");
+
+    return intersect_side;
+  }
+
+
+  libMesh::Elem * RayfireMesh::copy_to_first_order(const libMesh::Elem * elem)
+  {
+    libMesh::ElemType first_type = libMesh::Elem::first_order_equivalent_type(elem->type());
+    libMesh::Elem * first_order_elem = libMesh::Elem::build(first_type).release();
+
+    for (unsigned int n=0; n<first_order_elem->n_nodes(); ++n)
+      {
+        libMesh::Node * node = new libMesh::Node(elem->node_ref(n));
+        first_order_elem->set_node(n) = node;
+      }
+
+    return first_order_elem;
   }
 
 

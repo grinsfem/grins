@@ -40,6 +40,8 @@
 #include "grins/rayfire_mesh.h"
 #include "grins/math_constants.h"
 
+#include "rayfire_test_base.h"
+
 // libMesh
 #include "libmesh/elem.h"
 #include "libmesh/getpot.h"
@@ -52,12 +54,15 @@
 // Ignore warnings from auto_ptr in CPPUNIT_TEST_SUITE_END()
 #include <libmesh/ignore_warnings.h>
 
+#include <tuple>
+
 namespace GRINSTesting
 {
-  class RayfireTestAMR : public CppUnit::TestCase
+  class RayfireTestAMR2D : public CppUnit::TestCase,
+                           public GRINSTesting::RayfireTestBase
   {
   public:
-    CPPUNIT_TEST_SUITE( RayfireTestAMR );
+    CPPUNIT_TEST_SUITE( RayfireTestAMR2D );
 
     CPPUNIT_TEST( single_elems );
     CPPUNIT_TEST( through_vertex_postrefinment );
@@ -69,7 +74,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( refine_and_coarsen );
     CPPUNIT_TEST( mixed_type_mesh );
     CPPUNIT_TEST( start_with_refined_mesh );
-    CPPUNIT_TEST( refined_above_unrefined );
+    CPPUNIT_TEST( refined_and_unrefined );
     CPPUNIT_TEST( refine_deformed_elem );
     CPPUNIT_TEST( refine_deformed_elem_near_tolerance );
     CPPUNIT_TEST( init_on_refined_mesh );
@@ -81,42 +86,82 @@ namespace GRINSTesting
     //! Refine a single element
     void single_elems()
     {
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
-      test_single_elem(mesh);
+      libMesh::Point origin(0.0,0.1);
+      libMesh::Point end_point(1.0,0.2);
 
-      mesh = build_quad9_elem();
-      test_single_elem(mesh);
+      std::vector<unsigned int> children_in_rayfire;
+      children_in_rayfire.push_back(0);
+      children_in_rayfire.push_back(1);
+
+      std::vector<unsigned int> children_not_in_rayfire;
+      children_not_in_rayfire.push_back(2);
+      children_not_in_rayfire.push_back(3);
+
+      // QUAD4
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad4_elem();
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
+
+      // QUAD9
+      mesh = this->build_square_quad9_elem();
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
     }
 
     //! After refinement, the rayfire will travel through a vertex
     void through_vertex_postrefinment()
     {
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
-      test_through_vertex(mesh);
+      libMesh::Point origin(0.0,0.0);
+      libMesh::Point mid_point(0.5,0.5);
+      libMesh::Point end_point(1.0,1.0);
 
-      mesh = build_quad9_elem();
-      test_through_vertex(mesh);
+      std::vector<unsigned int> children_in_rayfire;
+      children_in_rayfire.push_back(0);
+      children_in_rayfire.push_back(3);
+
+      std::vector<unsigned int> children_not_in_rayfire;
+      children_not_in_rayfire.push_back(1);
+      children_not_in_rayfire.push_back(2);
+
+      // QUAD4
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad4_elem();
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
+
+      // QUAD9
+      mesh = this->build_square_quad9_elem();
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
     }
 
     //! After refinement, the rayfire will travel very near (but not through) a vertex
     void near_vertex_postrefinement()
     {
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
-      test_near_vertex(mesh);
+      libMesh::Point origin(0.4999,0.0);
+      libMesh::Point end_point(1.0,1.0);
 
-      mesh = build_quad9_elem();
-      test_near_vertex(mesh);
+      std::vector<unsigned int> children_in_rayfire;
+      children_in_rayfire.push_back(0);
+      children_in_rayfire.push_back(1);
+      children_in_rayfire.push_back(3);
+
+      std::vector<unsigned int> children_not_in_rayfire;
+      children_not_in_rayfire.push_back(2);
+
+      // QUAD4
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad4_elem();
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
+
+      // QUAD9
+      mesh = this->build_square_quad9_elem();
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
     }
 
     //! A 10x10 mesh with selectively refined elements
     void large_2D_mesh()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem_2D.in";
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
       GetPot input_quad4(filename);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
       test_large_mesh(mesh);
 
-      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem_2D.in";
+      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem.in";
       GetPot input_quad9(filename);
       mesh = this->build_mesh(input_quad9);
       test_large_mesh(mesh);
@@ -125,52 +170,49 @@ namespace GRINSTesting
     //! Make sure refined elements not on the rayfire do not get added
     void refine_elem_not_on_rayfire()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem_2D.in";
-      GetPot input(filename);
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
-
       libMesh::Point origin(0.0,6.5);
       libMesh::Point end_point(10.0,0.25);
-      libMesh::Real theta = calc_theta(origin,end_point);
 
-      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
-      rayfire->init(*mesh);
+      std::vector<unsigned int> children_in_rayfire;
 
-      // elem 0 is not along the rayfire
-      mesh->elem_ptr(0)->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
+      std::vector<unsigned int> children_not_in_rayfire;
+      children_not_in_rayfire.push_back(0);
+      children_not_in_rayfire.push_back(2);
+      children_not_in_rayfire.push_back(1);
+      children_not_in_rayfire.push_back(3);
 
-      libMesh::MeshRefinement mr(*mesh);
-      mr.refine_elements();
-
-      rayfire->reinit(*mesh);
-
-      // elem 0 should not be in the rayfire
-      CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->id()) ) );
-
-      // no children of elem 0 should be in the rayfire
-      for (unsigned int i=0; i<4; i++)
-        CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem( mesh->elem_ptr(0)->child_ptr(i)->id() ) ) );
+      // QUAD 4
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
+      GetPot input4(filename);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input4);
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
+      
+      // QUAD 9
+      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
+      GetPot input9(filename);
+      mesh = this->build_mesh(input9);
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
     }
 
     //! Test for multiple successive refinements
     void multiple_refinements()
     {
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad4_elem();
       test_multiple_refinements(mesh);
 
-      mesh = build_quad9_elem();
+      mesh = this->build_square_quad9_elem();
       test_multiple_refinements(mesh);
     }
 
     //! Test of the coarsening functionality
     void coarsen_elements()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem_2D.in";
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
       GetPot input_quad4(filename);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
       test_coarsen(mesh);
 
-      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem_2D.in";
+      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem.in";
       GetPot input_quad9(filename);
       mesh = this->build_mesh(input_quad9);
       test_coarsen(mesh);
@@ -179,11 +221,11 @@ namespace GRINSTesting
     //! Refine and coarsen before calling reinit()
     void refine_and_coarsen()
     {
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad4_elem();
 
       libMesh::Point origin(0.0,0.1);
       libMesh::Point end_point(1.0,0.1);
-      libMesh::Real theta = calc_theta(origin,end_point);
+      libMesh::Real theta = this->calc_theta(origin,end_point);
 
       std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
       rayfire->init(*mesh);
@@ -209,8 +251,6 @@ namespace GRINSTesting
       CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->child_ptr(1)->child_ptr(0)->id()) );
       CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->child_ptr(1)->child_ptr(1)->child_ptr(0)->id()) );
       CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->child_ptr(1)->child_ptr(1)->child_ptr(1)->id()) );
-
-
     }
 
     //! Mesh contains 2 QUAD4 and 2 TRI3
@@ -222,7 +262,7 @@ namespace GRINSTesting
 
       libMesh::Point origin(0.0,0.25);
       libMesh::Point end_point(1.0,0.25);
-      libMesh::Real theta = calc_theta(origin,end_point);
+      libMesh::Real theta = this->calc_theta(origin,end_point);
 
       std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
       rayfire->init(*mesh);
@@ -284,7 +324,7 @@ namespace GRINSTesting
     //! Mesh given to init() is already refined
     void start_with_refined_mesh()
     {
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = build_quad4_elem();
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_square_quad4_elem();
 
       // uniform refinement
       libMesh::MeshRefinement mr(*mesh);
@@ -293,7 +333,7 @@ namespace GRINSTesting
       // now init the rayfire
       libMesh::Point origin(0.0,0.1);
       libMesh::Point end_point(1.0,0.1);
-      libMesh::Real theta = calc_theta(origin,end_point);
+      libMesh::Real theta = this->calc_theta(origin,end_point);
 
       std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
       rayfire->init(*mesh);
@@ -328,10 +368,12 @@ namespace GRINSTesting
       // and no other elem
       for (unsigned int e=1; e<mesh->n_elem(); e++)
         CPPUNIT_ASSERT( !(rayfire->map_to_rayfire_elem(e)) );
+
     }
 
     //! 2 QUAD4 elems, one is refined, one if not, rayfire travels boundary between them
-    void refined_above_unrefined() {
+    void refined_and_unrefined()
+    {
       std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
 
       mesh->set_mesh_dimension(2);
@@ -343,13 +385,13 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(1.0,2.0),4 );
       mesh->add_point( libMesh::Point(0.0,2.0),5 );
 
-      libMesh::Elem* elem0 = mesh->add_elem( new libMesh::Quad4 );
+      libMesh::Elem * elem0 = mesh->add_elem( new libMesh::Quad4 );
       elem0->set_node(0) = mesh->node_ptr(0);
       elem0->set_node(1) = mesh->node_ptr(1);
       elem0->set_node(2) = mesh->node_ptr(2);
       elem0->set_node(3) = mesh->node_ptr(3);
 
-      libMesh::Elem* elem1 = mesh->add_elem( new libMesh::Quad4 );
+      libMesh::Elem * elem1 = mesh->add_elem( new libMesh::Quad4 );
       elem1->set_node(0) = mesh->node_ptr(3);
       elem1->set_node(1) = mesh->node_ptr(2);
       elem1->set_node(2) = mesh->node_ptr(4);
@@ -393,7 +435,7 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(1.1,1.1),2 );
       mesh->add_point( libMesh::Point(0.2,1.0),3 );
 
-      libMesh::Elem* e = mesh->add_elem( new libMesh::Quad4 );
+      libMesh::Elem * e = mesh->add_elem( new libMesh::Quad4 );
       for (unsigned int n=0; n<4; n++)
         e->set_node(n) = mesh->node_ptr(n);
 
@@ -405,7 +447,7 @@ namespace GRINSTesting
       libMesh::Real x = y/5.0;
 
       libMesh::Point origin(x,y); // within libMesh::TOLERANCE of node 8
-      libMesh::Real theta = 0.0;
+      libMesh::Point end_point(1.0477273181818181,y);
 
       std::vector<unsigned int> children_in_rayfire;
       children_in_rayfire.push_back(1);
@@ -415,7 +457,7 @@ namespace GRINSTesting
       std::vector<unsigned int> children_not_in_rayfire;
       children_not_in_rayfire.push_back(0);
 
-      this->test_deformed_elem(mesh,origin,theta,children_in_rayfire,children_not_in_rayfire);
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
     }
 
     //! QUAD4 elem is slightly deformed, rayfire starts and ends very neay boundary of refined children.
@@ -432,7 +474,7 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(0.26538091506882988,0.015714299294800886),0 );
       mesh->add_point( libMesh::Point(0.26590538328042834,0.015713833483130532),1 );
 
-      libMesh::Elem* e = mesh->add_elem( new libMesh::Quad4 );
+      libMesh::Elem * e = mesh->add_elem( new libMesh::Quad4 );
       for (unsigned int n=0; n<4; n++)
         e->set_node(n) = mesh->node_ptr(n);
 
@@ -444,7 +486,7 @@ namespace GRINSTesting
       libMesh::Real y = 0.01600000000000000;
 
       libMesh::Point origin(x,y);
-      libMesh::Real theta = 0.0;
+      libMesh::Point end_point(0.26591208215603906,y);
 
       std::vector<unsigned int> children_in_rayfire;
       children_in_rayfire.push_back(0);
@@ -454,7 +496,7 @@ namespace GRINSTesting
       std::vector<unsigned int> children_not_in_rayfire;
       children_not_in_rayfire.push_back(1);
 
-      this->test_deformed_elem(mesh,origin,theta,children_in_rayfire,children_not_in_rayfire);
+      this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
     }
 
     //! Call init() on an already refined mesh
@@ -462,7 +504,7 @@ namespace GRINSTesting
     //! Mimics a run from restart
     void init_on_refined_mesh()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_9elem_2D.in";
+      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_9elem.in";
       GetPot input_quad4(filename);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
 
@@ -495,168 +537,12 @@ namespace GRINSTesting
 
   private:
 
-    libMesh::Real calc_theta(libMesh::Point& start, libMesh::Point end)
-    {
-      return std::atan2( (end(1)-start(1)), (end(0)-start(0)) );
-    }
-
-    std::shared_ptr<libMesh::UnstructuredMesh> build_mesh( const GetPot& input )
-    {
-      GRINS::MeshBuilder mesh_builder;
-      return mesh_builder.build( input, *TestCommWorld );
-    }
-
-    //! Build a single square QUAD4
-    std::shared_ptr<libMesh::UnstructuredMesh> build_quad4_elem()
-    {
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-
-      mesh->set_mesh_dimension(2);
-
-      mesh->add_point( libMesh::Point(0.0,0.0),0 );
-      mesh->add_point( libMesh::Point(1.0,0.0),1 );
-      mesh->add_point( libMesh::Point(1.0,1.0),2 );
-      mesh->add_point( libMesh::Point(0.0,1.0),3 );
-
-      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad4 );
-      for (unsigned int n=0; n<4; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
-
-      mesh->prepare_for_use();
-
-      return mesh;
-    }
-
-    //! Build a single square QUAD9
-    std::shared_ptr<libMesh::UnstructuredMesh> build_quad9_elem()
-    {
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-
-      mesh->set_mesh_dimension(2);
-
-      mesh->add_point( libMesh::Point(0.0,0.0),0 );
-      mesh->add_point( libMesh::Point(1.0,0.0),1 );
-      mesh->add_point( libMesh::Point(1.0,1.0),2 );
-      mesh->add_point( libMesh::Point(0.0,1.0),3 );
-      mesh->add_point( libMesh::Point(0.5,0.0),4 );
-      mesh->add_point( libMesh::Point(1.0,0.5),5 );
-      mesh->add_point( libMesh::Point(0.5,1.0),6 );
-      mesh->add_point( libMesh::Point(0.0,0.5),7 );
-      mesh->add_point( libMesh::Point(0.5,0.5),8 );
-
-      libMesh::Elem* elem = mesh->add_elem( new libMesh::Quad9 );
-      for (unsigned int n=0; n<9; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
-
-      mesh->prepare_for_use();
-
-      return mesh;
-    }
-
-    //! Runs the test on single square QUADs of unit length and width
-    void test_single_elem(std::shared_ptr<libMesh::UnstructuredMesh> mesh)
-    {
-      CPPUNIT_ASSERT_EQUAL( mesh->n_elem(), (libMesh::dof_id_type)1 );
-
-      libMesh::Point origin(0.0,0.1);
-      libMesh::Point end_point(1.0,0.2);
-      libMesh::Real theta = calc_theta(origin,end_point);
-
-      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
-      rayfire->init(*mesh);
-
-      libMesh::Elem* elem = mesh->elem_ptr(0);
-      CPPUNIT_ASSERT(elem);
-
-      elem->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
-
-      libMesh::MeshRefinement mr(*mesh);
-      mr.refine_elements();
-
-      rayfire->reinit(*mesh);
-
-      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child_ptr(0)->id() );
-      CPPUNIT_ASSERT(rayfire_elem0);
-
-      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child_ptr(1)->id() );
-      CPPUNIT_ASSERT(rayfire_elem1);
-
-      CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(0))->absolute_fuzzy_equals(origin) );
-      CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(1))->absolute_fuzzy_equals(libMesh::Point(0.5,0.15)) );
-      CPPUNIT_ASSERT( (rayfire_elem1->node_ptr(0))->absolute_fuzzy_equals(libMesh::Point(0.5,0.15)) );
-      CPPUNIT_ASSERT( (rayfire_elem1->node_ptr(1))->absolute_fuzzy_equals(end_point) );
-    }
-
-    void test_through_vertex(std::shared_ptr<libMesh::UnstructuredMesh> mesh)
-    {
-      libMesh::Point origin(0.0,0.0);
-      libMesh::Point end_point(1.0,1.0);
-      libMesh::Real theta = calc_theta(origin,end_point);
-
-      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
-      rayfire->init(*mesh);
-
-      libMesh::Elem* elem = mesh->elem_ptr(0);
-      CPPUNIT_ASSERT(elem);
-
-      elem->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
-
-      libMesh::MeshRefinement mr(*mesh);
-      mr.refine_elements();
-
-      rayfire->reinit(*mesh);
-
-      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child_ptr(0)->id() );
-      CPPUNIT_ASSERT(rayfire_elem0);
-
-      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child_ptr(3)->id() );
-      CPPUNIT_ASSERT(rayfire_elem1);
-
-      CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(0))->absolute_fuzzy_equals(origin) );
-      CPPUNIT_ASSERT( (rayfire_elem0->node_ptr(1))->absolute_fuzzy_equals(libMesh::Point(0.5,0.5)) );
-      CPPUNIT_ASSERT( (rayfire_elem1->node_ptr(0))->absolute_fuzzy_equals(libMesh::Point(0.5,0.5)) );
-      CPPUNIT_ASSERT( (rayfire_elem1->node_ptr(1))->absolute_fuzzy_equals(end_point) );
-    }
-
-    void test_near_vertex(std::shared_ptr<libMesh::UnstructuredMesh> mesh)
-    {
-      libMesh::Point origin(0.4999,0.0);
-      libMesh::Point end_point(1.0,1.0);
-      libMesh::Real theta = calc_theta(origin,end_point);
-
-      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
-      rayfire->init(*mesh);
-
-      libMesh::Elem* elem = mesh->elem_ptr(0);
-      CPPUNIT_ASSERT(elem);
-
-      elem->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
-
-      libMesh::MeshRefinement mr(*mesh);
-      mr.refine_elements();
-
-      rayfire->reinit(*mesh);
-
-      const libMesh::Elem* rayfire_elem0 = rayfire->map_to_rayfire_elem( elem->child_ptr(0)->id() );
-      CPPUNIT_ASSERT(rayfire_elem0);
-
-      const libMesh::Elem* rayfire_elem1 = rayfire->map_to_rayfire_elem( elem->child_ptr(1)->id() );
-      CPPUNIT_ASSERT(rayfire_elem1);
-
-      const libMesh::Elem* rayfire_elem2 = rayfire->map_to_rayfire_elem( elem->child_ptr(3)->id() );
-      CPPUNIT_ASSERT(rayfire_elem2);
-
-      // not in rayfire
-      const libMesh::Elem* non_rayfire_elem = rayfire->map_to_rayfire_elem( elem->child_ptr(2)->id() );
-      CPPUNIT_ASSERT(!non_rayfire_elem);
-    }
-
     //! Refine specific elements on a large mesh
     void test_large_mesh(std::shared_ptr<libMesh::UnstructuredMesh> mesh)
     {
       libMesh::Point origin(0.0,6.5);
       libMesh::Point end_point(10.0,0.25);
-      libMesh::Real theta = calc_theta(origin,end_point);
+      libMesh::Real theta = this->calc_theta(origin,end_point);
 
       std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
       rayfire->init(*mesh);
@@ -699,7 +585,7 @@ namespace GRINSTesting
       std::map<unsigned int,std::vector<unsigned int> >::iterator it = refine_elems.begin();
       for(; it != refine_elems.end(); it++)
         {
-          libMesh::Elem* elem = mesh->elem_ptr( it->first );
+          libMesh::Elem * elem = mesh->elem_ptr( it->first );
           CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(elem->id()) );
           elem->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
         }
@@ -715,7 +601,7 @@ namespace GRINSTesting
       it = refine_elems.begin();
       for(; it != refine_elems.end(); it++)
         {
-          libMesh::Elem* elem = mesh->elem_ptr( it->first );
+          libMesh::Elem * elem = mesh->elem_ptr( it->first );
 
           // make sure it was refined
           CPPUNIT_ASSERT_EQUAL( elem->refinement_flag(), libMesh::Elem::RefinementState::INACTIVE );
@@ -748,7 +634,7 @@ namespace GRINSTesting
     {
       libMesh::Point origin(0.0,0.0);
       libMesh::Point end_point(1.0,0.25);
-      libMesh::Real theta = calc_theta(origin,end_point);
+      libMesh::Real theta = this->calc_theta(origin,end_point);
 
       std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
       rayfire->init(*mesh);
@@ -771,7 +657,6 @@ namespace GRINSTesting
       CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->child_ptr(1)->child_ptr(0)->child_ptr(3)->id()) );
       CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->child_ptr(1)->child_ptr(1)->child_ptr(2)->id()) );
       CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->child_ptr(1)->child_ptr(1)->child_ptr(3)->id()) );
-
     }
 
     //! Test coarsening specific elements on a large mesh
@@ -779,7 +664,7 @@ namespace GRINSTesting
     {
       libMesh::Point origin(0.0,6.5);
       libMesh::Point end_point(10.0,0.25);
-      libMesh::Real theta = calc_theta(origin,end_point);
+      libMesh::Real theta = this->calc_theta(origin,end_point);
 
       std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
       rayfire->init(*mesh);
@@ -817,35 +702,9 @@ namespace GRINSTesting
         }
     }
 
-    void test_deformed_elem(  std::shared_ptr<libMesh::UnstructuredMesh> & mesh,
-                              libMesh::Point & origin, libMesh::Real theta,
-                              std::vector<unsigned int> & children_in_rayfire,
-                              std::vector<unsigned int> & children_not_in_rayfire )
-    {
-      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta) );
-      rayfire->init(*mesh);
-
-      libMesh::Elem* elem = mesh->elem_ptr(0);
-      CPPUNIT_ASSERT(elem);
-
-      elem->set_refinement_flag(libMesh::Elem::RefinementState::REFINE);
-
-      libMesh::MeshRefinement mr(*mesh);
-      mr.refine_elements();
-
-      rayfire->reinit(*mesh);
-
-      for (unsigned int c=0; c<children_in_rayfire.size(); c++)
-        CPPUNIT_ASSERT( rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->child_ptr(children_in_rayfire[c])->id()) );
-
-      for (unsigned int c=0; c<children_not_in_rayfire.size(); c++)
-        CPPUNIT_ASSERT( !rayfire->map_to_rayfire_elem(mesh->elem_ptr(0)->child_ptr(children_not_in_rayfire[c])->id()) );
-
-    }
-
   };
 
-  CPPUNIT_TEST_SUITE_REGISTRATION( RayfireTestAMR );
+  CPPUNIT_TEST_SUITE_REGISTRATION( RayfireTestAMR2D );
 
 } // end namespace GRINSTesting
 

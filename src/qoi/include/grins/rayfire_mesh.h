@@ -93,7 +93,7 @@ namespace GRINS
     RayfireMesh(const GetPot & input, const std::string & qoi_string);
 
     //! Enable rayfire output after init()
-    void enable_rayfire_output(std::string & filename)
+    void enable_rayfire_output(const std::string & filename)
     {
       _output_filename = filename;
     }
@@ -158,6 +158,8 @@ namespace GRINS
     //! User should never call the default constructor
     RayfireMesh();
 
+    void validate_rayfire_angles();
+
     //! Private function to get a rayfire elem from main_mesh elem ID
     /*!
       Does not return a const pointer, and is used within this class to simplify
@@ -202,7 +204,7 @@ namespace GRINS
     unsigned int calculate_intersection_point(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
 
     //! Edges of 2D FIRST order elements can be represented in point-slope form, so there is an analytical solution for the intersection point
-    unsigned int intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+    unsigned int intersection_2D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point, unsigned int initial_side = libMesh::invalid_uint);
 
     //! Edges of 2D SECOND order elements can be nonlinear, so use a standard Newton iterative solver to find the intersection point
     /*!
@@ -247,6 +249,63 @@ namespace GRINS
       and converge when \f$|| \delta || <\f$ libMesh::TOLERANCE
     */
     unsigned int intersection_2D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+
+    //! Faces of 3D FIRST order elements are planes that can be represented in point-normal form, so there is an analytical solution for the intersection point
+    unsigned int intersection_3D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point, unsigned int initial_side = libMesh::invalid_uint);
+
+    //! Faces of 3D SECOND order elements can be nonlinear, so use a standard Newton iterative solver to find the intersection point
+    /*!
+      Knowing the starting point \f$(x_r,y_r,z_r)\f$ of the rayfire on the current element,
+      the rayfire line can be parameterized as
+
+      \f$ x = x_r + L*cos(\theta)*sin(\phi) \f$
+
+      \f$ y = y_r + L*sin(\theta)*sin(phi) \f$
+      
+      \f$ z = z_r + L*cos(\phi) \f$
+
+      We can also represent a point \f$(X,Y,Z)\f$ on a given face of the element as a function of
+      the reference coordinates \f$\xi,\eta\f$ on that face
+
+      \f$ X = \sum_i x_i \phi_i(\xi,\eta) \f$
+
+      \f$ Y = \sum_i y_i \phi_i(\xi,\eta) \f$
+      
+      \f$ Z = \sum_i z_i \phi_i(\xi,\eta) \f$
+
+      At the intersection point of the rayfire line and the edge,
+      \f$x=X\f$, \f$y=Y\f$, and \f$z=Z\f$ so we can form a residual vector
+
+      \f$ F = F(L,\xi,\eta) = \begin{bmatrix}
+                                x_r + L*cos(\theta)*sin(\phi) - \sum_i x_i \phi_i(\xi) \\
+                                y_r + L*sin(\theta)*sin(\phi) - \sum_i y_i \phi_i(\xi) \\
+                                z_r + L*cos(\phi) - \sum_i z_i \phi_i(\xi)
+                              \end{bmatrix}
+            = 0
+      \f$
+
+      with Jacobian \f$J\f$
+
+      \f$ J = \begin{bmatrix}
+                cos(\theta)*sin(\phi) & - \sum_i x_i \frac{d \phi_i}{d\xi} & - \sum_i x_i \frac{d \phi_i}{d\eta} \\
+                sin(\theta)*sin(\phi) & - \sum_i y_i \frac{d \phi_i}{d\xi} & - \sum_i y_i \frac{d \phi_i}{d\eta} \\
+                cos(\phi)             & - \sum_i z_i \frac{d \phi_i}{d\xi} & - \sum_i z_i \frac{d \phi_i}{d\eta}
+              \end{bmatrix}
+      \f$
+
+      Then we can use a Newton iteration
+      \f$ \begin{bmatrix}
+                \Delta L \\
+                \Delta \xi \\
+                \Delta \eta
+              \end{bmatrix}
+          = \delta = - J^{-1} F\f$
+      and converge when \f$|| \delta || <\f$ libMesh::TOLERANCE
+    */
+    unsigned int intersection_3D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+
+    //! Create a FIRST order version of a SECOND order element
+    libMesh::Elem * copy_to_first_order(const libMesh::Elem * elem);
 
     //! Refinement of a rayfire element whose main mesh counterpart was refined
     void refine(const libMesh::Elem * main_elem, libMesh::Elem * rayfire_elem);
