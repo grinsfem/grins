@@ -887,7 +887,8 @@ namespace GRINS
           J_inv.vector_mult(delta,F);
 
           // check for convergence
-          if ( delta.l2_norm() < libMesh::TOLERANCE )
+          libMesh::Real tol = std::min( libMesh::TOLERANCE, libMesh::TOLERANCE*edge_elem->hmax() );
+          if ( delta.l2_norm() < tol )
             {
               libMesh::Point intersect(X,Y);
 
@@ -1136,7 +1137,8 @@ namespace GRINS
       J.lu_solve(F,delta);
 
       // check for convergence
-      if ( delta.l2_norm() < libMesh::TOLERANCE )
+      libMesh::Real tol = std::min( libMesh::TOLERANCE, libMesh::TOLERANCE*side_elem->hmax() );
+      if ( delta.l2_norm() < tol )
         {
           libMesh::Point intersect(X,Y,Z);
 
