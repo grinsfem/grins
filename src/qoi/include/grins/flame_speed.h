@@ -42,19 +42,19 @@ namespace GRINS
   public:
 
     FlameSpeed(const std::string& qoi_name);
-    
+
     virtual ~FlameSpeed();
-    
+
     virtual QoIBase* clone() const;
-    
+
     virtual bool assemble_on_interior() const;
-    
+
     virtual bool assemble_on_sides() const;
-    
-    virtual void side_qoi( AssemblyContext& context,
-                           const unsigned int qoi_index );
-    
-   
+
+    virtual void element_qoi( AssemblyContext& context,
+                              const unsigned int qoi_index);
+
+
 
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
@@ -63,25 +63,17 @@ namespace GRINS
     virtual void init_context( AssemblyContext& context );
 
     libMesh::Real M_dot( const libMesh::Point& p, const AssemblyContext& c ) const;
-    void mass_fractions( const libMesh::Point& p, const AssemblyContext& c,
-                         std::vector<libMesh::Real>& mass_fracs ) const;
-
-
 
   protected:
 
     void parse_Pressure( const GetPot& input);
 
-    const PrimitiveTempFEVariables * _temp_vars;
     const SingleVariable * _mass_flux_vars;
-    const SpeciesMassFractionsVariable * _species_vars;
-    
+
+    std::vector<libMesh::Real> Mass_Fractions;
+
     libMesh::Real rho( libMesh::Real T, libMesh::Real p0, libMesh::Real R_mix) const;
 
-    //! List of boundary ids for which we want to compute this QoI
-    std::set<libMesh::boundary_id_type> _bc_ids;
-
- 
     std::shared_ptr<Chemistry> _chemistry;
 
     libMesh::Real _P0;
@@ -103,27 +95,27 @@ namespace GRINS
     value = p0/(R_mix*T);
     return value;
   }
-  
+
   template< typename Chemistry>
     inline
     libMesh::Real FlameSpeed<Chemistry>::M_dot( const libMesh::Point& p,
 				     const AssemblyContext& c ) const
   { return c.point_value(_mass_flux_vars->var(),p); }
-  
- 
+
+
   template< typename Chemistry>
     inline
     bool FlameSpeed<Chemistry>::assemble_on_interior() const
   {
-    return false;
+    return true;
   }
   template< typename Chemistry>
   inline
     bool FlameSpeed<Chemistry>::assemble_on_sides() const
   {
-   return true;
+   return false;
   }
-  
-    
+
+
 }
 #endif //GRINS_Flame_Speed_H

@@ -26,9 +26,17 @@
 // This class
 #include "grins/flame_speed.h"
 
+
 // GRINS
 #include "grins/variable_warehouse.h"
 #include "grins/chemistry_builder.h"
+#include "grins/physics.h"
+
+// libMesh
+#include "libmesh/string_to_enum.h"
+#include "libmesh/quadrature.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/elem.h"
 
 #if GRINS_HAVE_ANTIOCH
 #include "grins/antioch_chemistry.h"
@@ -42,7 +50,7 @@ namespace GRINS
 {
   template< typename Chemistry>
   FlameSpeed<Chemistry>::FlameSpeed( const std::string& qoi_name)
-    : QoIBase(qoi_name)      
+    : QoIBase(qoi_name)
   {
     return;
   }
@@ -56,7 +64,6 @@ namespace GRINS
   template< typename Chemistry>
   QoIBase* FlameSpeed<Chemistry>::clone() const
   {
-    //libmesh_not_implemented();
      return new FlameSpeed(*this);
   }
 
@@ -69,36 +76,29 @@ namespace GRINS
   {
     //grab the pressure value
     this->parse_Pressure(input);
+    //grab the unburnt temperature value
     this->set_parameter
       ( _T_unburnt, input,"QoI/FlameSpeed/Unburnt_Temperature" , -1.0 );
+
+
+
     //figure out the chemistry
      std::string material = input("QoI/FlameSpeed/material","DIE!");
      _chemistry.reset( new Chemistry(input,material));
-       
 
-    // Read boundary ids for which we want to compute, and make sure they are specified
-    int num_bcs =  input.vector_variable_size("QoI/FlameSpeed/bc_ids");
+     //For a one dimensional premixed flame, the unburnt species values have to already be
+     //specified for the physics, grabbing those values.
+     Mass_Fractions.resize(this->_chemistry->n_species());
+     for (unsigned int s = 0; s < this->_chemistry->n_species(); s++)
+       {
+         this->set_parameter(Mass_Fractions[s], input, "Physics/"+PhysicsNaming::od_premixed_flame()+"/"
+                             +_chemistry->species_name(s), 0.0);
+       }
 
-    if( num_bcs <= 0 )
-      {
-        std::cerr << "Error: Must specify at least one boundary id to compute"
-                  << " Flame Speed" << std::endl
-                  << "Found: " << num_bcs << std::endl;
-        libmesh_error();
-      }
-    //insert the boundary id specified
-    for( int i = 0; i < num_bcs; i++ )
-      {
-        _bc_ids.insert( input("QoI/FlameSpeed/bc_ids", -1, i ) );
-      }
-
-    //Set our Vaiables and number of species
-    _temp_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
+    //Set our Vaiables
     _mass_flux_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
-    _species_vars= &GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>(VariablesParsing::species_mass_frac_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
+
   }
-
-
 
 
 
@@ -107,62 +107,41 @@ namespace GRINS
   template< typename Chemistry>
   void FlameSpeed<Chemistry>::init_context( AssemblyContext& context )
   {
-    libMesh::FEBase* T_fe;
+    libMesh::FEBase* M_fe;
 
-    context.get_side_fe<libMesh::Real>(this->_temp_vars->T(), T_fe);
+    context.get_element_fe<libMesh::Real>(this->_mass_flux_vars->var(), M_fe);
 
-    T_fe->get_dphi();
-    T_fe->get_JxW();
+    M_fe->get_dphi();
+    M_fe->get_JxW();
+    M_fe->get_xyz();
 
     return;
   }
 
-
-  //###############################################################################################################
-
   template< typename Chemistry>
-  void FlameSpeed<Chemistry>::side_qoi( AssemblyContext& context,
-                                       const unsigned int qoi_index )
+  void FlameSpeed<Chemistry>::element_qoi( AssemblyContext & context,
+                                           const unsigned qoi_index)
   {
-    bool on_correct_side = false;
-
-    for (std::set<libMesh::boundary_id_type>::const_iterator id =
-           _bc_ids.begin(); id != _bc_ids.end(); id++ )
-      if( context.has_side_boundary_id( (*id) ) )
-        {
-          on_correct_side = true;
-          break;
-        }
-
-    if (!on_correct_side)
-      return;
-    
-    libMesh::Number& qoi = context.get_qois()[qoi_index];
-    libMesh::Real p0 = this->_P0;
-    libMesh::Real Mdot = context.side_value(this->_mass_flux_vars->var(),0);
-
-    std::vector<libMesh::Real> mass_fractions;
-    mass_fractions.resize(this->_species_vars->n_species());
-    for (unsigned int s=0; s < this->_species_vars->n_species(); s++)
+    if(context.get_elem().contains_point(0.01) ) //if were at 1 cm off the boundary
       {
-	mass_fractions[s] = context.side_value(this->_species_vars->species(s),0);
+
+        libMesh::Number& qoi = context.get_qois()[qoi_index];
+        libMesh::Real p0 = this->_P0;
+        libMesh::Real Mdot = context.point_value(this->_mass_flux_vars->var(),0.01);
+
+
+        libMesh::Real Rmix = _chemistry->R_mix(Mass_Fractions);
+
+        qoi += Mdot/(this->rho(_T_unburnt,p0, Rmix));
       }
-    libMesh::Real Rmix = _chemistry->R_mix(mass_fractions);
-
-    qoi += Mdot/(this->rho(_T_unburnt,p0, Rmix));
-  } //end side_qoi
-
-
-  //###########################################################################################################
-
-
+  }
 
   template< typename Chemistry>
   void FlameSpeed<Chemistry>::parse_Pressure( const GetPot& input)
   {
     //grab where the value is located in input file
     std::string material = input("QoI/FlameSpeed/material", "NoMaterial!");
-    
+
     if( input.have_variable("Materials/"+material+"/ThermodynamicPressure/value") )
       {
         this->set_parameter

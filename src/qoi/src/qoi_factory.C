@@ -105,7 +105,7 @@ namespace GRINS
         qoi = new AverageNusseltNumber( avg_nusselt );
       }
 
- 
+
     else if( qoi_name == parsed_boundary )
       {
         qoi =  new ParsedBoundaryQoI( parsed_boundary );
@@ -128,16 +128,17 @@ namespace GRINS
 
    else if ( qoi_name == flame_speed )
       {
+        std::string material = input("QoI/FlameSpeed/material","NONE");
+        std::string ChemistryModel = input("Materials/" + material + "/GasMixture/thermochemistry_library", "none" );
+        if(ChemistryModel == "antioch")
+          qoi = new FlameSpeed<AntiochChemistry>( flame_speed);
+        else if(ChemistryModel == "cantera")
+          qoi = new FlameSpeed<CanteraMixture>(flame_speed);
 
-#if GRINS_HAVE_ANTIOCH
-        qoi = new FlameSpeed<AntiochChemistry>( flame_speed);
-#elif GRINS_HAVE_CANTERA
-        qoi = new FlameSpeed<CanteraMixture>(flame_speed);
-#else
-        libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the SpectroscopicAbsorption QoI");
-#endif
+        else
+          libmesh_error_msg("ERROR: Must Specify material name in the flamespeed qoi section, and make sure the thermochemistry_library is either: 'cantera' or 'antioch'.");
       }
-    
+
     else if( qoi_name == integrated_function )
       {
         std::string function;
