@@ -105,21 +105,6 @@ g = '0.0 -9.81' #[m/s^2]
       order = 'FIRST'
 []
 
-[Variables]
-   [./Velocity]
-      names = 'u v'
-      fe_family = 'LAGRANGE'
-      order = 'FIRST'
-   [../Pressure]
-      names = 'p'
-      fe_family = 'LAGRANGE'
-      order = 'FIRST'
-   [../Temperature]
-      names = 'T'
-      fe_family = 'LAGRANGE'
-      order = 'FIRST'
-[]
-
 [Stabilization]
 
 tau_constant_vel = '1.0'
@@ -127,7 +112,6 @@ tau_factor_vel = '1.0'
 
 tau_constant_T = '1.0'
 tau_factor_T = '3.0'
-
 
 []
 
@@ -194,6 +178,5 @@ solver_verbose = true
 solver_quiet = false
 
 print_element_jacobians = 'false'
-
 
 []
