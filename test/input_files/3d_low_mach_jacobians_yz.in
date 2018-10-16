@@ -98,7 +98,7 @@ scaling = '0.0332262120257623' #'${/ ${Pr_over_TwomuT} ${Physics/LowMachNavierSt
       n_elems_z = '3'
 []
 
-# Options for tiem solvers
+# Options for time solvers
 
 
 

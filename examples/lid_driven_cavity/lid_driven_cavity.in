@@ -79,7 +79,7 @@ tau_factor = '1.0'
 []
 
 
-# Options for tiem solvers
+# Options for time solvers
 [unsteady-solver]
 transient = 'true'
 theta = '1.0'

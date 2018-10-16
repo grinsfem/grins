@@ -71,7 +71,7 @@
       element_type = 'QUAD4'
 []
 
-# Options for tiem solvers
+# Options for time solvers
 
 
 []

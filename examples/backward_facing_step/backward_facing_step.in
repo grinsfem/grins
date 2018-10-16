@@ -64,7 +64,7 @@ tau_factor = '0.05'
       filename = 'mesh.e'
 []
 
-# Options for tiem solvers
+# Options for time solvers
 [unsteady-solver]
 transient = 'false'
 
