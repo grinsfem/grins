@@ -31,7 +31,7 @@
 
 namespace GRINS
 {
-  //! Adds Boussinesq bouyancy source term
+  //! Adds Boussinesq buoyancy source term
   /*!
     This class implements the Boussinesq approximation for thermal buoyancy.
     Namely:
@@ -41,9 +41,9 @@ namespace GRINS
     \f$ T_0 = \f$ reference temperature,
     \f$ \beta_T = \f$ coefficient of thermal expansion, and
     \f$ \mathbf{g} = \f$ the gravitional vector.
-    This source term to the governing flow equations through the
+    This adds a source term to the governing flow equations through the
     element_time_derivative routine. This class requires a flow physics enabled
-    and the ConvectiveHeatTransfer physics class enabled.
+    and the HeatTransfer physics class enabled.
   */
   class BoussinesqBuoyancy : public BoussinesqBuoyancyBase
   {
