@@ -7,13 +7,15 @@ uniformly_refine = '2'
 
 []
 
-# Options for time solvers
-[unsteady-solver]
-transient = false
-theta = 0.5
-n_timesteps = 1
-deltat = 0.1
-
+# Options for solvers
+[SolverOptions]
+  solver_type = 'grins_unsteady_solver'
+  [./TimeStepping]
+    solver_type = 'libmesh_euler_solver'
+    theta = 0.5
+    n_timesteps = 1
+    delta_t = 0.1
+  [../]
 []
 
 #Linear and nonlinear solver options

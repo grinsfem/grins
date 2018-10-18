@@ -17,9 +17,10 @@
       uniformly_refine = '2'
 []
 
-# Options for time solvers
-[unsteady-solver]
-transient = false
+# Options for solvers
+[SolverOptions]
+  solver_options = 'grins_steady_solver'
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

@@ -19,8 +19,8 @@
    restart_file = './turbulent_airfoil_Re_6000000.xda'
 []
 
-[unsteady-solver]
-transient = false
+[SolverOptions]
+  solver_type = 'grins_steady_solver'
 []
 
 #Linear and nonlinear solver options

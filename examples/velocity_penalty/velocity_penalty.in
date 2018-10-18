@@ -83,11 +83,15 @@ tau_factor = '1.0'
 []
 
 # Options for time solvers
-[unsteady-solver]
-transient = 'true'
-theta = '1.0'
-n_timesteps = '25'
-deltat = '0.1'
+[SolverOptions]
+  solver_type = 'grins_unsteady_solver'
+  [./TimeStepping]
+    solver_type = 'libmesh_euler_solver'
+    theta = '1.0'
+    n_timesteps = '25'
+    delta_t = '0.1'
+  [../]
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

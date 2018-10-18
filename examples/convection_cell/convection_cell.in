@@ -121,8 +121,6 @@ tau_factor_T = '3.0'
 
 []
 
-
-
 # Mesh related options
 [Mesh]
    [./Generation]
@@ -137,11 +135,15 @@ tau_factor_T = '3.0'
 []
 
 # Options for time solvers
-[unsteady-solver]
-transient = 'true'
-theta = 1.0
-n_timesteps = '250'
-deltat = '0.25'
+[SolverOptions]
+  solver_type = 'grins_unsteady_solver'
+  [./TimeStepping]
+    solver_type = 'libmesh_euler_solver'
+    theta = 1.0
+    n_timesteps = '250'
+    delta_t = '0.25'
+  [../]
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

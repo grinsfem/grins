@@ -64,9 +64,10 @@ tau_factor = '0.05'
       filename = 'mesh.e'
 []
 
-# Options for time solvers
-[unsteady-solver]
-transient = 'false'
+# Options for solvers
+[SolverOptions]
+  solver_type = 'grins_steady_solver'
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
