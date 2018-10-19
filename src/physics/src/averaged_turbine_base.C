@@ -49,6 +49,7 @@ namespace GRINS
     _var(GRINSPrivate::VariableWarehouse::get_variable_subclass<ScalarVariable>(VariablesParsing::scalar_variable_name(input,physics_name,VariablesParsing::PHYSICS)))
   {
     this->read_input_options(input);
+    _var.set_is_constraint_var(true);
   }
 
   template<class Mu>
