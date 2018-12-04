@@ -24,7 +24,7 @@
 
 
 // This class
-#include "grins/spectroscopic_absorption.h"
+#include "grins/spectroscopic_qoi_base.h"
 #include "grins/absorption_coeff.h"
 #include "grins/integrated_function.h"
 
@@ -42,40 +42,28 @@
 
 namespace GRINS
 {
-  SpectroscopicAbsorption::SpectroscopicAbsorption( const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
-                                                    const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv)
-    : SpectroscopicQoIBase(absorb,rayfire,qoi_name,output_as_csv)
+  SpectroscopicQoIBase::SpectroscopicQoIBase( const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
+                                              const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv)
+    : IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >(2 /* QGauss order */,absorb,rayfire,qoi_name),
+      _output_as_csv(output_as_csv)
   {}
 
-  QoIBase * SpectroscopicAbsorption::clone() const
+  void SpectroscopicQoIBase::output_qoi(std::ostream & out) const
   {
-    return new SpectroscopicAbsorption( *this );
-  }
+    if (_output_as_csv)
+      {
+        const AbsorptionCoeffBase & abs = libMesh::cast_ref<const AbsorptionCoeffBase &>(this->get_function());
+        libMesh::Real nu = abs.get_wavenumber();
 
-  void SpectroscopicAbsorption::parallel_op( const libMesh::Parallel::Communicator & communicator,
-                                             libMesh::Number & sys_qoi,
-                                             libMesh::Number & local_qoi )
-  {
-    QoIBase::parallel_op(communicator,sys_qoi,local_qoi);
-
-    // absorption coefficient is calculated in [cm^-1], but path length is given in [m]
-    // 100.0 factor converts pathlength to [cm]
-    sys_qoi = 1.0 - std::exp( -sys_qoi * 100.0 );
-    QoIBase::_qoi_value = sys_qoi;
-  }
-
-  void SpectroscopicAbsorption::finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index)
-  {
-    if (!derivatives.closed())
-      derivatives.close();
-
-    // We recalculate the _qoi_value to make sure
-    // it is set and up-to-date
-    libMesh::QoISet qs;
-    qs.add_index(qoi_index);
-    _multiphysics_system->assemble_qoi(qs);
-
-    derivatives.scale(100.0 * (1.0-QoIBase::_qoi_value));
+        out << std::setprecision(16)
+            << std::scientific
+            << nu << ","
+            << _qoi_value << std::endl;
+      }
+    else
+      {
+        QoIBase::output_qoi(out);
+      }
   }
 
 } //namespace GRINS

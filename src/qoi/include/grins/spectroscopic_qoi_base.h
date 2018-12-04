@@ -23,11 +23,10 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_SPECTROSCOPIC_ABSORPTION_H
-#define GRINS_SPECTROSCOPIC_ABSORPTION_H
+#ifndef GRINS_SPECTROSCOPIC_QOI_BASE_H
+#define GRINS_SPECTROSCOPIC_QOI_BASE_H
 
 // GRINS
-#include "grins/spectroscopic_qoi_base.h"
 #include "grins/integrated_function.h"
 #include "grins/absorption_coeff.h"
 #include "grins/single_variable.h"
@@ -40,13 +39,9 @@ namespace GRINS
     Relies upon the IntegratedFunction class for hooking into QoI infrastructure,
     and AbsorptionCoeff class for evaluating the <i>spectral absorption coefficient</i>, \f$ k_{\nu} \f$
 
-    \f$ \frac{I_{\nu}^0 - I_{\nu}}{I_{\nu}^0} = 1.0 - \exp\left\{- \int_0^L k_{\nu} dx\right\} \f$
-
-    where \f$ \frac{I_{\nu}^0 - I_{\nu}}{I_{\nu}^0} \f$ is the <i>spectral absorption</i>
-
     Expects all parameters given in standard SI units [m], [K], [Pa]
   */
-  class SpectroscopicAbsorption : public SpectroscopicQoIBase
+  class SpectroscopicQoIBase : public IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >
   {
   public:
 
@@ -55,21 +50,18 @@ namespace GRINS
       @param output_as_csv Flag for whether we should output QoI value in wavenumber,absorption CSV format
         or in the normal QoIBase way
     */
-    SpectroscopicAbsorption(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
+    SpectroscopicQoIBase(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
                             const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv);
 
-    virtual QoIBase * clone() const;
+    // Allow for outputting in CSV format
+    virtual void output_qoi(std::ostream & out) const;
 
-    //! Override the QoIBase implementation to perform exp(-kv*L)
-    virtual void parallel_op( const libMesh::Parallel::Communicator & communicator,
-                              libMesh::Number & sys_qoi,
-                              libMesh::Number & local_qoi );
+    SpectroscopicQoIBase() = delete;
 
-    //! Override DifferentiableQoI's empty implementation to add chain rule (QoI is exponential)
-    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index);
+  private:
 
-    SpectroscopicAbsorption() = delete;
+    bool _output_as_csv;
 
   };
 }
-#endif //GRINS_SPECTROSCOPIC_ABSORPTION_H
+#endif //GRINS_SPECTROSCOPIC_QOI_BASE_H

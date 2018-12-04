@@ -23,8 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_SPECTROSCOPIC_ABSORPTION_H
-#define GRINS_SPECTROSCOPIC_ABSORPTION_H
+#ifndef GRINS_SPECTROSCOPIC_TRANSMISSION_H
+#define GRINS_SPECTROSCOPIC_TRANSMISSION_H
 
 // GRINS
 #include "grins/spectroscopic_qoi_base.h"
@@ -40,13 +40,13 @@ namespace GRINS
     Relies upon the IntegratedFunction class for hooking into QoI infrastructure,
     and AbsorptionCoeff class for evaluating the <i>spectral absorption coefficient</i>, \f$ k_{\nu} \f$
 
-    \f$ \frac{I_{\nu}^0 - I_{\nu}}{I_{\nu}^0} = 1.0 - \exp\left\{- \int_0^L k_{\nu} dx\right\} \f$
+    \f$ \frac{I_{\nu}}{I_{\nu}^0} = \exp\left\{- \int_0^L k_{\nu} dx\right\} \f$
 
-    where \f$ \frac{I_{\nu}^0 - I_{\nu}}{I_{\nu}^0} \f$ is the <i>spectral absorption</i>
+    where \f$ \frac{I_{\nu}}{I_{\nu}^0} \f$ is the <i>spectral transmission</i>
 
     Expects all parameters given in standard SI units [m], [K], [Pa]
   */
-  class SpectroscopicAbsorption : public SpectroscopicQoIBase
+  class SpectroscopicTransmission : public SpectroscopicQoIBase
   {
   public:
 
@@ -55,8 +55,8 @@ namespace GRINS
       @param output_as_csv Flag for whether we should output QoI value in wavenumber,absorption CSV format
         or in the normal QoIBase way
     */
-    SpectroscopicAbsorption(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
-                            const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv);
+    SpectroscopicTransmission(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
+                               const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv);
 
     virtual QoIBase * clone() const;
 
@@ -68,8 +68,8 @@ namespace GRINS
     //! Override DifferentiableQoI's empty implementation to add chain rule (QoI is exponential)
     virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index);
 
-    SpectroscopicAbsorption() = delete;
+    SpectroscopicTransmission() = delete;
 
   };
 }
-#endif //GRINS_SPECTROSCOPIC_ABSORPTION_H
+#endif //GRINS_SPECTROSCOPIC_TRANSMISSION_H
