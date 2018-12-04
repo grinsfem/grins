@@ -43,7 +43,7 @@ namespace GRINSTesting
                             libMesh::Real desired_nu, const std::string & species,
                             libMesh::Real thermo_pressure);
 
-    friend class SpectroscopicAbsorptionTest;
+    friend class SpectroscopicTestBase;
   };
 
   template<typename Chemistry>

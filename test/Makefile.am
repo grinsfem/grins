@@ -116,6 +116,7 @@ unit_driver_SOURCES = unit/unit_driver.C \
                       unit/rayfireAMR_test_3d.C \
                       unit/integrated_function_test.C \
                       unit/hitran_test.C \
+                      unit/spectroscopic_transmission_test.C \
                       unit/spectroscopic_absorption_test.C \
                       unit/nonlinear_solver_options.C \
                       unit/overlapping_fluid_solid_mesh.C \
@@ -147,7 +148,8 @@ interface_driver_SOURCES = interface/interface_driver.C \
                            interface/absorption_coeff_testing.h \
                            interface/antioch_parsing_type.C \
                            interface/antioch_build_species_names.C \
-                           interface/rayfire_test_base.h
+                           interface/rayfire_test_base.h \
+                           interface/spectroscopic_test_base.h
 
 
 
