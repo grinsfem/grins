@@ -156,13 +156,19 @@ namespace GRINSTesting
     //! A 10x10 mesh with selectively refined elements
     void large_2D_mesh()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
-      GetPot input_quad4(filename);
+      std::string quad4_string = this->mesh_2D("QUAD4",10.0,10.0,10,10);
+      std::stringstream ss_quad4;
+      ss_quad4 << quad4_string;
+
+      GetPot input_quad4(ss_quad4);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
       test_large_mesh(mesh);
 
-      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem.in";
-      GetPot input_quad9(filename);
+      std::string quad9_string = this->mesh_2D("QUAD9",10.0,10.0,10,10);
+      std::stringstream ss_quad9;
+      ss_quad9 << quad9_string;
+
+      GetPot input_quad9(ss_quad9);
       mesh = this->build_mesh(input_quad9);
       test_large_mesh(mesh);
     }
@@ -182,15 +188,21 @@ namespace GRINSTesting
       children_not_in_rayfire.push_back(3);
 
       // QUAD 4
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
-      GetPot input4(filename);
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input4);
+      std::string quad4_string = this->mesh_2D("QUAD4",10.0,10.0,10,10);
+      std::stringstream ss_quad4;
+      ss_quad4 << quad4_string;
+
+      GetPot input_quad4(ss_quad4);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
       this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
       
       // QUAD 9
-      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
-      GetPot input9(filename);
-      mesh = this->build_mesh(input9);
+      std::string quad9_string = this->mesh_2D("QUAD9",10.0,10.0,10,10);
+      std::stringstream ss_quad9;
+      ss_quad9 << quad9_string;
+
+      GetPot input_quad9(ss_quad9);
+      mesh = this->build_mesh(input_quad9);
       this->amr_single_elem(mesh,origin,end_point,children_in_rayfire,children_not_in_rayfire);
     }
 
@@ -207,13 +219,19 @@ namespace GRINSTesting
     //! Test of the coarsening functionality
     void coarsen_elements()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad4_100elem.in";
-      GetPot input_quad4(filename);
+      std::string quad4_string = this->mesh_2D("QUAD4",10.0,10.0,10,10);
+      std::stringstream ss_quad4;
+      ss_quad4 << quad4_string;
+
+      GetPot input_quad4(ss_quad4);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
       test_coarsen(mesh);
 
-      filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_quad9_100elem.in";
-      GetPot input_quad9(filename);
+      std::string quad9_string = this->mesh_2D("QUAD9",10.0,10.0,10,10);
+      std::stringstream ss_quad9;
+      ss_quad9 << quad9_string;
+
+      GetPot input_quad9(ss_quad9);
       mesh = this->build_mesh(input_quad9);
       test_coarsen(mesh);
     }
@@ -256,8 +274,11 @@ namespace GRINSTesting
     //! Mesh contains 2 QUAD4 and 2 TRI3
     void mixed_type_mesh()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mixed_quad_tri.in";
-      GetPot input(filename);
+      std::string input_string = this->mesh_mixed_quad_tri();
+      std::stringstream ss;
+      ss << input_string;
+
+      GetPot input(ss);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
 
       libMesh::Point origin(0.0,0.25);

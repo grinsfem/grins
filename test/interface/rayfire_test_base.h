@@ -363,6 +363,15 @@ namespace GRINSTesting
       return text;
     }
 
+    std::string mesh_mixed_quad_tri()
+    {
+      std::string text = "[Mesh]\n";
+                  text += "[./Read]\n";
+                  text +=   "filename = './grids/mixed_quad_tri_square_mesh.xda'";
+
+      return text;
+    }
+
     std::string mesh_3D(const std::string & elem_type, libMesh::Real x_max, libMesh::Real y_max, libMesh::Real z_max, unsigned int nx, unsigned int ny, unsigned int nz)
     {
       std::string text = "[Mesh]\n";
