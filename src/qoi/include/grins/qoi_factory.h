@@ -68,6 +68,9 @@ namespace GRINS
     //! Helper function to read a required value from the input file, or error if value is missing
     template<typename T>
     void get_var_value( const GetPot & input, T & value, std::string input_var, T default_value);
+
+    //! Helper function to reduce code duplication in SpectroscopicTransmission and SpectroscopicAbsorption creation
+    bool create_spectroscopic_qoi(const GetPot & input, const std::string & qoi_name, const std::string & qoi_string, QoIBase ** qoi, std::shared_ptr<CompositeQoI> & qois);
   };
 }
 #endif // QOI_FACTORY_H
