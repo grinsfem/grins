@@ -1,4 +1,3 @@
-# Materials
 [Materials]
    [./TestMaterial]
       [./ThermalConductivity]
@@ -11,18 +10,14 @@
          value = '1.0'
 []
 
-# Options related to all Physics
 [Physics]
-
    enabled_physics = 'HeatConduction'
 
    [./HeatConduction]
-
       material = 'TestMaterial'
 []
 
 [BoundaryConditions]
-
    bc_ids = '0 1:2:3'
    bc_id_name_map = 'Dirichlet Neumann'
 
@@ -38,9 +33,7 @@
          type = 'adiabatic'
       [../]
    [../]
-
 []
-
 
 [Variables]
    [./Temperature]
@@ -49,7 +42,6 @@
       order = 'FIRST'
 []
 
-# Mesh related options
 [Mesh]
    [./Generation]
       dimension = '2'
@@ -63,14 +55,10 @@
 []
 
 [Strategies]
-
   [./MeshAdaptivity]
     disable_two_step_refinement = 'true'
-  [../]
-
 []
 
-#Linear and nonlinear solver options
 [linear-nonlinear-solver]
    max_nonlinear_iterations =  25
    max_linear_iterations = 2500
@@ -78,19 +66,3 @@
    relative_step_tolerance = '1.0e-12'
 []
 
-# Visualization options
-[vis-options]
-   output_vis = false
-   vis_output_file_prefix = 'laplace'
-   output_format = 'ExodusII xdr'
-[]
-
-# Options for print info to the screen
-[screen-options]
-   system_name = 'Laplace'
-   print_equation_system_info = 'true'
-   print_mesh_info = 'true'
-   print_log_info = 'true'
-   solver_verbose = 'true'
-   solver_quiet = 'false'
-[]
