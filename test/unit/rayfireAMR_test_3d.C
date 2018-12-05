@@ -306,9 +306,12 @@ namespace GRINSTesting
     //! Mimics a run from restart
     void init_on_refined_mesh()
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/mesh_hex27_27elem.in";
-      GetPot input_quad4(filename);
-      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input_quad4);
+      std::string input_string = this->mesh_3D("HEX27",3.0,3.0,3.0,3,3,3);
+      std::stringstream ss;
+      ss << input_string;
+
+      GetPot input(ss);
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
 
       // refine elem 1 before rayfire init
       libMesh::MeshRefinement mr(*mesh);

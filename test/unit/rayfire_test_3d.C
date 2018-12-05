@@ -163,8 +163,11 @@ namespace GRINSTesting
       exit_ids[3] = 2;
       exit_ids[4] = 0;
 
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_5elem.in");
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_5elem.in");
+      std::string hex8_string = this->mesh_3D("HEX8",5.0,1.0,1.0,5,1,1);
+      std::string hex27_string = this->mesh_3D("HEX27",5.0,1.0,1.0,5,1,1);
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,hex8_string);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,hex27_string);
     }
 
     void hex_27elem_3x3x3()
@@ -187,8 +190,11 @@ namespace GRINSTesting
       exit_ids[3] = 8;
       exit_ids[4] = 8;
 
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_27elem.in");
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_27elem.in");
+      std::string hex8_string = this->mesh_3D("HEX8",3.0,3.0,3.0,3,3,3);
+      std::string hex27_string = this->mesh_3D("HEX27",3.0,3.0,3.0,3,3,3);
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,hex8_string);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,hex27_string);
     }
 
     void fire_through_vertex()
@@ -203,8 +209,11 @@ namespace GRINSTesting
       std::vector<unsigned int> exit_ids(1);
       exit_ids[0] = 26;
 
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_27elem.in");
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_27elem.in");
+      std::string hex8_string = this->mesh_3D("HEX8",3.0,3.0,3.0,3,3,3);
+      std::string hex27_string = this->mesh_3D("HEX27",3.0,3.0,3.0,3,3,3);
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,hex8_string);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,hex27_string);
     }
 
     void origin_between_elems()
@@ -219,8 +228,11 @@ namespace GRINSTesting
       std::vector<unsigned int> exit_ids(1);
       exit_ids[0] = 26;
 
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex8_27elem.in");
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_hex27_27elem.in");
+      std::string hex8_string = this->mesh_3D("HEX8",3.0,3.0,3.0,3,3,3);
+      std::string hex27_string = this->mesh_3D("HEX27",3.0,3.0,3.0,3,3,3);
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,hex8_string);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,hex27_string);
     }
 
     //! This test replicates a failure from a larger mesh, hence the seemingly arbitrary coordinates

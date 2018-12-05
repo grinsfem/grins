@@ -23,6 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 #include "grins_config.h"
+#include <string>
 
 #ifdef GRINS_HAVE_CPPUNIT
 
@@ -163,8 +164,11 @@ namespace GRINSTesting
       exit_ids[1] = 3;
       exit_ids[2] = 3;
 
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad4_5elem.in");
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad9_5elem.in");
+      std::string quad4_string = this->mesh_2D("QUAD4",5.0,1.0,5,1);
+      std::string quad9_string = this->mesh_2D("QUAD9",5.0,1.0,5,1);
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,quad4_string);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,quad9_string);
     }
 
     void test_9elem_3x3()
@@ -187,8 +191,11 @@ namespace GRINSTesting
       exit_ids[3] = 6;
       exit_ids[4] = 0;
 
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad4_9elem.in");
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad9_9elem.in");
+      std::string quad4_string = this->mesh_2D("QUAD4",3.0,3.0,3,3);
+      std::string quad9_string = this->mesh_2D("QUAD9",3.0,3.0,3,3);
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,quad4_string);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,quad9_string);
     }
 
     void fire_through_vertex()
@@ -203,8 +210,11 @@ namespace GRINSTesting
       std::vector<unsigned int> exit_ids(1);
       exit_ids[0] = 8;
 
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad4_9elem.in");
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad9_9elem.in");
+      std::string quad4_string = this->mesh_2D("QUAD4",3.0,3.0,3,3);
+      std::string quad9_string = this->mesh_2D("QUAD9",3.0,3.0,3,3);
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,quad4_string);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,quad9_string);
     }
 
     void origin_between_elems()
@@ -220,8 +230,11 @@ namespace GRINSTesting
       std::vector<unsigned int> exit_ids(1);
       exit_ids[0] = 8;
 
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad4_9elem.in");
-      this->run_test_with_mesh_from_file(origin,pts,exit_ids,"mesh_quad9_9elem.in");
+      std::string quad4_string = this->mesh_2D("QUAD4",3.0,3.0,3,3);
+      std::string quad9_string = this->mesh_2D("QUAD9",3.0,3.0,3,3);
+
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,quad4_string);
+      this->run_test_with_mesh_from_file(origin,pts,exit_ids,quad9_string);
     }
 
     void quad4_off_origin()
