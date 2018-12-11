@@ -1,4 +1,3 @@
-# Materials
 [Materials]
    [./TestMaterial]
       [./ThermalConductivity]
@@ -30,14 +29,11 @@
            mass_diffusivity_model = 'constant_lewis'
 []
 
-# Options related to all Physics
 [Physics]
-
    enabled_physics = 'ReactingLowMachNavierStokes
                       ReactingLowMachNavierStokesSPGSMStabilization'
 
    [./ReactingLowMachNavierStokes]
-
       material = 'TestMaterial'
       pin_pressure = 'true'
       pin_location = '0.0 0.0'
@@ -52,12 +48,10 @@
 []
 
 [BoundaryConditions]
-
     bc_ids = '0:1:2:3'
     bc_id_name_map = 'Dirichlet'
 
     [./Dirichlet]
-
       [./Temperature]
          type = 'isothermal'
          T = '300.0'
@@ -98,7 +92,6 @@
       material = 'TestMaterial'
 []
 
-# Mesh related options
 [Mesh]
    [./Generation]
       dimension = '2'
@@ -112,11 +105,9 @@
 []
 
 [QoI]
-
   enabled_qois = 'spectroscopic_absorption'
 
   [./SpectroscopicAbsorption]
-
     material = 'TestMaterial'
     species_of_interest = 'CO2'
     hitran_data_file = './test_data/CO2_data.dat'
@@ -132,10 +123,8 @@
       theta = '0.0'
     [../]
   [../]
-
 []
 
-#Linear and nonlinear solver options
 [linear-nonlinear-solver]
    max_nonlinear_iterations =  25
    max_linear_iterations = 2500
@@ -150,3 +139,4 @@
       print_qoi = 'true'
    [../]
 []
+

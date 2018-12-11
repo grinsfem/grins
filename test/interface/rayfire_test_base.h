@@ -57,10 +57,12 @@ namespace GRINSTesting
   protected:
 
     //! Given an origin and a vector of end points, we will iterate through them based on the mesh given in the supplied input file
-    void run_test_with_mesh_from_file(libMesh::Point & origin, std::vector<libMesh::Point> & end_points, std::vector<unsigned int> & exit_elem_ids, const std::string & input_filename)
+    void run_test_with_mesh_from_file(libMesh::Point & origin, std::vector<libMesh::Point> & end_points, std::vector<unsigned int> & exit_elem_ids, const std::string & input_string)
     {
-      std::string filename = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/"+input_filename;
-      GetPot input(filename);
+      std::stringstream ss;
+      ss << input_string;
+
+      GetPot input(ss);
       std::shared_ptr<libMesh::UnstructuredMesh> mesh = this->build_mesh(input);
 
       // iterate over the end points for the given origin
@@ -345,6 +347,50 @@ namespace GRINSTesting
 
     }
 
+    std::string mesh_2D(const std::string & elem_type, libMesh::Real x_max, libMesh::Real y_max, unsigned int nx, unsigned int ny)
+    {
+      std::string text = "[Mesh]\n";
+                  text +=  "[./Generation]\n";
+                  text +=    "dimension = '2'\n";
+                  text +=    "element_type = '"+elem_type+"'\n";
+                  text +=    "x_min = '0'\n";
+                  text +=    "y_min = '0'\n";
+                  text +=    "x_max = '"+std::to_string(x_max)+"'\n";
+                  text +=    "y_max = '"+std::to_string(y_max)+"'\n";
+                  text +=    "n_elems_x = '"+std::to_string(nx)+"'\n";
+                  text +=    "n_elems_y = '"+std::to_string(ny)+"'";
+
+      return text;
+    }
+
+    std::string mesh_mixed_quad_tri()
+    {
+      std::string text = "[Mesh]\n";
+                  text += "[./Read]\n";
+                  text +=   "filename = './grids/mixed_quad_tri_square_mesh.xda'";
+
+      return text;
+    }
+
+    std::string mesh_3D(const std::string & elem_type, libMesh::Real x_max, libMesh::Real y_max, libMesh::Real z_max, unsigned int nx, unsigned int ny, unsigned int nz)
+    {
+      std::string text = "[Mesh]\n";
+                  text +=  "[./Generation]\n";
+                  text +=    "dimension = '3'\n";
+                  text +=    "element_type = '"+elem_type+"'\n";
+                  text +=    "x_min = '0'\n";
+                  text +=    "y_min = '0'\n";
+                  text +=    "z_min = '0'\n";
+                  text +=    "x_max = '"+std::to_string(x_max)+"'\n";
+                  text +=    "y_max = '"+std::to_string(y_max)+"'\n";
+                  text +=    "z_max = '"+std::to_string(z_max)+"'\n";
+                  text +=    "n_elems_x = '"+std::to_string(nx)+"'\n";
+                  text +=    "n_elems_y = '"+std::to_string(ny)+"'\n";
+                  text +=    "n_elems_z = '"+std::to_string(nz)+"'";
+
+      return text;
+    }
+ 
   };
 
 } // namespace GRINSTesting
