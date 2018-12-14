@@ -33,6 +33,7 @@ namespace GRINS
   const std::string parsed_interior = "parsed_interior";
   const std::string weighted_flux = "weighted_flux";
   const std::string integrated_function = "integrated_function";
+  const std::string spectroscopic_transmission = "spectroscopic_transmission";
   const std::string spectroscopic_absorption = "spectroscopic_absorption";
 }
 #endif //GRINS_QOI_NAMES_H

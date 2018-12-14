@@ -24,7 +24,7 @@
 
 
 // This class
-#include "grins/spectroscopic_absorption.h"
+#include "grins/spectroscopic_transmission.h"
 #include "grins/absorption_coeff.h"
 #include "grins/integrated_function.h"
 
@@ -42,17 +42,17 @@
 
 namespace GRINS
 {
-  SpectroscopicAbsorption::SpectroscopicAbsorption( const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
+  SpectroscopicTransmission::SpectroscopicTransmission( const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
                                                     const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv)
     : SpectroscopicQoIBase(absorb,rayfire,qoi_name,output_as_csv)
   {}
 
-  QoIBase * SpectroscopicAbsorption::clone() const
+  QoIBase * SpectroscopicTransmission::clone() const
   {
-    return new SpectroscopicAbsorption( *this );
+    return new SpectroscopicTransmission( *this );
   }
 
-  void SpectroscopicAbsorption::parallel_op( const libMesh::Parallel::Communicator & communicator,
+  void SpectroscopicTransmission::parallel_op( const libMesh::Parallel::Communicator & communicator,
                                              libMesh::Number & sys_qoi,
                                              libMesh::Number & local_qoi )
   {
@@ -60,11 +60,11 @@ namespace GRINS
 
     // absorption coefficient is calculated in [cm^-1], but path length is given in [m]
     // 100.0 factor converts pathlength to [cm]
-    sys_qoi = 1.0 - std::exp( -sys_qoi * 100.0 );
+    sys_qoi = std::exp( -sys_qoi * 100.0 );
     QoIBase::_qoi_value = sys_qoi;
   }
 
-  void SpectroscopicAbsorption::finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index)
+  void SpectroscopicTransmission::finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index)
   {
     if (!derivatives.closed())
       derivatives.close();
@@ -75,7 +75,7 @@ namespace GRINS
     qs.add_index(qoi_index);
     _multiphysics_system->assemble_qoi(qs);
 
-    derivatives.scale(100.0 * (1.0-QoIBase::_qoi_value));
+    derivatives.scale(100.0 * -QoIBase::_qoi_value);
   }
 
 } //namespace GRINS

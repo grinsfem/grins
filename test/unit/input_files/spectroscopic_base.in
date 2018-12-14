@@ -95,34 +95,11 @@
 [Mesh]
    [./Generation]
       dimension = '2'
-      n_elems_x = '1'
-      n_elems_y = '1'
       x_min = '0.0'
       x_max = '0.10'
       y_min = '0.0'
       y_max = '0.10'
       element_type = 'QUAD4'
-[]
-
-[QoI]
-  enabled_qois = 'spectroscopic_absorption'
-
-  [./SpectroscopicAbsorption]
-    material = 'TestMaterial'
-    species_of_interest = 'CO2'
-    hitran_data_file = './test_data/CO2_data.dat'
-    hitran_partition_function_file = './test_data/CO2_partition_function.dat'
-    partition_temperatures = '290 310 0.01'
-    desired_wavenumber = '3682.7649'
-    min_wavenumber = '3682.69'
-    max_wavenumber = '3682.8'
-    calc_thermo_pressure = 'false'
-
-    [./Rayfire]
-      origin = '0.0 0.025'
-      theta = '0.0'
-    [../]
-  [../]
 []
 
 [linear-nonlinear-solver]

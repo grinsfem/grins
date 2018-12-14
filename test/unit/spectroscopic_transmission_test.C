@@ -57,11 +57,11 @@
 
 namespace GRINSTesting
 {
-  class SpectroscopicAbsorptionTest : public CppUnit::TestCase,
-                                      public SpectroscopicTestBase
+  class SpectroscopicTransmissionTest : public CppUnit::TestCase,
+                                        public GRINSTesting::SpectroscopicTestBase
   {
   public:
-    CPPUNIT_TEST_SUITE( SpectroscopicAbsorptionTest );
+    CPPUNIT_TEST_SUITE( SpectroscopicTransmissionTest );
     CPPUNIT_TEST( single_elem_mesh );
     CPPUNIT_TEST( multi_elem_mesh );
     CPPUNIT_TEST( param_derivs );
@@ -81,9 +81,9 @@ namespace GRINSTesting
     void single_elem_mesh()
     {
       std::stringstream ss;
-      ss << this->spectroscopic_string("spectroscopic_absorption","SpectroscopicAbsorption",1,1);
+      ss << this->spectroscopic_string("spectroscopic_transmission","SpectroscopicTransmission",1,1);
 
-      libMesh::Real calc_answer = 1.0 - 0.520403290868787;
+      libMesh::Real calc_answer = 0.520403290868787;
 
       this->run_test(ss,calc_answer);
     }
@@ -92,9 +92,9 @@ namespace GRINSTesting
     void multi_elem_mesh()
     {
       std::stringstream ss;
-      ss << this->spectroscopic_string("spectroscopic_absorption","SpectroscopicAbsorption",3,3);
+      ss << this->spectroscopic_string("spectroscopic_transmission","SpectroscopicTransmission",3,3);
 
-      libMesh::Real calc_answer = 1.0 - 0.520403290868787; // same physical conditions as single_elem_mesh, so answer should not change
+      libMesh::Real calc_answer = 0.520403290868787; // same physical conditions as single_elem_mesh, so answer should not change
 
       this->run_test(ss,calc_answer);
     }
@@ -102,7 +102,7 @@ namespace GRINSTesting
     void param_derivs()
     {
       std::stringstream ss;
-      ss << this->spectroscopic_string("spectroscopic_absorption","SpectroscopicAbsorption",1,1);
+      ss << this->spectroscopic_string("spectroscopic_transmission","SpectroscopicTransmission",1,1);
 
       this->param_deriv_test(ss);
     }
@@ -110,7 +110,7 @@ namespace GRINSTesting
     void elem_qoi_derivatives()
     {
       std::stringstream ss;
-      ss << this->spectroscopic_string("spectroscopic_absorption","SpectroscopicAbsorption",1,1);
+      ss << this->spectroscopic_string("spectroscopic_transmission","SpectroscopicTransmission",1,1);
 
       this->elem_qoi_derivative_test(ss);
     }
@@ -118,14 +118,14 @@ namespace GRINSTesting
     void test_assemble_qoi_derivatives()
     {
       std::stringstream ss;
-      ss << this->spectroscopic_string("spectroscopic_absorption","SpectroscopicAbsorption",1,1);
+      ss << this->spectroscopic_string("spectroscopic_transmission","SpectroscopicTransmission",1,1);
 
       this->assemble_qoi_derivative_test(ss);
     }
 
   };
 
-  CPPUNIT_TEST_SUITE_REGISTRATION( SpectroscopicAbsorptionTest );
+  CPPUNIT_TEST_SUITE_REGISTRATION( SpectroscopicTransmissionTest );
 
 } // end namespace GRINSTesting
 
