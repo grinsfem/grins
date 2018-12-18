@@ -185,6 +185,7 @@ libgrins_la_SOURCES += properties/src/chemistry_builder.C
 # src/qoi files
 libgrins_la_SOURCES += qoi/src/average_nusselt_number.C
 libgrins_la_SOURCES += qoi/src/qoi_base.C
+libgrins_la_SOURCES += qoi/src/multi_qoi_base.C
 libgrins_la_SOURCES += qoi/src/qoi_factory.C
 libgrins_la_SOURCES += qoi/src/vorticity.C
 libgrins_la_SOURCES += qoi/src/composite_qoi.C
@@ -500,6 +501,7 @@ include_HEADERS += properties/include/grins/chemistry_builder.h
 # src/qoi headers
 include_HEADERS += qoi/include/grins/average_nusselt_number.h
 include_HEADERS += qoi/include/grins/qoi_base.h
+include_HEADERS += qoi/include/grins/multi_qoi_base.h
 include_HEADERS += qoi/include/grins/qoi_factory.h
 include_HEADERS += qoi/include/grins/qoi_names.h
 include_HEADERS += qoi/include/grins/vorticity.h
