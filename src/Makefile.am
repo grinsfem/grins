@@ -200,6 +200,9 @@ libgrins_la_SOURCES += qoi/src/absorption_coeff.C
 libgrins_la_SOURCES += qoi/src/spectroscopic_qoi_base.C
 libgrins_la_SOURCES += qoi/src/spectroscopic_transmission.C
 libgrins_la_SOURCES += qoi/src/spectroscopic_absorption.C
+libgrins_la_SOURCES += qoi/src/laser_intensity_profile_base.C
+libgrins_la_SOURCES += qoi/src/constant_laser_intensity_profile.C
+libgrins_la_SOURCES += qoi/src/collimated_gaussian_laser_intensity_profile.C
 
 # src/solver files
 libgrins_la_SOURCES += solver/src/solver.C
@@ -520,6 +523,9 @@ include_HEADERS += qoi/include/grins/spectroscopic_qoi_base.h
 include_HEADERS += qoi/include/grins/spectroscopic_transmission.h
 include_HEADERS += qoi/include/grins/spectroscopic_absorption.h
 include_HEADERS += qoi/include/grins/fem_function_and_derivative_base.h
+include_HEADERS += qoi/include/grins/laser_intensity_profile_base.h
+include_HEADERS += qoi/include/grins/constant_laser_intensity_profile.h
+include_HEADERS += qoi/include/grins/collimated_gaussian_laser_intensity_profile.h
 
 # src/solver headers
 include_HEADERS += solver/include/grins/solver.h
