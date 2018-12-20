@@ -35,5 +35,6 @@ namespace GRINS
   const std::string integrated_function = "integrated_function";
   const std::string spectroscopic_transmission = "spectroscopic_transmission";
   const std::string spectroscopic_absorption = "spectroscopic_absorption";
+  const std::string laser_absorption = "laser_absorption";
 }
 #endif //GRINS_QOI_NAMES_H
