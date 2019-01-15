@@ -56,6 +56,7 @@ namespace GRINSTesting
   public:
     CPPUNIT_TEST_SUITE( LaserAbsorptionTest );
     CPPUNIT_TEST( two_dimension_mesh );
+    CPPUNIT_TEST( three_dimension_mesh );
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -72,9 +73,8 @@ namespace GRINSTesting
     {
       libMesh::Real calc_answer = 4.7959591239712063e-01;
 
-      std::stringstream ss;
-
       // left to right
+      std::stringstream ss;
       ss << this->laser_string_2D("laser_absorption","LaserAbsorption","0.0 0.0501","0.0 0.0500","0.0 0.0499",0.0,10,10);
       this->run_test(ss,calc_answer);
 
@@ -84,6 +84,32 @@ namespace GRINSTesting
       std::stringstream ss2;
       ss2 << this->laser_string_2D("laser_absorption","LaserAbsorption","0.0501 0.0","0.0500 0.0","0.0499 0.0",1.57079632679,10,10);
       this->run_test(ss2,calc_answer);
+    }
+
+    //! 3x3x3 mesh of HEX8 with simple, non-moving flow. Hence, orientation and position of the optical paths
+    //! should not change the QoI value
+    void three_dimension_mesh()
+    {
+      libMesh::Real calc_answer = 4.7959591239712063e-01;
+
+      // left to right
+      std::stringstream ss;
+      ss << this->laser_string_3D("laser_absorption","LaserAbsorption","0.0500 0.0501 0.0","0.0500 0.0500 0.0","0.0501 0.0500 0.0",0.0,0.0,3,3,3);
+      this->run_test(ss,calc_answer);
+
+      this->tearDown();
+
+      // bottom to top
+      std::stringstream ss2;
+      ss2 << this->laser_string_3D("laser_absorption","LaserAbsorption","0.0 0.0500 0.0501","0.0 0.0500 0.0500","0.0 0.0501 0.0500",0.0,1.57079632679,3,3,3);
+      this->run_test(ss2,calc_answer);
+
+      this->tearDown();
+
+      // front to back
+      std::stringstream ss3;
+      ss3 << this->laser_string_3D("laser_absorption","LaserAbsorption","0.0500 0.0 0.0501","0.0500 0.0 0.0500","0.0501 0.0 0.0500",1.57079632679,1.57079632679,3,3,3);
+      this->run_test(ss3,calc_answer);
     }
 
   };
