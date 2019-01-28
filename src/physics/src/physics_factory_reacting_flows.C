@@ -202,7 +202,7 @@ namespace GRINS
       {
         {
           std::string msg = "WARNING: Specifying thermo_model = "+AntiochOptions::cea_nasa_model();
-          msg += "is DEPREACATED!\n";
+          msg += " is DEPREACATED!\n";
           msg += "         You should specify either "+AntiochOptions::stat_mech_thermo_model();
           msg += "or "+AntiochOptions::ideal_gas_thermo_model()+"\n";
           grins_warning(msg);
@@ -310,7 +310,7 @@ namespace GRINS
       {
         {
           std::string msg = "WARNING: Specifying thermo_model = "+AntiochOptions::cea_nasa_model();
-          msg += "is DEPREACATED!\n";
+          msg += " is DEPREACATED!\n";
           msg += "         You should specify either "+AntiochOptions::stat_mech_thermo_model();
           msg += "or "+AntiochOptions::ideal_gas_thermo_model()+"\n";
           grins_warning(msg);
