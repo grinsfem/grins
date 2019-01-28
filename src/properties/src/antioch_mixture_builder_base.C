@@ -227,7 +227,7 @@ namespace GRINS
     if( input.have_variable(old_option) )
       {
         parsing_type = Antioch::ASCII;
-        std::string warning = "WARNING: Specifying "+old_option+"is DEPRECATED!\n";
+        std::string warning = "WARNING: Specifying "+old_option+" is DEPRECATED!\n";
         warning += "         Instead use the option "+prefix+"/species\n";
         warning += "         or, preferred, use XML or ChemKin formats so that species\n";
         warning += "         are parsed automatically.\n";
