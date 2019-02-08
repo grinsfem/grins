@@ -2,9 +2,9 @@
 <ctml>
 <validate reactions="no" species="yes"/>
 
- <!-- phase bunsen     -->
-  <phase dim="3" id="ozone">
-    <elementArray datasrc="elements.xml">O </elementArray>
+  <!-- Gas -->
+  <phase dim="3" id="gas">
+    <elementArray datasrc="elements.xml">O C N</elementArray>
     <speciesArray datasrc="#species_data">
       CO2  N2
     </speciesArray>

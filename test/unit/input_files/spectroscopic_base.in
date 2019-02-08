@@ -18,15 +18,15 @@
 
       [../GasMixture]
         thermochemistry_library = 'antioch'
-        species = 'CO2 N2'
-        kinetics_data = './test_data/CO2_N2.xml'
 
         [./Antioch]
-           transport_model = 'constant'
-           thermo_model = 'cea'
-           viscosity_model = 'constant'
-           thermal_conductivity_model = 'constant'
-           mass_diffusivity_model = 'constant_lewis'
+          chemical_data = './test_data/CO2_N2.xml'
+          gas_mixture = 'gas'
+          transport_model = 'constant'
+          thermo_model = 'ideal_gas'
+          viscosity_model = 'constant'
+          thermal_conductivity_model = 'constant'
+          mass_diffusivity_model = 'constant_lewis'
 []
 
 [Physics]
