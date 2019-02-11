@@ -36,6 +36,7 @@
 #include "libmesh/mesh_modification.h"
 #include "libmesh/mesh_refinement.h"
 #include "libmesh/parallel_mesh.h"
+#include "libmesh/partitioner.h"
 #include "libmesh/parsed_function.h"
 #include "libmesh/serial_mesh.h"
 #include "libmesh/elem.h"
@@ -385,6 +386,18 @@ namespace GRINS
             mesh.all_second_order();
           }
       }
+
+    bool allow_remote_elem_deletion = input("Mesh/Refinement/allow_remote_elem_deletion", true);
+    if (allow_remote_elem_deletion == false)
+      mesh.allow_remote_element_removal(false);
+
+    bool allow_renumbering = input("Mesh/Refinement/allow_renumbering", true);
+    if (allow_renumbering == false)
+      mesh.allow_renumbering(false);
+
+    bool disable_partitioning = input("Mesh/Refinement/disable_partitioning", false);
+    if (disable_partitioning == true)
+      mesh.partitioner() = nullptr;
 
     int uniformly_refine = input("Mesh/Refinement/uniformly_refine", 0);
     this->deprecated_option( input, "mesh-options/uniformly_refine", "Mesh/Refinement/uniformly_refine", 0, uniformly_refine );
