@@ -142,6 +142,15 @@
        # If the value is less than zero, no refinements will be done.
        locally_h_refine = '(9-x)/4.5+(abs(y)<.2)'
 
+       # Specify if you wish for the mesh to not be renumbered upon refinement. Default = true
+       allow_renumbering = 'false'
+
+       # Allow remote element removal during refinement? Default = true
+       allow_remote_elem_deletion = 'false'
+
+       # Optionally disable the partitioner during refinement. Default = enabled
+       disable_partitioning = 'true'
+
    # Options related to input-based mesh redistribution
    [../Redistribution]
 
@@ -222,7 +231,7 @@
            # variable is not used and not needed.
            gas_mixture = 'air4sp'
 
-           
+
            # The type of transport model. Currently accepted values
            # are: constant, mixture_averaged
            transport_model = 'constant'
@@ -263,7 +272,7 @@
            #   eucken (transport_model = mixture_averaged, requires thermo_model = stat_mech)
            #   kinetics_theory (* transport_model = mixture_averaged,
            #                    * requires transport_data if using ASCII parsing or have data in XML file
-           #                      if using XML parsing 
+           #                      if using XML parsing
            #                    * requires viscosity_model and mass_diffusivity_model
            #                      to be kinetics_theory)
            #
