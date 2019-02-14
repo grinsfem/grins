@@ -22,19 +22,25 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_QOI_NAMES_H
-#define GRINS_QOI_NAMES_H
+
+// GRINS
+#include "grins/constant_laser_intensity_profile.h"
 
 namespace GRINS
 {
-  const std::string avg_nusselt = "average_nusselt_number";
-  const std::string vorticity = "vorticity";
-  const std::string parsed_boundary = "parsed_boundary";
-  const std::string parsed_interior = "parsed_interior";
-  const std::string weighted_flux = "weighted_flux";
-  const std::string integrated_function = "integrated_function";
-  const std::string spectroscopic_transmission = "spectroscopic_transmission";
-  const std::string spectroscopic_absorption = "spectroscopic_absorption";
-  const std::string laser_absorption = "laser_absorption";
+  ConstantLaserIntensityProfile::ConstantLaserIntensityProfile(libMesh::Real I0)
+    : _I0(I0)
+  {}
+
+  void ConstantLaserIntensityProfile::init( const std::vector<libMesh::Point> & quadrature_xyz,
+                                            const libMesh::Point & /*laser_centerline*/)
+  {
+    _intensity_vals.resize(quadrature_xyz.size());
+
+    for (unsigned int i = 0; i < quadrature_xyz.size(); ++i)
+      _intensity_vals[i] = _I0;
+
+  }
+
 }
-#endif //GRINS_QOI_NAMES_H
+

@@ -31,6 +31,7 @@
 //GRINS
 #include "grins/composite_qoi.h"
 #include "grins/rayfire_mesh.h"
+#include "grins/fem_function_and_derivative_base.h"
 
 // shared_ptr
 #include <memory>
@@ -71,6 +72,9 @@ namespace GRINS
 
     //! Helper function to reduce code duplication in SpectroscopicTransmission and SpectroscopicAbsorption creation
     bool create_spectroscopic_qoi(const GetPot & input, const std::string & qoi_name, const std::string & qoi_string, QoIBase ** qoi, std::shared_ptr<CompositeQoI> & qois);
+
+    //! Helper function to encapsulate the creation of an AbsorptionCoeff object
+    std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> create_absorption_coeff(const GetPot & input, const std::string & qoi_string);
   };
 }
 #endif // QOI_FACTORY_H

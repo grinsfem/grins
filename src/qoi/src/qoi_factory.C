@@ -40,6 +40,9 @@
 #include "grins/spectroscopic_transmission.h"
 #include "grins/spectroscopic_absorption.h"
 #include "grins/chemistry_builder.h"
+#include "grins/constant_laser_intensity_profile.h"
+#include "grins/collimated_gaussian_laser_intensity_profile.h"
+#include "grins/laser_absorption.h"
 
 #if GRINS_HAVE_ANTIOCH
 #include "grins/antioch_chemistry.h"
@@ -155,6 +158,48 @@ namespace GRINS
         do_final_add = this->create_spectroscopic_qoi(input,qoi_name,"SpectroscopicAbsorption",&qoi,qois);
       }
 
+    else if ( qoi_name == laser_absorption )
+      {
+        std::string qoi_string = "LaserAbsorption";
+
+        std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> absorb = this->create_absorption_coeff(input,qoi_string);
+
+        libMesh::Point top_origin;
+        top_origin(0) = input("QoI/"+qoi_string+"/top_origin", 0.0, 0);
+        top_origin(1) = input("QoI/"+qoi_string+"/top_origin", 0.0, 1);
+
+        libMesh::Point centerline_origin;
+        centerline_origin(0) = input("QoI/"+qoi_string+"/centerline_origin", 0.0, 0);
+        centerline_origin(1) = input("QoI/"+qoi_string+"/centerline_origin", 0.0, 1);
+
+        libMesh::Point bottom_origin;
+        bottom_origin(0) = input("QoI/"+qoi_string+"/bottom_origin", 0.0, 0);
+        bottom_origin(1) = input("QoI/"+qoi_string+"/bottom_origin", 0.0, 1);
+
+        libMesh::Real theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
+
+        unsigned int n_qp = input("QoI/"+qoi_string+"/n_quadrature_points", 1); // default to single rayfire
+        
+        std::shared_ptr<LaserIntensityProfileBase> intensity_profile;
+        std::string profile_name = input("QoI/"+qoi_string+"/intensity_profile","");
+        if (profile_name == "constant")
+          {
+            libMesh::Real I0 = input("QoI/"+qoi_string+"/I0",0.0);
+            intensity_profile.reset( new ConstantLaserIntensityProfile(I0) );
+          }
+        else if (profile_name == "collimated gaussian")
+          {
+            libMesh::Real w = input("QoI/"+qoi_string+"/w",0.0);
+            intensity_profile.reset( new CollimatedGaussianLaserIntensityProfile(w) );
+          }
+        else
+          {
+            libmesh_error_msg("ERROR: Please specify either 'constant' or 'collimated gaussian' intensity profile");
+          }
+
+        qoi = new LaserAbsorption(absorb,top_origin,centerline_origin,bottom_origin,theta,n_qp,intensity_profile,qoi_name);
+      }
+
     else
       {
         libMesh::err << "Error: Invalid QoI name " << qoi_name << std::endl;
@@ -265,56 +310,7 @@ namespace GRINS
   {
     bool do_final_add = true;
 
-    std::string material;
-    this->get_var_value<std::string>(input,material,"QoI/"+qoi_string+"/material","NoMaterial!");
-
-    std::string hitran_data;
-    this->get_var_value<std::string>(input,hitran_data,"QoI/"+qoi_string+"/hitran_data_file","");
-
-    std::string hitran_partition;
-    this->get_var_value<std::string>(input,hitran_partition,"QoI/"+qoi_string+"/hitran_partition_function_file","");
-
-    libMesh::Real T_min,T_max,T_step;
-    std::string partition_temp_var = "QoI/"+qoi_string+"/partition_temperatures";
-    if (input.have_variable(partition_temp_var))
-      {
-        T_min = input(partition_temp_var, 0.0, 0);
-        T_max = input(partition_temp_var, 0.0, 1);
-        T_step = input(partition_temp_var, 0.0, 2);
-      }
-    else
-      libmesh_error_msg("ERROR: Could not find tenmperature range specification for partition functions: "+partition_temp_var+" 'T_min T_max T_step'");
-
-    std::shared_ptr<HITRAN> hitran( new HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
-
-    std::string species;
-    this->get_var_value<std::string>(input,species,"QoI/"+qoi_string+"/species_of_interest","");
-
-    libMesh::Real thermo_pressure = -1.0;
-    bool calc_thermo_pressure = input("QoI/"+qoi_string+"/calc_thermo_pressure", false );
-    if (!calc_thermo_pressure)
-      thermo_pressure = input("Materials/"+material+"/ThermodynamicPressure/value", 0.0 );
-
-
-    // These options are for the linecenter wavenumbers included in the calculation of kv
-    libMesh::Real nu_data_min,nu_data_max;
-    this->get_var_value<libMesh::Real>(input,nu_data_min,"QoI/"+qoi_string+"/min_wavenumber",0.0);
-    this->get_var_value<libMesh::Real>(input,nu_data_max,"QoI/"+qoi_string+"/max_wavenumber",0.0);
-
-    ChemistryBuilder chem_builder;
-    std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb;
-
-#if GRINS_HAVE_ANTIOCH
-    std::unique_ptr<AntiochChemistry> chem_ptr;
-    chem_builder.build_chemistry(input,material,chem_ptr);
-    std::shared_ptr<AntiochChemistry> chem(chem_ptr.release());
-#elif GRINS_HAVE_CANTERA
-    std::unique_ptr<CanteraMixture> chem_ptr;
-    chem_builder.build_chemistry(input,material,chem_ptr);
-    std::shared_ptr<CanteraMixture> chem(chem_ptr.release());
-#else
-    libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the "+qoi_string+" QoI");
-#endif
+    std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> absorb = this->create_absorption_coeff(input,qoi_string);
 
     std::shared_ptr<RayfireMesh> rayfire( new RayfireMesh(input,qoi_string) );
 
@@ -327,17 +323,6 @@ namespace GRINS
 
         // Output the QoI value normally
         bool output_as_csv = false;
-
-        libMesh::Real nu_desired;
-        this->get_var_value<libMesh::Real>(input,nu_desired,"QoI/"+qoi_string+"/desired_wavenumber",0.0);
-
-#if GRINS_HAVE_ANTIOCH
-        absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
-#elif GRINS_HAVE_CANTERA
-        absorb.reset( new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
-#else
-        libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the "+qoi_string+" QoI");
-#endif
         
         if (qoi_name == spectroscopic_absorption)
           *qoi = new SpectroscopicAbsorption(absorb,rayfire,qoi_name,output_as_csv);
@@ -373,14 +358,10 @@ namespace GRINS
         for (libMesh::Real nu = min_nu; nu <= max_nu; nu += step_nu)
           {            
             libMesh::Real nu_desired = nu;
-        
-#if GRINS_HAVE_ANTIOCH
-            absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
-#elif GRINS_HAVE_CANTERA
-            absorb.reset( new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
-#else
-            libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the "+qoi_string+" QoI");
-#endif
+
+            AbsorptionCoeffBase * coeff = libMesh::cast_ptr<AbsorptionCoeffBase *>(absorb->clone().release());
+            coeff->set_wavenumber(nu_desired);
+            absorb.reset( coeff );
 
             if (qoi_name == spectroscopic_absorption)
               *qoi = new SpectroscopicAbsorption(absorb,rayfire,qoi_name,output_as_csv);
@@ -392,6 +373,73 @@ namespace GRINS
       }
 
     return do_final_add;
+  }
+
+  std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> QoIFactory::create_absorption_coeff(const GetPot & input, const std::string & qoi_string)
+  {
+    std::string material;
+    this->get_var_value<std::string>(input,material,"QoI/"+qoi_string+"/material","NoMaterial!");
+
+    std::string hitran_data;
+    this->get_var_value<std::string>(input,hitran_data,"QoI/"+qoi_string+"/hitran_data_file","");
+
+    std::string hitran_partition;
+    this->get_var_value<std::string>(input,hitran_partition,"QoI/"+qoi_string+"/hitran_partition_function_file","");
+
+    libMesh::Real T_min,T_max,T_step;
+    std::string partition_temp_var = "QoI/"+qoi_string+"/partition_temperatures";
+    if (input.have_variable(partition_temp_var))
+      {
+        T_min = input(partition_temp_var, 0.0, 0);
+        T_max = input(partition_temp_var, 0.0, 1);
+        T_step = input(partition_temp_var, 0.0, 2);
+      }
+    else
+      libmesh_error_msg("ERROR: Could not find temperature range specification for partition functions: "+partition_temp_var+" 'T_min T_max T_step'");
+
+    std::shared_ptr<HITRAN> hitran( new HITRAN(hitran_data,hitran_partition,T_min,T_max,T_step) );
+
+    std::string species;
+    this->get_var_value<std::string>(input,species,"QoI/"+qoi_string+"/species_of_interest","");
+
+    libMesh::Real thermo_pressure = -1.0;
+    bool calc_thermo_pressure = input("QoI/"+qoi_string+"/calc_thermo_pressure", false );
+    if (!calc_thermo_pressure)
+      thermo_pressure = input("Materials/"+material+"/ThermodynamicPressure/value", 0.0 );
+
+
+    // These options are for the linecenter wavenumbers included in the calculation of kv
+    libMesh::Real nu_data_min,nu_data_max;
+    this->get_var_value<libMesh::Real>(input,nu_data_min,"QoI/"+qoi_string+"/min_wavenumber",0.0);
+    this->get_var_value<libMesh::Real>(input,nu_data_max,"QoI/"+qoi_string+"/max_wavenumber",0.0);
+
+    ChemistryBuilder chem_builder;
+    std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > absorb;
+
+#if GRINS_HAVE_ANTIOCH
+    std::unique_ptr<AntiochChemistry> chem_ptr;
+    chem_builder.build_chemistry(input,material,chem_ptr);
+    std::shared_ptr<AntiochChemistry> chem(chem_ptr.release());
+#elif GRINS_HAVE_CANTERA
+    std::unique_ptr<CanteraMixture> chem_ptr;
+    chem_builder.build_chemistry(input,material,chem_ptr);
+    std::shared_ptr<CanteraMixture> chem(chem_ptr.release());
+#else
+    libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the LaserAbsorption QoI");
+#endif
+
+    libMesh::Real nu_desired;
+    this->get_var_value<libMesh::Real>(input,nu_desired,"QoI/"+qoi_string+"/desired_wavenumber",0.0);
+
+#if GRINS_HAVE_ANTIOCH
+    absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
+#elif GRINS_HAVE_CANTERA
+    absorb.reset( new AbsorptionCoeff<CanteraMixture>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
+#else
+    libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the LaserAbsorption QoI");
+#endif
+    
+    return absorb;
   }
 
   template void QoIFactory::get_var_value<std::string>( const GetPot &, std::string &, std::string, std::string);

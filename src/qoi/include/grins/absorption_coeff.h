@@ -95,7 +95,7 @@ namespace GRINS
                               const unsigned int qoi_index,
                               const libMesh::Real time);
 
-    //! Not used
+    //! Clones the current object
     virtual std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Real> > clone() const;
 
   protected:

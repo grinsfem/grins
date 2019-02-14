@@ -22,19 +22,28 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_QOI_NAMES_H
-#define GRINS_QOI_NAMES_H
+
+// GRINS
+#include "grins/collimated_gaussian_laser_intensity_profile.h"
 
 namespace GRINS
 {
-  const std::string avg_nusselt = "average_nusselt_number";
-  const std::string vorticity = "vorticity";
-  const std::string parsed_boundary = "parsed_boundary";
-  const std::string parsed_interior = "parsed_interior";
-  const std::string weighted_flux = "weighted_flux";
-  const std::string integrated_function = "integrated_function";
-  const std::string spectroscopic_transmission = "spectroscopic_transmission";
-  const std::string spectroscopic_absorption = "spectroscopic_absorption";
-  const std::string laser_absorption = "laser_absorption";
+  CollimatedGaussianLaserIntensityProfile::CollimatedGaussianLaserIntensityProfile(libMesh::Real w)
+    : _w(w)
+  {}
+
+  void CollimatedGaussianLaserIntensityProfile::init( const std::vector<libMesh::Point> & quadrature_xyz,
+                                                      const libMesh::Point & laser_centerline)
+  {
+    _intensity_vals.resize(quadrature_xyz.size());
+
+    for (unsigned int i = 0; i < quadrature_xyz.size(); ++i)
+      {
+        libMesh::Real radius = ( quadrature_xyz[i] - laser_centerline).norm();
+        _intensity_vals[i] = std::exp( -2.0 * (radius*radius)/(_w*_w) );;
+      }
+
+  }
+
 }
-#endif //GRINS_QOI_NAMES_H
+

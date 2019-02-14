@@ -22,19 +22,37 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_QOI_NAMES_H
-#define GRINS_QOI_NAMES_H
+
+#ifndef GRINS_LASER_INTENSITY_PROFILE_BASE_H
+#define GRINS_LASER_INTENSITY_PROFILE_BASE_H
+
+// C++
+#include <vector>
+
+// libMesh
+#include "libmesh/libmesh.h"
+#include "libmesh/point.h"
 
 namespace GRINS
 {
-  const std::string avg_nusselt = "average_nusselt_number";
-  const std::string vorticity = "vorticity";
-  const std::string parsed_boundary = "parsed_boundary";
-  const std::string parsed_interior = "parsed_interior";
-  const std::string weighted_flux = "weighted_flux";
-  const std::string integrated_function = "integrated_function";
-  const std::string spectroscopic_transmission = "spectroscopic_transmission";
-  const std::string spectroscopic_absorption = "spectroscopic_absorption";
-  const std::string laser_absorption = "laser_absorption";
+  class LaserIntensityProfileBase
+  {
+  public:
+    /*!
+      This is a base class for handling evaluation of laser intensity profiles
+      (used by the LaserAbsorption class)
+    */
+
+    virtual void init(const std::vector<libMesh::Point> & quadrature_xyz,
+                      const libMesh::Point & laser_centerline) =0;
+
+    libMesh::Real intensity(unsigned int index) const;
+
+  protected:
+    std::vector<libMesh::Real> _intensity_vals;
+
+  };
+
 }
-#endif //GRINS_QOI_NAMES_H
+#endif // GRINS_LASER_INTENSITY_PROFILE_BASE_H
+
