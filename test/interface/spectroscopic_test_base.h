@@ -194,9 +194,13 @@ namespace GRINSTesting
     {
       std::string text = "[Mesh]\n";
                   text +=  "[./Generation]\n";
+                  text +=    "dimension = '2'\n";
+                  text +=    "elem_type = 'QUAD4'\n";
                   text +=    "n_elems_x = '"+std::to_string(nx)+"'\n";
                   text +=    "n_elems_y = '"+std::to_string(ny)+"'\n";
                   text += "[]\n";
+                  text += "[BoundaryConditions]\n";
+                  text +=    "bc_ids = '0:1:2:3'\n";
                   text += "[QoI]\n";
                   text +=   "enabled_qois = '"+qoi_name+"'\n";
                   text +=   "[./"+qoi_string+"]\n";
@@ -212,6 +216,104 @@ namespace GRINSTesting
                   text +=       "[./Rayfire]\n";
                   text +=         "origin = '0.0 0.025'\n";
                   text +=         "theta = '0.0'\n";
+                  text += "[]\n";
+                  text += "[Variables]\n";
+                  text +=   "[./Velocity]\n";
+                  text +=     "names = 'Ux Uy'\n";
+                  text +=     "fe_family = 'LAGRANGE'\n";
+                  text +=     "order = 'FIRST'\n";
+                  text += "[]";
+
+      return text;
+    }
+
+    std::string laser_string_2D(const std::string & qoi_name, const std::string & qoi_string,
+                             const std::string & top_origin, const std::string & centerline_origin, const std::string & bottom_origin,
+                             libMesh::Real theta, unsigned int nx, unsigned int ny)
+    {
+      std::string text = "[Mesh]\n";
+                  text +=  "[./Generation]\n";
+                  text +=    "dimension = '2'\n";
+                  text +=    "elem_type = 'QUAD4'\n";
+                  text +=    "n_elems_x = '"+std::to_string(nx)+"'\n";
+                  text +=    "n_elems_y = '"+std::to_string(ny)+"'\n";
+                  text += "[]\n";
+                  text += "[BoundaryConditions]\n";
+                  text +=    "bc_ids = '0:1:2:3'\n";
+                  text += "[QoI]\n";
+                  text +=   "enabled_qois = '"+qoi_name+"'\n";
+                  text +=   "[./"+qoi_string+"]\n";
+                  text +=     "material = 'TestMaterial'\n";
+                  text +=     "species_of_interest = 'CO2'\n";
+                  text +=     "hitran_data_file = './test_data/CO2_data.dat'\n";
+                  text +=     "hitran_partition_function_file = './test_data/CO2_partition_function.dat'\n";
+                  text +=     "partition_temperatures = '290 310 0.01'\n";
+                  text +=     "desired_wavenumber = '3682.7649'\n";
+                  text +=     "min_wavenumber = '3682.69'\n";
+                  text +=     "max_wavenumber = '3682.8'\n";
+                  text +=     "calc_thermo_pressure = 'false'\n";
+                  text +=     "n_quadrature_points = '4'\n";
+                  text +=     "intensity_profile = 'collimated gaussian'\n";
+                  text +=     "w = '0.000848725'\n";
+                  text +=     "top_origin = '"+top_origin+"'\n";
+                  text +=     "centerline_origin = '"+centerline_origin+"'\n";
+                  text +=     "bottom_origin = '"+bottom_origin+"'\n";
+                  text +=       "[./Rayfire]\n";
+                  text +=         "theta = '"+std::to_string(theta)+"'\n";
+                  text += "[]\n";
+                  text += "[Variables]\n";
+                  text +=   "[./Velocity]\n";
+                  text +=     "names = 'Ux Uy'\n";
+                  text +=     "fe_family = 'LAGRANGE'\n";
+                  text +=     "order = 'FIRST'\n";
+                  text += "[]";
+
+      return text;
+    }
+
+    std::string laser_string_3D(const std::string & qoi_name, const std::string & qoi_string,
+                             const std::string & top_origin, const std::string & centerline_origin, const std::string & bottom_origin,
+                             libMesh::Real theta, libMesh::Real phi, unsigned int nx, unsigned int ny, unsigned int nz)
+    {
+      std::string text = "[Mesh]\n";
+                  text +=  "[./Generation]\n";
+                  text +=    "dimension = '3'\n";
+                  text +=    "elem_type = 'HEX8'\n";
+                  text +=    "z_min = '0.0'\n";
+                  text +=    "z_max = '0.1'\n";
+                  text +=    "n_elems_x = '"+std::to_string(nx)+"'\n";
+                  text +=    "n_elems_y = '"+std::to_string(ny)+"'\n";
+                  text +=    "n_elems_z = '"+std::to_string(nz)+"'\n";
+                  text += "[]\n";
+                  text += "[BoundaryConditions]\n";
+                  text +=    "bc_ids = '0:1:2:3:4:5'\n";
+                  text += "[QoI]\n";
+                  text +=   "enabled_qois = '"+qoi_name+"'\n";
+                  text +=   "[./"+qoi_string+"]\n";
+                  text +=     "material = 'TestMaterial'\n";
+                  text +=     "species_of_interest = 'CO2'\n";
+                  text +=     "hitran_data_file = './test_data/CO2_data.dat'\n";
+                  text +=     "hitran_partition_function_file = './test_data/CO2_partition_function.dat'\n";
+                  text +=     "partition_temperatures = '290 310 0.01'\n";
+                  text +=     "desired_wavenumber = '3682.7649'\n";
+                  text +=     "min_wavenumber = '3682.69'\n";
+                  text +=     "max_wavenumber = '3682.8'\n";
+                  text +=     "calc_thermo_pressure = 'false'\n";
+                  text +=     "n_quadrature_points = '4'\n";
+                  text +=     "intensity_profile = 'collimated gaussian'\n";
+                  text +=     "w = '0.000848725'\n";
+                  text +=     "top_origin = '"+top_origin+"'\n";
+                  text +=     "centerline_origin = '"+centerline_origin+"'\n";
+                  text +=     "bottom_origin = '"+bottom_origin+"'\n";
+                  text +=       "[./Rayfire]\n";
+                  text +=         "theta = '"+std::to_string(theta)+"'\n";
+                  text +=         "phi = '"+std::to_string(phi)+"'\n";
+                  text += "[]\n";
+                  text += "[Variables]\n";
+                  text +=   "[./Velocity]\n";
+                  text +=     "names = 'Ux Uy Uz'\n";
+                  text +=     "fe_family = 'LAGRANGE'\n";
+                  text +=     "order = 'FIRST'\n";
                   text += "[]";
 
       return text;

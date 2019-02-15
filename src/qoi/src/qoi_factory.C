@@ -164,32 +164,48 @@ namespace GRINS
 
         std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> absorb = this->create_absorption_coeff(input,qoi_string);
 
+        unsigned int dim = 2;
+        if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
+          dim = 3;
+
         libMesh::Point top_origin;
         top_origin(0) = input("QoI/"+qoi_string+"/top_origin", 0.0, 0);
         top_origin(1) = input("QoI/"+qoi_string+"/top_origin", 0.0, 1);
+        if (dim == 3)
+          top_origin(2) = input("QoI/"+qoi_string+"/top_origin", 0.0, 2);
 
         libMesh::Point centerline_origin;
         centerline_origin(0) = input("QoI/"+qoi_string+"/centerline_origin", 0.0, 0);
         centerline_origin(1) = input("QoI/"+qoi_string+"/centerline_origin", 0.0, 1);
+        if (dim == 3)
+          centerline_origin(2) = input("QoI/"+qoi_string+"/centerline_origin", 0.0, 2);
 
         libMesh::Point bottom_origin;
         bottom_origin(0) = input("QoI/"+qoi_string+"/bottom_origin", 0.0, 0);
         bottom_origin(1) = input("QoI/"+qoi_string+"/bottom_origin", 0.0, 1);
+        if (dim == 3)
+          bottom_origin(2) = input("QoI/"+qoi_string+"/bottom_origin", 0.0, 2);
 
         libMesh::Real theta = input("QoI/"+qoi_string+"/Rayfire/theta", -7.0);
+        libMesh::Real phi = -1.0;
+        if (dim == 3)
+          this->get_var_value<libMesh::Real>(input,phi,"QoI/"+qoi_string+"/Rayfire/phi",-1.0);
 
         unsigned int n_qp = input("QoI/"+qoi_string+"/n_quadrature_points", 1); // default to single rayfire
         
         std::shared_ptr<LaserIntensityProfileBase> intensity_profile;
-        std::string profile_name = input("QoI/"+qoi_string+"/intensity_profile","");
+        std::string profile_name;
+        this->get_var_value<std::string>(input,profile_name,"QoI/"+qoi_string+"/intensity_profile","");
         if (profile_name == "constant")
           {
-            libMesh::Real I0 = input("QoI/"+qoi_string+"/I0",0.0);
+            libMesh::Real I0;
+            this->get_var_value<libMesh::Real>(input,I0,"QoI/"+qoi_string+"/I0",0.0);
             intensity_profile.reset( new ConstantLaserIntensityProfile(I0) );
           }
         else if (profile_name == "collimated gaussian")
           {
-            libMesh::Real w = input("QoI/"+qoi_string+"/w",0.0);
+            libMesh::Real w;
+            this->get_var_value<libMesh::Real>(input,w,"QoI/"+qoi_string+"/w",0.0);
             intensity_profile.reset( new CollimatedGaussianLaserIntensityProfile(w) );
           }
         else
@@ -197,7 +213,10 @@ namespace GRINS
             libmesh_error_msg("ERROR: Please specify either 'constant' or 'collimated gaussian' intensity profile");
           }
 
-        qoi = new LaserAbsorption(absorb,top_origin,centerline_origin,bottom_origin,theta,n_qp,intensity_profile,qoi_name);
+        if (dim == 3)
+          qoi = new LaserAbsorption(absorb,top_origin,centerline_origin,bottom_origin,theta,phi,n_qp,intensity_profile,qoi_name);
+        else
+          qoi = new LaserAbsorption(absorb,top_origin,centerline_origin,bottom_origin,theta,n_qp,intensity_profile,qoi_name);
       }
 
     else

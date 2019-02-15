@@ -34,26 +34,29 @@
 
 namespace GRINS
 {
+  /*!
+    The LaserAbsorption class is a 2D/3D analogue of SpectroscopicAbsorption that
+    can calculate the total absorbed laser intensity of a two-dimensional
+    laser beam across a given flow field.
+    
+    It uses Gauss quadrature to integrate the initial and final laser intensity profiles.
+    
+    Each quadrature point has a corresponding SpectroscopicTransmission object to calculate the
+    transmitted laser intensity along its respective optical path (i.e. RayfireMesh).
+  */
   class LaserAbsorption : public MultiQoIBase
   {
   public:
-
     /*!
-      The LaserAbsorption class is a 2D analogue of SpectroscopicAbsorption that
-      can calculate the total absorbed laser intensity of a two-dimensional
-      laser beam across a given flow field.
-      
-      It uses Gauss quadrature to integrate the initial and final laser intensity profiles.
-      
-      Each quadrature point has a corresponding SpectroscopicTransmission object to calculate the
-      transmitted laser intensity along its respective optical path (i.e. RayfireMesh).
+      Two-dimensional class constructor
 
       @param absorb An AbsorptionCoeff object that will be shared by all internal SpectroscopicTransmission classes
       @param top_origin A point on the mesh boundary at the top of the 2D laser
       @param centerline_origin A point on the mesh boundary at the centerline of the 2D laser
       @param bottom_origin A point on the mesh boundary at the bottom of the 2D laser
-      @param theta angle in the xy-plane for the laser path (measured from the positive x-axis)
-      @param n_quadrature_point The number of quadrature points used to integral the intensity profile.
+      @param theta angle in the xy-plane for the laser path, measured from the positive x-axis
+                    with counterclockwise being positive; \f$-2\pi \leq \theta \leq +2\pi\f$
+      @param n_quadrature_point The number of quadrature points used to integrate the intensity profile.
                                 Each quadrature point will have a separate SpectroscopicTransmission class
       @param intensity_profile A LaserIntensityProfileBase object
       @param qoi_name The name of the QoI
@@ -62,6 +65,33 @@ namespace GRINS
                     const libMesh::Point & top_origin, const libMesh::Point & centerline_origin,
                     const libMesh::Point & bottom_origin,
                     libMesh::Real theta, unsigned int n_quadrature_points,
+                    std::shared_ptr<LaserIntensityProfileBase> intensity_profile,   
+                    const std::string & qoi_name);
+
+      /*!
+      Three-dimensional class constructor
+      
+      <b>top_origin, centerline_origin, and bottom_origin must not all be colinear</b>
+
+      @param absorb An AbsorptionCoeff object that will be shared by all internal SpectroscopicTransmission classes
+      @param top_origin A point on the mesh boundary on the outside edge of the circular 3D laser
+      @param centerline_origin A point on the mesh boundary at the centerline of the 3D circular laser
+      @param bottom_origin A different point on the mesh boundary on the outside edge of the circular 3D laser.
+                          Must not be colinear with other 2 origin points
+      @param theta angle in the xy-plane for the laser path, measured from the positive x-axis
+                    with counterclockwise being positive; \f$-2\pi \leq \theta \leq +2\pi\f$
+      @param phi angle from the positive z-axis, with \f$\phi = \pi/2\f$ being the xy-plane;
+                  \f$ 0 \leq \phi \leq \pi \f$
+      @param n_quadrature_point The number of quadrature points *in each dimension* used to integrate the intensity profile.
+                                For example, n_quadrature_points='4' will result in a total of 16 quadrature points (4 in each dimension).
+                                Each quadrature point will have a separate SpectroscopicTransmission class
+      @param intensity_profile A LaserIntensityProfileBase object
+      @param qoi_name The name of the QoI
+    */
+    LaserAbsorption(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> & absorb,
+                    const libMesh::Point & top_origin, const libMesh::Point & centerline_origin,
+                    const libMesh::Point & bottom_origin,
+                    libMesh::Real theta, libMesh::Real phi, unsigned int n_quadrature_points,
                     std::shared_ptr<LaserIntensityProfileBase> intensity_profile,   
                     const std::string & qoi_name);
 
