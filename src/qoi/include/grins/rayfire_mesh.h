@@ -250,12 +250,7 @@ namespace GRINS
     */
     unsigned int intersection_2D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
 
-    //! Faces of 3D FIRST order elements are treated as planes that can be represented in point-normal form, so there is an analytical solution for the intersection point
-    //! 
-    //! <b>NB: this will fail for elements whose faces are nonlinear</b>
-    unsigned int intersection_3D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point, unsigned int initial_side = libMesh::invalid_uint);
-
-    //! Faces of 3D SECOND order elements can be nonlinear, so use a standard Newton iterative solver to find the intersection point
+    //! Faces of 3D elements (of FIRST or SECOND) can be nonlinear, so use a standard Newton iterative solver to find the intersection point
     /*!
       Knowing the starting point \f$(x_r,y_r,z_r)\f$ of the rayfire on the current element,
       the rayfire line can be parameterized as
@@ -304,7 +299,7 @@ namespace GRINS
           = \delta = - J^{-1} F\f$
       and converge when \f$|| \delta || <\f$ libMesh::TOLERANCE
     */
-    unsigned int intersection_3D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
+    unsigned int intersection_3D(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
 
     //! Create a FIRST order version of a SECOND order element
     libMesh::Elem * copy_to_first_order(const libMesh::Elem * elem);
