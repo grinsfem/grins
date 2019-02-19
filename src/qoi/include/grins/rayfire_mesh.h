@@ -250,7 +250,9 @@ namespace GRINS
     */
     unsigned int intersection_2D_second_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point);
 
-    //! Faces of 3D FIRST order elements are planes that can be represented in point-normal form, so there is an analytical solution for the intersection point
+    //! Faces of 3D FIRST order elements are treated as planes that can be represented in point-normal form, so there is an analytical solution for the intersection point
+    //! 
+    //! <b>NB: this will fail for elements whose faces are nonlinear</b>
     unsigned int intersection_3D_first_order(libMesh::Point & initial_point, const libMesh::Elem * cur_elem, libMesh::Point & intersection_point, unsigned int initial_side = libMesh::invalid_uint);
 
     //! Faces of 3D SECOND order elements can be nonlinear, so use a standard Newton iterative solver to find the intersection point
@@ -312,6 +314,10 @@ namespace GRINS
 
     //! Coarsening of a rayfire element whose main mesh counterpart was coarsened
     void coarsen(const libMesh::Elem * rayfire_elem);
+
+    //! Helper function that solves a 3x3 system
+    //! @return false if the matrix A is singular (i.e. there is no solution)
+    bool system_solve_3x3(libMesh::DenseMatrix<libMesh::Real> & A, libMesh::DenseVector<libMesh::Real> & b, libMesh::DenseVector<libMesh::Real> & x);
 
   };
 
