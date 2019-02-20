@@ -73,6 +73,7 @@ namespace GRINSTesting
     CPPUNIT_TEST( fire_through_vertex );
     CPPUNIT_TEST( origin_between_elems );
     CPPUNIT_TEST( hex27_from_larger_mesh );
+    CPPUNIT_TEST( another_hex27_from_larger_mesh );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -279,6 +280,60 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(0.0022564775245432489, 0.069253246753246733, 0.00064714645067485434),25 );
 
       mesh->add_point( libMesh::Point(0.0022564775245432489, 0.070022727272727264, 0.00064714645067485413),26 );
+
+      libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex27 );
+      for (unsigned int n=0; n<27; n++)
+        elem->set_node(n) = mesh->node_ptr(n);
+
+      mesh->prepare_for_use();
+
+      std::shared_ptr<GRINS::RayfireMesh> rayfire( new GRINS::RayfireMesh(origin,theta,phi) );
+
+      rayfire->init(*mesh);
+
+      // make sure we get a rayfire elem
+      const libMesh::Elem * rayfire_elem = rayfire->map_to_rayfire_elem(0);
+
+      CPPUNIT_ASSERT(rayfire_elem);
+    }
+
+    void another_hex27_from_larger_mesh()
+    {
+      libMesh::Point origin(0.00125,     0.65, 0.00237201);
+      libMesh::Real theta = 1.57079632679;
+      libMesh::Real phi = 1.57079632679;
+
+      std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
+
+      mesh->set_mesh_dimension(3);
+
+      mesh->add_point( libMesh::Point(0.00164665,0.723,0.00393763),0);
+      mesh->add_point( libMesh::Point(0.0030143,0.723,0.00300646),1);
+      mesh->add_point( libMesh::Point(0.0028715,0.65,0.00285975),2);
+      mesh->add_point( libMesh::Point(0.001577,0.65,0.0037506),3);
+      mesh->add_point( libMesh::Point(0.00108207,0.723,0.00256845),4);
+      mesh->add_point( libMesh::Point(0.00196242,0.723,0.0019608),5);
+      mesh->add_point( libMesh::Point(0.00185348,0.65,0.00185105),6);
+      mesh->add_point( libMesh::Point(0.00103306,0.65,0.0024282),7);
+      mesh->add_point( libMesh::Point(0.00233048,0.723,0.00347205),8);
+      mesh->add_point( libMesh::Point(0.0029429,0.6865,0.0029331),9);
+      mesh->add_point( libMesh::Point(0.00222425,0.65,0.00330517),10);
+      mesh->add_point( libMesh::Point(0.00161182,0.6865,0.00384412),11);
+      mesh->add_point( libMesh::Point(0.00136436,0.723,0.00325304),12);
+      mesh->add_point( libMesh::Point(0.00248836,0.723,0.00248363),13);
+      mesh->add_point( libMesh::Point(0.00236249,0.65,0.0023554),14);
+      mesh->add_point( libMesh::Point(0.00130503,0.65,0.0030894),15);
+      mesh->add_point( libMesh::Point(0.00152225,0.723,0.00226463),16);
+      mesh->add_point( libMesh::Point(0.00190795,0.6865,0.00190593),17);
+      mesh->add_point( libMesh::Point(0.00144327,0.65,0.00213962),18);
+      mesh->add_point( libMesh::Point(0.00105756,0.6865,0.00249832),19);
+      mesh->add_point( libMesh::Point(0.00227736,0.6865,0.00338861),20);
+      mesh->add_point( libMesh::Point(0.00192636,0.723,0.00286834),21);
+      mesh->add_point( libMesh::Point(0.00242543,0.6865,0.00241952),22);
+      mesh->add_point( libMesh::Point(0.00183376,0.65,0.0027224),23);
+      mesh->add_point( libMesh::Point(0.00133469,0.6865,0.00317122),24);
+      mesh->add_point( libMesh::Point(0.00148276,0.6865,0.00220212),25);
+      mesh->add_point( libMesh::Point(0.00188006,0.6865,0.00279537),26);
 
       libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex27 );
       for (unsigned int n=0; n<27; n++)
