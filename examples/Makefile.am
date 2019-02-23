@@ -245,6 +245,15 @@ spec_SOURCES  = spectroscopy/spectroscopy.C
 
 spec_LDADD = $(LIBGRINS_LIBS)
 
+#=======================================================================
+# Multigrid Example
+#=======================================================================
+multigriddir       = $(prefix)/examples/multigrid
+multigrid_DATA     = $(top_srcdir)/examples/multigrid/forced_poisson.in
+multigrid_DATA    += $(top_srcdir)/examples/multigrid/stokes_fieldsplit.in
+multigrid_SCRIPTS  = $(top_builddir)/examples/multigrid/run_poisson.sh
+multigrid_SCRIPTS += $(top_builddir)/examples/multigrid/run_stokes.sh
+
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno
