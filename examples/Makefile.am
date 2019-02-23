@@ -251,6 +251,7 @@ spec_LDADD = $(LIBGRINS_LIBS)
 multigriddir       = $(prefix)/examples/multigrid
 multigrid_DATA     = $(top_srcdir)/examples/multigrid/forced_poisson.in
 multigrid_DATA    += $(top_srcdir)/examples/multigrid/stokes_fieldsplit.in
+multigrid_DATA    += $(top_srcdir)/examples/multigrid/README
 multigrid_SCRIPTS  = $(top_builddir)/examples/multigrid/run_poisson.sh
 multigrid_SCRIPTS += $(top_builddir)/examples/multigrid/run_stokes.sh
 
