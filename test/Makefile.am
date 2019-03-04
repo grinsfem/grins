@@ -285,6 +285,7 @@ TESTS += regression/coupled_stokes_ns.sh
 TESTS += regression/hot_cylinder.sh
 TESTS += regression/hot_cylinder_petsc_diff.sh
 TESTS += regression/multigrid_poisson.sh
+TESTS += regression/multigrid_stokes.sh
 
 TESTS += regression/reacting_low_mach_cantera.sh
 

@@ -1,7 +1,7 @@
 
-==================
-Multigrid Examples
-==================
+====================
+ Multigrid Examples
+====================
 
 These examples demonstrate the utilization of Geometric Multigrid on
 some benchmark problems. The first, run_poisson.sh, demonstrates
