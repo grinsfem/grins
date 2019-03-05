@@ -12,40 +12,41 @@
 [Mesh]
    [./Read]
       filename = 'mesh.e'
-
-   [../Refinement]
+   [../]
+   [./Refinement]
       uniformly_refine = '2'
+   [../]
 []
 
 # Options for solvers
 [SolverOptions]
-  solver_options = 'grins_steady_solver'
+  solver_type = 'grins_steady_solver'
 []
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10
-max_linear_iterations = 2500
-
-initial_linear_tolerance = '1.0e-12'
-
-verify_analytic_jacobians = '1.e-6'
+  max_nonlinear_iterations = 10
+  max_linear_iterations = 2500
+  initial_linear_tolerance = '1.0e-12'
+  verify_analytic_jacobians = '1.e-6'
+[]
 
 # Visualization options
 [vis-options]
-output_vis = 'true'
-vis_output_file_prefix = 'stokes_ns'
-output_format = 'ExodusII'
+  output_vis = 'true'
+  vis_output_file_prefix = 'stokes_ns'
+  output_format = 'ExodusII'
+[]
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true'
-print_mesh_info = 'true'
-print_log_info = 'true'
-solver_verbose = 'true'
-solver_quiet = 'false'
-
-echo_physics = 'true'
+  print_equation_system_info = 'true'
+  print_mesh_info = 'true'
+  print_log_info = 'true'
+  solver_verbose = 'true'
+  solver_quiet = 'false'
+  echo_physics = 'true'
+[]
 
 [Physics]
 

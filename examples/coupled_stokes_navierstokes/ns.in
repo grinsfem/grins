@@ -1,10 +1,21 @@
+# Material properties
+[Materials]
+   [./Gas]
+     [./Density]
+        value = '1.0'
+     [../Viscosity]
+        model = 'constant'
+        value = '1.0e-3'
+[]
+
 # Mesh related options
-[mesh-options]
-mesh_option = 'read_mesh_from_file'
-mesh_filename = 'mesh.e'
-
-uniformly_refine = '2'
-
+[Mesh]
+  [./Read]
+    filename = 'mesh.e'
+  [../]
+  [./Refinement]
+    uniformly_refine = '2'
+  [../]
 []
 
 # Options for solvers
@@ -20,58 +31,41 @@ uniformly_refine = '2'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10
-max_linear_iterations = 2500
-
-initial_linear_tolerance = '1.0e-12'
-
-verify_analytic_jacobians = '1.e-6'
-
+  max_nonlinear_iterations = 10
+  max_linear_iterations = 2500
+  initial_linear_tolerance = '1.0e-12'
+  verify_analytic_jacobians = '1.e-6'
 []
 
 # Visualization options
 [vis-options]
-output_vis_time_series = 'false'
-output_vis = 'true'
-vis_output_file_prefix = 'ns'
-output_format = 'ExodusII'
-
+  output_vis_time_series = 'false'
+  output_vis = 'true'
+  vis_output_file_prefix = 'ns'
+  output_format = 'ExodusII'
 []
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true'
-print_mesh_info = 'true'
-print_log_info = 'true'
-solver_verbose = 'true'
-solver_quiet = 'false'
-
-echo_physics = 'true'
-
+  print_equation_system_info = 'true'
+  print_mesh_info = 'true'
+  print_log_info = 'true'
+  solver_verbose = 'true'
+  solver_quiet = 'false'
+  echo_physics = 'true'
 []
 
 # [restart-options]
-#
 # restart_file = 'stokes_tsection.xdr'
 
 # Options related to all Physics
 [Physics]
+  enabled_physics = 'IncompressibleNavierStokes'
 
-enabled_physics = 'IncompressibleNavierStokes'
-
-# Options for Navier Stokes physics
-[./IncompressibleNavierStokes]
-
-rho = '1.0'
-mu = '1.0e-3'
-
-bc_ids = '1 2 3 4 6 7 8'
-bc_types = 'no_slip no_slip no_slip no_slip no_slip parabolic_profile no_slip'
-
-parabolic_profile_coeffs_7 = '0.0 0.0 -4.0 0.0 4.0 0.0'
-parabolic_profile_var_7 = 'u'
-parabolic_profile_fix_7 = 'v'
-
+  # Options for Navier Stokes physics
+  [./IncompressibleNavierStokes]
+    material = 'Gas'
+  [../]
 []
 
 [Variables]
@@ -83,4 +77,28 @@ parabolic_profile_fix_7 = 'v'
       names = 'p'
       fe_family = 'LAGRANGE'
       order = 'FIRST'
+[]
+
+[BoundaryConditions]
+   bc_ids = '1:2:3:4:6:8 7 5:9'
+   bc_id_name_map = 'Walls Inlet Outlet'
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+   [../]
+
+   [./Inlet]
+      [./Velocity]
+         type = 'parsed_dirichlet'
+         u = '4*y*(1-y)'
+         v = '0.0'
+      [../]
+   [../]
+
+   [./Outlet]
+      [./Velocity]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
 []
