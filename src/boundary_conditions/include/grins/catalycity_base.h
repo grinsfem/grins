@@ -48,6 +48,8 @@ namespace GRINS
 
     virtual libMesh::Real dT( const libMesh::Real T ) const =0;
 
+    virtual void get_params( std::vector<libMesh::Real> & params ) =0;
+
     virtual void set_params( const std::vector<libMesh::Real>& params ) =0;
 
     //! Creates a new copy of the current class.

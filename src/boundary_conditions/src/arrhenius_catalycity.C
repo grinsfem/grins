@@ -53,6 +53,15 @@ namespace GRINS
     return _gamma0*_Ta/(T*T)*std::exp(-_Ta/T);
   }
 
+  void ArrheniusCatalycity::get_params( std::vector<libMesh::Real> & params )
+  {
+    libmesh_assert_equal_to( params.size(), 2 );
+
+    params[0] = _gamma0;
+
+    params[1] = _Ta;
+  }
+
   void ArrheniusCatalycity::set_params( const std::vector<libMesh::Real>& params )
   {
     libmesh_assert_equal_to( params.size(), 2 );
