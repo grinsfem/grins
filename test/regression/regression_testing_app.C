@@ -28,11 +28,13 @@
 #include "grins/mesh_builder.h"
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
+#include "grins/simulation_initializer.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/string_utils.h"
 
 //libMesh
 #include "libmesh/exact_solution.h"
+#include "libmesh/petsc_diff_solver.h"
 
 void test_error_norm( libMesh::ExactSolution& exact_sol,
                       const std::string& system_name,
@@ -45,6 +47,14 @@ void parse_qoi_data( const std::vector<std::string> & qoi_names,
                      const GetPot & command_line,
                      std::vector<libMesh::Real> & qoi_data_values,
                      std::vector<libMesh::Real> & qoi_gold_values );
+
+void test_convergence_iterations( libMesh::EquationSystems eq_sys,
+                                  const GetPot & input,
+                                  GetPot & command_line,
+                                  const unsigned int & max_nl,
+                                  const unsigned int & max_l,
+                                  int & return_flag );
+
 
 int main(int argc, char* argv[])
 {
@@ -110,8 +120,6 @@ int main(int argc, char* argv[])
           std::cerr << "ERROR: Must have the same number of gold-qoi-names and gold-qoi-values!" << std::endl;
           exit(1);
         }
-
-
     }
 
   // Now grab the variables for which we want to compare
@@ -179,6 +187,10 @@ int main(int argc, char* argv[])
   input.have_variable("gold-qoi-names");
   input.have_variable("qoi-data");
   input.have_variable("gold-qoi-values");
+  input.have_variable("linear-its");
+  input.have_variable("nonlinear-its");
+
+  int return_flag = 0;
 
   // Initialize libMesh library.
   libMesh::LibMeshInit libmesh_init(argc, argv);
@@ -201,6 +213,15 @@ int main(int argc, char* argv[])
       }
   }
 
+  // If {nonlinear,linear}-its are specified we need to run the solve
+  // to get iteration counts as they are not stashed as part of
+  // solution output file. Doing so also generates soln-data for exact
+  // solution testing.
+  int input_nl_its = command_line("nonlinear_its", 0);
+  int input_l_its  = command_line("linear_its", 0);
+  if ( (input_nl_its > 0) || (input_l_its > 0) )
+    test_convergence_iterations(es, input, command_line, input_nl_its, input_l_its, return_flag);
+
   es.read(soln_data,
           libMesh::EquationSystems::READ_HEADER |
           libMesh::EquationSystems::READ_DATA |
@@ -222,8 +243,6 @@ int main(int argc, char* argv[])
   // Now compute error for each variable
   for( unsigned int v = 0; v < n_vars; v++ )
     exact_sol.compute_error(system_name, vars[v]);
-
-  int return_flag = 0;
 
   double tol = command_line("tol", 1.0e-10);
 
@@ -353,4 +372,54 @@ void parse_qoi_data( const std::vector<std::string> & qoi_names,
     }
 
   qoi_input.close();
+}
+
+void test_convergence_iterations( libMesh::EquationSystems eq_sys,
+                                  const GetPot & input,
+                                  GetPot & command_line,
+                                  const unsigned int & max_nl,
+                                  const unsigned int & max_l,
+                                  int & return_flag )
+{
+  // We don't set return_flag unless we are setting it 1
+  // since this function gets called multiple times and we don't
+  // want to overwrite a previous "fail" (return_flag = 1) with
+  // a "pass" (return_flag = 0)
+
+  // First run the solve to populate the Solver iteration info.
+  GRINS::SimulationBuilder sb;
+  GRINS::SimulationInitializer si;
+  libMesh::UniquePtr<GRINS::Simulation> sim;
+
+  std::cout << "==========================================================" << std::endl;
+  command_line.print();
+
+  sim.reset( new GRINS::Simulation(input, command_line, sb, eq_sys.comm()) );
+
+  GRINS::MultiphysicsSystem * system = sim->get_multiphysics_system();
+
+  system->get_time_solver().diff_solver()->verbose = true;
+  system->get_time_solver().diff_solver()->quiet = false;
+  sim->run();
+
+  unsigned int nl_its =   system->get_time_solver().diff_solver()->total_outer_iterations();
+  unsigned int l_its  = system->get_time_solver().diff_solver()->total_inner_iterations();
+
+  std::cout << "==========================================================" << std::endl
+            << "Checking number of iterations... " << std::endl;
+    if( nl_its > max_nl || l_its > max_l )
+    {
+      return_flag = 1;
+
+      std::cerr << "FAILED: Number of nonlinear or linear iterations exceeded maximum for generic regression test!" << std::endl
+                << "nonlinear its:     = " << nl_its  << std::endl
+                << "max nonlinear its: = " << max_nl << std::endl
+                << "linear its:        = " << l_its << std::endl
+                << "max linear its:    = " << max_l << std::endl;
+    }
+  else
+    {
+      std::cout << "PASSED!" << std::endl
+                << "==========================================================" << std::endl;
+    }
 }
