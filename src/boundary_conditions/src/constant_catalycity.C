@@ -48,6 +48,13 @@ namespace GRINS
     return 0.0;
   }
 
+  void ConstantCatalycity::get_params( std::vector<libMesh::Real> & params )
+  {
+    libmesh_assert_equal_to( params.size(), 1 );
+
+    params[0] = _gamma;
+  }
+
   void ConstantCatalycity::set_params( const std::vector<libMesh::Real>& params )
   {
     libmesh_assert_equal_to( params.size(), 1 );

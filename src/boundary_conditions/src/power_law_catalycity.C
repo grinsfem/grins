@@ -55,6 +55,17 @@ namespace GRINS
     return (*this)(T)*_alpha/T;
   }
 
+  void PowerLawCatalycity::get_params( std::vector<libMesh::Real> & params )
+  {
+    libmesh_assert_equal_to( params.size(), 3 );
+
+    params[0] = _gamma0;
+
+    params[1] = _Tref;
+
+    params[2] = _alpha;
+  }
+
   void PowerLawCatalycity::set_params( const std::vector<libMesh::Real>& params )
   {
     libmesh_assert_equal_to( params.size(), 3 );
