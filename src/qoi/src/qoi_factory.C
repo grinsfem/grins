@@ -40,6 +40,7 @@
 #include "grins/spectroscopic_absorption.h"
 #include "grins/chemistry_builder.h"
 #include "grins/flame_speed.h"
+#include "grins/adiabiatic_flame_temperature.h"
 
 #if GRINS_HAVE_ANTIOCH
 #include "grins/antioch_chemistry.h"
@@ -134,11 +135,14 @@ namespace GRINS
           qoi = new FlameSpeed<AntiochChemistry>( flame_speed);
         else if(ChemistryModel == "cantera")
           qoi = new FlameSpeed<CanteraMixture>(flame_speed);
-
         else
           libmesh_error_msg("ERROR: Must Specify material name in the flamespeed qoi section, and make sure the thermochemistry_library is either: 'cantera' or 'antioch'.");
       }
 
+   else if ( qoi_name == adiabiatic_flame_temperature )
+     {
+       qoi = new AdiabiaticFlameTemperature(adiabiatic_flame_temperature);
+     }
     else if( qoi_name == integrated_function )
       {
         std::string function;

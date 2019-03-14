@@ -35,5 +35,6 @@ namespace GRINS
   const std::string integrated_function = "integrated_function";
   const std::string spectroscopic_absorption = "spectroscopic_absorption";
   const std::string flame_speed = "flame_speed";
+  const std::string adiabiatic_flame_temperature = "adiabiatic_flame_temperature";
 }
 #endif //GRINS_QOI_NAMES_H
