@@ -54,6 +54,10 @@ namespace GRINS
 
     virtual ~OverlappingFluidSolidMap(){};
 
+    //!Returns vector with the element ids of fluid elements that overlap with the given solid elem id
+    const std::set<libMesh::dof_id_type> & get_overlapping_fluid_elems
+    ( const libMesh::dof_id_type solid_id ) const;
+
     const std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > > &
     solid_map() const
     { return _solid_to_fluid_map; }
@@ -73,6 +77,9 @@ namespace GRINS
                      const DisplacementVariable & solid_disp_vars );
 
     void map_error(const libMesh::dof_id_type id, const std::string & type) const;
+
+    //! Vector of element ids overlapping each solid id
+    std::map<libMesh::dof_id_type,std::set<libMesh::dof_id_type>> _overlapping_fluid_ids;
 
     std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > >
     _solid_to_fluid_map;

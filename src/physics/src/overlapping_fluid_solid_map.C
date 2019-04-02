@@ -127,6 +127,33 @@ namespace GRINS
               }
             }
         }
+
+    // Populate _overlapping_fluid_ids
+    // This is technically redundant information, but is a (premature...)
+    // optimization for fetching the list of fluid element ids later.
+    for( const auto & solid_it : _solid_to_fluid_map )
+      {
+        libMesh::dof_id_type solid_id = solid_it.first;
+        const auto & fluid_map = solid_it.second;
+
+        std::set<libMesh::dof_id_type> fluid_ids;
+        for( const auto fluid_it : fluid_map )
+          fluid_ids.insert(fluid_it.first);
+
+        _overlapping_fluid_ids.insert(std::make_pair(solid_id,fluid_ids));
+      }
+  }
+
+
+  const std::set<libMesh::dof_id_type> & OverlappingFluidSolidMap::get_overlapping_fluid_elems
+  ( const libMesh::dof_id_type solid_id ) const
+  {
+    const auto & it = _overlapping_fluid_ids.find(solid_id);
+
+    if( it == _overlapping_fluid_ids.end() )
+      this->map_error(solid_id,"solid");
+
+    return it->second;
   }
 
   void OverlappingFluidSolidMap::map_error(const libMesh::dof_id_type id, const std::string & type) const
