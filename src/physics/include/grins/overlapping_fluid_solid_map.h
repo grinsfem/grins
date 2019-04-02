@@ -58,6 +58,11 @@ namespace GRINS
     const std::set<libMesh::dof_id_type> & get_overlapping_fluid_elems
     ( const libMesh::dof_id_type solid_id ) const;
 
+    /*! Returns the quadrature point indices corresponding to those solid quadrature points
+      contained in the fluid element given by fluid_id. */
+    const std::vector<unsigned int> & get_solid_qps( const libMesh::dof_id_type solid_id,
+                                                     const libMesh::dof_id_type fluid_id ) const;
+
     const std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > > &
     solid_map() const
     { return _solid_to_fluid_map; }

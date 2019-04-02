@@ -156,6 +156,24 @@ namespace GRINS
     return it->second;
   }
 
+  const std::vector<unsigned int> & OverlappingFluidSolidMap::get_solid_qps
+  ( const libMesh::dof_id_type solid_id, const libMesh::dof_id_type fluid_id ) const
+  {
+    const auto & solid_it = _solid_to_fluid_map.find(solid_id);
+
+    if( solid_it == _solid_to_fluid_map.end())
+      this->map_error(solid_id,"solid");
+
+    const auto & fluid_map = solid_it->second;
+
+    const auto & fluid_it = fluid_map.find(fluid_id);
+
+    if( fluid_it == fluid_map.end() )
+      this->map_error(fluid_id,"fluid");
+
+    return fluid_it->second;
+  }
+
   void OverlappingFluidSolidMap::map_error(const libMesh::dof_id_type id, const std::string & type) const
   {
     std::stringstream ss;
