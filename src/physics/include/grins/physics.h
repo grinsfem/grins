@@ -158,7 +158,24 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
+    //! Perform  any necessary setup before solve begins.
+    /*!
+     * API hook to do any (re)initialization before each nonlinear solve.
+     * This will be called once before each nonlinear solve (through
+     * MultiphysicsSystem::solve()). So for steady problems, this is called
+     * once, while for unsteady problems, this will be called before each
+     * nonlinear solve at each time step.
+     */
+    virtual void presolve( MultiphysicsSystem & /*system*/ ){};
+
     //! Perform any necessary setup before element assembly begins
+    /*!
+     * API hook to do any (re)initialization before each assembly for each
+     * iteration in a nonlinear solve. So for steady problems, this is called
+     * during each Newton iteration (before assembly), while for unsteady problems,
+     * this will be called before each assembly for each Newton iteration
+     * during each time step.
+     */
     virtual void preassembly( MultiphysicsSystem & /*system*/ ){};
 
     //! Any reinitialization that needs to be done
