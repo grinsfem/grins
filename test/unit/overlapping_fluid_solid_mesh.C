@@ -134,6 +134,12 @@ namespace GRINSTesting
         }
 
       // There should be 1 "solid" element mapping to other two fluid elements
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
+
       CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
       CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
 
@@ -294,10 +300,16 @@ namespace GRINSTesting
         (GRINS::VariablesParsing::displacement_section());
 
       _es->init();
-      
+
       libMesh::UniquePtr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
+
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
 
       CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
       CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
@@ -459,6 +471,12 @@ namespace GRINSTesting
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
+
       CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
       CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
 
@@ -618,6 +636,12 @@ namespace GRINSTesting
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
+
       CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
       CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
 
@@ -754,6 +778,12 @@ namespace GRINSTesting
       libMesh::UniquePtr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
+
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
 
       CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
       CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
