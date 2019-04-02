@@ -129,4 +129,12 @@ namespace GRINS
         }
   }
 
+  void OverlappingFluidSolidMap::map_error(const libMesh::dof_id_type id, const std::string & type) const
+  {
+    std::stringstream ss;
+    ss << std::string("ERROR: Could not find ")+type+std::string(" element corresponding to element id ")
+       << id << std::string(" !");
+    libmesh_error_msg(ss.str());
+  }
+
 } // end namespace GRINS

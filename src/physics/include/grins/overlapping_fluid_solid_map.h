@@ -72,6 +72,8 @@ namespace GRINS
                      const std::set<libMesh::subdomain_id_type> & fluid_ids,
                      const DisplacementVariable & solid_disp_vars );
 
+    void map_error(const libMesh::dof_id_type id, const std::string & type) const;
+
     std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > >
     _solid_to_fluid_map;
 
