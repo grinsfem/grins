@@ -281,6 +281,14 @@ namespace GRINS
       }
   }
 
+  void MultiphysicsSystem::solve()
+  {
+    for (auto & physics : _physics_list )
+      physics.second->presolve(*this);
+
+    FEMSystem::solve();
+  }
+
   bool MultiphysicsSystem::_general_residual( bool request_jacobian,
                                               libMesh::DiffContext& context,
                                               ResFuncType resfunc,
