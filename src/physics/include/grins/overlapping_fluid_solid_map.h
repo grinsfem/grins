@@ -63,9 +63,6 @@ namespace GRINS
     const std::vector<unsigned int> & get_solid_qps( const libMesh::dof_id_type solid_id,
                                                      const libMesh::dof_id_type fluid_id ) const;
 
-    const std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > > &
-    solid_map() const
-    { return _solid_to_fluid_map; }
 
     const std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > > &
     fluid_map() const
