@@ -76,7 +76,7 @@ namespace GRINSTesting
       this->reset_all();
     }
 
-    //---------------------------------------------QUAD-ON-QUAD-TEST(.exo)------------------------------------------------- 
+    //---------------------------------------------QUAD-ON-QUAD-TEST(.exo)-------------------------------------------------
 
     void one_overlapping_element_test()
     {
@@ -123,7 +123,7 @@ namespace GRINSTesting
        (-1,-1) ------------------------ (-1,1)
 
        */
-      
+
       for( libMesh::MeshBase::element_iterator e = (*_mesh).active_local_elements_begin();
            e != (*_mesh).active_local_elements_end();
            ++e )
@@ -188,7 +188,7 @@ namespace GRINSTesting
     void quad_on_quad_overlapping_test()
     {
       std::string input_file = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/overlap_variables.in";
-      
+
       std::unique_ptr<GetPot> _input;
       _input.reset( new GetPot(input_file) );
 
@@ -208,7 +208,7 @@ namespace GRINSTesting
                |          |          |
                |          |          |
        (-1,-1) ------------------------ (-1,1)
-   
+
       */
 
       mesh->set_mesh_dimension(2);
@@ -228,7 +228,7 @@ namespace GRINSTesting
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<9; n++)
         elem->set_node(n) = mesh->node_ptr(n);
-      
+
       mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(0.0,1.0),10 );
       mesh->add_point( libMesh::Point(0.0,-1.0),11 );
@@ -251,7 +251,7 @@ namespace GRINSTesting
       elem->set_node(6) = mesh->node_ptr(15);
       elem->set_node(7) = mesh->node_ptr(16);
       elem->set_node(8) = mesh->node_ptr(17);
-      
+
       //mesh->add_point( libMesh::Point(0.0,1.0),10 );
       mesh->add_point( libMesh::Point(-1.0,1.0),18 );
       mesh->add_point( libMesh::Point(-1.0,-1.0),19 );
@@ -274,7 +274,7 @@ namespace GRINSTesting
       elem->set_node(6) = mesh->node_ptr(22);
       elem->set_node(7) = mesh->node_ptr(14);
       elem->set_node(8) = mesh->node_ptr(23);
-      
+
       mesh->prepare_for_use();
 
       std::unique_ptr<libMesh::EquationSystems> _es;
@@ -356,7 +356,7 @@ namespace GRINSTesting
     void tri_on_quad_overlapping_test()
     {
       std::string input_file = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/overlap_variables.in";
-      
+
       std::unique_ptr<GetPot> _input;
       _input.reset( new GetPot(input_file) );
 
@@ -366,7 +366,7 @@ namespace GRINSTesting
         Overlapping element in the interior (TRI6): id = 0, node 0 = (0.0,0.5)
         Right interior element (QUAD9): id = 1, node 0 = (1,1), width = 1,  height is 2
         Left interior element (QUAD9): id = 2, node 0 = (0,1), width = 1,  height is 2
-     
+
         (-1,1) ----------------------- (1,1)
                |          |          |
                |          |          |
@@ -388,13 +388,13 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(-0.25,0.0),3 );
       mesh->add_point( libMesh::Point(0.0,-0.5),4 );
       mesh->add_point( libMesh::Point(0.25,0.0),5 );
-      
+
       libMesh::Elem* elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(0);
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<6; n++)
         elem->set_node(n) = mesh->node_ptr(n);
-      
+
       mesh->add_point( libMesh::Point(1.0,1.0),6 );
       mesh->add_point( libMesh::Point(0.0,1.0),7 );
       mesh->add_point( libMesh::Point(0.0,-1.0),8 );
@@ -417,7 +417,7 @@ namespace GRINSTesting
       elem->set_node(6) = mesh->node_ptr(12);
       elem->set_node(7) = mesh->node_ptr(13);
       elem->set_node(8) = mesh->node_ptr(14);
- 
+
       //mesh->add_point( libMesh::Point(0.0,1.0),7 );
       mesh->add_point( libMesh::Point(-1.0,1.0),15 );
       mesh->add_point( libMesh::Point(-1.0,-1.0),16 );
@@ -440,9 +440,9 @@ namespace GRINSTesting
       elem->set_node(6) = mesh->node_ptr(19);
       elem->set_node(7) = mesh->node_ptr(11);
       elem->set_node(8) = mesh->node_ptr(20);
-      
+
       mesh->prepare_for_use();
-    
+
       std::unique_ptr<libMesh::EquationSystems> _es;
       _es.reset( new libMesh::EquationSystems(*mesh) );
 
@@ -487,10 +487,10 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_EQUAL(2,(int)((mesh_overlap.solid_map().find(0)->second).find(2)->second).size());
 
       std::vector<unsigned int> elem1_qps(5);
-      elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 4; elem1_qps[4] = 5; 
+      elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 4; elem1_qps[4] = 5;
 
       std::vector<unsigned int> elem2_qps(2);
-      elem2_qps[0] = 2; elem2_qps[1] = 6; 
+      elem2_qps[0] = 2; elem2_qps[1] = 6;
 
       for( unsigned int i = 0; i < 5; i++ )
         CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.solid_map().find(0)->second).find(1)->second)[i]);
@@ -518,21 +518,21 @@ namespace GRINSTesting
     }
 
     //---------------------------------------------QUAD-ON-TRI-TEST-------------------------------------------------
- 
+
     void quad_on_tri_overlapping_test()
     {
       std::string input_file = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/overlap_variables.in";
-      
+
       std::unique_ptr<GetPot> _input;
       _input.reset( new GetPot(input_file) );
 
       std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-      
+
       /*
         Overlapping element in the interior(QUAD9): id = 0, node 0 = (0.5,0.5), length is 1 on each edge
-        Right interior element(TRI6): id = 1, node 0 = (1,1) 
+        Right interior element(TRI6): id = 1, node 0 = (1,1)
         Left interior element(TRI6): id = 2, node 0 = (1,1)
-        
+
         (-1,1) ---------------------- (1,1)
                |                   /|
                |                  / |
@@ -551,9 +551,9 @@ namespace GRINSTesting
                | /                  |
                |/                   |
        (-1,-1) ---------------------- (-1,1)
-      
+
       */
-      
+
       mesh->set_mesh_dimension(2);
 
       mesh->add_point( libMesh::Point(0.5,0.5),0 );
@@ -571,14 +571,14 @@ namespace GRINSTesting
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<9; n++)
         elem->set_node(n) = mesh->node_ptr(n);
-      
+
       mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(-1.0,-1.0),10 );
       mesh->add_point( libMesh::Point(1.0,-1.0),11 );
       mesh->add_point( libMesh::Point(0.0,0.0),12 );
       mesh->add_point( libMesh::Point(0.0,-1.0),13 );
       mesh->add_point( libMesh::Point(1.0,0.0),14 );
-      
+
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(1);
       elem->subdomain_id() = 2;
@@ -588,14 +588,14 @@ namespace GRINSTesting
       elem->set_node(3) = mesh->node_ptr(12);
       elem->set_node(4) = mesh->node_ptr(13);
       elem->set_node(5) = mesh->node_ptr(14);
-            
+
       //mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(-1.0,1.0),15 );
       //mesh->add_point( libMesh::Point(-1.0,-1.0),10 );
       mesh->add_point( libMesh::Point(0.0,1.0),16 );
       mesh->add_point( libMesh::Point(-1.0,0.0),17 );
       //mesh->add_point( libMesh::Point(0.0,0.0),12 );
-      
+
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(2);
       elem->subdomain_id() = 2;
@@ -605,9 +605,9 @@ namespace GRINSTesting
       elem->set_node(3) = mesh->node_ptr(16);
       elem->set_node(4) = mesh->node_ptr(17);
       elem->set_node(5) = mesh->node_ptr(12);
-            
+
       mesh->prepare_for_use();
-      
+
       std::unique_ptr<libMesh::EquationSystems> _es;
       _es.reset( new libMesh::EquationSystems(*mesh) );
 
@@ -681,13 +681,13 @@ namespace GRINSTesting
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
-    
+
     //---------------------------------------------TRI-ON-TRI-TEST-------------------------------------------------
-   
+
     void tri_on_tri_overlapping_test()
     {
       std::string input_file = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/overlap_variables.in";
-      
+
       std::unique_ptr<GetPot> _input;
       _input.reset( new GetPot(input_file) );
 
@@ -695,9 +695,9 @@ namespace GRINSTesting
 
       /*
         Overlapping element in the interior(TRI6): id = 0, node 0 = (0.0,0.5)
-        Right interior element(TRI6): id = 1, node 0 = (1,1) 
+        Right interior element(TRI6): id = 1, node 0 = (1,1)
         Left interior element(TRI6): id = 2, node 0 = (1,1)
-            
+
       */
 
       mesh->set_mesh_dimension(2);
@@ -738,7 +738,7 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(0.0,1.0),13 );
       mesh->add_point( libMesh::Point(-1.0,0.0),14 );
       //mesh->add_point( libMesh::Point(0.0,0.0),9 );
-      
+
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(2);
       elem->subdomain_id() = 2;
@@ -795,10 +795,10 @@ namespace GRINSTesting
       CPPUNIT_ASSERT_EQUAL(2,(int)((mesh_overlap.solid_map().find(0)->second).find(2)->second).size());
 
       std::vector<unsigned int> elem1_qps(5);
-      elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 5; elem1_qps[4] = 6; 
+      elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 5; elem1_qps[4] = 6;
 
       std::vector<unsigned int> elem2_qps(2);
-      elem2_qps[0] = 2; elem2_qps[1] = 4; 
+      elem2_qps[0] = 2; elem2_qps[1] = 4;
 
       for( unsigned int i = 0; i < 5; i++ )
         CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.solid_map().find(0)->second).find(1)->second)[i]);
