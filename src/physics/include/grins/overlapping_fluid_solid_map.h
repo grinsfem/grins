@@ -64,10 +64,6 @@ namespace GRINS
                                                      const libMesh::dof_id_type fluid_id ) const;
 
 
-    const std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > > &
-    fluid_map() const
-    { return _fluid_to_solid_map; }
-
   private:
 
     OverlappingFluidSolidMap();

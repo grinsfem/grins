@@ -160,21 +160,6 @@ namespace GRINSTesting
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
       }
 
-      // There should be 2 "fluid" elements, each mapping to the solid element
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
-
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
-
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
-
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
@@ -327,20 +312,6 @@ namespace GRINSTesting
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
       }
 
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
-
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
-
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
-
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
@@ -491,20 +462,6 @@ namespace GRINSTesting
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
       }
 
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(5,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
-
-      for( unsigned int i = 0; i < 5; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
-
-      for( unsigned int i = 0; i < 2; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
-
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
@@ -654,20 +611,6 @@ namespace GRINSTesting
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
       }
 
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
-
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
-
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
-
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
@@ -794,20 +737,6 @@ namespace GRINSTesting
         for( unsigned int i = 0; i < 2; i++ )
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
       }
-
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(5,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
-
-      for( unsigned int i = 0; i < 5; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
-
-      for( unsigned int i = 0; i < 2; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
