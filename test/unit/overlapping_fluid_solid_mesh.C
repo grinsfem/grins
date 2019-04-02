@@ -164,6 +164,20 @@ namespace GRINSTesting
       for( unsigned int i = 0; i < 3; i++ )
         CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
 
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
+
+        CPPUNIT_ASSERT_EQUAL(6,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(3,(int)qps2.size());
+
+        for( unsigned int i = 0; i < 6; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
+
+        for( unsigned int i = 0; i < 3; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
+
       // There should be 2 "fluid" elements, each mapping to the solid element
       CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
       CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
@@ -332,6 +346,19 @@ namespace GRINSTesting
       for( unsigned int i = 0; i < 3; i++ )
         CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
 
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
+
+        CPPUNIT_ASSERT_EQUAL(6,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(3,(int)qps2.size());
+
+        for( unsigned int i = 0; i < 6; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
+
+        for( unsigned int i = 0; i < 3; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
 
       CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
       CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
@@ -498,6 +525,19 @@ namespace GRINSTesting
       for( unsigned int i = 0; i < 2; i++ )
         CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
 
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
+
+        CPPUNIT_ASSERT_EQUAL(5,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(2,(int)qps2.size());
+
+        for( unsigned int i = 0; i < 5; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
+
+        for( unsigned int i = 0; i < 2; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
 
       CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
       CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
@@ -664,6 +704,20 @@ namespace GRINSTesting
         CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
 
 
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
+
+        CPPUNIT_ASSERT_EQUAL(6,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(3,(int)qps2.size());
+
+        for( unsigned int i = 0; i < 6; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
+
+        for( unsigned int i = 0; i < 3; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
+
       CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
       CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
       CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
@@ -806,6 +860,20 @@ namespace GRINSTesting
       for( unsigned int i = 0; i < 2; i++ )
         CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
 
+
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
+
+        CPPUNIT_ASSERT_EQUAL(5,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(2,(int)qps2.size());
+
+        for( unsigned int i = 0; i < 5; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
+
+        for( unsigned int i = 0; i < 2; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
 
       CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
       CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
