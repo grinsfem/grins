@@ -77,6 +77,8 @@ namespace GRINS
                      const std::set<libMesh::subdomain_id_type> & fluid_ids,
                      const DisplacementVariable & solid_disp_vars );
 
+    void parallel_sync( MultiphysicsSystem & system );
+
     void pack_ids_to_push
     ( const libMesh::MeshBase & mesh,
       std::map<libMesh::processor_id_type,

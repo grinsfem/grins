@@ -31,6 +31,7 @@
 
 // libMesh
 #include "libmesh/elem.h"
+#include "libmesh/parallel_sync.h"
 
 namespace GRINS
 {
@@ -47,6 +48,8 @@ namespace GRINS
       libmesh_error_msg("ERROR: Must have at least one fluid subdomain id!");
 
     this->build_maps(system,point_locator,solid_ids,fluid_ids,solid_disp_vars);
+
+    this->parallel_sync(system);
   }
 
   void OverlappingFluidSolidMap::build_maps( MultiphysicsSystem & system,
@@ -178,6 +181,46 @@ namespace GRINS
       this->map_error(fluid_id,"fluid");
 
     return fluid_it->second;
+  }
+
+  void OverlappingFluidSolidMap::parallel_sync( MultiphysicsSystem & system )
+  {
+    // This should be call on every processor
+    libmesh_parallel_only(system.comm());
+
+    const libMesh::MeshBase & mesh = system.get_mesh();
+
+    // Parallel syncing data structure
+    std::map<libMesh::processor_id_type, std::vector<std::pair<libMesh::dof_id_type,libMesh::dof_id_type>>>
+      ids_to_push;
+
+    this->pack_ids_to_push( mesh, ids_to_push );
+
+    // Extract references to data members that we'll give to the extraction functor below
+    auto & overlapping_fluid_elems = this->_overlapping_fluid_ids;
+    auto & fluid_to_solid_map = this->_fluid_to_solid_map;
+
+    // Lambda functor to extract out the sent data into the local data structures.
+    // We only populate _overlapping_fluid_ids and _fluid_to_solid_map since that's
+    // all we'll need on the fluid processors, we won't need quadrature points.
+    auto extract_ids_functor =
+    [& overlapping_fluid_elems, & fluid_to_solid_map]
+    (libMesh::processor_id_type, const std::vector<std::pair<libMesh::dof_id_type,libMesh::dof_id_type>> & data)
+    {
+      for (auto & p : data)
+        {
+          const libMesh::dof_id_type solid_elem_id = p.first;
+          const libMesh::dof_id_type fluid_elem_id = p.second;
+
+          auto & fluid_set = overlapping_fluid_elems[solid_elem_id];
+          fluid_set.insert(fluid_elem_id);
+
+          auto & solid_set = fluid_to_solid_map[fluid_elem_id];
+          solid_set.insert(solid_elem_id);
+        }
+    }; // end functor
+
+    libMesh::Parallel::push_parallel_vector_data(system.comm(), ids_to_push, extract_ids_functor);
   }
 
   void OverlappingFluidSolidMap::pack_ids_to_push
