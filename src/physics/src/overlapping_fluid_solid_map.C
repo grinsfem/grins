@@ -115,15 +115,10 @@ namespace GRINS
                 solid_qps.push_back(qp);
               }
 
-              // Now add to the fluid elem->overlapping solid elems map, but only if
-              // the fluid elem belongs to this processor
+              // Now add to the fluid elem->overlapping solid elems map
               {
-                std::map<libMesh::dof_id_type,std::vector<unsigned int> > & solid_elem_map =
-                  _fluid_to_solid_map[fluid_elem->id()];
-
-                // The solid quadrature point that are in this overlapping fluid/solid element pair
-                std::vector<unsigned int>& solid_qps = solid_elem_map[solid_elem->id()];
-                solid_qps.push_back(qp);
+                std::set<libMesh::dof_id_type> & solid_set = _fluid_to_solid_map[fluid_elem->id()];
+                solid_set.insert(solid_elem->id());
               }
             }
         }

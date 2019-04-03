@@ -82,8 +82,7 @@ namespace GRINS
     std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > >
     _solid_to_fluid_map;
 
-    std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > >
-    _fluid_to_solid_map;
+    std::map<libMesh::dof_id_type,std::set<libMesh::dof_id_type>> _fluid_to_solid_map;
   };
 
 } // end namespace GRINS
