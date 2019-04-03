@@ -77,6 +77,11 @@ namespace GRINS
                      const std::set<libMesh::subdomain_id_type> & fluid_ids,
                      const DisplacementVariable & solid_disp_vars );
 
+    void pack_ids_to_push
+    ( const libMesh::MeshBase & mesh,
+      std::map<libMesh::processor_id_type,
+      std::vector<std::pair<libMesh::dof_id_type,libMesh::dof_id_type>>> & ids_to_push ) const;
+
     void map_error(const libMesh::dof_id_type id, const std::string & type) const;
 
     //! Vector of element ids overlapping each solid id

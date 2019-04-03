@@ -180,6 +180,42 @@ namespace GRINS
     return fluid_it->second;
   }
 
+  void OverlappingFluidSolidMap::pack_ids_to_push
+    ( const libMesh::MeshBase & mesh,
+      std::map<libMesh::processor_id_type,
+      std::vector<std::pair<libMesh::dof_id_type,libMesh::dof_id_type>>> & ids_to_push ) const
+  {
+    // We need to send the solid ids to all the other processors that contain the fluid elements
+    // overlapped by the solid element. To do that, we need to pack the information to send.
+    // The packing is mapped by processor id. So we go through each solid element, and for all
+    // the fluid elements overlapped by that solid element, we figure out the processor id of that
+    // fluid element and then we pack the pair of solid element id and fluid element id. We need to
+    // send both so that we can keep the association on the receiving processor and not require redundant
+    // searching through the PointLocator.
+    //
+    // FIXME: Note we are assuming that the fluid element is present on this processor so that we can grab its
+    // pointer and, therefore, processor id. This will likely break on DistributedMeshes so additional
+    // work will be needed to support DistributedMeshes.
+    for( const auto & solid_it : _overlapping_fluid_ids )
+      {
+        const libMesh::dof_id_type solid_elem_id = solid_it.first;
+        const auto & fluid_set = solid_it.second;
+
+        for( const auto & fluid_elem_id : fluid_set )
+          {
+            // FIXME: This is where we're making an assumption about the fluid element
+            //        being on this processor.
+            const libMesh::Elem & fluid_elem = mesh.elem_ref(fluid_elem_id);
+
+            const libMesh::processor_id_type fpid = fluid_elem.processor_id();
+
+            auto & ids_pair = ids_to_push[fpid];
+
+            ids_pair.push_back( std::make_pair(solid_elem_id,fluid_elem_id) );
+          }
+      }
+  }
+
   void OverlappingFluidSolidMap::map_error(const libMesh::dof_id_type id, const std::string & type) const
   {
     std::stringstream ss;
