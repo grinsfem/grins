@@ -160,6 +160,22 @@ namespace GRINSTesting
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
       }
 
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
@@ -312,6 +328,22 @@ namespace GRINSTesting
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
       }
 
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
@@ -460,6 +492,22 @@ namespace GRINSTesting
 
         for( unsigned int i = 0; i < 2; i++ )
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
       }
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
@@ -611,6 +659,22 @@ namespace GRINSTesting
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
       }
 
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
@@ -736,6 +800,22 @@ namespace GRINSTesting
 
         for( unsigned int i = 0; i < 2; i++ )
           CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
       }
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
