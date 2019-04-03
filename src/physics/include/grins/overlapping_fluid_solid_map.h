@@ -63,6 +63,9 @@ namespace GRINS
     const std::vector<unsigned int> & get_solid_qps( const libMesh::dof_id_type solid_id,
                                                      const libMesh::dof_id_type fluid_id ) const;
 
+    //!Returns vector with the element ids of solid elements that overlap with the given fluid elem id
+    const std::set<libMesh::dof_id_type> & get_overlapping_solid_elems
+    ( const libMesh::dof_id_type fluid_id ) const;
 
   private:
 
