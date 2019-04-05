@@ -54,6 +54,12 @@ namespace GRINS
 
     virtual ~OverlappingFluidSolidMap(){};
 
+    bool has_overlapping_fluid_elem(const libMesh::dof_id_type elem_id) const
+    { return _overlapping_fluid_ids.find(elem_id) != _overlapping_fluid_ids.end(); }
+
+    bool has_overlapping_solid_elem(const libMesh::dof_id_type elem_id) const
+    { return _fluid_to_solid_map.find(elem_id) != _fluid_to_solid_map.end(); }
+
     //!Returns vector with the element ids of fluid elements that overlap with the given solid elem id
     const std::set<libMesh::dof_id_type> & get_overlapping_fluid_elems
     ( const libMesh::dof_id_type solid_id ) const;
