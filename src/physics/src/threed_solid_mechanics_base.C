@@ -28,9 +28,11 @@
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
+#include "grins/multiphysics_sys.h"
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {
@@ -76,4 +78,70 @@ namespace GRINS
 
     I3 = C.det();
   }
+
+  void ThreeDSolidMechanicsBase::mass_residual( bool compute_jacobian, AssemblyContext & context )
+  {
+    const MultiphysicsSystem & system = context.get_multiphysics_system();
+
+    const int n_u_dofs = context.get_dof_indices(this->_disp_vars.u()).size();
+
+    // We need to extract the corresponding velocity variable.
+    // This allows us to use either a FirstOrderUnsteadySolver
+    // or a SecondOrderUnsteadySolver. That is, we get back the velocity variable
+    // index for FirstOrderUnsteadySolvers or, if it's a SecondOrderUnsteadySolver,
+    // this is actually just giving us back the same variable index.
+
+    // If we only wanted to use a SecondOrderUnsteadySolver, then this
+    // step would be unnecessary and we would just
+    // populate the _u_var, etc. blocks of the residual and Jacobian.
+    unsigned int u_dot_var = system.get_second_order_dot_var(this->_disp_vars.u());
+    unsigned int v_dot_var = system.get_second_order_dot_var(this->_disp_vars.v());
+    unsigned int w_dot_var = system.get_second_order_dot_var(this->_disp_vars.w());
+
+    // Residuals that we're populating
+    libMesh::DenseSubVector<libMesh::Number> & Fu = context.get_elem_residual(u_dot_var);
+    libMesh::DenseSubVector<libMesh::Number> & Fv = context.get_elem_residual(v_dot_var);
+    libMesh::DenseSubVector<libMesh::Number> & Fw = context.get_elem_residual(w_dot_var);
+
+    libMesh::DenseSubMatrix<libMesh::Number> & Kuu = context.get_elem_jacobian(u_dot_var, u_dot_var);
+    libMesh::DenseSubMatrix<libMesh::Number> & Kvv = context.get_elem_jacobian(v_dot_var, v_dot_var);
+    libMesh::DenseSubMatrix<libMesh::Number> & Kww = context.get_elem_jacobian(w_dot_var, w_dot_var);
+
+    const std::vector<libMesh::Real> & JxW = this->get_fe(context)->get_JxW();
+
+    const std::vector<std::vector<libMesh::Real> > & phi = this->get_fe(context)->get_phi();
+
+    int n_qpoints = context.get_element_qrule().n_points();
+
+    for (int qp=0; qp != n_qpoints; qp++)
+      {
+        libMesh::Real u_ddot, v_ddot, w_ddot;
+        context.interior_accel(u_dot_var, qp, u_ddot);
+        context.interior_accel(v_dot_var, qp, v_ddot);
+        context.interior_accel(w_dot_var, qp, w_ddot);
+
+        for (int i=0; i != n_u_dofs; i++)
+          {
+            libMesh::Real phi_jac = _rho*phi[i][qp]*JxW[qp];
+
+            Fu(i) += u_ddot*phi_jac;
+            Fv(i) += v_ddot*phi_jac;
+            Fw(i) += w_ddot*phi_jac;
+
+            if (compute_jacobian)
+              {
+                for (int j=0; j != n_u_dofs; j++)
+                  {
+                    libMesh::Real jac_term = phi_jac*phi[j][qp];
+                    jac_term *= context.get_elem_solution_accel_derivative();
+
+                    Kuu(i,j) += jac_term;
+                    Kvv(i,j) += jac_term;
+                    Kww(i,j) += jac_term;
+                  }
+              }
+          }
+      }
+  }
+
 } // end namespace GRINS

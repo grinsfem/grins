@@ -46,6 +46,8 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext & context );
 
+    virtual void mass_residual( bool compute_jacobian, AssemblyContext & context ) override;
+
   protected:
 
     libMesh::Tensor form_def_gradient( const libMesh::Gradient & grad_u,
