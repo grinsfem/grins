@@ -41,6 +41,8 @@ namespace GRINS
 
     virtual ~CompressibleHyperelasticity() = default;
 
+    virtual void element_time_derivative( bool compute_jacobian, AssemblyContext & context ) override;
+
   private:
 
     libMesh::Tensor compute_pk2_stress( const libMesh::Tensor & C, const libMesh::Tensor & Cinv,
