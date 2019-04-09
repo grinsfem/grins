@@ -46,4 +46,28 @@ namespace GRINS
     _strain_energy.reset(new StrainEnergy(input,material));
   }
 
+  template<typename StrainEnergy>
+  libMesh::Tensor CompressibleHyperelasticity<StrainEnergy>::compute_pk2_stress
+  ( const libMesh::Tensor & C,
+    const libMesh::Tensor & Cinv,
+    const libMesh::Number & I1,
+    const libMesh::Number & I3,
+    const libMesh::Number & dWdI1,
+    const libMesh::Number & dWdI2,
+    const libMesh::Number & dWdI3 ) const
+  {
+    const int dim = 3;
+    libMesh::Tensor S;
+
+    for( int i = 0; i < dim; i++ )
+      {
+        for (int j = 0; j < dim; j++ )
+          {
+            libMesh::Real dij = this->delta(i,j);
+            S(i,j) = 2*( dWdI1*dij + dWdI2*(I1*dij-C(i,j)) + dWdI3*(I3*Cinv(i,j)) );
+          }
+      }
+
+    return S;
+  }
 } // end namespace GRINS
