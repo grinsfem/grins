@@ -34,8 +34,10 @@ namespace GRINS
   class HyperelasticStrainEnergy
   {
   public:
-    HyperelasticStrainEnergy(){};
-    virtual ~HyperelasticStrainEnergy(){};
+
+    HyperelasticStrainEnergy() = default;
+
+    virtual ~HyperelasticStrainEnergy() = default;
 
     libMesh::Real dI1( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
     libMesh::Real dI2( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
