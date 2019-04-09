@@ -108,7 +108,7 @@ namespace GRINS
 
   public:
 
-    Physics( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    Physics( const PhysicsName& physics_name, const GetPot& input );
     virtual ~Physics();
 
     //! Initialize variables for this physics.
@@ -255,7 +255,7 @@ namespace GRINS
      * in trouble. */
     const PhysicsName _physics_name;
 
-    GRINS::ICHandlingBase* _ic_handler;
+    ICHandlingBase* _ic_handler;
 
     //! Subdomains on which the current Physics class is enabled
     std::set<libMesh::subdomain_id_type> _enabled_subdomains;

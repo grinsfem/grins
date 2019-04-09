@@ -115,15 +115,15 @@ namespace GRINS
 
     std::shared_ptr<libMesh::EquationSystems> _equation_system;
 
-    std::unique_ptr<GRINS::Solver> _solver;
+    std::unique_ptr<Solver> _solver;
 
-    //! GRINS::Multiphysics system name
+    //! Multiphysics system name
     std::string _system_name;
 
     // This needs to be a standard pointer, as _equation_system will own and destroy the object.
-    GRINS::MultiphysicsSystem* _multiphysics_system;
+    MultiphysicsSystem* _multiphysics_system;
 
-    std::shared_ptr<GRINS::Visualization> _vis;
+    std::shared_ptr<Visualization> _vis;
 
     std::shared_ptr<PostProcessedQuantities<libMesh::Real> > _postprocessing;
 

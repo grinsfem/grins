@@ -68,7 +68,7 @@ namespace GRINS
     return (this->_mesh_builder)->build(input, comm);
   }
 
-  std::shared_ptr<GRINS::Visualization> SimulationBuilder::build_vis
+  std::shared_ptr<Visualization> SimulationBuilder::build_vis
   ( const GetPot& input,
     const libMesh::Parallel::Communicator &comm)
   {

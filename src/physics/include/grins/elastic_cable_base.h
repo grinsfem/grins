@@ -35,7 +35,7 @@ namespace GRINS
   {
   public:
 
-    ElasticCableBase( const GRINS::PhysicsName& physics_name,
+    ElasticCableBase( const PhysicsName& physics_name,
                       const GetPot& input,
                       bool is_compressible);
 

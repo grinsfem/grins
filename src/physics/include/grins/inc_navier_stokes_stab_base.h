@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-    IncompressibleNavierStokesStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    IncompressibleNavierStokesStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
     virtual ~IncompressibleNavierStokesStabilizationBase();
 

@@ -42,7 +42,7 @@
 
 namespace GRINS
 {
-  ConvectionDiffusion::ConvectionDiffusion( const GRINS::PhysicsName& physics_name,
+  ConvectionDiffusion::ConvectionDiffusion( const PhysicsName& physics_name,
                                             const GetPot& input )
     : Physics(physics_name,input),
       _v(3,libMesh::ParsedFunction<libMesh::Number>("0.0") ),

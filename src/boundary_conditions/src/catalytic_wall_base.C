@@ -45,7 +45,7 @@ namespace GRINS
     : _chem_ptr(chem),
       _chemistry(*(chem.get())),// This will be removed after NeumannBC refactoring
       _gamma_ptr(gamma),
-      _C( std::sqrt( chem->R(reactant_species_idx)/(GRINS::Constants::two_pi) ) ),
+      _C( std::sqrt( chem->R(reactant_species_idx)/(Constants::two_pi) ) ),
       _species_vars(species_vars),
       _T_var(T_var),
       _p0(p0)
@@ -57,7 +57,7 @@ namespace GRINS
                                                    const unsigned int reactant_species_idx )
     : _chemistry(chemistry),
       _gamma_s( gamma.clone() ),
-      _C( std::sqrt( chemistry.R(reactant_species_idx)/(GRINS::Constants::two_pi) ) )
+      _C( std::sqrt( chemistry.R(reactant_species_idx)/(Constants::two_pi) ) )
   {}
 
   template<typename Chemistry>

@@ -47,7 +47,7 @@ namespace GRINS
       const libMesh::Parallel::Communicator &comm
       LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
-    std::shared_ptr<GRINS::Visualization> build_vis
+    std::shared_ptr<Visualization> build_vis
     ( const GetPot& input,
       const libMesh::Parallel::Communicator &comm
       LIBMESH_CAN_DEFAULT_TO_COMMWORLD );

@@ -38,7 +38,7 @@ namespace GRINS
   {
   public:
 
-    ElasticCableAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    ElasticCableAbstract( const PhysicsName& physics_name, const GetPot& input );
 
     virtual ~ElasticCableAbstract(){};
 

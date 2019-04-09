@@ -36,7 +36,7 @@ namespace GRINS
   {
   public:
 
-    ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
+    ElasticMembrane( const PhysicsName& physics_name, const GetPot& input,
                      bool is_compressible );
 
     virtual ~ElasticMembrane(){};

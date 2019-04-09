@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-    HeatTransferAdjointStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    HeatTransferAdjointStabilization( const PhysicsName& physics_name, const GetPot& input );
     virtual ~HeatTransferAdjointStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,

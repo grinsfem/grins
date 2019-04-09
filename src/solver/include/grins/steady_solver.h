@@ -54,7 +54,7 @@ namespace GRINS
 
   protected:
 
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
+    virtual void init_time_solver(MultiphysicsSystem* system);
 
   };
 } // namespace GRINS

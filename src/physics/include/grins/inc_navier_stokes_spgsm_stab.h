@@ -37,7 +37,7 @@ namespace GRINS
 
   public:
 
-    IncompressibleNavierStokesSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    IncompressibleNavierStokesSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
     virtual ~IncompressibleNavierStokesSPGSMStabilization(){};
 
     virtual void element_time_derivative( bool compute_jacobian,

@@ -39,7 +39,7 @@ namespace GRINS
 
   public:
 
-    LowMachNavierStokesStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    LowMachNavierStokesStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
     virtual ~LowMachNavierStokesStabilizationBase(){};
 

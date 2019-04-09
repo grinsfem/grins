@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-    HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    HeatConduction( const PhysicsName& physics_name, const GetPot& input );
     ~HeatConduction(){};
 
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );

@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-    HeatTransferStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    HeatTransferStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
     virtual ~HeatTransferStabilizationBase(){};
 

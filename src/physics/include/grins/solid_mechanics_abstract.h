@@ -38,7 +38,7 @@ namespace GRINS
   {
   public:
 
-    SolidMechanicsAbstract( const GRINS::PhysicsName& physics_name,
+    SolidMechanicsAbstract( const PhysicsName& physics_name,
                             const GetPot& input );
 
     virtual ~SolidMechanicsAbstract(){};

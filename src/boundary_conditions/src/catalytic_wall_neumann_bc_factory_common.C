@@ -84,7 +84,7 @@ namespace GRINS
   {
     // This will throw an error is the temperature variables are not there
     const FEVariablesBase& temp_fe_var_base =
-      GRINS::GRINSPrivate::VariableWarehouse::get_variable(VariablesParsing::temperature_section());
+      GRINSPrivate::VariableWarehouse::get_variable(VariablesParsing::temperature_section());
 
     const PrimitiveTempFEVariables& temp_fe_var =
       libMesh::cast_ref<const PrimitiveTempFEVariables&>(temp_fe_var_base);

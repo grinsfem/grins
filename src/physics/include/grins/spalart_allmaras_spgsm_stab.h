@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-    SpalartAllmarasSPGSMStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    SpalartAllmarasSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
     virtual ~SpalartAllmarasSPGSMStabilization(){};
 
     virtual void init_variables( libMesh::FEMSystem* system );

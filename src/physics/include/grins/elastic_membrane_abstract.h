@@ -38,7 +38,7 @@ namespace GRINS
   {
   public:
 
-    ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    ElasticMembraneAbstract( const PhysicsName& physics_name, const GetPot& input );
 
     virtual ~ElasticMembraneAbstract(){};
 

@@ -163,7 +163,7 @@ namespace GRINS
     {
       AntiochConstantTransportMixtureBuilder mix_builder;
 
-      std::unique_ptr<GRINS::AntiochConstantTransportMixture<KineticsThermo,Conductivity> >
+      std::unique_ptr<AntiochConstantTransportMixture<KineticsThermo,Conductivity> >
         gas_mixture = mix_builder.build_mixture<KineticsThermo,Conductivity>(input,material);
 
       new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<KineticsThermo,Conductivity>,

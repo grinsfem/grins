@@ -44,7 +44,7 @@ namespace GRINS
 {
 
   template<class K>
-  HeatConduction<K>::HeatConduction( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  HeatConduction<K>::HeatConduction( const PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _temp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
       _rho(0.0),

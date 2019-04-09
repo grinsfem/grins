@@ -35,7 +35,7 @@ namespace GRINS
 {
   template<typename Mixture, typename Evaluator>
   ReactingLowMachNavierStokesSPGSMStabilization<Mixture,Evaluator>::ReactingLowMachNavierStokesSPGSMStabilization
-  ( const GRINS::PhysicsName& physics_name, const GetPot& input,std::unique_ptr<Mixture> & gas_mix )
+  ( const PhysicsName& physics_name, const GetPot& input,std::unique_ptr<Mixture> & gas_mix )
     : ReactingLowMachNavierStokesStabilizationBase<Mixture,Evaluator>(physics_name,input,gas_mix)
   {}
 

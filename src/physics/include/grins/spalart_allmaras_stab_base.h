@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-    SpalartAllmarasStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    SpalartAllmarasStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
     virtual ~SpalartAllmarasStabilizationBase(){};
 

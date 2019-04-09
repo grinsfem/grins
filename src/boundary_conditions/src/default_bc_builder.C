@@ -158,7 +158,7 @@ namespace GRINS
 
         // Grab FEVariable
         const FEVariablesBase& fe_var =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(var_section);
+          GRINSPrivate::VariableWarehouse::get_variable(var_section);
 
         // We don't need to do anything for constraint variables
         if( fe_var.is_constraint_var() )

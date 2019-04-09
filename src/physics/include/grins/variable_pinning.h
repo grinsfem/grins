@@ -37,7 +37,7 @@ namespace GRINS
 
   public:
 
-    VariablePinning( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    VariablePinning( const PhysicsName& physics_name, const GetPot& input );
     ~VariablePinning(){};
 
     //! Initialize context for added physics variables

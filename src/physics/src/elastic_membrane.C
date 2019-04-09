@@ -44,7 +44,7 @@
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
+  ElasticMembrane<StressStrainLaw>::ElasticMembrane( const PhysicsName& physics_name, const GetPot& input,
                                                      bool is_compressible )
     : ElasticMembraneBase<StressStrainLaw>(physics_name,input,is_compressible)
   {

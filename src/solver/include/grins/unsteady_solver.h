@@ -47,7 +47,7 @@ namespace GRINS
 
   protected:
 
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
+    virtual void init_time_solver(MultiphysicsSystem* system);
 
     template <typename T>
     void set_theta( libMesh::UnsteadySolver* time_solver );

@@ -55,11 +55,11 @@ namespace GRINS
   /*! We make it a short int to be compatible with libMesh */
   typedef libMesh::boundary_id_type BoundaryID;
 
-  //! Container for GRINS::Physics object pointers
-  typedef std::map< std::string,std::shared_ptr<GRINS::Physics> > PhysicsList;
+  //! Container for Physics object pointers
+  typedef std::map< std::string,std::shared_ptr<Physics> > PhysicsList;
 
   //! Iterator for PhysicsList
-  typedef std::map< std::string,std::shared_ptr<GRINS::Physics> >::const_iterator PhysicsListIter;
+  typedef std::map< std::string,std::shared_ptr<Physics> >::const_iterator PhysicsListIter;
 
 }
 #endif //GRINS_VAR_TYPEDEFS_H

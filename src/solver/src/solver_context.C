@@ -34,7 +34,7 @@ namespace GRINS
   SolverContext::SolverContext()
     : system(NULL),
       equation_system( std::shared_ptr<libMesh::EquationSystems>() ),
-      vis( std::shared_ptr<GRINS::Visualization>() ),
+      vis( std::shared_ptr<Visualization>() ),
       timesteps_per_vis( 1 ),
       timesteps_per_perflog( 1 ),
       output_vis( false ),

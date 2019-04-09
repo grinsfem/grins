@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-    LowMachNavierStokesBraackStabilization( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    LowMachNavierStokesBraackStabilization( const PhysicsName& physics_name, const GetPot& input );
     virtual ~LowMachNavierStokesBraackStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,

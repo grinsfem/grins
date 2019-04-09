@@ -41,7 +41,7 @@ namespace GRINS
   {
   public:
 
-    ConvectionDiffusion( const GRINS::PhysicsName& physics_name, const GetPot& input );
+    ConvectionDiffusion( const PhysicsName& physics_name, const GetPot& input );
 
     virtual ~ConvectionDiffusion(){};
 

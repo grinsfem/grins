@@ -62,39 +62,39 @@ namespace GRINS
                  const unsigned int time_step, const libMesh::Real time );
 
     void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
-                          GRINS::MultiphysicsSystem* system );
+                          MultiphysicsSystem* system );
 
     virtual void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
-                                  GRINS::MultiphysicsSystem* system,
+                                  MultiphysicsSystem* system,
                                   const unsigned int time_step, const libMesh::Real time ) =0;
 
     void output_residual_sensitivities
     (std::shared_ptr<libMesh::EquationSystems> equation_system,
-     GRINS::MultiphysicsSystem* system,
+     MultiphysicsSystem* system,
      const libMesh::ParameterVector & params);
 
     virtual void output_residual_sensitivities
     (std::shared_ptr<libMesh::EquationSystems> equation_system,
-     GRINS::MultiphysicsSystem* system,
+     MultiphysicsSystem* system,
      const libMesh::ParameterVector & params,
      const unsigned int time_step, const libMesh::Real time ) =0;
 
     void output_adjoint( std::shared_ptr<libMesh::EquationSystems> equation_system,
-                         GRINS::MultiphysicsSystem* system );
+                         MultiphysicsSystem* system );
 
     virtual void output_adjoint( std::shared_ptr<libMesh::EquationSystems> equation_system,
-                                 GRINS::MultiphysicsSystem* system,
+                                 MultiphysicsSystem* system,
                                  const unsigned int time_step,
                                  const libMesh::Real time ) =0;
 
     void output_solution_sensitivities
     (std::shared_ptr<libMesh::EquationSystems> equation_system,
-     GRINS::MultiphysicsSystem* system,
+     MultiphysicsSystem* system,
      const libMesh::ParameterVector & params);
 
     virtual void output_solution_sensitivities
     (std::shared_ptr<libMesh::EquationSystems> equation_system,
-     GRINS::MultiphysicsSystem* system,
+     MultiphysicsSystem* system,
      const libMesh::ParameterVector & params,
      const unsigned int time_step, const libMesh::Real time ) =0;
 

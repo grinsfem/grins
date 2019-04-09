@@ -66,7 +66,7 @@ namespace GRINS
       a null space - e.g. pressure for IncompressibleNavierStokes. */
     void pin_value( libMesh::DiffContext& context,
                     const bool request_jacobian,
-                    const GRINS::VariableIndex var,
+                    const VariableIndex var,
                     const double penalty = 1.0 );
 
   private:

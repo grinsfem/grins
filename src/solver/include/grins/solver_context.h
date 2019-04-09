@@ -55,9 +55,9 @@ namespace GRINS
     SolverContext();
     ~SolverContext(){};
 
-    GRINS::MultiphysicsSystem* system;
+    MultiphysicsSystem* system;
     std::shared_ptr<libMesh::EquationSystems> equation_system;
-    std::shared_ptr<GRINS::Visualization> vis;
+    std::shared_ptr<Visualization> vis;
     unsigned int timesteps_per_vis;
     unsigned int timesteps_per_perflog;
     bool output_vis;

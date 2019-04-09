@@ -59,7 +59,7 @@ namespace GRINS
 
     virtual void initialize( const GetPot& input,
                              std::shared_ptr<libMesh::EquationSystems> equation_system,
-                             GRINS::MultiphysicsSystem* system );
+                             MultiphysicsSystem* system );
 
     virtual void solve( SolverContext& context )=0;
 
@@ -102,7 +102,7 @@ namespace GRINS
 
     void set_solver_options( libMesh::DiffSolver& solver );
 
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system)=0;
+    virtual void init_time_solver(MultiphysicsSystem* system)=0;
 
     void build_diff_solver( const NonlinearSolverOptions & options,
                             MultiphysicsSystem * system );

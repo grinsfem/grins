@@ -36,7 +36,7 @@
 namespace GRINS
 {
 
-  VariablePinning::VariablePinning( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  VariablePinning::VariablePinning( const PhysicsName& physics_name, const GetPot& input )
     : Physics(physics_name,input),
       _var_pinning(input,physics_name),
       _penalty(input("Physics/" + PhysicsNaming::variable_pinning() + "/penalty", 1e10)),
