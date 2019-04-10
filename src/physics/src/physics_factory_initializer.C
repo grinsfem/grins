@@ -32,6 +32,7 @@
 #include "grins/physics_factory_incompressible_turb_flow.h"
 #include "grins/physics_factory_one_d_stress_solids.h"
 #include "grins/physics_factory_plane_stress_solids.h"
+#include "grins/physics_factory_compressible_hyperelasticity.h"
 #include "grins/physics_factory_variable_density_flow.h"
 #include "grins/physics_factory_reacting_flows.h"
 
@@ -77,6 +78,8 @@
 #include "grins/elastic_membrane_constant_pressure.h"
 #include "grins/elastic_membrane_pressure.h"
 #include "grins/parsed_pressure.h"
+
+#include "grins/compressible_hyperelasticity.h"
 
 #include "grins/low_mach_navier_stokes.h"
 #include "grins/low_mach_navier_stokes_braack_stab.h"
@@ -221,6 +224,11 @@ namespace GRINS
     static PhysicsFactoryPlaneStressSolids<ElasticMembraneRayleighDamping>
       grins_factory_elastic_membrane_rayleigh_damping
       (PhysicsNaming::elastic_membrane_rayleigh_damping(),PhysicsNaming::elastic_membrane());
+
+
+    static PhysicsFactoryCompressibleHyperelasticity<CompressibleHyperelasticity>
+      grins_factory_hyperelasticity
+      (PhysicsNaming::compressible_hyperelasticity(),PhysicsNaming::compressible_hyperelasticity());
 
 
     static PhysicsFactoryVariableDensityFlow<LowMachNavierStokes> grins_factory_low_mach_navier_stokes
