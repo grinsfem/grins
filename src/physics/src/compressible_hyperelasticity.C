@@ -131,7 +131,37 @@ namespace GRINS
 
             if( compute_jacobian )
               {
-                libmesh_not_implemented();
+                for( int j = 0; j != n_u_dofs; j++ )
+                  {
+                    // Compute the  derivative term without the elasticity tensor
+                    libMesh::Number term1 = (dphi[j][qp]*(S*dphi[i][qp]))*JxW[qp];
+
+                    Kuu(i,j) += term1;
+                    Kvv(i,j) += term1;
+                    Kww(i,j) += term1;
+
+                    for( int I = 0; I < dim; I++)
+                      for( int J = 0; J < dim; J++)
+                        for( int K = 0; K < dim; K++)
+                          for( int L = 0; L < dim; L++)
+                            {
+                              libMesh::Number Cijkl = this->elasticity_tensor(I,J,K,L,
+                                                                              C,Cinv,I1,I2,I3,
+                                                                              dWdI2,dWdI3);
+
+                              libMesh::Real c0 = dphi[i][qp](J)*dphi[j][qp](L)*JxW[qp];
+
+                              Kuu(i,j) += F(0,I)*Cijkl*F(0,K)*c0;
+                              Kuv(i,j) += F(0,I)*Cijkl*F(1,K)*c0;
+                              Kuw(i,j) += F(0,I)*Cijkl*F(2,K)*c0;
+                              Kvu(i,j) += F(1,I)*Cijkl*F(0,K)*c0;
+                              Kvv(i,j) += F(1,I)*Cijkl*F(1,K)*c0;
+                              Kvw(i,j) += F(1,I)*Cijkl*F(2,K)*c0;
+                              Kwu(i,j) += F(2,I)*Cijkl*F(0,K)*c0;
+                              Kwv(i,j) += F(2,I)*Cijkl*F(1,K)*c0;
+                              Kww(i,j) += F(2,I)*Cijkl*F(2,K)*c0;
+                            }
+                  } // end j dof loop
               }
           }
       }
