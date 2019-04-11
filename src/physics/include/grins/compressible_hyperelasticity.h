@@ -50,6 +50,15 @@ namespace GRINS
                                         const libMesh::Number & dWdI1, const libMesh::Number & dWdI2,
                                         const libMesh::Number & dWdI3 ) const;
 
+    libMesh::Number elasticity_tensor( int i, int j, int k, int l,
+                                       const libMesh::Tensor & C,
+                                       const libMesh::Tensor & Cinv,
+                                       const libMesh::Number I1,
+                                       const libMesh::Number I2,
+                                       const libMesh::Number I3,
+                                       const libMesh::Number dWdI2,
+                                       const libMesh::Number dWdI3 ) const;
+
     std::unique_ptr<HyperelasticStrainEnergy<StrainEnergy>> _strain_energy;
 
   };

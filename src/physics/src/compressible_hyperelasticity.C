@@ -161,4 +161,42 @@ namespace GRINS
 
     return S;
   }
+
+  template<typename StrainEnergy>
+  libMesh::Number CompressibleHyperelasticity<StrainEnergy>::elasticity_tensor( int i, int j, int k, int l,
+                                                                                const libMesh::Tensor & C,
+                                                                                const libMesh::Tensor & Cinv,
+                                                                                const libMesh::Number I1,
+                                                                                const libMesh::Number I2,
+                                                                                const libMesh::Number I3,
+                                                                                const libMesh::Number dWdI2,
+                                                                                const libMesh::Number dWdI3 ) const
+  {
+    const libMesh::Number dW2dI12 = _strain_energy->dI12(I1,I2,I3);
+    const libMesh::Number dW2dI22 = _strain_energy->dI22(I1,I2,I3);
+    const libMesh::Number dW2dI32 = _strain_energy->dI32(I1,I2,I3);
+    const libMesh::Number dW2dI1dI2 = _strain_energy->dI1dI2(I1,I2,I3);
+    const libMesh::Number dW2dI1dI3 = _strain_energy->dI1dI3(I1,I2,I3);
+    const libMesh::Number dW2dI2dI3 = _strain_energy->dI2dI3(I1,I2,I3);
+
+    const libMesh::Real dij = this->delta(i,j);
+    const libMesh::Real dkl = this->delta(k,l);
+    const libMesh::Real dik = this->delta(i,k);
+    const libMesh::Real djl = this->delta(j,l);
+    const libMesh::Real dil = this->delta(i,l);
+    const libMesh::Real djk = this->delta(j,k);
+
+    libMesh::Number Cijkl =
+      dW2dI12*(dij*dkl) +
+      dW2dI22*( (I1*dij-C(i,j))*(I1*dkl-C(k,l)) ) +
+      dW2dI32*I3*I3*Cinv(i,j)*Cinv(k,l) +
+      dW2dI1dI2*( dij*(I1*dkl-C(k,l)) + dkl*(I1*dij-C(i,j)) ) +
+      dW2dI1dI3*I3*(dij*Cinv(k,l) + Cinv(i,j)*dkl) +
+      dW2dI2dI3*I3*( Cinv(k,l)*(I1*dij-C(i,j)) + Cinv(i,j)*(I1*dkl-C(k,l)) ) +
+      dWdI2*(dij*dkl - 0.5*(dik*djl + dil*djk) ) +
+      dWdI3*I3*(Cinv(i,j)*Cinv(k,l) - 0.5*(Cinv(i,k)*Cinv(j,l) + Cinv(i,l)*Cinv(j,k)) );
+
+    return 4*Cijkl;
+  }
+
 } // end namespace GRINS
