@@ -257,6 +257,15 @@ multigrid_SCRIPTS += $(top_builddir)/examples/multigrid/run_stokes.sh
 
 EXTRA_DIST += $(multigrid_DATA)
 
+#=======================================================================
+# Torsion Hyperelasticity Example
+#=======================================================================
+torsionhyperelasticitydir = $(prefix)/examples/torsion_hyperelasticity
+torsionhyperelasticity_SCRIPTS = $(top_builddir)/examples/torsion_hyperelasticity/run.sh
+torsionhyperelasticity_DATA  = $(top_srcdir)/examples/torsion_hyperelasticity/torsion.in
+
+EXTRA_DIST += $(torsionhyperelasticity_DATA)
+
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno
