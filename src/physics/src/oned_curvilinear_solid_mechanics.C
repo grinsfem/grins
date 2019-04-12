@@ -38,15 +38,8 @@ namespace GRINS
 {
   OneDCurvilinearSolidMechanics::OneDCurvilinearSolidMechanics( const PhysicsName& physics_name,
                                                                 const GetPot& input )
-    : SolidMechanicsAbstract<1>(physics_name,PhysicsNaming::elastic_cable(),input),
-      _A( 0.0 )
-  {
-    MaterialsParsing::read_property( input,
-                                     "CrossSectionalArea",
-                                     PhysicsNaming::elastic_cable(),
-                                     (*this),
-                                     _A );
-  }
+    : SolidMechanicsAbstract<1>(physics_name,PhysicsNaming::elastic_cable(),input)
+  {}
 
   void OneDCurvilinearSolidMechanics::init_context( AssemblyContext& context )
   {

@@ -65,6 +65,9 @@ namespace GRINS
                                  libMesh::TensorValue<libMesh::Real>& A_contra,
                                  libMesh::Real& lambda_sq);
 
+    //! Cross-sectional area of the cable
+    libMesh::Real _A;
+
     StressStrainLaw _stress_strain_law;
 
     bool _is_compressible;

@@ -47,11 +47,6 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
-  protected:
-
-    //! Cross-sectional area of the cable
-    libMesh::Real _A;
-
   };
 
 }
