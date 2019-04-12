@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -52,8 +52,8 @@ namespace GRINS
 
     virtual void initialize( const GetPot& input,
                              const std::string & parameters_varname,
-                             GRINS::MultiphysicsSystem & system,
-                             GRINS::CompositeQoI * qoi);
+                             MultiphysicsSystem & system,
+                             CompositeQoI * qoi);
 
     /*
      * Ordered list of names of independent parameters to study

@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -158,7 +158,7 @@ namespace GRINS
 
         // Grab FEVariable
         const FEVariablesBase& fe_var =
-          GRINS::GRINSPrivate::VariableWarehouse::get_variable(var_section);
+          GRINSPrivate::VariableWarehouse::get_variable(var_section);
 
         // We don't need to do anything for constraint variables
         if( fe_var.is_constraint_var() )

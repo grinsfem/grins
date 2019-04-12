@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ namespace GRINS
   SolverContext::SolverContext()
     : system(NULL),
       equation_system( std::shared_ptr<libMesh::EquationSystems>() ),
-      vis( std::shared_ptr<GRINS::Visualization>() ),
+      vis( std::shared_ptr<Visualization>() ),
       timesteps_per_vis( 1 ),
       timesteps_per_perflog( 1 ),
       output_vis( false ),

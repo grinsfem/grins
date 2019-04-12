@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ namespace GRINS
       a null space - e.g. pressure for IncompressibleNavierStokes. */
     void pin_value( libMesh::DiffContext& context,
                     const bool request_jacobian,
-                    const GRINS::VariableIndex var,
+                    const VariableIndex var,
                     const double penalty = 1.0 );
 
   private:

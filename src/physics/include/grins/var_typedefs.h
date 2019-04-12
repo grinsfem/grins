@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -55,11 +55,11 @@ namespace GRINS
   /*! We make it a short int to be compatible with libMesh */
   typedef libMesh::boundary_id_type BoundaryID;
 
-  //! Container for GRINS::Physics object pointers
-  typedef std::map< std::string,std::shared_ptr<GRINS::Physics> > PhysicsList;
+  //! Container for Physics object pointers
+  typedef std::map< std::string,std::shared_ptr<Physics> > PhysicsList;
 
   //! Iterator for PhysicsList
-  typedef std::map< std::string,std::shared_ptr<GRINS::Physics> >::const_iterator PhysicsListIter;
+  typedef std::map< std::string,std::shared_ptr<Physics> >::const_iterator PhysicsListIter;
 
 }
 #endif //GRINS_VAR_TYPEDEFS_H

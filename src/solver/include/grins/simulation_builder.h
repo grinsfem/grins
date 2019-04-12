@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@ namespace GRINS
       const libMesh::Parallel::Communicator &comm
       LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
-    std::shared_ptr<GRINS::Visualization> build_vis
+    std::shared_ptr<Visualization> build_vis
     ( const GetPot& input,
       const libMesh::Parallel::Communicator &comm
       LIBMESH_CAN_DEFAULT_TO_COMMWORLD );

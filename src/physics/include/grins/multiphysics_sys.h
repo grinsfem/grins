@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -86,7 +86,7 @@ namespace GRINS
     //! Destructor. Clean up all physics allocations.
     ~MultiphysicsSystem(){};
 
-    //! PhysicsList gets built by GRINS::PhysicsFactory and attached here.
+    //! PhysicsList gets built by PhysicsFactory and attached here.
     void attach_physics_list( PhysicsList physics_list );
 
     const PhysicsList& get_physics_list() const
@@ -174,9 +174,9 @@ namespace GRINS
     //! Query to check if a particular physics has been enabled
     bool has_physics( const std::string physics_name ) const;
 
-    std::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name );
+    std::shared_ptr<Physics> get_physics( const std::string physics_name );
 
-    std::shared_ptr<GRINS::Physics> get_physics( const std::string physics_name ) const;
+    std::shared_ptr<Physics> get_physics( const std::string physics_name ) const;
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
@@ -191,9 +191,9 @@ namespace GRINS
 
   private:
 
-    //! Container of pointers to GRINS::Physics classes requested at runtime.
+    //! Container of pointers to Physics classes requested at runtime.
     /*! Set using the attach_physics_list method as construction is taken care
-      of by GRINS::PhysicsFactory. */
+      of by PhysicsFactory. */
     PhysicsList _physics_list;
 
     bool _use_numerical_jacobians_only;
@@ -223,8 +223,8 @@ namespace GRINS
 
     // Useful typedef to pointer-to-member functions so we can call all
     // residual and caching functions using a single function (_general_residual)
-    typedef void (GRINS::Physics::*ResFuncType) (bool, AssemblyContext &);
-    typedef void (GRINS::Physics::*CacheFuncType) (AssemblyContext &);
+    typedef void (Physics::*ResFuncType) (bool, AssemblyContext &);
+    typedef void (Physics::*CacheFuncType) (AssemblyContext &);
 
     // Refactored residual evaluation implementation
     bool _general_residual( bool request_jacobian,
@@ -243,7 +243,7 @@ namespace GRINS
   };
 
   inline
-  std::shared_ptr<GRINS::Physics> MultiphysicsSystem::get_physics( const std::string physics_name ) const
+  std::shared_ptr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name ) const
   {
     libmesh_assert(_physics_list.find( physics_name ) != _physics_list.end());
 

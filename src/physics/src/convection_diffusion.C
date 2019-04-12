@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -42,7 +42,7 @@
 
 namespace GRINS
 {
-  ConvectionDiffusion::ConvectionDiffusion( const GRINS::PhysicsName& physics_name,
+  ConvectionDiffusion::ConvectionDiffusion( const PhysicsName& physics_name,
                                             const GetPot& input )
     : Physics(physics_name,input),
       _v(3,libMesh::ParsedFunction<libMesh::Number>("0.0") ),

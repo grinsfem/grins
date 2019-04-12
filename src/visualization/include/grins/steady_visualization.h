@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -40,25 +40,25 @@ namespace GRINS
     ~SteadyVisualization();
 
     virtual void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
-                                  GRINS::MultiphysicsSystem* system,
+                                  MultiphysicsSystem* system,
                                   const unsigned int time_step,
                                   const libMesh::Real time );
 
     virtual void output_residual_sensitivities
     (std::shared_ptr<libMesh::EquationSystems> equation_system,
-     GRINS::MultiphysicsSystem* system,
+     MultiphysicsSystem* system,
      const libMesh::ParameterVector & params,
      const unsigned int time_step,
      const libMesh::Real time );
 
     virtual void output_adjoint( std::shared_ptr<libMesh::EquationSystems> equation_system,
-                                 GRINS::MultiphysicsSystem* system,
+                                 MultiphysicsSystem* system,
                                  const unsigned int time_step,
                                  const libMesh::Real time );
 
     virtual void output_solution_sensitivities
     (std::shared_ptr<libMesh::EquationSystems> equation_system,
-     GRINS::MultiphysicsSystem* system,
+     MultiphysicsSystem* system,
      const libMesh::ParameterVector & params,
      const unsigned int time_step,
      const libMesh::Real time );

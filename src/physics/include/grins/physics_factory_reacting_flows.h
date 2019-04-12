@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -163,7 +163,7 @@ namespace GRINS
     {
       AntiochConstantTransportMixtureBuilder mix_builder;
 
-      std::unique_ptr<GRINS::AntiochConstantTransportMixture<KineticsThermo,Conductivity> >
+      std::unique_ptr<AntiochConstantTransportMixture<KineticsThermo,Conductivity> >
         gas_mixture = mix_builder.build_mixture<KineticsThermo,Conductivity>(input,material);
 
       new_physics.reset(new DerivedPhysics<AntiochConstantTransportMixture<KineticsThermo,Conductivity>,

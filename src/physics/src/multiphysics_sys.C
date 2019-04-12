@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -335,8 +335,8 @@ namespace GRINS
     return this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::element_time_derivative,
-       &GRINS::Physics::compute_element_time_derivative_cache);
+       &Physics::element_time_derivative,
+       &Physics::compute_element_time_derivative_cache);
   }
 
   bool MultiphysicsSystem::side_time_derivative( bool request_jacobian,
@@ -349,8 +349,8 @@ namespace GRINS
       this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::side_time_derivative,
-       &GRINS::Physics::compute_side_time_derivative_cache);
+       &Physics::side_time_derivative,
+       &Physics::compute_side_time_derivative_cache);
 
     return jacobian_computed;
   }
@@ -361,8 +361,8 @@ namespace GRINS
     return this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::nonlocal_time_derivative,
-       &GRINS::Physics::compute_nonlocal_time_derivative_cache);
+       &Physics::nonlocal_time_derivative,
+       &Physics::compute_nonlocal_time_derivative_cache);
   }
 
   bool MultiphysicsSystem::element_constraint( bool request_jacobian,
@@ -371,8 +371,8 @@ namespace GRINS
     return this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::element_constraint,
-       &GRINS::Physics::compute_element_constraint_cache);
+       &Physics::element_constraint,
+       &Physics::compute_element_constraint_cache);
   }
 
   bool MultiphysicsSystem::side_constraint( bool request_jacobian,
@@ -381,8 +381,8 @@ namespace GRINS
     return this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::side_constraint,
-       &GRINS::Physics::compute_side_constraint_cache);
+       &Physics::side_constraint,
+       &Physics::compute_side_constraint_cache);
   }
 
   bool MultiphysicsSystem::nonlocal_constraint( bool request_jacobian,
@@ -391,8 +391,8 @@ namespace GRINS
     return this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::nonlocal_constraint,
-       &GRINS::Physics::compute_nonlocal_constraint_cache);
+       &Physics::nonlocal_constraint,
+       &Physics::compute_nonlocal_constraint_cache);
   }
 
   bool MultiphysicsSystem::damping_residual( bool request_jacobian,
@@ -401,8 +401,8 @@ namespace GRINS
     return this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::damping_residual,
-       &GRINS::Physics::compute_damping_residual_cache);
+       &Physics::damping_residual,
+       &Physics::compute_damping_residual_cache);
   }
 
   bool MultiphysicsSystem::mass_residual( bool request_jacobian,
@@ -411,8 +411,8 @@ namespace GRINS
     return this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::mass_residual,
-       &GRINS::Physics::compute_mass_residual_cache);
+       &Physics::mass_residual,
+       &Physics::compute_mass_residual_cache);
   }
 
   bool MultiphysicsSystem::nonlocal_mass_residual( bool request_jacobian,
@@ -421,8 +421,8 @@ namespace GRINS
     return this->_general_residual
       (request_jacobian,
        context,
-       &GRINS::Physics::nonlocal_mass_residual,
-       &GRINS::Physics::compute_nonlocal_mass_residual_cache);
+       &Physics::nonlocal_mass_residual,
+       &Physics::compute_nonlocal_mass_residual_cache);
   }
 
   std::shared_ptr<Physics> MultiphysicsSystem::get_physics( const std::string physics_name )

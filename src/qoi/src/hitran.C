@@ -4,7 +4,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -75,7 +75,7 @@ namespace GRINS
 
         std::vector<libMesh::Real> vals;
 
-        GRINS::StringUtilities::split_string_real(line,",",vals);
+        StringUtilities::split_string_real(line,",",vals);
 
         libmesh_assert_equal_to(vals.size(),8);
 
@@ -131,7 +131,7 @@ namespace GRINS
 
         _qT.push_back(std::vector<libMesh::Real>());
 
-        GRINS::StringUtilities::split_string_real(line,",",_qT[counter]);
+        StringUtilities::split_string_real(line,",",_qT[counter]);
 
         // we should have a partition function value for each temperature
         libmesh_assert_equal_to(num_T,_qT[counter].size());

@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  ElasticMembrane<StressStrainLaw>::ElasticMembrane( const GRINS::PhysicsName& physics_name, const GetPot& input,
+  ElasticMembrane<StressStrainLaw>::ElasticMembrane( const PhysicsName& physics_name, const GetPot& input,
                                                      bool is_compressible )
     : ElasticMembraneBase<StressStrainLaw>(physics_name,input,is_compressible)
   {
