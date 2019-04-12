@@ -50,9 +50,6 @@ namespace GRINS
     //! Cross-sectional area of the cable
     libMesh::Real _A;
 
-    //! Cable density
-    libMesh::Real  _rho;
-
     const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
 
   private:

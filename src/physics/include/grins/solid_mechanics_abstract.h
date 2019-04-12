@@ -38,8 +38,9 @@ namespace GRINS
   {
   public:
 
-    SolidMechanicsAbstract( const PhysicsName& physics_name,
-                            const GetPot& input );
+    SolidMechanicsAbstract( const PhysicsName & physics_name,
+                            const PhysicsName & core_physics_name,
+                            const GetPot & input );
 
     virtual ~SolidMechanicsAbstract(){};
 
@@ -48,6 +49,9 @@ namespace GRINS
   protected:
 
     DisplacementVariable& _disp_vars;
+
+    //! Solid density
+    libMesh::Real _rho;
 
     typedef const libMesh::DenseSubVector<libMesh::Number>& (libMesh::DiffContext::*VarFuncType)(unsigned int) const;
 

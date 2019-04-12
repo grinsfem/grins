@@ -38,22 +38,14 @@ namespace GRINS
 {
   ElasticCableAbstract::ElasticCableAbstract( const PhysicsName& physics_name,
                                               const GetPot& input )
-    : SolidMechanicsAbstract(physics_name,input),
-      _A( 0.0 ),
-      _rho(0.0)
+    : SolidMechanicsAbstract(physics_name,PhysicsNaming::elastic_cable(),input),
+      _A( 0.0 )
   {
     MaterialsParsing::read_property( input,
                                      "CrossSectionalArea",
                                      PhysicsNaming::elastic_cable(),
                                      (*this),
                                      _A );
-
-    MaterialsParsing::read_property( input,
-                                     "Density",
-                                     PhysicsNaming::elastic_cable(),
-                                     (*this),
-                                     _rho );
-
   }
 
   void ElasticCableAbstract::init_context( AssemblyContext& context )

@@ -36,11 +36,19 @@
 
 namespace GRINS
 {
-  SolidMechanicsAbstract::SolidMechanicsAbstract(const PhysicsName& physics_name,
-                                                 const GetPot& input )
+  SolidMechanicsAbstract::SolidMechanicsAbstract(const PhysicsName & physics_name,
+                                                 const PhysicsName & core_physics_name,
+                                                 const GetPot & input )
     : Physics(physics_name,input),
-      _disp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<DisplacementVariable>(VariablesParsing::disp_variable_name(input,physics_name,VariablesParsing::PHYSICS)))
+      _disp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<DisplacementVariable>(VariablesParsing::disp_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
+      _rho(0.0)
   {
+    MaterialsParsing::read_property( input,
+                                     "Density",
+                                     core_physics_name,
+                                     (*this),
+                                     _rho );
+
     // For solid mechanics problems, we need to set the sign for tractions
     // to '-' since the second order time solvers use a Newton residual of the form
     // M(u)\ddot{u} + C(u)\dot{u} + F(u) + G(u) = 0
