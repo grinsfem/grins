@@ -38,7 +38,7 @@ namespace GRINS
 {
   ElasticCableAbstract::ElasticCableAbstract( const PhysicsName& physics_name,
                                               const GetPot& input )
-    : SolidMechanicsAbstract(physics_name,PhysicsNaming::elastic_cable(),input),
+    : SolidMechanicsAbstract<1>(physics_name,PhysicsNaming::elastic_cable(),input),
       _A( 0.0 )
   {
     MaterialsParsing::read_property( input,

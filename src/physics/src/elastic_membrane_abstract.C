@@ -36,7 +36,7 @@
 namespace GRINS
 {
   ElasticMembraneAbstract::ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : SolidMechanicsAbstract(physics_name,PhysicsNaming::elastic_membrane(),input)
+    : SolidMechanicsAbstract<2>(physics_name,PhysicsNaming::elastic_membrane(),input)
   {}
 
   void ElasticMembraneAbstract::init_context( AssemblyContext& context )
