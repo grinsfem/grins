@@ -26,12 +26,12 @@
 #define GRINS_ELASTIC_CABLE_BASE_H
 
 //GRINS
-#include "grins/elastic_cable_abstract.h"
+#include "grins/oned_curvilinear_solid_mechanics.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticCableBase : public ElasticCableAbstract
+  class ElasticCableBase : public OneDCurvilinearSolidMechanics
   {
   public:
 

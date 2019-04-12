@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_CABLE_ABSTRACT_H
-#define GRINS_ELASTIC_CABLE_ABSTRACT_H
+#ifndef GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H
+#define GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H
 
 //GRINS
 #include "grins/solid_mechanics_abstract.h"
@@ -34,15 +34,15 @@
 
 namespace GRINS
 {
-  class ElasticCableAbstract : public SolidMechanicsAbstract<1>
+  class OneDCurvilinearSolidMechanics : public SolidMechanicsAbstract<1>
   {
   public:
 
-    ElasticCableAbstract( const PhysicsName& physics_name, const GetPot& input );
+    OneDCurvilinearSolidMechanics( const PhysicsName& physics_name, const GetPot& input );
 
-    ElasticCableAbstract() = delete;
+    OneDCurvilinearSolidMechanics() = delete;
 
-    virtual ~ElasticCableAbstract() = default;
+    virtual ~OneDCurvilinearSolidMechanics() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
@@ -56,4 +56,4 @@ namespace GRINS
 
 }
 
-#endif // GRINS_ELASTIC_CABLE_ABSTRACT_H
+#endif // GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H

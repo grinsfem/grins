@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/elastic_cable_abstract.h"
+#include "grins/oned_curvilinear_solid_mechanics.h"
 
 // GRINS
 #include "grins_config.h"
@@ -36,8 +36,8 @@
 
 namespace GRINS
 {
-  ElasticCableAbstract::ElasticCableAbstract( const PhysicsName& physics_name,
-                                              const GetPot& input )
+  OneDCurvilinearSolidMechanics::OneDCurvilinearSolidMechanics( const PhysicsName& physics_name,
+                                                                const GetPot& input )
     : SolidMechanicsAbstract<1>(physics_name,PhysicsNaming::elastic_cable(),input),
       _A( 0.0 )
   {
@@ -48,7 +48,7 @@ namespace GRINS
                                      _A );
   }
 
-  void ElasticCableAbstract::init_context( AssemblyContext& context )
+  void OneDCurvilinearSolidMechanics::init_context( AssemblyContext& context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
