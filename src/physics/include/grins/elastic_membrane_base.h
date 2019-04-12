@@ -26,12 +26,12 @@
 #define GRINS_ELASTIC_MEMBRANE_BASE_H
 
 //GRINS
-#include "grins/elastic_membrane_abstract.h"
+#include "grins/twod_curvilinear_solid_mechanics.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticMembraneBase : public ElasticMembraneAbstract
+  class ElasticMembraneBase : public TwoDCurvilinearSolidMechanics
   {
   public:
 

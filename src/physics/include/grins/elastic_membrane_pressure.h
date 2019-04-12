@@ -26,13 +26,13 @@
 #define GRINS_ELASTIC_MEMBRANE_PRESSURE_H
 
 //GRINS
-#include "grins/elastic_membrane_abstract.h"
+#include "grins/twod_curvilinear_solid_mechanics.h"
 #include "grins/property_base.h"
 
 namespace GRINS
 {
   template<typename PressureType>
-  class ElasticMembranePressure : public ElasticMembraneAbstract
+  class ElasticMembranePressure : public TwoDCurvilinearSolidMechanics
   {
   public:
 

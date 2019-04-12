@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/elastic_membrane_abstract.h"
+#include "grins/twod_curvilinear_solid_mechanics.h"
 
 // GRINS
 #include "grins_config.h"
@@ -35,11 +35,11 @@
 
 namespace GRINS
 {
-  ElasticMembraneAbstract::ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input )
+  TwoDCurvilinearSolidMechanics::TwoDCurvilinearSolidMechanics( const GRINS::PhysicsName& physics_name, const GetPot& input )
     : SolidMechanicsAbstract<2>(physics_name,PhysicsNaming::elastic_membrane(),input)
   {}
 
-  void ElasticMembraneAbstract::init_context( AssemblyContext& context )
+  void TwoDCurvilinearSolidMechanics::init_context( AssemblyContext& context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();

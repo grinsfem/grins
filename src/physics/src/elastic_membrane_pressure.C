@@ -42,7 +42,7 @@ namespace GRINS
   template<typename PressureType>
   ElasticMembranePressure<PressureType>::ElasticMembranePressure( const std::string & physics_name,
                                                                   const GetPot & input )
-    : ElasticMembraneAbstract(physics_name,input),
+    : TwoDCurvilinearSolidMechanics(physics_name,input),
       _pressure(new PressureType(input,"Physics/"+physics_name) )
   {
     this->check_subdomain_consistency(input);
