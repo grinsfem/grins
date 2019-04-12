@@ -34,7 +34,7 @@
 
 namespace GRINS
 {
-  class ElasticCableAbstract : public SolidMechanicsAbstract
+  class ElasticCableAbstract : public SolidMechanicsAbstract<1>
   {
   public:
 
@@ -50,20 +50,12 @@ namespace GRINS
     //! Cross-sectional area of the cable
     libMesh::Real _A;
 
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
-
   private:
 
     ElasticCableAbstract();
 
   };
 
-  inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticCableAbstract::get_fe( const AssemblyContext& context )
-  {
-    // For this Physics, we need to make sure that we grab only the 1D elements
-    return context.get_element_fe(_disp_vars.u(),1);
-  }
 }
 
 #endif // GRINS_ELASTIC_CABLE_ABSTRACT_H

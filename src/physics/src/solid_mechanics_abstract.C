@@ -36,9 +36,10 @@
 
 namespace GRINS
 {
-  SolidMechanicsAbstract::SolidMechanicsAbstract(const PhysicsName & physics_name,
-                                                 const PhysicsName & core_physics_name,
-                                                 const GetPot & input )
+  template<unsigned int Dim>
+  SolidMechanicsAbstract<Dim>::SolidMechanicsAbstract(const PhysicsName & physics_name,
+                                                      const PhysicsName & core_physics_name,
+                                                      const GetPot & input )
     : Physics(physics_name,input),
       _disp_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<DisplacementVariable>(VariablesParsing::disp_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
       _rho(0.0)
@@ -60,7 +61,8 @@ namespace GRINS
     this->check_var_subdomain_consistency(_disp_vars);
   }
 
-  void SolidMechanicsAbstract::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<unsigned int Dim>
+  void SolidMechanicsAbstract<Dim>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     // Tell the system to march displacement forward in time, for as
     // many displacement variables as the dimension we're tracking
@@ -73,5 +75,9 @@ namespace GRINS
     if( this->_disp_vars.dim() > 2 )
       system->time_evolving(_disp_vars.w(),2);
   }
+
+  template class SolidMechanicsAbstract<1>;
+  template class SolidMechanicsAbstract<2>;
+  template class SolidMechanicsAbstract<3>;
 
 } // end namespace GRINS

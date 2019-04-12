@@ -34,6 +34,7 @@
 
 namespace GRINS
 {
+  template<unsigned int Dim>
   class SolidMechanicsAbstract : public Physics
   {
   public:
@@ -53,6 +54,8 @@ namespace GRINS
     //! Solid density
     libMesh::Real _rho;
 
+    const libMesh::FEGenericBase<libMesh::Real> * get_fe( const AssemblyContext & context );
+
     typedef const libMesh::DenseSubVector<libMesh::Number>& (libMesh::DiffContext::*VarFuncType)(unsigned int) const;
 
     typedef void (libMesh::FEMContext::*InteriorFuncType)(unsigned int, unsigned int, libMesh::Real&) const;
@@ -64,6 +67,14 @@ namespace GRINS
     SolidMechanicsAbstract();
 
   };
+
+  template<unsigned int Dim>
+  inline
+  const libMesh::FEGenericBase<libMesh::Real>* SolidMechanicsAbstract<Dim>::get_fe( const AssemblyContext & context )
+  {
+    // For this Physics, we need to make sure that we grab only the 1D elements
+    return context.get_element_fe(_disp_vars.u(),Dim);
+  }
 
 } // end namespace GRINS
 

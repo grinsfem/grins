@@ -34,7 +34,7 @@
 
 namespace GRINS
 {
-  class ElasticMembraneAbstract : public SolidMechanicsAbstract
+  class ElasticMembraneAbstract : public SolidMechanicsAbstract<2>
   {
   public:
 
@@ -45,22 +45,11 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
-  protected:
-
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
-
   private:
 
     ElasticMembraneAbstract();
 
   };
-
-  inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticMembraneAbstract::get_fe( const AssemblyContext& context )
-  {
-    // For this Physics, we need to make sure that we grab only the 2D elements
-    return context.get_element_fe(_disp_vars.u(),2);
-  }
 
 } // end namespace GRINS
 
