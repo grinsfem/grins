@@ -43,7 +43,9 @@ namespace GRINS
                             const PhysicsName & core_physics_name,
                             const GetPot & input );
 
-    virtual ~SolidMechanicsAbstract(){};
+    SolidMechanicsAbstract() = delete;
+
+    virtual ~SolidMechanicsAbstract() =default;
 
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -61,10 +63,6 @@ namespace GRINS
     typedef void (libMesh::FEMContext::*InteriorFuncType)(unsigned int, unsigned int, libMesh::Real&) const;
 
     typedef libMesh::Real (libMesh::DiffContext::*VarDerivType)() const;
-
-  private:
-
-    SolidMechanicsAbstract();
 
   };
 

@@ -40,7 +40,9 @@ namespace GRINS
 
     ElasticCableAbstract( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~ElasticCableAbstract(){};
+    ElasticCableAbstract() = delete;
+
+    virtual ~ElasticCableAbstract() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
@@ -49,10 +51,6 @@ namespace GRINS
 
     //! Cross-sectional area of the cable
     libMesh::Real _A;
-
-  private:
-
-    ElasticCableAbstract();
 
   };
 

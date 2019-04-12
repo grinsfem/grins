@@ -39,7 +39,9 @@ namespace GRINS
     ElasticMembrane( const PhysicsName& physics_name, const GetPot& input,
                      bool is_compressible );
 
-    virtual ~ElasticMembrane(){};
+    ElasticMembrane() = delete;
+
+    virtual ~ElasticMembrane() = default;
 
     //! Register postprocessing variables for ElasticMembrane
     virtual void register_postprocessing_vars( const GetPot& input,
@@ -83,8 +85,6 @@ namespace GRINS
                                     ElasticityTensor & C );
 
   private:
-
-    ElasticMembrane();
 
     //! Index from registering this quantity for postprocessing. Each component will have it's own index.
     std::vector<unsigned int> _stress_indices;

@@ -39,7 +39,9 @@ namespace GRINS
                          const GetPot& input,
                          bool is_compressible);
 
-    virtual ~ElasticMembraneBase(){};
+    ElasticMembraneBase() = delete;
+
+    virtual ~ElasticMembraneBase() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system );
 
@@ -74,10 +76,6 @@ namespace GRINS
 
     //! Variable index for lambda_sq variable
     VariableIndex _lambda_sq_var;
-
-  private:
-
-    ElasticMembraneBase();
 
   };
 

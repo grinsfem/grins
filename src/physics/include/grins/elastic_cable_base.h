@@ -39,7 +39,9 @@ namespace GRINS
                       const GetPot& input,
                       bool is_compressible);
 
-    virtual ~ElasticCableBase(){};
+    ElasticCableBase() = delete;
+
+    virtual ~ElasticCableBase() = default;
 
   protected:
 
@@ -66,10 +68,6 @@ namespace GRINS
     StressStrainLaw _stress_strain_law;
 
     bool _is_compressible;
-
-  private:
-
-    ElasticCableBase();
 
   };
 

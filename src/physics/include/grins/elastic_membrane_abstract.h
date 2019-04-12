@@ -40,14 +40,12 @@ namespace GRINS
 
     ElasticMembraneAbstract( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~ElasticMembraneAbstract(){};
+    ElasticMembraneAbstract() = delete;
+
+    virtual ~ElasticMembraneAbstract() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
-
-  private:
-
-    ElasticMembraneAbstract();
 
   };
 
