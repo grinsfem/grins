@@ -62,9 +62,7 @@ namespace GRINS
     std::string core_physics = this->find_core_physics_name(physics_name);
 
     std::string model = "none";
-    std::string strain_energy = "none";
-
-    MaterialsParsing::stress_strain_model( input, core_physics, model, strain_energy );
+    MaterialsParsing::stress_strain_model( input, core_physics, model );
 
     std::unique_ptr<Physics> new_physics;
 
@@ -74,6 +72,9 @@ namespace GRINS
 
     else if( model == std::string("incompressible_hyperelasticity") )
       {
+        std::string strain_energy = "none";
+        MaterialsParsing::strain_energy( input, core_physics, strain_energy );
+
         if( strain_energy == std::string("mooney_rivlin") )
           {
             new_physics.reset( new DerivedPhysics<IncompressiblePlaneStressHyperelasticity<MooneyRivlin> >(physics_name,input,false /*is_compressible*/) );
@@ -84,7 +85,6 @@ namespace GRINS
             error += "       Valid values are: mooney_rivlin\n";
             libmesh_error_msg(error);
           }
-
       }
     else
       {

@@ -40,7 +40,9 @@ namespace GRINS
     ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                   bool is_compressible );
 
-    virtual ~ElasticCable(){};
+    ElasticCable() = delete;
+
+    virtual ~ElasticCable() = default;
 
     //! Register postprocessing variables for ElasticCable
     virtual void register_postprocessing_vars( const GetPot& input,
@@ -81,8 +83,6 @@ namespace GRINS
                                     ElasticityTensor & C );
 
   private:
-
-    ElasticCable();
 
     //! Index from registering this quantity. Each component will have it's own index.
     std::vector<unsigned int> _stress_indices;

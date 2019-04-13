@@ -60,7 +60,7 @@ namespace GRINS
     std::string model = "none";
     std::string strain_energy = "none";
 
-    MaterialsParsing::stress_strain_model( input, core_physics, model, strain_energy );
+    MaterialsParsing::stress_strain_model( input, core_physics, model );
 
     std::unique_ptr<Physics> new_physics;
 

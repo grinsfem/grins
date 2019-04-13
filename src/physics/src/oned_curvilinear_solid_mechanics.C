@@ -23,11 +23,12 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/elastic_membrane_abstract.h"
+#include "grins/oned_curvilinear_solid_mechanics.h"
 
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
+#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -35,27 +36,22 @@
 
 namespace GRINS
 {
-  ElasticMembraneAbstract::ElasticMembraneAbstract( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : SolidMechanicsAbstract(physics_name,input)
+  OneDCurvilinearSolidMechanics::OneDCurvilinearSolidMechanics( const PhysicsName& physics_name,
+                                                                const GetPot& input )
+    : SolidMechanicsAbstract<1>(physics_name,PhysicsNaming::elastic_cable(),input)
   {}
 
-  void ElasticMembraneAbstract::init_context( AssemblyContext& context )
+  void OneDCurvilinearSolidMechanics::init_context( AssemblyContext& context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
-    this->get_fe(context)->get_xyz();
     this->get_fe(context)->get_dphidxi();
-    this->get_fe(context)->get_dphideta();
 
     // Need for constructing metric tensors
     this->get_fe(context)->get_dxyzdxi();
-    this->get_fe(context)->get_dxyzdeta();
     this->get_fe(context)->get_dxidx();
     this->get_fe(context)->get_dxidy();
     this->get_fe(context)->get_dxidz();
-    this->get_fe(context)->get_detadx();
-    this->get_fe(context)->get_detady();
-    this->get_fe(context)->get_detadz();
   }
 
 } // end namespace GRINS

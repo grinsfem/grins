@@ -34,29 +34,31 @@ namespace GRINS
   class HyperelasticStrainEnergy
   {
   public:
-    HyperelasticStrainEnergy(){};
-    virtual ~HyperelasticStrainEnergy(){};
 
-    libMesh::Real dI1( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
-    libMesh::Real dI2( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
-    libMesh::Real dI3( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const;
+    HyperelasticStrainEnergy() = default;
+
+    virtual ~HyperelasticStrainEnergy() = default;
+
+    libMesh::Number dI1( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+    libMesh::Number dI2( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+    libMesh::Number dI3( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
 
   };
 
   template<typename Function>
-  libMesh::Real HyperelasticStrainEnergy<Function>::dI1( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI1( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
   {
     return static_cast<const Function*>(this)->dI1_imp(I1,I2,I3);
   }
 
   template<typename Function>
-  libMesh::Real HyperelasticStrainEnergy<Function>::dI2( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI2( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
   {
     return static_cast<const Function*>(this)->dI2_imp(I1,I2,I3);
   }
 
   template<typename Function>
-  libMesh::Real HyperelasticStrainEnergy<Function>::dI3( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI3( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
   {
     return static_cast<const Function*>(this)->dI3_imp(I1,I2,I3);
   }

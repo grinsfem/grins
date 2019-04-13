@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_CABLE_ABSTRACT_H
-#define GRINS_ELASTIC_CABLE_ABSTRACT_H
+#ifndef GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H
+#define GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H
 
 //GRINS
 #include "grins/solid_mechanics_abstract.h"
@@ -34,39 +34,21 @@
 
 namespace GRINS
 {
-  class ElasticCableAbstract : public SolidMechanicsAbstract
+  class OneDCurvilinearSolidMechanics : public SolidMechanicsAbstract<1>
   {
   public:
 
-    ElasticCableAbstract( const PhysicsName& physics_name, const GetPot& input );
+    OneDCurvilinearSolidMechanics( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~ElasticCableAbstract(){};
+    OneDCurvilinearSolidMechanics() = delete;
+
+    virtual ~OneDCurvilinearSolidMechanics() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
-  protected:
-
-    //! Cross-sectional area of the cable
-    libMesh::Real _A;
-
-    //! Cable density
-    libMesh::Real  _rho;
-
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
-
-  private:
-
-    ElasticCableAbstract();
-
   };
 
-  inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticCableAbstract::get_fe( const AssemblyContext& context )
-  {
-    // For this Physics, we need to make sure that we grab only the 1D elements
-    return context.get_element_fe(_disp_vars.u(),1);
-  }
 }
 
-#endif // GRINS_ELASTIC_CABLE_ABSTRACT_H
+#endif // GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H

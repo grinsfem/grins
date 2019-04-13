@@ -34,14 +34,18 @@
 
 namespace GRINS
 {
+  template<unsigned int Dim>
   class SolidMechanicsAbstract : public Physics
   {
   public:
 
-    SolidMechanicsAbstract( const PhysicsName& physics_name,
-                            const GetPot& input );
+    SolidMechanicsAbstract( const PhysicsName & physics_name,
+                            const PhysicsName & core_physics_name,
+                            const GetPot & input );
 
-    virtual ~SolidMechanicsAbstract(){};
+    SolidMechanicsAbstract() = delete;
+
+    virtual ~SolidMechanicsAbstract() =default;
 
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
@@ -49,17 +53,26 @@ namespace GRINS
 
     DisplacementVariable& _disp_vars;
 
+    //! Solid density
+    libMesh::Real _rho;
+
+    const libMesh::FEGenericBase<libMesh::Real> * get_fe( const AssemblyContext & context );
+
     typedef const libMesh::DenseSubVector<libMesh::Number>& (libMesh::DiffContext::*VarFuncType)(unsigned int) const;
 
     typedef void (libMesh::FEMContext::*InteriorFuncType)(unsigned int, unsigned int, libMesh::Real&) const;
 
     typedef libMesh::Real (libMesh::DiffContext::*VarDerivType)() const;
 
-  private:
-
-    SolidMechanicsAbstract();
-
   };
+
+  template<unsigned int Dim>
+  inline
+  const libMesh::FEGenericBase<libMesh::Real>* SolidMechanicsAbstract<Dim>::get_fe( const AssemblyContext & context )
+  {
+    // For this Physics, we need to make sure that we grab only the 1D elements
+    return context.get_element_fe(_disp_vars.u(),Dim);
+  }
 
 } // end namespace GRINS
 

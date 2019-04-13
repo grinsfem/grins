@@ -26,12 +26,12 @@
 #define GRINS_ELASTIC_MEMBRANE_BASE_H
 
 //GRINS
-#include "grins/elastic_membrane_abstract.h"
+#include "grins/twod_curvilinear_solid_mechanics.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticMembraneBase : public ElasticMembraneAbstract
+  class ElasticMembraneBase : public TwoDCurvilinearSolidMechanics
   {
   public:
 
@@ -39,7 +39,9 @@ namespace GRINS
                          const GetPot& input,
                          bool is_compressible);
 
-    virtual ~ElasticMembraneBase(){};
+    ElasticMembraneBase() = delete;
+
+    virtual ~ElasticMembraneBase() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system );
 
@@ -72,15 +74,8 @@ namespace GRINS
     //! Membrane thickness
     libMesh::Real _h0;
 
-    //! Membrane density
-    libMesh::Real _rho;
-
     //! Variable index for lambda_sq variable
     VariableIndex _lambda_sq_var;
-
-  private:
-
-    ElasticMembraneBase();
 
   };
 

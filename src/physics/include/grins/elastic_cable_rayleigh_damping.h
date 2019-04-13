@@ -38,7 +38,9 @@ namespace GRINS
                                  const GetPot& input,
                                  bool is_compressible );
 
-    virtual ~ElasticCableRayleighDamping(){};
+    ElasticCableRayleighDamping() = delete;
+
+    virtual ~ElasticCableRayleighDamping() = default;
 
     //! Error out if using libMesh::FirstOrderUnsteadySolver
     virtual void auxiliary_init( MultiphysicsSystem & system );
@@ -51,10 +53,6 @@ namespace GRINS
 
     libMesh::Real _lambda_factor;
     libMesh::Real _mu_factor;
-
-  private:
-
-    ElasticCableRayleighDamping();
 
   };
 

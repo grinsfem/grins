@@ -26,12 +26,12 @@
 #define GRINS_ELASTIC_CABLE_BASE_H
 
 //GRINS
-#include "grins/elastic_cable_abstract.h"
+#include "grins/oned_curvilinear_solid_mechanics.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticCableBase : public ElasticCableAbstract
+  class ElasticCableBase : public OneDCurvilinearSolidMechanics
   {
   public:
 
@@ -39,7 +39,9 @@ namespace GRINS
                       const GetPot& input,
                       bool is_compressible);
 
-    virtual ~ElasticCableBase(){};
+    ElasticCableBase() = delete;
+
+    virtual ~ElasticCableBase() = default;
 
   protected:
 
@@ -63,13 +65,12 @@ namespace GRINS
                                  libMesh::TensorValue<libMesh::Real>& A_contra,
                                  libMesh::Real& lambda_sq);
 
+    //! Cross-sectional area of the cable
+    libMesh::Real _A;
+
     StressStrainLaw _stress_strain_law;
 
     bool _is_compressible;
-
-  private:
-
-    ElasticCableBase();
 
   };
 

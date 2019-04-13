@@ -92,8 +92,7 @@ namespace GRINS
 
   void MaterialsParsing::stress_strain_model( const GetPot & input,
                                               const std::string & physics,
-                                              std::string & model,
-                                              std::string & strain_energy )
+                                              std::string & model )
   {
     std::string material = MaterialsParsing::material_name( input, physics );
     std::string ss_option("Materials/"+material+"/StressStrainLaw/model");
@@ -101,8 +100,16 @@ namespace GRINS
     MaterialsParsing::check_for_input_option(input,ss_option);
 
     model = input(ss_option, "DIE!");
+  }
 
-    strain_energy = input("Materials/"+material+"/StressStrainLaw/strain_energy", "none");
+  void MaterialsParsing::strain_energy( const GetPot & input,
+                                        const std::string & physics,
+                                        std::string & strain_energy )
+  {
+    std::string material = MaterialsParsing::material_name( input, physics );
+    std::string option("Materials/"+material+"/StressStrainLaw/strain_energy");
+    MaterialsParsing::check_for_input_option(input,option);
+    strain_energy = input(option,"DIE!");
   }
 
   void MaterialsParsing::thermochemistry_lib( const GetPot & input,

@@ -23,12 +23,11 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/elastic_cable_abstract.h"
+#include "grins/twod_curvilinear_solid_mechanics.h"
 
 // GRINS
 #include "grins_config.h"
 #include "grins/assembly_context.h"
-#include "grins/materials_parsing.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -36,37 +35,27 @@
 
 namespace GRINS
 {
-  ElasticCableAbstract::ElasticCableAbstract( const PhysicsName& physics_name,
-                                              const GetPot& input )
-    : SolidMechanicsAbstract(physics_name,input),
-      _A( 0.0 ),
-      _rho(0.0)
-  {
-    MaterialsParsing::read_property( input,
-                                     "CrossSectionalArea",
-                                     PhysicsNaming::elastic_cable(),
-                                     (*this),
-                                     _A );
+  TwoDCurvilinearSolidMechanics::TwoDCurvilinearSolidMechanics( const GRINS::PhysicsName& physics_name, const GetPot& input )
+    : SolidMechanicsAbstract<2>(physics_name,PhysicsNaming::elastic_membrane(),input)
+  {}
 
-    MaterialsParsing::read_property( input,
-                                     "Density",
-                                     PhysicsNaming::elastic_cable(),
-                                     (*this),
-                                     _rho );
-
-  }
-
-  void ElasticCableAbstract::init_context( AssemblyContext& context )
+  void TwoDCurvilinearSolidMechanics::init_context( AssemblyContext& context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
+    this->get_fe(context)->get_xyz();
     this->get_fe(context)->get_dphidxi();
+    this->get_fe(context)->get_dphideta();
 
     // Need for constructing metric tensors
     this->get_fe(context)->get_dxyzdxi();
+    this->get_fe(context)->get_dxyzdeta();
     this->get_fe(context)->get_dxidx();
     this->get_fe(context)->get_dxidy();
     this->get_fe(context)->get_dxidz();
+    this->get_fe(context)->get_detadx();
+    this->get_fe(context)->get_detady();
+    this->get_fe(context)->get_detadz();
   }
 
 } // end namespace GRINS

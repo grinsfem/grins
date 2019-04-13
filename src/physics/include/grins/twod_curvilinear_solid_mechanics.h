@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
-#define GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
+#ifndef GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
+#define GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
 
 //GRINS
 #include "grins/solid_mechanics_abstract.h"
@@ -34,34 +34,21 @@
 
 namespace GRINS
 {
-  class ElasticMembraneAbstract : public SolidMechanicsAbstract
+  class TwoDCurvilinearSolidMechanics : public SolidMechanicsAbstract<2>
   {
   public:
 
-    ElasticMembraneAbstract( const PhysicsName& physics_name, const GetPot& input );
+    TwoDCurvilinearSolidMechanics( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~ElasticMembraneAbstract(){};
+    TwoDCurvilinearSolidMechanics() = delete;
+
+    virtual ~TwoDCurvilinearSolidMechanics() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
-  protected:
-
-    const libMesh::FEGenericBase<libMesh::Real>* get_fe( const AssemblyContext& context );
-
-  private:
-
-    ElasticMembraneAbstract();
-
   };
-
-  inline
-  const libMesh::FEGenericBase<libMesh::Real>* ElasticMembraneAbstract::get_fe( const AssemblyContext& context )
-  {
-    // For this Physics, we need to make sure that we grab only the 2D elements
-    return context.get_element_fe(_disp_vars.u(),2);
-  }
 
 } // end namespace GRINS
 
-#endif // GRINS_ELASTIC_MEMBRANE_ABSTRACT_H
+#endif // GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
