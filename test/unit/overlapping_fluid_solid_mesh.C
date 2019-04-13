@@ -76,7 +76,7 @@ namespace GRINSTesting
       this->reset_all();
     }
 
-    //---------------------------------------------QUAD-ON-QUAD-TEST(.exo)------------------------------------------------- 
+    //---------------------------------------------QUAD-ON-QUAD-TEST(.exo)-------------------------------------------------
 
     void one_overlapping_element_test()
     {
@@ -123,7 +123,7 @@ namespace GRINSTesting
        (-1,-1) ------------------------ (-1,1)
 
        */
-      
+
       for( libMesh::MeshBase::element_iterator e = (*_mesh).active_local_elements_begin();
            e != (*_mesh).active_local_elements_end();
            ++e )
@@ -134,17 +134,11 @@ namespace GRINSTesting
         }
 
       // There should be 1 "solid" element mapping to other two fluid elements
-      CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
-
-      // These are a little silly. Morally equivalent to map.find() != map.end()
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.solid_map().find(0)->second).find(1)->first);
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).find(2)->first);
-
-      // Check for the correct number and values of solid quadrature point indices
-      // associated with each of the fluid elements
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.solid_map().find(0)->second).find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.solid_map().find(0)->second).find(2)->second).size());
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
 
       std::vector<unsigned int> elem1_qps(6);
       elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 4; elem1_qps[4] = 6; elem1_qps[5] = 7;
@@ -152,26 +146,35 @@ namespace GRINSTesting
       std::vector<unsigned int> elem2_qps(3);
       elem2_qps[0] = 2; elem2_qps[1] = 5; elem2_qps[2] = 8;
 
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.solid_map().find(0)->second).find(1)->second)[i]);
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
 
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(6,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(3,(int)qps2.size());
 
-      // There should be 2 "fluid" elements, each mapping to the solid element
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
+        for( unsigned int i = 0; i < 6; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
 
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
+        for( unsigned int i = 0; i < 3; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
 
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
@@ -182,7 +185,7 @@ namespace GRINSTesting
     void quad_on_quad_overlapping_test()
     {
       std::string input_file = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/overlap_variables.in";
-      
+
       std::unique_ptr<GetPot> _input;
       _input.reset( new GetPot(input_file) );
 
@@ -202,7 +205,7 @@ namespace GRINSTesting
                |          |          |
                |          |          |
        (-1,-1) ------------------------ (-1,1)
-   
+
       */
 
       mesh->set_mesh_dimension(2);
@@ -222,7 +225,7 @@ namespace GRINSTesting
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<9; n++)
         elem->set_node(n) = mesh->node_ptr(n);
-      
+
       mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(0.0,1.0),10 );
       mesh->add_point( libMesh::Point(0.0,-1.0),11 );
@@ -245,7 +248,7 @@ namespace GRINSTesting
       elem->set_node(6) = mesh->node_ptr(15);
       elem->set_node(7) = mesh->node_ptr(16);
       elem->set_node(8) = mesh->node_ptr(17);
-      
+
       //mesh->add_point( libMesh::Point(0.0,1.0),10 );
       mesh->add_point( libMesh::Point(-1.0,1.0),18 );
       mesh->add_point( libMesh::Point(-1.0,-1.0),19 );
@@ -268,7 +271,7 @@ namespace GRINSTesting
       elem->set_node(6) = mesh->node_ptr(22);
       elem->set_node(7) = mesh->node_ptr(14);
       elem->set_node(8) = mesh->node_ptr(23);
-      
+
       mesh->prepare_for_use();
 
       std::unique_ptr<libMesh::EquationSystems> _es;
@@ -294,19 +297,16 @@ namespace GRINSTesting
         (GRINS::VariablesParsing::displacement_section());
 
       _es->init();
-      
+
       libMesh::UniquePtr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
-      CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
-
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.solid_map().find(0)->second).find(1)->first);
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).find(2)->first);
-
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.solid_map().find(0)->second).find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.solid_map().find(0)->second).find(2)->second).size());
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
 
       std::vector<unsigned int> elem1_qps(6);
       elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 4; elem1_qps[4] = 6; elem1_qps[5] = 7;
@@ -314,26 +314,35 @@ namespace GRINSTesting
       std::vector<unsigned int> elem2_qps(3);
       elem2_qps[0] = 2; elem2_qps[1] = 5; elem2_qps[2] = 8;
 
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.solid_map().find(0)->second).find(1)->second)[i]);
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
 
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(6,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(3,(int)qps2.size());
 
+        for( unsigned int i = 0; i < 6; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
 
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
+        for( unsigned int i = 0; i < 3; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
 
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
 
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
@@ -344,7 +353,7 @@ namespace GRINSTesting
     void tri_on_quad_overlapping_test()
     {
       std::string input_file = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/overlap_variables.in";
-      
+
       std::unique_ptr<GetPot> _input;
       _input.reset( new GetPot(input_file) );
 
@@ -354,7 +363,7 @@ namespace GRINSTesting
         Overlapping element in the interior (TRI6): id = 0, node 0 = (0.0,0.5)
         Right interior element (QUAD9): id = 1, node 0 = (1,1), width = 1,  height is 2
         Left interior element (QUAD9): id = 2, node 0 = (0,1), width = 1,  height is 2
-     
+
         (-1,1) ----------------------- (1,1)
                |          |          |
                |          |          |
@@ -376,13 +385,13 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(-0.25,0.0),3 );
       mesh->add_point( libMesh::Point(0.0,-0.5),4 );
       mesh->add_point( libMesh::Point(0.25,0.0),5 );
-      
+
       libMesh::Elem* elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(0);
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<6; n++)
         elem->set_node(n) = mesh->node_ptr(n);
-      
+
       mesh->add_point( libMesh::Point(1.0,1.0),6 );
       mesh->add_point( libMesh::Point(0.0,1.0),7 );
       mesh->add_point( libMesh::Point(0.0,-1.0),8 );
@@ -405,7 +414,7 @@ namespace GRINSTesting
       elem->set_node(6) = mesh->node_ptr(12);
       elem->set_node(7) = mesh->node_ptr(13);
       elem->set_node(8) = mesh->node_ptr(14);
- 
+
       //mesh->add_point( libMesh::Point(0.0,1.0),7 );
       mesh->add_point( libMesh::Point(-1.0,1.0),15 );
       mesh->add_point( libMesh::Point(-1.0,-1.0),16 );
@@ -428,9 +437,9 @@ namespace GRINSTesting
       elem->set_node(6) = mesh->node_ptr(19);
       elem->set_node(7) = mesh->node_ptr(11);
       elem->set_node(8) = mesh->node_ptr(20);
-      
+
       mesh->prepare_for_use();
-    
+
       std::unique_ptr<libMesh::EquationSystems> _es;
       _es.reset( new libMesh::EquationSystems(*mesh) );
 
@@ -459,62 +468,68 @@ namespace GRINSTesting
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
-      CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
-
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.solid_map().find(0)->second).find(1)->first);
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).find(2)->first);
-
-      CPPUNIT_ASSERT_EQUAL(5,(int)((mesh_overlap.solid_map().find(0)->second).find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)((mesh_overlap.solid_map().find(0)->second).find(2)->second).size());
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
 
       std::vector<unsigned int> elem1_qps(5);
-      elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 4; elem1_qps[4] = 5; 
+      elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 4; elem1_qps[4] = 5;
 
       std::vector<unsigned int> elem2_qps(2);
-      elem2_qps[0] = 2; elem2_qps[1] = 6; 
+      elem2_qps[0] = 2; elem2_qps[1] = 6;
 
-      for( unsigned int i = 0; i < 5; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.solid_map().find(0)->second).find(1)->second)[i]);
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
 
-      for( unsigned int i = 0; i < 2; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(5,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(2,(int)qps2.size());
 
+        for( unsigned int i = 0; i < 5; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
 
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(5,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
+        for( unsigned int i = 0; i < 2; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
 
-      for( unsigned int i = 0; i < 5; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
 
-      for( unsigned int i = 0; i < 2; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
 
     //---------------------------------------------QUAD-ON-TRI-TEST-------------------------------------------------
- 
+
     void quad_on_tri_overlapping_test()
     {
       std::string input_file = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/overlap_variables.in";
-      
+
       std::unique_ptr<GetPot> _input;
       _input.reset( new GetPot(input_file) );
 
       std::shared_ptr<libMesh::UnstructuredMesh> mesh( new libMesh::SerialMesh(*TestCommWorld) );
-      
+
       /*
         Overlapping element in the interior(QUAD9): id = 0, node 0 = (0.5,0.5), length is 1 on each edge
-        Right interior element(TRI6): id = 1, node 0 = (1,1) 
+        Right interior element(TRI6): id = 1, node 0 = (1,1)
         Left interior element(TRI6): id = 2, node 0 = (1,1)
-        
+
         (-1,1) ---------------------- (1,1)
                |                   /|
                |                  / |
@@ -533,9 +548,9 @@ namespace GRINSTesting
                | /                  |
                |/                   |
        (-1,-1) ---------------------- (-1,1)
-      
+
       */
-      
+
       mesh->set_mesh_dimension(2);
 
       mesh->add_point( libMesh::Point(0.5,0.5),0 );
@@ -553,14 +568,14 @@ namespace GRINSTesting
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<9; n++)
         elem->set_node(n) = mesh->node_ptr(n);
-      
+
       mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(-1.0,-1.0),10 );
       mesh->add_point( libMesh::Point(1.0,-1.0),11 );
       mesh->add_point( libMesh::Point(0.0,0.0),12 );
       mesh->add_point( libMesh::Point(0.0,-1.0),13 );
       mesh->add_point( libMesh::Point(1.0,0.0),14 );
-      
+
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(1);
       elem->subdomain_id() = 2;
@@ -570,14 +585,14 @@ namespace GRINSTesting
       elem->set_node(3) = mesh->node_ptr(12);
       elem->set_node(4) = mesh->node_ptr(13);
       elem->set_node(5) = mesh->node_ptr(14);
-            
+
       //mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(-1.0,1.0),15 );
       //mesh->add_point( libMesh::Point(-1.0,-1.0),10 );
       mesh->add_point( libMesh::Point(0.0,1.0),16 );
       mesh->add_point( libMesh::Point(-1.0,0.0),17 );
       //mesh->add_point( libMesh::Point(0.0,0.0),12 );
-      
+
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(2);
       elem->subdomain_id() = 2;
@@ -587,9 +602,9 @@ namespace GRINSTesting
       elem->set_node(3) = mesh->node_ptr(16);
       elem->set_node(4) = mesh->node_ptr(17);
       elem->set_node(5) = mesh->node_ptr(12);
-            
+
       mesh->prepare_for_use();
-      
+
       std::unique_ptr<libMesh::EquationSystems> _es;
       _es.reset( new libMesh::EquationSystems(*mesh) );
 
@@ -618,14 +633,11 @@ namespace GRINSTesting
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
-      CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
-
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.solid_map().find(0)->second).find(1)->first);
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).find(2)->first);
-
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.solid_map().find(0)->second).find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.solid_map().find(0)->second).find(2)->second).size());
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
 
       std::vector<unsigned int> elem1_qps(6);
       elem1_qps[0] = 0; elem1_qps[1] = 3; elem1_qps[2] = 4; elem1_qps[3] = 6; elem1_qps[4] = 7; elem1_qps[5] = 8;
@@ -633,37 +645,46 @@ namespace GRINSTesting
       std::vector<unsigned int> elem2_qps(3);
       elem2_qps[0] = 1; elem2_qps[1] = 2; elem2_qps[2] = 5;
 
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.solid_map().find(0)->second).find(1)->second)[i]);
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
 
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(6,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(3,(int)qps2.size());
 
+        for( unsigned int i = 0; i < 6; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
 
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(6,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(3,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
+        for( unsigned int i = 0; i < 3; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
 
-      for( unsigned int i = 0; i < 6; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
 
-      for( unsigned int i = 0; i < 3; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();
     }
-    
+
     //---------------------------------------------TRI-ON-TRI-TEST-------------------------------------------------
-   
+
     void tri_on_tri_overlapping_test()
     {
       std::string input_file = std::string(GRINS_TEST_UNIT_INPUT_SRCDIR)+"/overlap_variables.in";
-      
+
       std::unique_ptr<GetPot> _input;
       _input.reset( new GetPot(input_file) );
 
@@ -671,9 +692,9 @@ namespace GRINSTesting
 
       /*
         Overlapping element in the interior(TRI6): id = 0, node 0 = (0.0,0.5)
-        Right interior element(TRI6): id = 1, node 0 = (1,1) 
+        Right interior element(TRI6): id = 1, node 0 = (1,1)
         Left interior element(TRI6): id = 2, node 0 = (1,1)
-            
+
       */
 
       mesh->set_mesh_dimension(2);
@@ -714,7 +735,7 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(0.0,1.0),13 );
       mesh->add_point( libMesh::Point(-1.0,0.0),14 );
       //mesh->add_point( libMesh::Point(0.0,0.0),9 );
-      
+
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(2);
       elem->subdomain_id() = 2;
@@ -755,41 +776,47 @@ namespace GRINSTesting
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
-      CPPUNIT_ASSERT_EQUAL(1,(int)mesh_overlap.solid_map().size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).size());
-
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.solid_map().find(0)->second).find(1)->first);
-      CPPUNIT_ASSERT_EQUAL(2,(int)(mesh_overlap.solid_map().find(0)->second).find(2)->first);
-
-      CPPUNIT_ASSERT_EQUAL(5,(int)((mesh_overlap.solid_map().find(0)->second).find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)((mesh_overlap.solid_map().find(0)->second).find(2)->second).size());
+      {
+        const std::set<libMesh::dof_id_type> & fluid_elem_ids =
+          mesh_overlap.get_overlapping_fluid_elems(0);
+        CPPUNIT_ASSERT_EQUAL(2,(int)fluid_elem_ids.size());
+      }
 
       std::vector<unsigned int> elem1_qps(5);
-      elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 5; elem1_qps[4] = 6; 
+      elem1_qps[0] = 0; elem1_qps[1] = 1; elem1_qps[2] = 3; elem1_qps[3] = 5; elem1_qps[4] = 6;
 
       std::vector<unsigned int> elem2_qps(2);
-      elem2_qps[0] = 2; elem2_qps[1] = 4; 
+      elem2_qps[0] = 2; elem2_qps[1] = 4;
 
-      for( unsigned int i = 0; i < 5; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.solid_map().find(0)->second).find(1)->second)[i]);
+      {
+        const std::vector<unsigned int> & qps1 = mesh_overlap.get_solid_qps(0,1);
+        const std::vector<unsigned int> & qps2 = mesh_overlap.get_solid_qps(0,2);
 
-      for( unsigned int i = 0; i < 2; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.solid_map().find(0)->second).find(2)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(5,(int)qps1.size());
+        CPPUNIT_ASSERT_EQUAL(2,(int)qps2.size());
 
+        for( unsigned int i = 0; i < 5; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem1_qps[i], qps1[i]);
 
-      CPPUNIT_ASSERT_EQUAL(2,(int)mesh_overlap.fluid_map().size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(1)->second).size());
-      CPPUNIT_ASSERT_EQUAL(1,(int)(mesh_overlap.fluid_map().find(2)->second).size());
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(1)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(0,(int)(mesh_overlap.fluid_map().find(2)->second).find(0)->first);
-      CPPUNIT_ASSERT_EQUAL(5,(int)((mesh_overlap.fluid_map().find(1)->second).find(0)->second).size());
-      CPPUNIT_ASSERT_EQUAL(2,(int)((mesh_overlap.fluid_map().find(2)->second).find(0)->second).size());
+        for( unsigned int i = 0; i < 2; i++ )
+          CPPUNIT_ASSERT_EQUAL(elem2_qps[i], qps2[i]);
+      }
 
-      for( unsigned int i = 0; i < 5; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem1_qps[i],((mesh_overlap.fluid_map().find(1)->second).find(0)->second)[i]);
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(1);
 
-      for( unsigned int i = 0; i < 2; i++ )
-        CPPUNIT_ASSERT_EQUAL(elem2_qps[i],((mesh_overlap.fluid_map().find(2)->second).find(0)->second)[i]);
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
+
+      {
+        const std::set<libMesh::dof_id_type> & solid_elem_ids =
+          mesh_overlap.get_overlapping_solid_elems(2);
+
+        CPPUNIT_ASSERT_EQUAL(1,(int)solid_elem_ids.size());
+        CPPUNIT_ASSERT(solid_elem_ids.find(0) != solid_elem_ids.end());
+      }
 
       // Clear out the VariableWarehouse so it doesn't interfere with other tests.
       GRINS::GRINSPrivate::VariableWarehouse::clear();

@@ -54,13 +54,24 @@ namespace GRINS
 
     virtual ~OverlappingFluidSolidMap(){};
 
-    const std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > > &
-    solid_map() const
-    { return _solid_to_fluid_map; }
+    bool has_overlapping_fluid_elem(const libMesh::dof_id_type elem_id) const
+    { return _overlapping_fluid_ids.find(elem_id) != _overlapping_fluid_ids.end(); }
 
-    const std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > > &
-    fluid_map() const
-    { return _fluid_to_solid_map; }
+    bool has_overlapping_solid_elem(const libMesh::dof_id_type elem_id) const
+    { return _fluid_to_solid_map.find(elem_id) != _fluid_to_solid_map.end(); }
+
+    //!Returns vector with the element ids of fluid elements that overlap with the given solid elem id
+    const std::set<libMesh::dof_id_type> & get_overlapping_fluid_elems
+    ( const libMesh::dof_id_type solid_id ) const;
+
+    /*! Returns the quadrature point indices corresponding to those solid quadrature points
+      contained in the fluid element given by fluid_id. */
+    const std::vector<unsigned int> & get_solid_qps( const libMesh::dof_id_type solid_id,
+                                                     const libMesh::dof_id_type fluid_id ) const;
+
+    //!Returns vector with the element ids of solid elements that overlap with the given fluid elem id
+    const std::set<libMesh::dof_id_type> & get_overlapping_solid_elems
+    ( const libMesh::dof_id_type fluid_id ) const;
 
   private:
 
@@ -72,11 +83,22 @@ namespace GRINS
                      const std::set<libMesh::subdomain_id_type> & fluid_ids,
                      const DisplacementVariable & solid_disp_vars );
 
+    void parallel_sync( MultiphysicsSystem & system );
+
+    void pack_ids_to_push
+    ( const libMesh::MeshBase & mesh,
+      std::map<libMesh::processor_id_type,
+      std::vector<std::pair<libMesh::dof_id_type,libMesh::dof_id_type>>> & ids_to_push ) const;
+
+    void map_error(const libMesh::dof_id_type id, const std::string & type) const;
+
+    //! Vector of element ids overlapping each solid id
+    std::map<libMesh::dof_id_type,std::set<libMesh::dof_id_type>> _overlapping_fluid_ids;
+
     std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > >
     _solid_to_fluid_map;
 
-    std::map<libMesh::dof_id_type,std::map<libMesh::dof_id_type,std::vector<unsigned int> > >
-    _fluid_to_solid_map;
+    std::map<libMesh::dof_id_type,std::set<libMesh::dof_id_type>> _fluid_to_solid_map;
   };
 
 } // end namespace GRINS
