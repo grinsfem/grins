@@ -1,0 +1,25 @@
+
+====================
+ Multigrid Examples
+====================
+
+These examples demonstrate the utilization of Geometric Multigrid on
+some benchmark problems. The first, run_poisson.sh, demonstrates
+vanilla multigrid usage for a forced Poisson problem with homogeneous
+boundary conditions. Next, run_stokes.sh demonstrates the coupling
+between fieldsplit and multigrid capabilities by applying multigrid
+directly to the velocity sub-block of a lid driven cavity Stokes flow
+formulation.
+
+Both examples contain a set of default solver settings which perform
+adequately, but a large variety of further options can be employed to
+further customize the solve. The single required option is
+-pc_mg_levels which must be specified at all times in order to dictate
+the number of multigrid levels. Options such as
+-pc_mg_distinct_smoothup for use to specify the up/down solve
+separately, -pc_mg_cycles to select v or w cycles, -pc_mg_type for
+additive, multiplicative or full multigrid types, and
+-mg_{coarse,levels}_{pc,ksp}_* to configure the PC/KSP object for the
+smoothing are commonly employed and can be used with appropriate
+fieldsplit prefixes; for a full list of available solver options
+please refer to the PETSc documentation.

@@ -1,0 +1,105 @@
+# Input file for Stokes fieldsplit+multigrid example
+
+# Mesh related options
+[Mesh]
+  class = 'parallel'
+  [./Generation]
+    dimension = '2'
+    element_type = 'QUAD9'
+    n_elems_x = '6'
+    n_elems_y = '6'
+    x_min = '0.0'
+    x_max = '1.0'
+    y_min = '-1.0'
+    y_max = '0.0'
+  [../]
+  [./Refinement]
+     uniformly_refine = '2'
+     allow_renumbering = 'false'
+     allow_remote_elem_deletion = 'false'
+     disable_partitioning = 'true'
+  [../]
+[]
+
+# The physics class employed
+[Physics]
+   enabled_physics = 'Stokes'
+   [./Stokes]
+     material = 'Fluid'
+     pin_pressure = 'true'
+     pin_location = '0.0 0.0'
+     pin_value = '0.0'
+   [../]
+[]
+
+# Material properties
+[Materials]
+  [./Fluid]
+     [./Density]
+        value = '1.0'
+     [../]
+     [./Viscosity]
+        model = 'constant'
+        value = '1.0e-1'
+     [../]
+  [../]
+[]
+
+[BoundaryConditions]
+   bc_ids = '2 0:1:3'
+   bc_id_name_map = 'Top Walls'
+   [./Walls]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+   [../]
+   [./Top]
+      [./Velocity]
+         type = 'constant_dirichlet'
+         u = '1.0'
+      [../]
+   [../]
+[]
+
+[Variables]
+   [./Velocity]
+      names = 'u v'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+   [./Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../]
+[]
+
+# Visualization options
+[vis-options]
+ output_vis = true
+ vis_output_file_prefix = 'multigrid_stokes'
+ output_residual = 'false'
+ output_format = 'xdr'
+[]
+
+# Options for printing info to the screen
+[screen-options]
+  system_name = 'GRINS-TEST'
+  print_equation_system_info = true
+  print_mesh_info = true
+  print_log_info = true
+  solver_verbose = true
+  solver_quiet = false
+  print_element_jacobians = 'false'
+[]
+
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+  max_nonlinear_iterations =  1
+  max_linear_iterations = 15
+  verify_analytic_jacobians = 0.0
+  #initial_linear_tolerance = 1.0e-10
+  use_numerical_jacobians_only = 'false'
+  type = 'libmesh_petsc_diff'
+[]

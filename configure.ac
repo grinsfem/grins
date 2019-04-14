@@ -394,6 +394,8 @@ AC_CONFIG_FILES(examples/transient_amr/run.sh,   [chmod +x examples/transient_am
 AC_CONFIG_FILES(examples/ozone_flame/run.sh,                 [chmod +x examples/ozone_flame/run.sh])
 AC_CONFIG_FILES(examples/ozone_flame/crun.sh,                 [chmod +x examples/ozone_flame/crun.sh])
 AC_CONFIG_FILES(examples/spectroscopy/run.sh,                 [chmod +x examples/spectroscopy/run.sh])
+AC_CONFIG_FILES(examples/multigrid/run_poisson.sh,            [chmod +x examples/multigrid/run_poisson.sh])
+AC_CONFIG_FILES(examples/multigrid/run_stokes.sh,             [chmod +x examples/multigrid/run_stokes.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files
