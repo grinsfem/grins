@@ -164,6 +164,9 @@ namespace GRINS
     static PhysicsName reacting_low_mach_navier_stokes_spgsm_stab()
     { return "ReactingLowMachNavierStokesSPGSMStabilization"+suffix(); }
 
+    static PhysicsName compressible_hyperelasticity()
+    { return "CompressibleHyperelasticity"+suffix(); }
+
     static PhysicsName elastic_membrane()
     { return "ElasticMembrane"+suffix(); }
 

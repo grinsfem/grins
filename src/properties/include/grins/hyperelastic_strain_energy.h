@@ -39,10 +39,32 @@ namespace GRINS
 
     virtual ~HyperelasticStrainEnergy() = default;
 
+    //! dW/dI1
     libMesh::Number dI1( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+
+    //! dW/dI2
     libMesh::Number dI2( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+
+    //! dW/dI3
     libMesh::Number dI3( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
 
+    //! d^2W/dI1^2
+    libMesh::Number dI12( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+
+    //! d^2W/dI2^2
+    libMesh::Number dI22( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+
+    //! d^2W/dI3^2
+    libMesh::Number dI32( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+
+    //! d^2W/dI1dI2
+    libMesh::Number dI1dI2( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+
+    //! d^2W/dI1dI3
+    libMesh::Number dI1dI3( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
+
+    //! d^2W/dI2dI3
+    libMesh::Number dI2dI3( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const;
   };
 
   template<typename Function>
@@ -63,8 +85,42 @@ namespace GRINS
     return static_cast<const Function*>(this)->dI3_imp(I1,I2,I3);
   }
 
+  template<typename Function>
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI12( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
+  {
+    return static_cast<const Function*>(this)->dI12_imp(I1,I2,I3);
+  }
+
+  template<typename Function>
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI22( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
+  {
+    return static_cast<const Function*>(this)->dI22_imp(I1,I2,I3);
+  }
+
+  template<typename Function>
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI32( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
+  {
+    return static_cast<const Function*>(this)->dI32_imp(I1,I2,I3);
+  }
+
+  template<typename Function>
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI1dI2( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
+  {
+    return static_cast<const Function*>(this)->dI1dI2_imp(I1,I2,I3);
+  }
+
+  template<typename Function>
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI1dI3( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
+  {
+    return static_cast<const Function*>(this)->dI1dI3_imp(I1,I2,I3);
+  }
+
+  template<typename Function>
+  libMesh::Number HyperelasticStrainEnergy<Function>::dI2dI3( libMesh::Number I1, libMesh::Number I2, libMesh::Number I3 ) const
+  {
+    return static_cast<const Function*>(this)->dI2dI3_imp(I1,I2,I3);
+  }
+
 } // end namespace GRINS
-
-
 
 #endif // GRINS_HYPERELASTIC_STRAIN_ENERGY_H
