@@ -255,6 +255,8 @@ multigrid_DATA    += $(top_srcdir)/examples/multigrid/README
 multigrid_SCRIPTS  = $(top_builddir)/examples/multigrid/run_poisson.sh
 multigrid_SCRIPTS += $(top_builddir)/examples/multigrid/run_stokes.sh
 
+EXTRA_DIST += $(multigrid_DATA)
+
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno
