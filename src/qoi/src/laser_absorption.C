@@ -116,7 +116,7 @@ namespace GRINS
     std::shared_ptr<libMesh::Elem> elem( new libMesh::Quad9() );
 
     elem->set_node(0) = new libMesh::Node(p);
-    elem->get_node(0)->set_id(0);
+    elem->node_ptr(0)->set_id(0);
 
     for (unsigned int s = 1; s < 8; ++s)
       {
@@ -131,13 +131,13 @@ namespace GRINS
         libMesh::Point node = radius*(x1*p + x2*w);
 
         elem->set_node(s) = new libMesh::Node(node);
-        elem->get_node(s)->set_id(s);
+        elem->node_ptr(s)->set_id(s);
 
         p = node;
       }
 
     elem->set_node(8) = new libMesh::Node(centerline_origin);
-    elem->get_node(8)->set_id(8);
+    elem->node_ptr(8)->set_id(8);
 
     // need a dummy ID to get through several asserts
     elem->set_id(0);
