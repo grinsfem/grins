@@ -102,12 +102,8 @@ namespace GRINS
        MUST complete first. */
     /*! \todo Figure out how to tell compilers not to fuse this loop when
       they want to be aggressive. */
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      {
-        (physics_iter->second)->init_variables( this );
-      }
+    for (auto & physics : _physics_list )
+      physics.second->init_variables( this );
 
     libmesh_assert(_input);
     BCBuilder::build_boundary_conditions(*_input,*this,_neumann_bcs);
@@ -128,19 +124,15 @@ namespace GRINS
       }
 
     // Now set time_evolving variables
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      {
-        (physics_iter->second)->set_time_evolving_vars( this );
-      }
+    for (auto & physics : _physics_list )
+      physics.second->set_time_evolving_vars( this );
 
     // Set whether the problem we're solving is steady or not
     // Since the variable is static, just call one Physics class
     {
-      PhysicsListIter physics_iter = _physics_list.begin();
-      if (physics_iter != _physics_list.end() )
-        (physics_iter->second)->set_is_steady((this->time_solver)->is_steady());
+      auto physics = _physics_list.begin();
+      if (physics != _physics_list.end() )
+        physics->second->set_is_steady((this->time_solver)->is_steady());
     }
 
     // Next, call parent init_data function to intialize everything.
@@ -149,28 +141,17 @@ namespace GRINS
     // After solution has been initialized we can project initial
     // conditions to it
     libMesh::CompositeFunction<libMesh::Number> ic_function;
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      {
-        // Initialize builtin IC's for each physics
-        (physics_iter->second)->init_ics( this, ic_function );
-      }
+
+    // Initialize builtin IC's for each physics
+    for (auto & physics : _physics_list )
+      physics.second->init_ics( this, ic_function );
 
     if (ic_function.n_subfunctions())
-      {
-        this->project_solution(&ic_function);
-      }
+      this->project_solution(&ic_function);
 
     // Now do any auxillary initialization required by each Physics
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      {
-        (physics_iter->second)->auxiliary_init( *this );
-      }
-
-    return;
+    for (auto & physics : _physics_list )
+      physics.second->auxiliary_init( *this );
   }
 
   std::unique_ptr<libMesh::DiffContext> MultiphysicsSystem::build_context()
@@ -200,14 +181,8 @@ namespace GRINS
   void MultiphysicsSystem::register_postprocessing_vars( const GetPot& input,
                                                          PostProcessedQuantities<libMesh::Real>& postprocessing )
   {
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      {
-        (physics_iter->second)->register_postprocessing_vars( input, postprocessing );
-      }
-
-    return;
+    for (auto & physics : _physics_list )
+      physics.second->register_postprocessing_vars( input, postprocessing );
   }
 
   void MultiphysicsSystem::register_parameter
@@ -215,16 +190,11 @@ namespace GRINS
     libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer )
   {
     //Loop over each physics to ask each for the requested parameter
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      {
-        (physics_iter->second)->register_parameter( param_name,
-                                                    param_pointer );
-      }
+    for (auto & physics : _physics_list )
+      physics.second->register_parameter( param_name, param_pointer );
 
-    for (unsigned int bc=0; bc<_neumann_bcs.size(); bc++)
-      _neumann_bcs[bc]->get_func()->register_parameter(param_name, param_pointer);
+    for (const auto & neuman_bc : _neumann_bcs)
+      neuman_bc->get_func()->register_parameter(param_name, param_pointer);
   }
 
 
@@ -234,14 +204,8 @@ namespace GRINS
     AssemblyContext& c = libMesh::cast_ref<AssemblyContext&>(context);
 
     //Loop over each physics to initialize relevant variable structures for assembling system
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      {
-        (physics_iter->second)->init_context( c );
-      }
-
-    return;
+    for (auto & physics : _physics_list )
+      physics.second->init_context( c );
   }
 
   void MultiphysicsSystem::assembly( bool get_residual,
@@ -250,10 +214,8 @@ namespace GRINS
                                      bool apply_no_constraints )
   {
     // First do any preassembly that the Physics requires (which by default is none)
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      (physics_iter->second)->preassembly(*this);
+    for (auto & physics : _physics_list )
+      physics.second->preassembly(*this);
 
     // Now do the assembly
     libMesh::FEMSystem::assembly(get_residual,get_jacobian,
@@ -267,10 +229,8 @@ namespace GRINS
     FEMSystem::reinit();
 
     // Now do per Physics reinit (which by default is none)
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
-      (physics_iter->second)->reinit(*this);
+    for (auto & physics : _physics_list )
+      physics.second->reinit(*this);
 
     // And now reinit the QoI
     if (this->qoi.size() > 0)
@@ -279,6 +239,14 @@ namespace GRINS
         CompositeQoI* qoi = libMesh::cast_ptr<CompositeQoI*>(diff_qoi);
         qoi->reinit(*this);
       }
+  }
+
+  void MultiphysicsSystem::solve()
+  {
+    for (auto & physics : _physics_list )
+      physics.second->presolve(*this);
+
+    FEMSystem::solve();
   }
 
   bool MultiphysicsSystem::_general_residual( bool request_jacobian,
@@ -294,30 +262,24 @@ namespace GRINS
     CachedValues & cache = c.get_cached_values();
 
     // Now compute cache for this element
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
+    for (auto & physics : _physics_list )
       {
         // shared_ptr gets confused by operator->*
-        ((*(physics_iter->second)).*cachefunc)( c );
+        ((*(physics.second)).*cachefunc)( c );
       }
 
     // Loop over each physics and compute their contributions
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
+    for (auto & physics : _physics_list )
       {
         if(c.has_elem())
           {
-            if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
+            if( physics.second->enabled_on_elem( &c.get_elem() ) )
               {
-                ((*(physics_iter->second)).*resfunc)( compute_jacobian, c );
+                ((*(physics.second)).*resfunc)( compute_jacobian, c );
               }
           }
         else
-          {
-            ((*(physics_iter->second)).*resfunc)( compute_jacobian, c );
-          }
+          ((*(physics.second)).*resfunc)( compute_jacobian, c );
       }
 
     // We need to clear out the cache when we're done so we don't interfere
@@ -451,28 +413,31 @@ namespace GRINS
                                                            const libMesh::Point& point,
                                                            libMesh::Real& value )
   {
-    for( PhysicsListIter physics_iter = _physics_list.begin();
-         physics_iter != _physics_list.end();
-         physics_iter++ )
+    for (auto & physics : _physics_list )
       {
         // Only compute if physics is active on current subdomain or globally
-        if( (physics_iter->second)->enabled_on_elem( &context.get_elem() ) )
-          {
-            (physics_iter->second)->compute_postprocessed_quantity( quantity_index, context, point, value );
-          }
+        if( physics.second->enabled_on_elem( &context.get_elem() ) )
+          physics.second->compute_postprocessed_quantity( quantity_index, context, point, value );
       }
-    return;
   }
 
   void MultiphysicsSystem::get_active_neumann_bcs( BoundaryID bc_id,
                                                    const std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs,
                                                    std::vector<std::shared_ptr<NeumannBCContainer> >& active_neumann_bcs )
   {
-    // Manually writing the loop since std::copy_if is C++11 only
-    for( std::vector<std::shared_ptr<NeumannBCContainer> >::const_iterator it = neumann_bcs.begin();
-         it < neumann_bcs.end(); ++it )
-      if( (*it)->has_bc_id( bc_id ) )
-        active_neumann_bcs.push_back( *it );
+    libmesh_assert( active_neumann_bcs.empty() );
+
+    // Make space in the container
+    active_neumann_bcs.resize( std::distance(neumann_bcs.begin(),neumann_bcs.end()) );
+
+    // Copy in active bcs
+    auto it = std::copy_if( neumann_bcs.begin(), neumann_bcs.end(),
+                            active_neumann_bcs.begin(),
+                            [bc_id]( const std::shared_ptr<NeumannBCContainer> & nbc )
+                            {return nbc->has_bc_id(bc_id);} );
+
+    // Remove unneeded space
+    active_neumann_bcs.resize( std::distance(active_neumann_bcs.begin(),it) );
   }
 
   bool MultiphysicsSystem::apply_neumann_bcs( bool request_jacobian,
@@ -487,11 +452,8 @@ namespace GRINS
     bool compute_jacobian = request_jacobian;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
-    for( std::vector<BoundaryID>::const_iterator it = ids.begin();
-         it != ids.end(); it++ )
+    for( const auto & bc_id : ids )
       {
-        BoundaryID bc_id = *it;
-
         libmesh_assert_not_equal_to(bc_id, libMesh::BoundaryInfo::invalid_id);
 
         // Retreive the NeumannBCContainers that are active on the current bc_id
@@ -500,13 +462,11 @@ namespace GRINS
 
         if( !active_neumann_bcs.empty() )
           {
-            typedef std::vector<std::shared_ptr<NeumannBCContainer> >::iterator BCIt;
-
-            for( BCIt container = active_neumann_bcs.begin(); container < active_neumann_bcs.end(); ++container )
+            for( const auto & container : active_neumann_bcs )
               {
-                std::shared_ptr<NeumannBCAbstract>& func = (*container)->get_func();
+                std::shared_ptr<NeumannBCAbstract>& func = container->get_func();
 
-                const FEVariablesBase& var = (*container)->get_fe_var();
+                const FEVariablesBase& var = container->get_fe_var();
 
                 func->eval_flux( compute_jacobian, assembly_context,
                                  var.neumann_bc_sign(), Physics::is_axisymmetric() );

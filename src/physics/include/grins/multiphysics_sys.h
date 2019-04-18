@@ -131,6 +131,8 @@ namespace GRINS
       such as point locators. */
     virtual void reinit();
 
+    virtual void solve() override;
+
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
