@@ -50,7 +50,8 @@ namespace GRINS
                               const libMesh::PointLocatorBase & point_locator,
                               const std::set<libMesh::subdomain_id_type> & solid_ids,
                               const std::set<libMesh::subdomain_id_type> & fluid_ids,
-                              const DisplacementVariable & solid_disp_vars );
+                              const DisplacementVariable & solid_disp_vars,
+                              bool use_old_solution = false );
 
     virtual ~OverlappingFluidSolidMap() = default;
 
@@ -99,6 +100,8 @@ namespace GRINS
     _solid_to_fluid_map;
 
     std::map<libMesh::dof_id_type,std::set<libMesh::dof_id_type>> _fluid_to_solid_map;
+
+    bool _use_old_solution;
   };
 
 } // end namespace GRINS

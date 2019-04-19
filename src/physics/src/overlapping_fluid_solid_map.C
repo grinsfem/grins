@@ -39,7 +39,9 @@ namespace GRINS
                                                       const libMesh::PointLocatorBase & point_locator,
                                                       const std::set<libMesh::subdomain_id_type> & solid_ids,
                                                       const std::set<libMesh::subdomain_id_type> & fluid_ids,
-                                                      const DisplacementVariable & solid_disp_vars )
+                                                      const DisplacementVariable & solid_disp_vars,
+                                                      bool use_old_solution )
+  : _use_old_solution(use_old_solution)
   {
     if( solid_ids.empty() )
       libmesh_error_msg("ERROR: Must have at least one solid subdomain id!");
