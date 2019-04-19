@@ -52,7 +52,9 @@ namespace GRINS
                               const std::set<libMesh::subdomain_id_type> & fluid_ids,
                               const DisplacementVariable & solid_disp_vars );
 
-    virtual ~OverlappingFluidSolidMap(){};
+    virtual ~OverlappingFluidSolidMap() = default;
+
+    OverlappingFluidSolidMap() = delete;
 
     bool has_overlapping_fluid_elem(const libMesh::dof_id_type elem_id) const
     { return _overlapping_fluid_ids.find(elem_id) != _overlapping_fluid_ids.end(); }
@@ -74,8 +76,6 @@ namespace GRINS
     ( const libMesh::dof_id_type fluid_id ) const;
 
   private:
-
-    OverlappingFluidSolidMap();
 
     void build_maps( MultiphysicsSystem & system,
                      const libMesh::PointLocatorBase & point_locator,
