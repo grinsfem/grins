@@ -54,6 +54,12 @@ namespace GRINS
 
     virtual ~OverlappingFluidSolidCouplingFunctor() = default;
 
+    virtual void operator()
+    ( const libMesh::MeshBase::const_element_iterator & range_begin,
+      const libMesh::MeshBase::const_element_iterator & range_end,
+      libMesh::processor_id_type p,
+      std::unordered_map<const libMesh::Elem *,const libMesh::CouplingMatrix*> & coupled_elements ) override;
+
   private:
 
     const libMesh::MeshBase & _mesh;
