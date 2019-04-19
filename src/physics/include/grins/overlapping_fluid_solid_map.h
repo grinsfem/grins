@@ -50,9 +50,12 @@ namespace GRINS
                               const libMesh::PointLocatorBase & point_locator,
                               const std::set<libMesh::subdomain_id_type> & solid_ids,
                               const std::set<libMesh::subdomain_id_type> & fluid_ids,
-                              const DisplacementVariable & solid_disp_vars );
+                              const DisplacementVariable & solid_disp_vars,
+                              bool use_old_solution = false );
 
-    virtual ~OverlappingFluidSolidMap(){};
+    virtual ~OverlappingFluidSolidMap() = default;
+
+    OverlappingFluidSolidMap() = delete;
 
     bool has_overlapping_fluid_elem(const libMesh::dof_id_type elem_id) const
     { return _overlapping_fluid_ids.find(elem_id) != _overlapping_fluid_ids.end(); }
@@ -75,8 +78,6 @@ namespace GRINS
 
   private:
 
-    OverlappingFluidSolidMap();
-
     void build_maps( MultiphysicsSystem & system,
                      const libMesh::PointLocatorBase & point_locator,
                      const std::set<libMesh::subdomain_id_type> & solid_ids,
@@ -92,6 +93,8 @@ namespace GRINS
 
     void map_error(const libMesh::dof_id_type id, const std::string & type) const;
 
+    void swap_old_solution( MultiphysicsSystem & system );
+
     //! Vector of element ids overlapping each solid id
     std::map<libMesh::dof_id_type,std::set<libMesh::dof_id_type>> _overlapping_fluid_ids;
 
@@ -99,6 +102,8 @@ namespace GRINS
     _solid_to_fluid_map;
 
     std::map<libMesh::dof_id_type,std::set<libMesh::dof_id_type>> _fluid_to_solid_map;
+
+    bool _use_old_solution;
   };
 
 } // end namespace GRINS
