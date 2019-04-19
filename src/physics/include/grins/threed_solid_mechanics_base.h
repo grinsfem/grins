@@ -44,7 +44,7 @@ namespace GRINS
     virtual ~ThreeDSolidMechanicsBase() = default;
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext & context );
+    virtual void init_context( AssemblyContext & context ) override;
 
     virtual void mass_residual( bool compute_jacobian, AssemblyContext & context ) override;
 
