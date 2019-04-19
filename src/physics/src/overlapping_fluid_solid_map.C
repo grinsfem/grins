@@ -67,6 +67,10 @@ namespace GRINS
     libMesh::UniquePtr<libMesh::FEMContext>
       fem_context( libMesh::cast_ptr<libMesh::FEMContext *>(raw_context.release()) );
 
+    // Swap current_local_solution with old_local_nonlinear_solution
+    if(_use_old_solution)
+      this->swap_old_solution(system);
+
     if( !mesh.is_serial() )
       libmesh_error_msg("ERROR: build_maps currently only implemented for ReplicatedMesh!");
 
@@ -138,6 +142,10 @@ namespace GRINS
 
         _overlapping_fluid_ids.insert(std::make_pair(solid_id,fluid_ids));
       }
+
+    // Swap back current_local_solution with old_local_nonlinear_solution
+    if(_use_old_solution)
+      this->swap_old_solution(system);
   }
 
 
