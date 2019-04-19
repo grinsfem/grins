@@ -32,6 +32,7 @@
 // libMesh
 #include "libmesh/elem.h"
 #include "libmesh/parallel_sync.h"
+#include "libmesh/unsteady_solver.h"
 
 namespace GRINS
 {
@@ -262,6 +263,20 @@ namespace GRINS
     ss << std::string("ERROR: Could not find ")+type+std::string(" element corresponding to element id ")
        << id << std::string(" !");
     libmesh_error_msg(ss.str());
+  }
+
+  void OverlappingFluidSolidMap::swap_old_solution( MultiphysicsSystem & system )
+  {
+    // Extract old nonlinear solution from TimeSolver
+    // Error out if this is not an UnsteadySolver
+    libMesh::TimeSolver & time_solver = system.get_time_solver();
+
+    libMesh::UnsteadySolver * unsteady_solver = dynamic_cast<libMesh::UnsteadySolver*>(&time_solver);
+
+    if( !unsteady_solver )
+      libmesh_error_msg("ERROR: Can only call swap_old_solution when using an UnsteadySolver!");
+
+    std::swap( unsteady_solver->old_local_nonlinear_solution, system.current_local_solution );
   }
 
 } // end namespace GRINS

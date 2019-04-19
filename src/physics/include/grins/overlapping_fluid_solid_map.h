@@ -93,6 +93,8 @@ namespace GRINS
 
     void map_error(const libMesh::dof_id_type id, const std::string & type) const;
 
+    void swap_old_solution( MultiphysicsSystem & system );
+
     //! Vector of element ids overlapping each solid id
     std::map<libMesh::dof_id_type,std::set<libMesh::dof_id_type>> _overlapping_fluid_ids;
 
