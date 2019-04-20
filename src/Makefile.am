@@ -468,6 +468,7 @@ include_HEADERS += physics/include/grins/physics_factory_incompressible_turb_flo
 include_HEADERS += physics/include/grins/physics_factory_heat_transfer.h
 include_HEADERS += physics/include/grins/physics_factory_variable_density_flow.h
 include_HEADERS += physics/include/grins/physics_factory_compressible_hyperelasticity.h
+include_HEADERS += physics/include/grins/physics_factory_incompressible_hyperelasticity.h
 include_HEADERS += physics/include/grins/physics_factory_plane_stress_solids.h
 include_HEADERS += physics/include/grins/physics_factory_one_d_stress_solids.h
 include_HEADERS += physics/include/grins/physics_factory_reacting_flows.h
