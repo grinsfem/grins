@@ -38,9 +38,11 @@ namespace GRINS
   {
   public:
 
-    ParsedFunctionDirichletBCFactory( const std::string& bc_type_name )
+    ParsedFunctionDirichletBCFactory( const std::string& bc_type_name,
+                                      bool zero_other_components )
       : DirichletBCFactoryFunctionBase<FunctionType>(bc_type_name),
-      ParsedFunctionFactoryHelper<FunctionType>()
+      ParsedFunctionFactoryHelper<FunctionType>(),
+      _zero_other_components(zero_other_components)
     {}
 
     ParsedFunctionDirichletBCFactory() = delete;
@@ -62,6 +64,10 @@ namespace GRINS
                 std::vector<std::string>& var_names,
                 const std::string& section ) override;
 
+    /*! Set to true at construction time if we want the BC factory
+     *  to zero all other non-specified components, false if not. */
+    bool _zero_other_components;
+
   };
 
   //! For notational convenience
@@ -69,7 +75,7 @@ namespace GRINS
   {
   public:
     ParsedDirichletBCFactory( const std::string& bc_type_name )
-      : ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >(bc_type_name)
+      : ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >(bc_type_name,true)
     {}
   };
 
@@ -78,7 +84,7 @@ namespace GRINS
   {
   public:
     ParsedFEMDirichletBCFactory( const std::string& bc_type_name )
-      : ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >(bc_type_name)
+      : ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >(bc_type_name,true)
     {}
   };
 
