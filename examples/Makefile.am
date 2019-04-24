@@ -263,6 +263,7 @@ EXTRA_DIST += $(multigrid_DATA)
 torsionhyperelasticitydir = $(prefix)/examples/torsion_hyperelasticity
 torsionhyperelasticity_SCRIPTS = $(top_builddir)/examples/torsion_hyperelasticity/run.sh
 torsionhyperelasticity_DATA  = $(top_srcdir)/examples/torsion_hyperelasticity/torsion.in
+torsionhyperelasticity_DATA += $(top_srcdir)/examples/torsion_hyperelasticity/inc_torsion.in
 
 EXTRA_DIST += $(torsionhyperelasticity_DATA)
 
