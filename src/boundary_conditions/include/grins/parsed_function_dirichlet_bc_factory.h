@@ -43,7 +43,9 @@ namespace GRINS
       ParsedFunctionFactoryHelper<FunctionType>()
     {}
 
-    ~ParsedFunctionDirichletBCFactory(){};
+    ParsedFunctionDirichletBCFactory() = delete;
+
+    virtual ~ParsedFunctionDirichletBCFactory() = default;
 
   protected:
     //! Builds the Parsed(FEM)Function objects for boundary conditions
