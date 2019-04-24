@@ -60,7 +60,7 @@ namespace GRINS
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
-                const std::string& section );
+                const std::string& section ) override;
 
   };
 
