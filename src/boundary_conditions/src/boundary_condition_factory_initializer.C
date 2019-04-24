@@ -75,6 +75,14 @@ namespace GRINS
     static ParsedFEMDirichletBCFactory grins_factory_parsed_fem_dirichlet("parsed_fem_dirichlet");
     static ParsedDirichletBCFactory grins_factory_parsed_displacement("parsed_displacement");
 
+    static ParsedDirichletComponentBCFactory
+      grins_factory_parsed_dirichlet_component("parsed_dirichlet_component");
+    static ParsedFEMDirichletComponentBCFactory
+      grins_factory_parsed_fem_dirichlet_component("parsed_fem_dirichlet_component");
+    static ParsedDirichletComponentBCFactory
+      grins_factory_parsed_displacement_component("parsed_displacement_component");
+
+
     static ParsedFunctionNeumannBCFactory<libMesh::FunctionBase<libMesh::Number> >
       grins_factory_parsed_neumann("parsed_neumann");
 

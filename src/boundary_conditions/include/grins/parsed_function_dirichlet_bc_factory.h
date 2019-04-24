@@ -88,6 +88,24 @@ namespace GRINS
     {}
   };
 
+  //! For notational convenience
+  class ParsedDirichletComponentBCFactory : public ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >
+  {
+  public:
+    ParsedDirichletComponentBCFactory( const std::string& bc_type_name )
+      : ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >(bc_type_name,false)
+    {}
+  };
+
+  //! For notational convenience
+  class ParsedFEMDirichletComponentBCFactory : public ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >
+  {
+  public:
+    ParsedFEMDirichletComponentBCFactory( const std::string& bc_type_name )
+      : ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >(bc_type_name,false)
+    {}
+  };
+
 } // end namespace GRINS
 
 #endif // GRINS_PARSED_FUNCTION_DIRICHLET_BC_FACTORY_H
