@@ -61,21 +61,21 @@ namespace GRINS
   };
 
   inline
-  libMesh::Real MooneyRivlin::dI1_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
+  libMesh::Real MooneyRivlin::dI1_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real I3 ) const
   {
-    return _C1;
+    return _C1*std::pow(I3,-1.0/3.0);
   }
 
   inline
-  libMesh::Real MooneyRivlin::dI2_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
+  libMesh::Real MooneyRivlin::dI2_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real I3 ) const
   {
-    return _C2;
+    return _C2*std::pow(I3,-2.0/3.0);
   }
 
   inline
-  libMesh::Real MooneyRivlin::dI3_imp( libMesh::Real /*I1*/, libMesh::Real /*I2*/, libMesh::Real /*I3*/ ) const
+  libMesh::Real MooneyRivlin::dI3_imp( libMesh::Real I1, libMesh::Real I2, libMesh::Real I3 ) const
   {
-    return 0.0;
+    return -(I1*_C1)/(3*std::pow(I3,4.0/3.0)) - (2*I2*_C2)/(3*std::pow(I3,5.0/3.0));
   }
 
 
