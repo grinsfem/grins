@@ -613,9 +613,17 @@
       #                       function of (x,y,z,t), where x,y,z are
       #                       spatial coordinates and t is time.
       #
+      #  parsed_dirichlet_component - Same as parsed_dirichlet, but does not
+      #                               zero unspecified components (see discussion
+      #                               below).
+      #
       #  parsed_fem_dirichlet - Dirichlet boundary condition specified
       #                         by a parsed expression that can be
       #                         function of solution variables.
+      #
+      #  parsed_fem_dirichlet_component - Same as parsed_fem_dirichlet, but
+      #                                   does not zero unspecified components
+      #                                   (see discussion below).
       #
       #  homogeneous_dirichlet - Zero-valued Dirichlet boundary conditions
       #
@@ -639,7 +647,14 @@
       # the variable name. See below. Furthermore, for variable
       # components that are *not* specified, it is assumed they are
       # zero. However, there must be at least one component specified
-      # or an error will be thrown. For the homogeneous types, no
+      # or an error will be thrown. If you wish for the non-specified
+      # components to remain unspecified rather than set to zero, you can
+      # instead use parsed_dirichlet_component and parsed_fem_dirichlet_component.
+      # The specification is idential to parsed_dirichlet and
+      # parsed_fem_dirichlet, respectively, but now the other components will
+      # not be pinned to zero, but rather will remain unconstrained.
+      #
+      # For the homogeneous types, no
       # components should be specified: all components will be set to
       # zero.
       #

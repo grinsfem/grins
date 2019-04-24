@@ -75,11 +75,24 @@ namespace GRINS
               (TypeFrom<FunctionType>::to_parsed(system, expression), var_idx);
           }
         // Otherwise, we set this variable to be zero.
-        else
+        // But only if this object was meant to.
+        else if (_zero_other_components)
           {
             composite_func->attach_subfunction
               (TypeFrom<FunctionType>::to_zero(), var_idx);
           }
+      }
+
+    // If we're not zeroing out the other components then we need to remove
+    // those variable names from var_names so they don't get added to the
+    // DirichletBoundary downstream. In this case we only want var_names
+    // to come out of this function with the entries in vars_found
+    if(!_zero_other_components)
+      {
+        var_names.clear();
+        var_names.reserve(vars_found.size());
+        for( const auto & var : vars_found )
+          var_names.push_back(var);
       }
 
     return all_funcs;

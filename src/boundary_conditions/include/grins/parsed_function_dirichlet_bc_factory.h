@@ -38,12 +38,16 @@ namespace GRINS
   {
   public:
 
-    ParsedFunctionDirichletBCFactory( const std::string& bc_type_name )
+    ParsedFunctionDirichletBCFactory( const std::string& bc_type_name,
+                                      bool zero_other_components )
       : DirichletBCFactoryFunctionBase<FunctionType>(bc_type_name),
-      ParsedFunctionFactoryHelper<FunctionType>()
+      ParsedFunctionFactoryHelper<FunctionType>(),
+      _zero_other_components(zero_other_components)
     {}
 
-    ~ParsedFunctionDirichletBCFactory(){};
+    ParsedFunctionDirichletBCFactory() = delete;
+
+    virtual ~ParsedFunctionDirichletBCFactory() = default;
 
   protected:
     //! Builds the Parsed(FEM)Function objects for boundary conditions
@@ -58,7 +62,11 @@ namespace GRINS
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
-                const std::string& section );
+                const std::string& section ) override;
+
+    /*! Set to true at construction time if we want the BC factory
+     *  to zero all other non-specified components, false if not. */
+    bool _zero_other_components;
 
   };
 
@@ -67,7 +75,7 @@ namespace GRINS
   {
   public:
     ParsedDirichletBCFactory( const std::string& bc_type_name )
-      : ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >(bc_type_name)
+      : ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >(bc_type_name,true)
     {}
   };
 
@@ -76,7 +84,25 @@ namespace GRINS
   {
   public:
     ParsedFEMDirichletBCFactory( const std::string& bc_type_name )
-      : ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >(bc_type_name)
+      : ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >(bc_type_name,true)
+    {}
+  };
+
+  //! For notational convenience
+  class ParsedDirichletComponentBCFactory : public ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >
+  {
+  public:
+    ParsedDirichletComponentBCFactory( const std::string& bc_type_name )
+      : ParsedFunctionDirichletBCFactory<libMesh::FunctionBase<libMesh::Number> >(bc_type_name,false)
+    {}
+  };
+
+  //! For notational convenience
+  class ParsedFEMDirichletComponentBCFactory : public ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >
+  {
+  public:
+    ParsedFEMDirichletComponentBCFactory( const std::string& bc_type_name )
+      : ParsedFunctionDirichletBCFactory<libMesh::FEMFunctionBase<libMesh::Number> >(bc_type_name,false)
     {}
   };
 
