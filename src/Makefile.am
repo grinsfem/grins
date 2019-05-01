@@ -432,6 +432,7 @@ include_HEADERS += physics/include/grins/spalart_allmaras_spgsm_stab.h
 include_HEADERS += physics/include/grins/solid_mechanics_abstract.h
 include_HEADERS += physics/include/grins/curvilinear_solid_mechanics.h
 include_HEADERS += physics/include/grins/cartesian_solid_mechanics.h
+include_HEADERS += physics/include/grins/cartesian_nonlinear_mechanics.h
 include_HEADERS += physics/include/grins/elastic_membrane_base.h
 include_HEADERS += physics/include/grins/elastic_membrane.h
 include_HEADERS += physics/include/grins/elastic_cable_base.h
