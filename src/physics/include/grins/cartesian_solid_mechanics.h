@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_THREED_SOLID_MECHANICS_BASE_H
-#define GRINS_THREED_SOLID_MECHANICS_BASE_H
+#ifndef GRINS_CARTESIAN_SOLID_MECHANICS_H
+#define GRINS_CARTESIAN_SOLID_MECHANICS_H
 
 //GRINS
 #include "grins/solid_mechanics_abstract.h"
@@ -31,17 +31,17 @@
 
 namespace GRINS
 {
-  class ThreeDSolidMechanicsBase : public SolidMechanicsAbstract<3>
+  class CartesianSolidMechanics : public SolidMechanicsAbstract<3>
   {
   public:
 
-    ThreeDSolidMechanicsBase( const PhysicsName & physics_name,
-                              const PhysicsName & core_physics_name,
-                              const GetPot & input );
+    CartesianSolidMechanics( const PhysicsName & physics_name,
+                             const PhysicsName & core_physics_name,
+                             const GetPot & input );
 
-    ThreeDSolidMechanicsBase() = delete;
+    CartesianSolidMechanics() = delete;
 
-    virtual ~ThreeDSolidMechanicsBase() = default;
+    virtual ~CartesianSolidMechanics() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext & context ) override;
@@ -67,4 +67,4 @@ namespace GRINS
 
 } // end namespace GRINS
 
-#endif // GRINS_THREED_SOLID_MECHANICS_BASE_H
+#endif // GRINS_CARTESIAN_SOLID_MECHANICS_H

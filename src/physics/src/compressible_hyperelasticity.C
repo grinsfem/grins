@@ -37,7 +37,7 @@ namespace GRINS
   template<typename StrainEnergy>
   CompressibleHyperelasticity<StrainEnergy>::CompressibleHyperelasticity
   ( const PhysicsName & physics_name, const GetPot & input )
-    : ThreeDSolidMechanicsBase(physics_name,PhysicsNaming::compressible_hyperelasticity(),input),
+    : CartesianSolidMechanics(physics_name,PhysicsNaming::compressible_hyperelasticity(),input),
       _strain_energy(nullptr)
   {
     const std::string material =

@@ -26,13 +26,13 @@
 #define GRINS_COMPRESSIBLE_HYPERELASTICITY_H
 
 // GRINS
-#include "grins/threed_solid_mechanics_base.h"
+#include "grins/cartesian_solid_mechanics.h"
 #include "grins/hyperelastic_strain_energy.h"
 
 namespace GRINS
 {
   template<typename StrainEnergy>
-  class CompressibleHyperelasticity : public ThreeDSolidMechanicsBase
+  class CompressibleHyperelasticity : public CartesianSolidMechanics
   {
   public:
 

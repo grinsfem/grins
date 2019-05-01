@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/threed_solid_mechanics_base.h"
+#include "grins/cartesian_solid_mechanics.h"
 
 // GRINS
 #include "grins_config.h"
@@ -36,9 +36,9 @@
 
 namespace GRINS
 {
-  ThreeDSolidMechanicsBase::ThreeDSolidMechanicsBase( const PhysicsName & physics_name,
-                                                      const PhysicsName & core_physics_name,
-                                                      const GetPot & input )
+  CartesianSolidMechanics::CartesianSolidMechanics( const PhysicsName & physics_name,
+                                                    const PhysicsName & core_physics_name,
+                                                    const GetPot & input )
     :  SolidMechanicsAbstract<3>(physics_name,core_physics_name,input)
   {
     if( this->_disp_vars.dim() != 3 )
@@ -49,7 +49,7 @@ namespace GRINS
       }
   }
 
-  void ThreeDSolidMechanicsBase::init_context( AssemblyContext & context )
+  void CartesianSolidMechanics::init_context( AssemblyContext & context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
@@ -57,19 +57,19 @@ namespace GRINS
     this->get_fe(context)->get_xyz();
   }
 
-  libMesh::Tensor ThreeDSolidMechanicsBase::form_def_gradient( const libMesh::Gradient & grad_u,
-                                                               const libMesh::Gradient & grad_v,
-                                                               const libMesh::Gradient & grad_w ) const
+  libMesh::Tensor CartesianSolidMechanics::form_def_gradient( const libMesh::Gradient & grad_u,
+                                                              const libMesh::Gradient & grad_v,
+                                                              const libMesh::Gradient & grad_w ) const
   {
     return libMesh::Tensor( 1.0+grad_u(0), grad_u(1), grad_u(2),
                             grad_v(0), 1.0+grad_v(1), grad_v(2),
                             grad_w(0), grad_w(1), 1.0+grad_w(2) );
   }
 
-  void ThreeDSolidMechanicsBase::compute_invariants( const libMesh::Tensor & C,
-                                                     libMesh::Number & I1,
-                                                     libMesh::Number & I2,
-                                                     libMesh::Number & I3 ) const
+  void CartesianSolidMechanics::compute_invariants( const libMesh::Tensor & C,
+                                                    libMesh::Number & I1,
+                                                    libMesh::Number & I2,
+                                                    libMesh::Number & I3 ) const
   {
     I1 = C.tr();
 
@@ -79,7 +79,7 @@ namespace GRINS
     I3 = C.det();
   }
 
-  void ThreeDSolidMechanicsBase::mass_residual( bool compute_jacobian, AssemblyContext & context )
+  void CartesianSolidMechanics::mass_residual( bool compute_jacobian, AssemblyContext & context )
   {
     const MultiphysicsSystem & system = context.get_multiphysics_system();
 
