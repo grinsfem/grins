@@ -28,6 +28,7 @@
 // GRINS
 #include "grins/materials_parsing.h"
 #include "grins/multiphysics_sys.h"
+#include "grins/cartesian_hyperelasticity.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -103,20 +104,11 @@ namespace GRINS
         context.interior_gradient(w_var, qp, grad_w);
 
         libMesh::Tensor F = this->form_def_gradient(grad_u,grad_v,grad_w);
-        libMesh::Tensor C = this->compute_right_cauchy_def(F);
 
-        libMesh::Number I1, I2, I3;
-        this->compute_invariants(C,I1,I2,I3);
+        CartesianHyperlasticity<StrainEnergy> stress(F, (*_strain_energy));
 
-        libMesh::Number dWdI1 = _strain_energy->dI1(I1,I2,I3);
-        libMesh::Number dWdI2 = _strain_energy->dI2(I1,I2,I3);
-        libMesh::Number dWdI3 = _strain_energy->dI3(I1,I2,I3);
-
-        libMesh::Tensor Cinv = C.inverse();
-
-        libMesh::Tensor S = this->compute_pk2_stress(C,Cinv,I1,I3,dWdI1,dWdI2,dWdI3);
-
-        libMesh::Tensor P(F*S);
+        libMesh::Tensor P(stress.pk1_stress());
+        const libMesh::Tensor & S = stress.get_pk2_stress();
 
         for( int i=0; i != n_u_dofs; i++)
           {
@@ -145,9 +137,7 @@ namespace GRINS
                         for( int K = 0; K < dim; K++)
                           for( int L = 0; L < dim; L++)
                             {
-                              libMesh::Number Cijkl = this->elasticity_tensor(I,J,K,L,
-                                                                              C,Cinv,I1,I2,I3,
-                                                                              dWdI2,dWdI3);
+                              libMesh::Number Cijkl = stress.elasticity_tensor(I,J,K,L);
 
                               libMesh::Real c0 = dphi[i][qp](J)*dphi[j][qp](L)*JxW[qp];
 
@@ -165,68 +155,6 @@ namespace GRINS
               }
           }
       }
-  }
-
-  template<typename StrainEnergy>
-  libMesh::Tensor CompressibleHyperelasticity<StrainEnergy>::compute_pk2_stress
-  ( const libMesh::Tensor & C,
-    const libMesh::Tensor & Cinv,
-    const libMesh::Number & I1,
-    const libMesh::Number & I3,
-    const libMesh::Number & dWdI1,
-    const libMesh::Number & dWdI2,
-    const libMesh::Number & dWdI3 ) const
-  {
-    const int dim = 3;
-    libMesh::Tensor S;
-
-    for( int i = 0; i < dim; i++ )
-      {
-        for (int j = 0; j < dim; j++ )
-          {
-            libMesh::Real dij = this->delta(i,j);
-            S(i,j) = 2*( dWdI1*dij + dWdI2*(I1*dij-C(i,j)) + dWdI3*(I3*Cinv(i,j)) );
-          }
-      }
-
-    return S;
-  }
-
-  template<typename StrainEnergy>
-  libMesh::Number CompressibleHyperelasticity<StrainEnergy>::elasticity_tensor( int i, int j, int k, int l,
-                                                                                const libMesh::Tensor & C,
-                                                                                const libMesh::Tensor & Cinv,
-                                                                                const libMesh::Number I1,
-                                                                                const libMesh::Number I2,
-                                                                                const libMesh::Number I3,
-                                                                                const libMesh::Number dWdI2,
-                                                                                const libMesh::Number dWdI3 ) const
-  {
-    const libMesh::Number dW2dI12 = _strain_energy->dI12(I1,I2,I3);
-    const libMesh::Number dW2dI22 = _strain_energy->dI22(I1,I2,I3);
-    const libMesh::Number dW2dI32 = _strain_energy->dI32(I1,I2,I3);
-    const libMesh::Number dW2dI1dI2 = _strain_energy->dI1dI2(I1,I2,I3);
-    const libMesh::Number dW2dI1dI3 = _strain_energy->dI1dI3(I1,I2,I3);
-    const libMesh::Number dW2dI2dI3 = _strain_energy->dI2dI3(I1,I2,I3);
-
-    const libMesh::Real dij = this->delta(i,j);
-    const libMesh::Real dkl = this->delta(k,l);
-    const libMesh::Real dik = this->delta(i,k);
-    const libMesh::Real djl = this->delta(j,l);
-    const libMesh::Real dil = this->delta(i,l);
-    const libMesh::Real djk = this->delta(j,k);
-
-    libMesh::Number Cijkl =
-      dW2dI12*(dij*dkl) +
-      dW2dI22*( (I1*dij-C(i,j))*(I1*dkl-C(k,l)) ) +
-      dW2dI32*I3*I3*Cinv(i,j)*Cinv(k,l) +
-      dW2dI1dI2*( dij*(I1*dkl-C(k,l)) + dkl*(I1*dij-C(i,j)) ) +
-      dW2dI1dI3*I3*(dij*Cinv(k,l) + Cinv(i,j)*dkl) +
-      dW2dI2dI3*I3*( Cinv(k,l)*(I1*dij-C(i,j)) + Cinv(i,j)*(I1*dkl-C(k,l)) ) +
-      dWdI2*(dij*dkl - 0.5*(dik*djl + dil*djk) ) +
-      dWdI3*I3*(Cinv(i,j)*Cinv(k,l) - 0.5*(Cinv(i,k)*Cinv(j,l) + Cinv(i,l)*Cinv(j,k)) );
-
-    return 4*Cijkl;
   }
 
 } // end namespace GRINS

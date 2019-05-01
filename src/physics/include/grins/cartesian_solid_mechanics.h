@@ -54,15 +54,6 @@ namespace GRINS
                                        const libMesh::Gradient & grad_v,
                                        const libMesh::Gradient & grad_w ) const;
 
-    libMesh::Tensor compute_right_cauchy_def( const libMesh::Tensor & F ) const
-    { return F.transpose()*F; }
-
-    void compute_invariants( const libMesh::Tensor & C,
-                             libMesh::Number & I1, libMesh::Number & I2, libMesh::Number & I3 ) const;
-
-    libMesh::Real delta( int i, int j ) const
-    { return (i==j) ? 1.0 : 0.0; }
-
   };
 
 } // end namespace GRINS

@@ -66,19 +66,6 @@ namespace GRINS
                             grad_w(0), grad_w(1), 1.0+grad_w(2) );
   }
 
-  void CartesianSolidMechanics::compute_invariants( const libMesh::Tensor & C,
-                                                    libMesh::Number & I1,
-                                                    libMesh::Number & I2,
-                                                    libMesh::Number & I3 ) const
-  {
-    I1 = C.tr();
-
-    // I2 = 0.5*( (tr(C))^2 - tr(C^2) )
-    I2 = 0.5*( I1*I1 - (C*C).tr() );
-
-    I3 = C.det();
-  }
-
   void CartesianSolidMechanics::mass_residual( bool compute_jacobian, AssemblyContext & context )
   {
     const MultiphysicsSystem & system = context.get_multiphysics_system();
