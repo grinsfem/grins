@@ -69,6 +69,10 @@ namespace GRINS
 
     system->time_evolving(_disp_vars.u(),2);
 
+    // Note that although Dim is a template parameter here,
+    // we may have two dimensional elements in 3D space, so
+    // we can't use the Dim template parameter to check for
+    // dimension.
     if( this->_disp_vars.dim() > 1 )
       system->time_evolving(_disp_vars.v(),2);
 
