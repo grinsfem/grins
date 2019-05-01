@@ -22,6 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
+#include "cartesian_hyperelasticity.C"
+
 #include "elastic_membrane_base.C"
 #include "elastic_membrane.C"
 #include "elastic_cable_base.C"
@@ -39,6 +41,8 @@
 
 #include "grins/constant_pressure.h"
 #include "grins/parsed_pressure.h"
+
+template class GRINS::CartesianHyperlasticity<GRINS::CompressibleMooneyRivlin>;
 
 template class GRINS::ElasticMembraneBase<GRINS::HookesLaw>;
 template class GRINS::ElasticMembraneBase<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
