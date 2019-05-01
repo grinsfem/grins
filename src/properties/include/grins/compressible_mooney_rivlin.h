@@ -38,11 +38,10 @@ namespace GRINS
                                    public ParameterUser
   {
   public:
-    CompressibleMooneyRivlin( const GetPot & input );
-
-    CompressibleMooneyRivlin() = delete;
 
     CompressibleMooneyRivlin( const GetPot & input, const std::string & material );
+
+    CompressibleMooneyRivlin() = delete;
 
     virtual ~CompressibleMooneyRivlin() = default;
 
