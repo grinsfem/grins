@@ -22,8 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
-#define GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
+#ifndef GRINS_CURVILINEAR_SOLID_MECHANICS_H
+#define GRINS_CURVILINEAR_SOLID_MECHANICS_H
 
 //GRINS
 #include "grins/solid_mechanics_abstract.h"
@@ -34,21 +34,24 @@
 
 namespace GRINS
 {
-  class TwoDCurvilinearSolidMechanics : public SolidMechanicsAbstract<2>
+  template<unsigned int Dim>
+  class CurvilinearSolidMechanics : public SolidMechanicsAbstract<Dim>
   {
   public:
 
-    TwoDCurvilinearSolidMechanics( const PhysicsName& physics_name, const GetPot& input );
+    CurvilinearSolidMechanics( const PhysicsName & physics_name,
+                               const GRINS::PhysicsName & core_physics_name,
+                               const GetPot & input );
 
-    TwoDCurvilinearSolidMechanics() = delete;
+    CurvilinearSolidMechanics() = delete;
 
-    virtual ~TwoDCurvilinearSolidMechanics() = default;
+    virtual ~CurvilinearSolidMechanics() = default;
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext & context ) override;
 
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
+#endif // GRINS_CURVILINEAR_SOLID_MECHANICS_H

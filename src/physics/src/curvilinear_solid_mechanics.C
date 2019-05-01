@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/twod_curvilinear_solid_mechanics.h"
+#include "grins/curvilinear_solid_mechanics.h"
 
 // GRINS
 #include "grins_config.h"
@@ -35,11 +35,17 @@
 
 namespace GRINS
 {
-  TwoDCurvilinearSolidMechanics::TwoDCurvilinearSolidMechanics( const GRINS::PhysicsName& physics_name, const GetPot& input )
-    : SolidMechanicsAbstract<2>(physics_name,PhysicsNaming::elastic_membrane(),input)
-  {}
+  template<unsigned int Dim>
+  CurvilinearSolidMechanics<Dim>::CurvilinearSolidMechanics( const GRINS::PhysicsName & physics_name,
+                                                             const GRINS::PhysicsName & core_physics_name,
+                                                             const GetPot & input )
+    : SolidMechanicsAbstract<Dim>(physics_name,core_physics_name,input)
+  {
+    static_assert( Dim <= 2, "Error: CurvilinearSolidMechanics defined only for Dim <= 2");
+  }
 
-  void TwoDCurvilinearSolidMechanics::init_context( AssemblyContext& context )
+  template<unsigned int Dim>
+  void CurvilinearSolidMechanics<Dim>::init_context( AssemblyContext & context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
@@ -52,10 +58,18 @@ namespace GRINS
     this->get_fe(context)->get_dxyzdeta();
     this->get_fe(context)->get_dxidx();
     this->get_fe(context)->get_dxidy();
-    this->get_fe(context)->get_dxidz();
     this->get_fe(context)->get_detadx();
     this->get_fe(context)->get_detady();
-    this->get_fe(context)->get_detadz();
+
+    // Only need the z-components if we're embedded in 3-dimensions
+    if( Dim == 2 && this->_disp_vars.dim() > 2)
+      {
+        this->get_fe(context)->get_dxidz();
+        this->get_fe(context)->get_detadz();
+      }
   }
+
+  template class CurvilinearSolidMechanics<1>;
+  template class CurvilinearSolidMechanics<2>;
 
 } // end namespace GRINS
