@@ -26,7 +26,6 @@
 #include "grins/compressible_hyperelasticity.h"
 
 // GRINS
-#include "grins/materials_parsing.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/cartesian_hyperelasticity.h"
 #include "grins/hyperelasticity_weak_form.h"
@@ -36,17 +35,6 @@
 
 namespace GRINS
 {
-  template<typename StrainEnergy>
-  CompressibleHyperelasticity<StrainEnergy>::CompressibleHyperelasticity
-  ( const PhysicsName & physics_name, const GetPot & input )
-    : CartesianSolidMechanics(physics_name,PhysicsNaming::compressible_hyperelasticity(),input),
-      _strain_energy(nullptr)
-  {
-    const std::string material =
-      MaterialsParsing::material_name(input,PhysicsNaming::compressible_hyperelasticity());
-
-    _strain_energy.reset(new StrainEnergy(input,material));
-  }
 
   template<typename StrainEnergy>
   void CompressibleHyperelasticity<StrainEnergy>::element_time_derivative( bool compute_jacobian,
@@ -106,7 +94,7 @@ namespace GRINS
 
         libMesh::Tensor F = this->form_def_gradient(grad_u,grad_v,grad_w);
 
-        CartesianHyperlasticity<StrainEnergy> stress_law(F, (*_strain_energy));
+        CartesianHyperlasticity<StrainEnergy> stress_law(F, (*(this->_strain_energy)));
 
         libMesh::Tensor P(stress_law.pk1_stress());
         const libMesh::Tensor & S = stress_law.get_pk2_stress();

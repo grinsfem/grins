@@ -26,26 +26,24 @@
 #define GRINS_COMPRESSIBLE_HYPERELASTICITY_H
 
 // GRINS
-#include "grins/cartesian_solid_mechanics.h"
-#include "grins/hyperelastic_strain_energy.h"
+#include "grins/hyperelasticity_base.h"
 
 namespace GRINS
 {
   template<typename StrainEnergy>
-  class CompressibleHyperelasticity : public CartesianSolidMechanics
+  class CompressibleHyperelasticity : public HyperelasticityBase<StrainEnergy>
   {
   public:
 
-    CompressibleHyperelasticity( const PhysicsName & physics_name, const GetPot & input );
+    CompressibleHyperelasticity( const PhysicsName & physics_name, const GetPot & input )
+      : HyperelasticityBase<StrainEnergy>(physics_name,PhysicsNaming::compressible_hyperelasticity(),input)
+    {}
+
     CompressibleHyperelasticity() = delete;
 
     virtual ~CompressibleHyperelasticity() = default;
 
     virtual void element_time_derivative( bool compute_jacobian, AssemblyContext & context ) override;
-
-  private:
-
-    std::unique_ptr<HyperelasticStrainEnergy<StrainEnergy>> _strain_energy;
 
   };
 
