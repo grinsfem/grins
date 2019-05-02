@@ -173,6 +173,9 @@ namespace GRINS
     static PhysicsName incompressible_hyperelasticity()
     { return "IncompressibleHyperelasticity"+suffix(); }
 
+    static PhysicsName plane_strain_incompressible_hyperelasticity()
+    { return "PlaneStrainIncompressibleHyperelasticity"+suffix(); }
+
     static PhysicsName elastic_membrane()
     { return "ElasticMembrane"+suffix(); }
 

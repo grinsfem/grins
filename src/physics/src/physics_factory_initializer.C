@@ -241,6 +241,11 @@ namespace GRINS
       grins_factory_incompressible_hyperelasticity
       (PhysicsNaming::incompressible_hyperelasticity(),PhysicsNaming::incompressible_hyperelasticity());
 
+    static PhysicsFactoryIncompressibleHyperelasticity<2,IncompressibleHyperelasticity>
+      grins_factory_plane_strain_incompressible_hyperelasticity
+      (PhysicsNaming::plane_strain_incompressible_hyperelasticity(),
+       PhysicsNaming::plane_strain_incompressible_hyperelasticity());
+
     static PhysicsFactoryVariableDensityFlow<LowMachNavierStokes> grins_factory_low_mach_navier_stokes
       (PhysicsNaming::low_mach_navier_stokes(),PhysicsNaming::low_mach_navier_stokes());
 
