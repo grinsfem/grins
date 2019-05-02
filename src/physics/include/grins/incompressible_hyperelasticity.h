@@ -46,6 +46,8 @@ namespace GRINS
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext & context ) override;
 
+    virtual void element_time_derivative( bool compute_jacobian, AssemblyContext & context ) override;
+
   protected:
 
     PressureFEVariable & _press_var;
