@@ -31,6 +31,9 @@ namespace GRINS
   /*!
    * Several Physics classes will reuse these terms so let's encapsulate them
    * in an object. These will sit inside dof loops so we want them to be inlined.
+   * This object supports both 2D (plane strain) and 3D evaluations. The functions
+   * are differentiated by the number of residual vectors passed to the function (2 or 3)
+   * and similarly for the Jacobian.
    */
   template<typename StrainEnergy>
   class HyperelasticityWeakForm
@@ -40,12 +43,32 @@ namespace GRINS
     HyperelasticityWeakForm() = default;
     ~HyperelasticityWeakForm() = default;
 
+    //! 2D version, consistent with plane strain assumption
+    void evaluate_internal_stress_residual( const libMesh::Tensor & P,
+                                            const libMesh::RealGradient & dphi_i_times_JxW,
+                                            libMesh::Number & Fu,
+                                            libMesh::Number & Fv ) const;
+
+    //! Full 3D version
     void evaluate_internal_stress_residual( const libMesh::Tensor & P,
                                             const libMesh::RealGradient & dphi_i_times_JxW,
                                             libMesh::Number & Fu,
                                             libMesh::Number & Fv,
                                             libMesh::Number & Fw ) const;
 
+
+    //! 2D version, consistent with plane strain assumption
+    void evaluate_internal_stress_jacobian( const libMesh::Tensor & S,
+                                            const libMesh::Tensor & F,
+                                            const libMesh::RealGradient & dphi_i_times_JxW,
+                                            const libMesh::RealGradient & dphi_j,
+                                            const CartesianHyperlasticity<StrainEnergy> & stress_law,
+                                            libMesh::Number & Kuu,
+                                            libMesh::Number & Kuv,
+                                            libMesh::Number & Kvu,
+                                            libMesh::Number & Kvv  ) const;
+
+    //! Full 3D version
     void evaluate_internal_stress_jacobian( const libMesh::Tensor & S,
                                             const libMesh::Tensor & F,
                                             const libMesh::RealGradient & dphi_i_times_JxW,
@@ -69,6 +92,22 @@ namespace GRINS
   ( const libMesh::Tensor & P,
     const libMesh::RealGradient & dphi_i_times_JxW,
     libMesh::Number & Fu,
+    libMesh::Number & Fv ) const
+  {
+    for( int alpha = 0; alpha < 2 /*dimension*/; alpha++)
+      {
+        libMesh::Real c = dphi_i_times_JxW(alpha);
+        Fu += P(0,alpha)*c;
+        Fv += P(1,alpha)*c;
+      }
+  }
+
+  template<typename StrainEnergy>
+  inline
+  void HyperelasticityWeakForm<StrainEnergy>::evaluate_internal_stress_residual
+  ( const libMesh::Tensor & P,
+    const libMesh::RealGradient & dphi_i_times_JxW,
+    libMesh::Number & Fu,
     libMesh::Number & Fv,
     libMesh::Number & Fw ) const
   {
@@ -80,6 +119,44 @@ namespace GRINS
         Fw += P(2,alpha)*c;
       }
   }
+
+  template<typename StrainEnergy>
+  inline
+  void HyperelasticityWeakForm<StrainEnergy>::evaluate_internal_stress_jacobian
+  ( const libMesh::Tensor & S,
+    const libMesh::Tensor & F,
+    const libMesh::RealGradient & dphi_i_times_JxW,
+    const libMesh::RealGradient & dphi_j,
+    const CartesianHyperlasticity<StrainEnergy> & stress_law,
+    libMesh::Number & Kuu,
+    libMesh::Number & Kuv,
+    libMesh::Number & Kvu,
+    libMesh::Number & Kvv ) const
+  {
+    // Compute the  derivative term without the elasticity tensor
+    libMesh::Number term1 = dphi_j*(S*dphi_i_times_JxW);
+
+    Kuu += term1;
+    Kvv += term1;
+
+    // Now compute the derivative term with the elasticity tensor
+    const int dim = 2;
+    for( int I = 0; I < dim; I++)
+      for( int J = 0; J < dim; J++)
+        for( int K = 0; K < dim; K++)
+          for( int L = 0; L < dim; L++)
+            {
+              libMesh::Number Cijkl = stress_law.elasticity_tensor(I,J,K,L);
+
+              libMesh::Real c0 = dphi_i_times_JxW(J)*Cijkl*dphi_j(L);
+
+              Kuu += F(0,I)*F(0,K)*c0;
+              Kuv += F(0,I)*F(1,K)*c0;
+              Kvu += F(1,I)*F(0,K)*c0;
+              Kvv += F(1,I)*F(1,K)*c0;
+            }
+  }
+
 
   template<typename StrainEnergy>
   inline
