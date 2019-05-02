@@ -36,13 +36,16 @@
 namespace GRINS
 {
 
-  template<typename StrainEnergy>
-  void CompressibleHyperelasticity<StrainEnergy>::element_time_derivative( bool compute_jacobian,
-                                                                           AssemblyContext & context )
+  template<unsigned int Dim,typename StrainEnergy>
+  void CompressibleHyperelasticity<Dim,StrainEnergy>::element_time_derivative( bool compute_jacobian,
+                                                                               AssemblyContext & context )
   {
     unsigned int u_var = this->_disp_vars.u();
     unsigned int v_var = this->_disp_vars.v();
-    unsigned int w_var = this->_disp_vars.w();
+
+    unsigned int w_var = libMesh::invalid_uint;
+    if(Dim==3)
+      w_var = this->_disp_vars.w();
 
     const MultiphysicsSystem & system = context.get_multiphysics_system();
 
@@ -57,23 +60,36 @@ namespace GRINS
     // populate the _u_var, etc. blocks of the residual and Jacobian.
     unsigned int u_dot_var = system.get_second_order_dot_var(u_var);
     unsigned int v_dot_var = system.get_second_order_dot_var(v_var);
-    unsigned int w_dot_var = system.get_second_order_dot_var(w_var);
+    unsigned int w_dot_var = libMesh::invalid_uint;
+    if(Dim==3)
+      w_dot_var = system.get_second_order_dot_var(w_var);
 
     libMesh::DenseSubVector<libMesh::Number> & Fu = context.get_elem_residual(u_dot_var);
     libMesh::DenseSubVector<libMesh::Number> & Fv = context.get_elem_residual(v_dot_var);
-    libMesh::DenseSubVector<libMesh::Number> & Fw = context.get_elem_residual(w_dot_var);
+    libMesh::DenseSubVector<libMesh::Number> * Fw = nullptr;
 
-    libMesh::DenseSubMatrix<libMesh::Number>& Kuu = context.get_elem_jacobian(u_dot_var,u_var);
-    libMesh::DenseSubMatrix<libMesh::Number>& Kuv = context.get_elem_jacobian(u_dot_var,v_var);
-    libMesh::DenseSubMatrix<libMesh::Number>& Kuw = context.get_elem_jacobian(u_dot_var,w_var);
+    if(Dim==3)
+      Fw = &context.get_elem_residual(w_dot_var);
 
-    libMesh::DenseSubMatrix<libMesh::Number>& Kvu = context.get_elem_jacobian(v_dot_var,u_var);
-    libMesh::DenseSubMatrix<libMesh::Number>& Kvv = context.get_elem_jacobian(v_dot_var,v_var);
-    libMesh::DenseSubMatrix<libMesh::Number>& Kvw = context.get_elem_jacobian(v_dot_var,w_var);
+    libMesh::DenseSubMatrix<libMesh::Number> & Kuu = context.get_elem_jacobian(u_dot_var,u_var);
+    libMesh::DenseSubMatrix<libMesh::Number> & Kuv = context.get_elem_jacobian(u_dot_var,v_var);
+    libMesh::DenseSubMatrix<libMesh::Number> & Kvu = context.get_elem_jacobian(v_dot_var,u_var);
+    libMesh::DenseSubMatrix<libMesh::Number> & Kvv = context.get_elem_jacobian(v_dot_var,v_var);
 
-    libMesh::DenseSubMatrix<libMesh::Number>& Kwu = context.get_elem_jacobian(w_dot_var,u_var);
-    libMesh::DenseSubMatrix<libMesh::Number>& Kwv = context.get_elem_jacobian(w_dot_var,v_var);
-    libMesh::DenseSubMatrix<libMesh::Number>& Kww = context.get_elem_jacobian(w_dot_var,w_var);
+    libMesh::DenseSubMatrix<libMesh::Number> * Kuw = nullptr;
+    libMesh::DenseSubMatrix<libMesh::Number> * Kvw = nullptr;
+    libMesh::DenseSubMatrix<libMesh::Number> * Kwu = nullptr;
+    libMesh::DenseSubMatrix<libMesh::Number> * Kwv = nullptr;
+    libMesh::DenseSubMatrix<libMesh::Number> * Kww = nullptr;
+
+    if(Dim==3)
+      {
+        Kuw = &context.get_elem_jacobian(u_dot_var,w_var);
+        Kvw = &context.get_elem_jacobian(v_dot_var,w_var);
+        Kwu = &context.get_elem_jacobian(w_dot_var,u_var);
+        Kwv = &context.get_elem_jacobian(w_dot_var,v_var);
+        Kww = &context.get_elem_jacobian(w_dot_var,w_var);
+      }
 
     int n_qpoints = context.get_element_qrule().n_points();
 
@@ -90,9 +106,18 @@ namespace GRINS
         libMesh::Gradient grad_u, grad_v,grad_w;
         context.interior_gradient(u_var, qp, grad_u);
         context.interior_gradient(v_var, qp, grad_v);
-        context.interior_gradient(w_var, qp, grad_w);
 
-        libMesh::Tensor F = this->form_def_gradient(grad_u,grad_v,grad_w);
+        if(Dim==3)
+          context.interior_gradient(w_var, qp, grad_w);
+
+        // After this, all calculations should be dimension independent
+        // since the structure of F will be correct for 2D plane strain
+        // or 3D
+        libMesh::Tensor F;
+        if(Dim==2)
+          F = this->form_def_gradient(grad_u,grad_v);
+        else if(Dim==3)
+          F = this->form_def_gradient(grad_u,grad_v,grad_w);
 
         CartesianHyperlasticity<StrainEnergy> stress_law(F, (*(this->_strain_energy)));
 
@@ -103,15 +128,25 @@ namespace GRINS
           {
             libMesh::RealGradient dphiJ(dphi[i][qp]*JxW[qp]);
 
-              weak_form.evaluate_internal_stress_residual(P,dphiJ,Fu(i),Fv(i),Fw(i));
+            if(Dim==2)
+              weak_form.evaluate_internal_stress_residual(P,dphiJ,Fu(i),Fv(i));
+            else if(Dim==3)
+              weak_form.evaluate_internal_stress_residual(P,dphiJ,Fu(i),Fv(i),(*Fw)(i));
 
             if( compute_jacobian )
               {
                 for( int j = 0; j != n_u_dofs; j++ )
+                  {
+                    if(Dim==2)
                       weak_form.evaluate_internal_stress_jacobian(S,F,dphiJ,dphi[j][qp],stress_law,
-                                                                  Kuu(i,j), Kuv(i,j), Kuw(i,j),
-                                                                  Kvu(i,j), Kvv(i,j), Kvw(i,j),
-                                                                  Kwu(i,j), Kwv(i,j), Kww(i,j));
+                                                                  Kuu(i,j),Kuv(i,j),
+                                                                  Kvu(i,j),Kvv(i,j));
+                    else if(Dim==3)
+                      weak_form.evaluate_internal_stress_jacobian(S,F,dphiJ,dphi[j][qp],stress_law,
+                                                                  Kuu(i,j), Kuv(i,j), (*Kuw)(i,j),
+                                                                  Kvu(i,j), Kvv(i,j), (*Kvw)(i,j),
+                                                                  (*Kwu)(i,j), (*Kwv)(i,j), (*Kww)(i,j));
+                  }
 
               } // compute jacobian
           }

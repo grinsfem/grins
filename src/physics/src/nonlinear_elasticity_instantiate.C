@@ -62,4 +62,5 @@ template class GRINS::ElasticMembranePressure<GRINS::ParsedPressure>;
 template class GRINS::HyperelasticityBase<2,GRINS::CompressibleMooneyRivlin>;
 template class GRINS::HyperelasticityBase<3,GRINS::CompressibleMooneyRivlin>;
 
-template class GRINS::CompressibleHyperelasticity<GRINS::CompressibleMooneyRivlin>;
+template class GRINS::CompressibleHyperelasticity<2,GRINS::CompressibleMooneyRivlin>;
+template class GRINS::CompressibleHyperelasticity<3,GRINS::CompressibleMooneyRivlin>;

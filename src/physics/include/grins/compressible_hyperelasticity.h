@@ -30,13 +30,13 @@
 
 namespace GRINS
 {
-  template<typename StrainEnergy>
-  class CompressibleHyperelasticity : public HyperelasticityBase<3,StrainEnergy>
+  template<unsigned int Dim, typename StrainEnergy>
+  class CompressibleHyperelasticity : public HyperelasticityBase<Dim,StrainEnergy>
   {
   public:
 
     CompressibleHyperelasticity( const PhysicsName & physics_name, const GetPot & input )
-      : HyperelasticityBase<3,StrainEnergy>(physics_name,PhysicsNaming::compressible_hyperelasticity(),input)
+      : HyperelasticityBase<Dim,StrainEnergy>(physics_name,physics_name,input)
     {}
 
     CompressibleHyperelasticity() = delete;

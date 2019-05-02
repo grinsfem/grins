@@ -32,7 +32,7 @@
 
 namespace GRINS
 {
-  template<template<typename> class DerivedPhysics>
+  template<unsigned int Dim,template<unsigned int,typename> class DerivedPhysics>
   class PhysicsFactoryCompressibleHyperelasticity : public PhysicsFactoryWithCore
   {
   public:
@@ -50,10 +50,10 @@ namespace GRINS
 
   };
 
-  template<template<typename> class DerivedPhysics>
+  template<unsigned int Dim,template<unsigned int,typename> class DerivedPhysics>
   inline
   std::unique_ptr<Physics>
-  PhysicsFactoryCompressibleHyperelasticity<DerivedPhysics>::build_physics
+  PhysicsFactoryCompressibleHyperelasticity<Dim,DerivedPhysics>::build_physics
   ( const GetPot& input, const std::string& physics_name )
   {
     std::string core_physics = this->find_core_physics_name(physics_name);
@@ -64,7 +64,7 @@ namespace GRINS
     std::unique_ptr<Physics> new_physics;
 
     if( strain_energy == std::string("compressible_mooney_rivlin") )
-      new_physics.reset( new DerivedPhysics<CompressibleMooneyRivlin>(physics_name,input) );
+      new_physics.reset( new DerivedPhysics<Dim,CompressibleMooneyRivlin>(physics_name,input) );
     else
       {
         std::string error = "ERROR: Invalid strain_energy "+strain_energy+"!\n";
