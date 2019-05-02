@@ -58,6 +58,14 @@ namespace GRINS
   }
 
   libMesh::Tensor CartesianSolidMechanics::form_def_gradient( const libMesh::Gradient & grad_u,
+                                                              const libMesh::Gradient & grad_v ) const
+  {
+    return libMesh::Tensor( 1.0+grad_u(0), grad_u(1), 0.0,
+                            grad_v(0), 1.0+grad_v(1), 0.0,
+                            0.0,           0.0,       1.0 );
+  }
+
+  libMesh::Tensor CartesianSolidMechanics::form_def_gradient( const libMesh::Gradient & grad_u,
                                                               const libMesh::Gradient & grad_v,
                                                               const libMesh::Gradient & grad_w ) const
   {

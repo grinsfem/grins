@@ -50,6 +50,12 @@ namespace GRINS
 
   protected:
 
+    //! 2D deformation gradient for plane strain
+    /* F(2,2) = 1 will be consistent with plane strain for everything that consumes F */
+    libMesh::Tensor form_def_gradient( const libMesh::Gradient & grad_u,
+                                       const libMesh::Gradient & grad_v ) const;
+
+    //! 3D deformation gradient
     libMesh::Tensor form_def_gradient( const libMesh::Gradient & grad_u,
                                        const libMesh::Gradient & grad_v,
                                        const libMesh::Gradient & grad_w ) const;
