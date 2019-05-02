@@ -62,6 +62,21 @@ namespace GRINS
                                             libMesh::Number & Fv,
                                             libMesh::Number & Fw ) const;
 
+    void evaluate_pressure_stress_pressure_jacobian( libMesh::Number J,
+                                                     const libMesh::Tensor & F_times_Cinv,
+                                                     const libMesh::Real & p_phi_j,
+                                                     const libMesh::RealGradient & dphi_i_times_JxW,
+                                                     libMesh::Number & Kup,
+                                                     libMesh::Number & Kvp ) const;
+
+    void evaluate_pressure_stress_pressure_jacobian( libMesh::Number J,
+                                                     const libMesh::Tensor & F_times_Cinv,
+                                                     const libMesh::Real & p_phi_j,
+                                                     const libMesh::RealGradient & dphi_i_times_JxW,
+                                                     libMesh::Number & Kup,
+                                                     libMesh::Number & Kvp,
+                                                     libMesh::Number & Kwp ) const;
+
     void evaluate_pressure_constraint_residual(libMesh::Number J,
                                                const libMesh::Real & phi_times_JxW,
                                                libMesh::Number & Fp) const;
@@ -123,6 +138,46 @@ namespace GRINS
         Fu += F_times_Cinv(0,alpha)*c;
         Fv += F_times_Cinv(1,alpha)*c;
         Fw += F_times_Cinv(2,alpha)*c;
+      }
+  }
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_stress_pressure_jacobian
+  ( libMesh::Number J,
+    const libMesh::Tensor & F_times_Cinv,
+    const libMesh::Real & p_phi_j,
+    const libMesh::RealGradient & dphi_i_times_JxW,
+    libMesh::Number & Kup,
+    libMesh::Number & Kvp ) const
+  {
+    for( int alpha = 0; alpha < 2 /*dim*/; alpha++)
+      {
+        libMesh::Number c = p_phi_j*J*dphi_i_times_JxW(alpha);
+
+        Kup += F_times_Cinv(0,alpha)*c;
+        Kvp += F_times_Cinv(1,alpha)*c;
+      }
+  }
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_stress_pressure_jacobian
+  ( libMesh::Number J,
+    const libMesh::Tensor & F_times_Cinv,
+    const libMesh::Real & p_phi_j,
+    const libMesh::RealGradient & dphi_i_times_JxW,
+    libMesh::Number & Kup,
+    libMesh::Number & Kvp,
+    libMesh::Number & Kwp ) const
+  {
+    for( int alpha = 0; alpha < 3 /*dim*/; alpha++)
+      {
+        libMesh::Number c = p_phi_j*J*dphi_i_times_JxW(alpha);
+
+        Kup += F_times_Cinv(0,alpha)*c;
+        Kvp += F_times_Cinv(1,alpha)*c;
+        Kwp += F_times_Cinv(2,alpha)*c;
       }
   }
 

@@ -98,11 +98,16 @@ namespace GRINS
     libMesh::DenseSubMatrix<libMesh::Number> & Kvu = context.get_elem_jacobian(v_dot_var,u_var);
     libMesh::DenseSubMatrix<libMesh::Number> & Kvv = context.get_elem_jacobian(v_dot_var,v_var);
 
+    libMesh::DenseSubMatrix<libMesh::Number> & Kup = context.get_elem_jacobian(u_dot_var,p_var);
+    libMesh::DenseSubMatrix<libMesh::Number> & Kvp = context.get_elem_jacobian(v_dot_var,p_var);
+
     libMesh::DenseSubMatrix<libMesh::Number> * Kuw = nullptr;
     libMesh::DenseSubMatrix<libMesh::Number> * Kvw = nullptr;
     libMesh::DenseSubMatrix<libMesh::Number> * Kwu = nullptr;
     libMesh::DenseSubMatrix<libMesh::Number> * Kwv = nullptr;
     libMesh::DenseSubMatrix<libMesh::Number> * Kww = nullptr;
+
+    libMesh::DenseSubMatrix<libMesh::Number> * Kwp = nullptr;
 
     if(Dim==3)
       {
@@ -111,15 +116,21 @@ namespace GRINS
         Kwu = &context.get_elem_jacobian(w_dot_var,u_var);
         Kwv = &context.get_elem_jacobian(w_dot_var,v_var);
         Kww = &context.get_elem_jacobian(w_dot_var,w_var);
+        Kwp = &context.get_elem_jacobian(w_dot_var,p_var);
       }
 
     int n_qpoints = context.get_element_qrule().n_points();
 
     const int n_u_dofs = context.get_dof_indices(u_var).size();
+    const int n_p_dofs = context.get_dof_indices(p_var).size();
 
     const std::vector<libMesh::Real> & JxW = this->get_fe(context)->get_JxW();
 
     const std::vector<std::vector<libMesh::RealGradient> > & dphi = this->get_fe(context)->get_dphi();
+
+    libMesh::FEGenericBase<libMesh::Real> * fe;
+    context.get_element_fe(_press_var.p(),fe,Dim);
+    const std::vector<std::vector<libMesh::Real> > & p_phi = fe->get_phi();
 
     IncompressibleHyperelasticityWeakForm<StrainEnergy> weak_form;
 
@@ -188,6 +199,16 @@ namespace GRINS
                                                                     (*Kwu)(i,j), (*Kwv)(i,j), (*Kww)(i,j));
                       }
                   } // end displacement dof loop
+
+                for( int j = 0; j != n_p_dofs; j++ )
+                  {
+                    if(Dim==2)
+                      weak_form.evaluate_pressure_stress_pressure_jacobian( J,FCinv,p_phi[j][qp],dphiJ,
+                                                                            Kup(i,j),Kvp(i,j) );
+                    else if(Dim==3)
+                      weak_form.evaluate_pressure_stress_pressure_jacobian( J,FCinv,p_phi[j][qp],dphiJ,
+                                                                            Kup(i,j),Kvp(i,j),(*Kwp)(i,j) );
+                  } // end pressure dof loop
 
               } // compute jacobian
           }
