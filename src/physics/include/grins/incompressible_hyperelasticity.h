@@ -43,6 +43,9 @@ namespace GRINS
 
     virtual ~IncompressibleHyperelasticity() = default;
 
+    //! Initialize context for added physics variables
+    virtual void init_context( AssemblyContext & context ) override;
+
   protected:
 
     PressureFEVariable & _press_var;

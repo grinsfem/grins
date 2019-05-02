@@ -47,4 +47,13 @@ namespace GRINS
     this->check_var_subdomain_consistency(_press_var);
   }
 
+  template<unsigned int Dim,typename StrainEnergy>
+  void IncompressibleHyperelasticity<Dim,StrainEnergy>::init_context( AssemblyContext & context )
+  {
+    context.get_element_fe(_press_var.p(),Dim)->get_phi();
+    context.get_element_fe(_press_var.p(),Dim)->get_JxW();
+
+    CartesianSolidMechanics<Dim>::init_context(context);
+  }
+
 } // end namespace GRINS
