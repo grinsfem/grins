@@ -33,10 +33,10 @@
 
 namespace GRINS
 {
-  template<typename StrainEnergy>
-  HyperelasticityBase<StrainEnergy>::HyperelasticityBase
+  template<unsigned int Dim,typename StrainEnergy>
+  HyperelasticityBase<Dim,StrainEnergy>::HyperelasticityBase
   ( const PhysicsName & physics_name, const PhysicsName & core_physics_name, const GetPot & input )
-    : CartesianSolidMechanics(physics_name,core_physics_name,input),
+    : CartesianSolidMechanics<Dim>(physics_name,core_physics_name,input),
       _strain_energy(nullptr)
   {
     const std::string material =

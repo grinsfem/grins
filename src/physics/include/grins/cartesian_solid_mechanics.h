@@ -31,7 +31,8 @@
 
 namespace GRINS
 {
-  class CartesianSolidMechanics : public SolidMechanicsAbstract<3>
+  template<unsigned int Dim>
+  class CartesianSolidMechanics : public SolidMechanicsAbstract<Dim>
   {
   public:
 

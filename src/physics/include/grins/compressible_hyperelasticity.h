@@ -31,12 +31,12 @@
 namespace GRINS
 {
   template<typename StrainEnergy>
-  class CompressibleHyperelasticity : public HyperelasticityBase<StrainEnergy>
+  class CompressibleHyperelasticity : public HyperelasticityBase<3,StrainEnergy>
   {
   public:
 
     CompressibleHyperelasticity( const PhysicsName & physics_name, const GetPot & input )
-      : HyperelasticityBase<StrainEnergy>(physics_name,PhysicsNaming::compressible_hyperelasticity(),input)
+      : HyperelasticityBase<3,StrainEnergy>(physics_name,PhysicsNaming::compressible_hyperelasticity(),input)
     {}
 
     CompressibleHyperelasticity() = delete;

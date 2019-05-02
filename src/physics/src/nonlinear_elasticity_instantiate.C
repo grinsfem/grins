@@ -59,5 +59,7 @@ template class GRINS::ElasticCableRayleighDamping<GRINS::HookesLaw1D>;
 template class GRINS::ElasticMembranePressure<GRINS::ConstantPressure>;
 template class GRINS::ElasticMembranePressure<GRINS::ParsedPressure>;
 
-template class GRINS::HyperelasticityBase<GRINS::CompressibleMooneyRivlin>;
+template class GRINS::HyperelasticityBase<2,GRINS::CompressibleMooneyRivlin>;
+template class GRINS::HyperelasticityBase<3,GRINS::CompressibleMooneyRivlin>;
+
 template class GRINS::CompressibleHyperelasticity<GRINS::CompressibleMooneyRivlin>;

@@ -31,8 +31,8 @@
 
 namespace GRINS
 {
-  template<typename StrainEnergy>
-  class HyperelasticityBase : public CartesianSolidMechanics
+  template<unsigned int Dim,typename StrainEnergy>
+  class HyperelasticityBase : public CartesianSolidMechanics<Dim>
   {
   public:
 
