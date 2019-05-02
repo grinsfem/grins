@@ -234,6 +234,7 @@ TESTS += exact_soln/elastic_cable_twod_newmark_rayleigh_damping.sh
 TESTS += exact_soln/compressible_hyperelasticity_uniaxial_tension_compressible_mooney_rivlin.sh
 TESTS += exact_soln/plane_strain_compressible_hyperelasticity_uniaxial_tension_compressible_mooney_rivlin.sh
 TESTS += exact_soln/incompressible_hyperelasticity_uniaxial_tension_mooney_rivlin.sh
+TESTS += exact_soln/plane_strain_incompressible_hyperelasticity_uniaxial_tension_mooney_rivlin.sh
 
 # Error/xfail TESTS
 TESTS += error_xfail/error_ufo.sh
