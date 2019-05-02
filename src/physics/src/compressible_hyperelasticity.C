@@ -29,6 +29,7 @@
 #include "grins/materials_parsing.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/cartesian_hyperelasticity.h"
+#include "grins/hyperelasticity_weak_form.h"
 
 // libMesh
 #include "libmesh/quadrature.h"
@@ -94,7 +95,7 @@ namespace GRINS
 
     const std::vector<std::vector<libMesh::RealGradient> > & dphi = this->get_fe(context)->get_dphi();
 
-    const int dim = 3;
+    HyperelasticityWeakForm<StrainEnergy> weak_form;
 
     for( int qp=0; qp != n_qpoints; qp++ )
       {
@@ -105,54 +106,26 @@ namespace GRINS
 
         libMesh::Tensor F = this->form_def_gradient(grad_u,grad_v,grad_w);
 
-        CartesianHyperlasticity<StrainEnergy> stress(F, (*_strain_energy));
+        CartesianHyperlasticity<StrainEnergy> stress_law(F, (*_strain_energy));
 
-        libMesh::Tensor P(stress.pk1_stress());
-        const libMesh::Tensor & S = stress.get_pk2_stress();
+        libMesh::Tensor P(stress_law.pk1_stress());
+        const libMesh::Tensor & S = stress_law.get_pk2_stress();
 
         for( int i=0; i != n_u_dofs; i++)
           {
-            for( int alpha = 0; alpha < dim; alpha++)
-              {
-                libMesh::Real dphiJ = dphi[i][qp](alpha)*JxW[qp];
+            libMesh::RealGradient dphiJ(dphi[i][qp]*JxW[qp]);
 
-                Fu(i) += P(0,alpha)*dphiJ;
-                Fv(i) += P(1,alpha)*dphiJ;
-                Fw(i) += P(2,alpha)*dphiJ;
-              }
+              weak_form.evaluate_internal_stress_residual(P,dphiJ,Fu(i),Fv(i),Fw(i));
 
             if( compute_jacobian )
               {
                 for( int j = 0; j != n_u_dofs; j++ )
-                  {
-                    // Compute the  derivative term without the elasticity tensor
-                    libMesh::Number term1 = (dphi[j][qp]*(S*dphi[i][qp]))*JxW[qp];
+                      weak_form.evaluate_internal_stress_jacobian(S,F,dphiJ,dphi[j][qp],stress_law,
+                                                                  Kuu(i,j), Kuv(i,j), Kuw(i,j),
+                                                                  Kvu(i,j), Kvv(i,j), Kvw(i,j),
+                                                                  Kwu(i,j), Kwv(i,j), Kww(i,j));
 
-                    Kuu(i,j) += term1;
-                    Kvv(i,j) += term1;
-                    Kww(i,j) += term1;
-
-                    for( int I = 0; I < dim; I++)
-                      for( int J = 0; J < dim; J++)
-                        for( int K = 0; K < dim; K++)
-                          for( int L = 0; L < dim; L++)
-                            {
-                              libMesh::Number Cijkl = stress.elasticity_tensor(I,J,K,L);
-
-                              libMesh::Real c0 = dphi[i][qp](J)*dphi[j][qp](L)*JxW[qp];
-
-                              Kuu(i,j) += F(0,I)*Cijkl*F(0,K)*c0;
-                              Kuv(i,j) += F(0,I)*Cijkl*F(1,K)*c0;
-                              Kuw(i,j) += F(0,I)*Cijkl*F(2,K)*c0;
-                              Kvu(i,j) += F(1,I)*Cijkl*F(0,K)*c0;
-                              Kvv(i,j) += F(1,I)*Cijkl*F(1,K)*c0;
-                              Kvw(i,j) += F(1,I)*Cijkl*F(2,K)*c0;
-                              Kwu(i,j) += F(2,I)*Cijkl*F(0,K)*c0;
-                              Kwv(i,j) += F(2,I)*Cijkl*F(1,K)*c0;
-                              Kww(i,j) += F(2,I)*Cijkl*F(2,K)*c0;
-                            }
-                  } // end j dof loop
-              }
+              } // compute jacobian
           }
       }
   }
