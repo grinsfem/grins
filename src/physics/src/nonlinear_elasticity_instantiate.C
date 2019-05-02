@@ -44,6 +44,7 @@
 #include "grins/parsed_pressure.h"
 
 template class GRINS::CartesianHyperlasticity<GRINS::CompressibleMooneyRivlin>;
+template class GRINS::CartesianHyperlasticity<GRINS::MooneyRivlin>;
 
 template class GRINS::ElasticMembraneBase<GRINS::HookesLaw>;
 template class GRINS::ElasticMembraneBase<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
@@ -61,6 +62,9 @@ template class GRINS::ElasticMembranePressure<GRINS::ParsedPressure>;
 
 template class GRINS::HyperelasticityBase<2,GRINS::CompressibleMooneyRivlin>;
 template class GRINS::HyperelasticityBase<3,GRINS::CompressibleMooneyRivlin>;
+
+template class GRINS::HyperelasticityBase<2,GRINS::MooneyRivlin>;
+template class GRINS::HyperelasticityBase<3,GRINS::MooneyRivlin>;
 
 template class GRINS::CompressibleHyperelasticity<2,GRINS::CompressibleMooneyRivlin>;
 template class GRINS::CompressibleHyperelasticity<3,GRINS::CompressibleMooneyRivlin>;
