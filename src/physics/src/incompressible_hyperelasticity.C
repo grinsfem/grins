@@ -194,4 +194,65 @@ namespace GRINS
       }
   }
 
+  template<unsigned int Dim,typename StrainEnergy>
+  void IncompressibleHyperelasticity<Dim,StrainEnergy>::element_constraint
+  ( bool compute_jacobian, AssemblyContext & context )
+  {
+    unsigned int u_var = this->_disp_vars.u();
+    unsigned int v_var = this->_disp_vars.v();
+
+    unsigned int w_var = libMesh::invalid_uint;
+    if(Dim==3)
+      w_var = this->_disp_vars.w();
+
+    unsigned int p_var = this->_press_var.p();
+
+    libMesh::DenseSubVector<libMesh::Number> & Fp = context.get_elem_residual(p_var);
+
+    int n_qpoints = context.get_element_qrule().n_points();
+
+    const int n_p_dofs = context.get_dof_indices(p_var).size();
+
+    libMesh::FEGenericBase<libMesh::Real> * fe;
+    context.get_element_fe(_press_var.p(),fe,Dim);
+
+    const std::vector<libMesh::Real> & JxW = fe->get_JxW();
+
+    const std::vector<std::vector<libMesh::Real> > & p_phi = fe->get_phi();
+
+    IncompressibleHyperelasticityWeakForm<StrainEnergy> weak_form;
+
+    for( int qp=0; qp != n_qpoints; qp++ )
+      {
+        libMesh::Gradient grad_u, grad_v, grad_w;
+        context.interior_gradient(u_var, qp, grad_u);
+        context.interior_gradient(v_var, qp, grad_v);
+
+        if(Dim==3)
+          context.interior_gradient(w_var, qp, grad_w);
+
+        // After this, all calculations should be dimension independent
+        // since the structure of F will be correct for 2D plane strain
+        // or 3D
+        libMesh::Tensor F;
+        if(Dim==2)
+          F = this->form_def_gradient(grad_u,grad_v);
+        else if(Dim==3)
+          F = this->form_def_gradient(grad_u,grad_v,grad_w);
+
+        libMesh::Number J = F.det();
+
+        for( int i=0; i != n_p_dofs; i++)
+          {
+            libMesh::Real phiJ = p_phi[i][qp]*JxW[qp];
+            weak_form.evaluate_pressure_constraint_residual(J,phiJ,Fp(i));
+          }
+
+        if( compute_jacobian )
+          {
+            libmesh_not_implemented();
+          }
+      }
+  }
+
 } // end namespace GRINS

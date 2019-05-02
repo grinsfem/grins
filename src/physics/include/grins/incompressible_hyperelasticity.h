@@ -48,6 +48,8 @@ namespace GRINS
 
     virtual void element_time_derivative( bool compute_jacobian, AssemblyContext & context ) override;
 
+    virtual void element_constraint( bool compute_jacobian, AssemblyContext & context ) override;
+
   protected:
 
     PressureFEVariable & _press_var;
