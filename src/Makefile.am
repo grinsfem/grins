@@ -446,6 +446,7 @@ include_HEADERS += physics/include/grins/elastic_membrane_rayleigh_damping.h
 include_HEADERS += physics/include/grins/elastic_membrane_pressure.h
 include_HEADERS += physics/include/grins/elastic_membrane_constant_pressure.h
 include_HEADERS += physics/include/grins/compressible_hyperelasticity.h
+include_HEADERS += physics/include/grins/hyperelasticity_weak_form.h
 include_HEADERS += physics/include/grins/source_term_base.h
 include_HEADERS += physics/include/grins/constant_source_term.h
 include_HEADERS += physics/include/grins/parsed_source_term.h
