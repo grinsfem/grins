@@ -1,0 +1,140 @@
+# Exact Solution for this problem
+# Define all the parameters, etc. to use
+# for specifying displacement etc.
+# For this solution, we're assuming neo-hookean,
+# so zero cofficient on the dWdI2 term.
+[ExactSolution]
+
+   # Length in reference configuation
+   # Can use below to control mesh dimensions
+   # to parameterize test
+   L0 = '1.0'
+
+   # Material coeffcients here to make it easier to parameterize test
+   C1 = '3.1'
+   C2 = '4.159'
+   C3 = '2.653'
+
+   # Normalized lateral contraction
+   # Will use to construct lateral displacement values
+   lambda2 = '0.8'
+
+   # Expression for the exact solution for lateral extension
+   # in terms of lateral contraction. Will have to define
+   # all these constants in the expression where it is used.
+   lamb1_exp = '(c3*l2+sqrt(c3*c3*l2*l2+4*l2*l2*(c2+c3)*(c1+2*c2-c1*l2*l2-c2*l2*l2)))/(2*l2*l2*(c2+c3))'
+
+   # Expression for the traction that would give the solution for lambda 1 above
+   # given the input lambda2 above
+   traction_exp = '(l1)*(2*c1-(2*(c1+2*c2+c3*(l1*l2)-c3*l1^2*l2^2))/l1^2+2*c2*(l2^2+1))'
+
+   # traction value that yields this solution
+   # Just defining all the variables and substituting in the expresssion
+   # above
+   traction = 'c1:=${ExactSolution/C1};c2:=${ExactSolution/C2};c3:=${ExactSolution/C3};l2:=${ExactSolution/lambda2};l1:=${ExactSolution/lamb1_exp};${ExactSolution/traction_exp}'
+
+[]
+
+[Physics]
+
+   enabled_physics = 'PlaneStrainCompressibleHyperelasticity'
+
+   [./PlaneStrainCompressibleHyperelasticity]
+      material = 'Solid'
+   [../]
+[]
+
+# Material properties
+[Materials]
+   [./Solid]
+      [./Density]
+         value = '1.0'
+      [../]
+      [./StressStrainLaw]
+         strain_energy = 'compressible_mooney_rivlin'
+         [./MooneyRivlin]
+            C1 = '${ExactSolution/C1}'
+            C2 = '${ExactSolution/C2}'
+            C3 = '${ExactSolution/C3}'
+         [../]
+      [../]
+   [../]
+[]
+
+[BoundaryConditions]
+   bc_ids = '0 2 3 1'
+   bc_id_name_map = 'YBottom YTop XBottom XTop'
+
+   [./XTop]
+      [./Displacement]
+         type = 'constant_traction'
+         traction = '${ExactSolution/traction} 0.0'
+      [../]
+   [../]
+
+   [./XBottom]
+      [./Displacement]
+         type = 'roller_y'
+      [../]
+   [../]
+
+   [./YBottom]
+      [./Displacement]
+         type = 'roller_x'
+      [../]
+   [../]
+
+   [./YTop]
+      [./Displacement]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+[]
+
+[Variables]
+   [./Displacement]
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD4'
+      x_min = '0.0'
+      x_max = '${ExactSolution/L0}'
+      y_min = '0.0'
+      y_max = '${ExactSolution/L0}'
+      n_elems_x = '2'
+      n_elems_y = '2'
+[]
+
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  '30'
+   max_linear_iterations = '20'
+   verify_analytic_jacobians = '1.0e-6'
+   use_numerical_jacobians_only = 'false'
+   relative_residual_tolerance = '1.0e-10'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'plane_strain_compressible_hyperelasticity_uniaxial_tension_compressible_mooney_rivlin'
+   output_format = 'xdr'
+[]
+
+# Options for print info to the screen
+[screen-options]
+   system_name = 'GRINS-TEST'
+
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+[]
