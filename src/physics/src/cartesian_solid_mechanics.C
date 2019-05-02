@@ -102,16 +102,24 @@ namespace GRINS
     // populate the _u_var, etc. blocks of the residual and Jacobian.
     unsigned int u_dot_var = system.get_second_order_dot_var(this->_disp_vars.u());
     unsigned int v_dot_var = system.get_second_order_dot_var(this->_disp_vars.v());
-    unsigned int w_dot_var = system.get_second_order_dot_var(this->_disp_vars.w());
+    unsigned int w_dot_var = libMesh::invalid_uint;
+    if(Dim==3)
+      w_dot_var = system.get_second_order_dot_var(this->_disp_vars.w());
 
     // Residuals that we're populating
     libMesh::DenseSubVector<libMesh::Number> & Fu = context.get_elem_residual(u_dot_var);
     libMesh::DenseSubVector<libMesh::Number> & Fv = context.get_elem_residual(v_dot_var);
-    libMesh::DenseSubVector<libMesh::Number> & Fw = context.get_elem_residual(w_dot_var);
+    libMesh::DenseSubVector<libMesh::Number> * Fw = nullptr;
+
+    if(Dim==3)
+      Fw = &context.get_elem_residual(w_dot_var);
 
     libMesh::DenseSubMatrix<libMesh::Number> & Kuu = context.get_elem_jacobian(u_dot_var, u_dot_var);
     libMesh::DenseSubMatrix<libMesh::Number> & Kvv = context.get_elem_jacobian(v_dot_var, v_dot_var);
-    libMesh::DenseSubMatrix<libMesh::Number> & Kww = context.get_elem_jacobian(w_dot_var, w_dot_var);
+    libMesh::DenseSubMatrix<libMesh::Number> * Kww = nullptr;
+
+    if(Dim==3)
+      Kww = &context.get_elem_jacobian(w_dot_var, w_dot_var);
 
     const std::vector<libMesh::Real> & JxW = this->get_fe(context)->get_JxW();
 
@@ -124,7 +132,9 @@ namespace GRINS
         libMesh::Real u_ddot, v_ddot, w_ddot;
         context.interior_accel(u_dot_var, qp, u_ddot);
         context.interior_accel(v_dot_var, qp, v_ddot);
-        context.interior_accel(w_dot_var, qp, w_ddot);
+
+        if(Dim==3)
+          context.interior_accel(w_dot_var, qp, w_ddot);
 
         for (int i=0; i != n_u_dofs; i++)
           {
@@ -132,7 +142,9 @@ namespace GRINS
 
             Fu(i) += u_ddot*phi_jac;
             Fv(i) += v_ddot*phi_jac;
-            Fw(i) += w_ddot*phi_jac;
+
+            if(Dim==3)
+              (*Fw)(i) += w_ddot*phi_jac;
 
             if (compute_jacobian)
               {
@@ -143,7 +155,9 @@ namespace GRINS
 
                     Kuu(i,j) += jac_term;
                     Kvv(i,j) += jac_term;
-                    Kww(i,j) += jac_term;
+
+                    if(Dim==3)
+                      (*Kww)(i,j) += jac_term;
                   }
               }
           }
