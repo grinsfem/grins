@@ -45,6 +45,29 @@ namespace GRINS
     IncompressibleHyperelasticityWeakForm() = default;
     virtual ~IncompressibleHyperelasticityWeakForm() = default;
 
+    //! 2D version, consistent with plane strain assumption
+    void evaluate_pressure_stress_residual( libMesh::Number J,
+                                            libMesh::Number press,
+                                            const libMesh::Tensor & F_times_Cinv,
+                                            const libMesh::RealGradient & dphi_i_times_JxW,
+                                            libMesh::Number & Fu,
+                                            libMesh::Number & Fv ) const;
+
+    //! Full 3D version
+    void evaluate_pressure_stress_residual( libMesh::Number J,
+                                            libMesh::Number press,
+                                            const libMesh::Tensor & F_times_Cinv,
+                                            const libMesh::RealGradient & dphi_i_times_JxW,
+                                            libMesh::Number & Fu,
+                                            libMesh::Number & Fv,
+                                            libMesh::Number & Fw ) const;
+
+    void evaluate_pressure_constraint_residual(libMesh::Number J,
+                                               const libMesh::Real & phi_times_JxW,
+                                               libMesh::Number & Fp) const;
+
+
+
   protected:
 
     //! Volumetric stored energy function
@@ -60,6 +83,59 @@ namespace GRINS
     libMesh::Number d2U( libMesh::Number J ) const;
 
   };
+
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_stress_residual
+  ( libMesh::Number J,
+    libMesh::Number press,
+    const libMesh::Tensor & F_times_Cinv,
+    const libMesh::RealGradient & dphi_i_times_JxW,
+    libMesh::Number & Fu,
+    libMesh::Number & Fv ) const
+  {
+
+    for( int alpha = 0; alpha < 2 /*dim*/; alpha++)
+      {
+        libMesh::Number c = press*J*dphi_i_times_JxW(alpha);
+
+        Fu += F_times_Cinv(0,alpha)*c;
+        Fv += F_times_Cinv(1,alpha)*c;
+      }
+  }
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_stress_residual
+  ( libMesh::Number J,
+    libMesh::Number press,
+    const libMesh::Tensor & F_times_Cinv,
+    const libMesh::RealGradient & dphi_i_times_JxW,
+    libMesh::Number & Fu,
+    libMesh::Number & Fv,
+    libMesh::Number & Fw ) const
+  {
+    for( int alpha = 0; alpha < 3 /*dim*/; alpha++)
+      {
+        libMesh::Number c = press*J*dphi_i_times_JxW(alpha);
+
+        Fu += F_times_Cinv(0,alpha)*c;
+        Fv += F_times_Cinv(1,alpha)*c;
+        Fw += F_times_Cinv(2,alpha)*c;
+      }
+  }
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_constraint_residual
+  ( libMesh::Number J,
+    const libMesh::Real & phi_times_JxW,
+    libMesh::Number & Fp ) const
+  {
+    libMesh::Number Up = this->dU(J);
+    Fp += Up*phi_times_JxW;
+  }
 
   template<typename StrainEnergy>
   inline
