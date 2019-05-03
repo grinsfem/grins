@@ -22,6 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
+#include "cartesian_hyperelasticity.C"
+
 #include "elastic_membrane_base.C"
 #include "elastic_membrane.C"
 #include "elastic_cable_base.C"
@@ -30,6 +32,7 @@
 #include "elastic_membrane_rayleigh_damping.C"
 #include "elastic_membrane_pressure.C"
 #include "compressible_hyperelasticity.C"
+#include "hyperelasticity_base.C"
 
 #include "grins/hookes_law.h"
 #include "grins/hookes_law_1d.h"
@@ -39,6 +42,8 @@
 
 #include "grins/constant_pressure.h"
 #include "grins/parsed_pressure.h"
+
+template class GRINS::CartesianHyperlasticity<GRINS::CompressibleMooneyRivlin>;
 
 template class GRINS::ElasticMembraneBase<GRINS::HookesLaw>;
 template class GRINS::ElasticMembraneBase<GRINS::IncompressiblePlaneStressHyperelasticity<GRINS::MooneyRivlin> >;
@@ -54,4 +59,8 @@ template class GRINS::ElasticCableRayleighDamping<GRINS::HookesLaw1D>;
 template class GRINS::ElasticMembranePressure<GRINS::ConstantPressure>;
 template class GRINS::ElasticMembranePressure<GRINS::ParsedPressure>;
 
-template class GRINS::CompressibleHyperelasticity<GRINS::CompressibleMooneyRivlin>;
+template class GRINS::HyperelasticityBase<2,GRINS::CompressibleMooneyRivlin>;
+template class GRINS::HyperelasticityBase<3,GRINS::CompressibleMooneyRivlin>;
+
+template class GRINS::CompressibleHyperelasticity<2,GRINS::CompressibleMooneyRivlin>;
+template class GRINS::CompressibleHyperelasticity<3,GRINS::CompressibleMooneyRivlin>;

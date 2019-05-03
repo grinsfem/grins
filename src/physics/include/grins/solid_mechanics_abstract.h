@@ -47,7 +47,7 @@ namespace GRINS
 
     virtual ~SolidMechanicsAbstract() =default;
 
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 
   protected:
 

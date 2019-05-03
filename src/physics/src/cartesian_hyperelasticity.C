@@ -22,31 +22,41 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_COMPRESSIBLE_HYPERELASTICITY_H
-#define GRINS_COMPRESSIBLE_HYPERELASTICITY_H
-
-// GRINS
-#include "grins/hyperelasticity_base.h"
+// This class
+#include "grins/cartesian_hyperelasticity.h"
 
 namespace GRINS
 {
-  template<unsigned int Dim, typename StrainEnergy>
-  class CompressibleHyperelasticity : public HyperelasticityBase<Dim,StrainEnergy>
+  template<typename StrainEnergy>
+  CartesianHyperlasticity<StrainEnergy>::CartesianHyperlasticity
+  ( const libMesh::Tensor & F, const HyperelasticStrainEnergy<StrainEnergy> & W )
+    : CartesianStressStrainLaw<CartesianHyperlasticity<StrainEnergy>>(F),
+    _W(W),
+    _C(this->right_cauchy_green(this->_F)),
+    _Cinv(_C.inverse())
   {
-  public:
+    this->compute_invariants(_C,_I1,_I2,_I3);
+    _dW(0) = _W.dI1(_I1,_I2,_I3);
+    _dW(1) = _W.dI2(_I1,_I2,_I3);
+    _dW(2) = _W.dI3(_I1,_I2,_I3);
 
-    CompressibleHyperelasticity( const PhysicsName & physics_name, const GetPot & input )
-      : HyperelasticityBase<Dim,StrainEnergy>(physics_name,physics_name,input)
-    {}
+    // We only need upper triangular part of the second derivative
+    _d2W(0,0) = _W.dI12(_I1,_I2,_I3);
+    _d2W(1,1) = _W.dI22(_I1,_I2,_I3);
+    _d2W(2,2) = _W.dI32(_I1,_I2,_I3);
 
-    CompressibleHyperelasticity() = delete;
+    _d2W(0,1) = _W.dI1dI2(_I1,_I2,_I3);
+    _d2W(0,2) = _W.dI1dI3(_I1,_I2,_I3);
+    _d2W(1,2) = _W.dI2dI3(_I1,_I2,_I3);
 
-    virtual ~CompressibleHyperelasticity() = default;
+    _S = this->compute_pk2_stress();
+  }
 
-    virtual void element_time_derivative( bool compute_jacobian, AssemblyContext & context ) override;
-
-  };
+  template<typename StrainEnergy>
+  libMesh::Tensor CartesianHyperlasticity<StrainEnergy>::compute_pk2_stress() const
+  {
+    libMesh::Tensor I(1,0,0,0,1,0,0,0,1);
+    return 2*( _dW(0)*I + _dW(1)*(_I1*I - _C) + (_dW(2)*_I3)*_Cinv );
+  }
 
 } // end namespace GRINS
-
-#endif // GRINS_COMPRESSIBLE_HYPERELASTICITY_H

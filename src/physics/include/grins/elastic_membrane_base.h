@@ -26,12 +26,12 @@
 #define GRINS_ELASTIC_MEMBRANE_BASE_H
 
 //GRINS
-#include "grins/twod_curvilinear_solid_mechanics.h"
+#include "grins/curvilinear_solid_mechanics.h"
 
 namespace GRINS
 {
   template<typename StressStrainLaw>
-  class ElasticMembraneBase : public TwoDCurvilinearSolidMechanics
+  class ElasticMembraneBase : public CurvilinearSolidMechanics<2>
   {
   public:
 
@@ -43,7 +43,7 @@ namespace GRINS
 
     virtual ~ElasticMembraneBase() = default;
 
-    virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init_variables( libMesh::FEMSystem* system ) override;
 
   protected:
 

@@ -226,9 +226,14 @@ namespace GRINS
       (PhysicsNaming::elastic_membrane_rayleigh_damping(),PhysicsNaming::elastic_membrane());
 
 
-    static PhysicsFactoryCompressibleHyperelasticity<CompressibleHyperelasticity>
-      grins_factory_hyperelasticity
+    static PhysicsFactoryCompressibleHyperelasticity<3,CompressibleHyperelasticity>
+      grins_factory_compressible_hyperelasticity
       (PhysicsNaming::compressible_hyperelasticity(),PhysicsNaming::compressible_hyperelasticity());
+
+    static PhysicsFactoryCompressibleHyperelasticity<2,CompressibleHyperelasticity>
+      grins_factory_plane_strain_compressible_hyperelasticity
+      (PhysicsNaming::plane_strain_compressible_hyperelasticity(),
+       PhysicsNaming::plane_strain_compressible_hyperelasticity());
 
 
     static PhysicsFactoryVariableDensityFlow<LowMachNavierStokes> grins_factory_low_mach_navier_stokes

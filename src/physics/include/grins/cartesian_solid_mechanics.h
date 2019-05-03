@@ -22,33 +22,47 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
-#define GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
+#ifndef GRINS_CARTESIAN_SOLID_MECHANICS_H
+#define GRINS_CARTESIAN_SOLID_MECHANICS_H
 
 //GRINS
 #include "grins/solid_mechanics_abstract.h"
 #include "grins/assembly_context.h"
 
-// libMesh
-#include "libmesh/fe_base.h"
-
 namespace GRINS
 {
-  class TwoDCurvilinearSolidMechanics : public SolidMechanicsAbstract<2>
+  template<unsigned int Dim>
+  class CartesianSolidMechanics : public SolidMechanicsAbstract<Dim>
   {
   public:
 
-    TwoDCurvilinearSolidMechanics( const PhysicsName& physics_name, const GetPot& input );
+    CartesianSolidMechanics( const PhysicsName & physics_name,
+                             const PhysicsName & core_physics_name,
+                             const GetPot & input );
 
-    TwoDCurvilinearSolidMechanics() = delete;
+    CartesianSolidMechanics() = delete;
 
-    virtual ~TwoDCurvilinearSolidMechanics() = default;
+    virtual ~CartesianSolidMechanics() = default;
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext & context ) override;
+
+    virtual void mass_residual( bool compute_jacobian, AssemblyContext & context ) override;
+
+  protected:
+
+    //! 2D deformation gradient for plane strain
+    /* F(2,2) = 1 will be consistent with plane strain for everything that consumes F */
+    libMesh::Tensor form_def_gradient( const libMesh::Gradient & grad_u,
+                                       const libMesh::Gradient & grad_v ) const;
+
+    //! 3D deformation gradient
+    libMesh::Tensor form_def_gradient( const libMesh::Gradient & grad_u,
+                                       const libMesh::Gradient & grad_v,
+                                       const libMesh::Gradient & grad_w ) const;
 
   };
 
 } // end namespace GRINS
 
-#endif // GRINS_TWOD_CURVILINEAR_SOLID_MECHANICS_H
+#endif // GRINS_CARTESIAN_SOLID_MECHANICS_H

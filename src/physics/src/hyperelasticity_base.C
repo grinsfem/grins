@@ -22,31 +22,27 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_COMPRESSIBLE_HYPERELASTICITY_H
-#define GRINS_COMPRESSIBLE_HYPERELASTICITY_H
+// This class
+#include "grins/hyperelasticity_base.h"
 
 // GRINS
-#include "grins/hyperelasticity_base.h"
+#include "grins/materials_parsing.h"
+
+// libMesh
+#include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  template<unsigned int Dim, typename StrainEnergy>
-  class CompressibleHyperelasticity : public HyperelasticityBase<Dim,StrainEnergy>
+  template<unsigned int Dim,typename StrainEnergy>
+  HyperelasticityBase<Dim,StrainEnergy>::HyperelasticityBase
+  ( const PhysicsName & physics_name, const PhysicsName & core_physics_name, const GetPot & input )
+    : CartesianSolidMechanics<Dim>(physics_name,core_physics_name,input),
+      _strain_energy(nullptr)
   {
-  public:
+    const std::string material =
+      MaterialsParsing::material_name(input,core_physics_name);
 
-    CompressibleHyperelasticity( const PhysicsName & physics_name, const GetPot & input )
-      : HyperelasticityBase<Dim,StrainEnergy>(physics_name,physics_name,input)
-    {}
-
-    CompressibleHyperelasticity() = delete;
-
-    virtual ~CompressibleHyperelasticity() = default;
-
-    virtual void element_time_derivative( bool compute_jacobian, AssemblyContext & context ) override;
-
-  };
+    _strain_energy.reset(new StrainEnergy(input,material));
+  }
 
 } // end namespace GRINS
-
-#endif // GRINS_COMPRESSIBLE_HYPERELASTICITY_H

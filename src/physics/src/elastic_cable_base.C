@@ -41,7 +41,7 @@ namespace GRINS
   ElasticCableBase<StressStrainLaw>::ElasticCableBase( const PhysicsName& physics_name,
                                                        const GetPot& input,
                                                        bool is_compressible)
-    : OneDCurvilinearSolidMechanics(physics_name,input),
+    : CurvilinearSolidMechanics<1>(physics_name,PhysicsNaming::elastic_cable(),input),
       _A(0.0),
       _stress_strain_law(input,MaterialsParsing::material_name(input,PhysicsNaming::elastic_cable())),
       _is_compressible(is_compressible)

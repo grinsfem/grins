@@ -22,39 +22,24 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_THREED_SOLID_MECHANICS_BASE_H
-#define GRINS_THREED_SOLID_MECHANICS_BASE_H
+#ifndef GRINS_CARTESIAN_NONLINEAR_MECHANICS_H
+#define GRINS_CARTESIAN_NONLINEAR_MECHANICS_H
 
-//GRINS
-#include "grins/solid_mechanics_abstract.h"
-#include "grins/assembly_context.h"
+// libMesh
+#include "libmesh/libmesh_common.h"
+#include "libmesh/vector_value.h"
+#include "libmesh/tensor_value.h"
 
 namespace GRINS
 {
-  class ThreeDSolidMechanicsBase : public SolidMechanicsAbstract<3>
+  //! Helper class for doing computations for nonlinear mechanics
+  class CartesianNonlinearMechanics
   {
   public:
+    CartesianNonlinearMechanics() = default;
+    virtual ~CartesianNonlinearMechanics() = default;
 
-    ThreeDSolidMechanicsBase( const PhysicsName & physics_name,
-                              const PhysicsName & core_physics_name,
-                              const GetPot & input );
-
-    ThreeDSolidMechanicsBase() = delete;
-
-    virtual ~ThreeDSolidMechanicsBase() = default;
-
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext & context );
-
-    virtual void mass_residual( bool compute_jacobian, AssemblyContext & context ) override;
-
-  protected:
-
-    libMesh::Tensor form_def_gradient( const libMesh::Gradient & grad_u,
-                                       const libMesh::Gradient & grad_v,
-                                       const libMesh::Gradient & grad_w ) const;
-
-    libMesh::Tensor compute_right_cauchy_def( const libMesh::Tensor & F ) const
+    libMesh::Tensor right_cauchy_green( const libMesh::Tensor & F ) const
     { return F.transpose()*F; }
 
     void compute_invariants( const libMesh::Tensor & C,
@@ -62,9 +47,22 @@ namespace GRINS
 
     libMesh::Real delta( int i, int j ) const
     { return (i==j) ? 1.0 : 0.0; }
-
   };
+
+  inline
+  void CartesianNonlinearMechanics::compute_invariants( const libMesh::Tensor & C,
+                                                        libMesh::Number & I1,
+                                                        libMesh::Number & I2,
+                                                        libMesh::Number & I3 ) const
+  {
+    I1 = C.tr();
+
+    // I2 = 0.5*( (tr(C))^2 - tr(C^2) )
+    I2 = 0.5*( I1*I1 - (C*C).tr() );
+
+    I3 = C.det();
+  }
 
 } // end namespace GRINS
 
-#endif // GRINS_THREED_SOLID_MECHANICS_BASE_H
+#endif // GRINS_CARTESIAN_NONLINEAR_MECHANICS_H

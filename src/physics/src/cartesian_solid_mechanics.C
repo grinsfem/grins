@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------el-
 
 // This class
-#include "grins/threed_solid_mechanics_base.h"
+#include "grins/cartesian_solid_mechanics.h"
 
 // GRINS
 #include "grins_config.h"
@@ -34,22 +34,30 @@
 #include "libmesh/getpot.h"
 #include "libmesh/quadrature.h"
 
+// C++
+#include <sstream>
+
 namespace GRINS
 {
-  ThreeDSolidMechanicsBase::ThreeDSolidMechanicsBase( const PhysicsName & physics_name,
-                                                      const PhysicsName & core_physics_name,
-                                                      const GetPot & input )
-    :  SolidMechanicsAbstract<3>(physics_name,core_physics_name,input)
+  template<unsigned int Dim>
+  CartesianSolidMechanics<Dim>::CartesianSolidMechanics( const PhysicsName & physics_name,
+                                                         const PhysicsName & core_physics_name,
+                                                         const GetPot & input )
+    :  SolidMechanicsAbstract<Dim>(physics_name,core_physics_name,input)
   {
-    if( this->_disp_vars.dim() != 3 )
+    if( this->_disp_vars.dim() != Dim )
       {
-        std::string msg = "ERROR: "+physics_name+" only valid for three dimensions!\n";
+        std::stringstream dimss;
+        dimss << Dim;
+
+        std::string msg = "ERROR: "+physics_name+" only valid for "+dimss.str()+" dimensions!\n";
         msg += "       Make sure you have three components in your Displacement type variable.\n";
         libmesh_error_msg(msg);
       }
   }
 
-  void ThreeDSolidMechanicsBase::init_context( AssemblyContext & context )
+  template<unsigned int Dim>
+  void CartesianSolidMechanics<Dim>::init_context( AssemblyContext & context )
   {
     this->get_fe(context)->get_JxW();
     this->get_fe(context)->get_phi();
@@ -57,29 +65,27 @@ namespace GRINS
     this->get_fe(context)->get_xyz();
   }
 
-  libMesh::Tensor ThreeDSolidMechanicsBase::form_def_gradient( const libMesh::Gradient & grad_u,
-                                                               const libMesh::Gradient & grad_v,
-                                                               const libMesh::Gradient & grad_w ) const
+  template<unsigned int Dim>
+  libMesh::Tensor CartesianSolidMechanics<Dim>::form_def_gradient( const libMesh::Gradient & grad_u,
+                                                                   const libMesh::Gradient & grad_v ) const
+  {
+    return libMesh::Tensor( 1.0+grad_u(0), grad_u(1), 0.0,
+                            grad_v(0), 1.0+grad_v(1), 0.0,
+                            0.0,           0.0,       1.0 );
+  }
+
+  template<unsigned int Dim>
+  libMesh::Tensor CartesianSolidMechanics<Dim>::form_def_gradient( const libMesh::Gradient & grad_u,
+                                                                   const libMesh::Gradient & grad_v,
+                                                                   const libMesh::Gradient & grad_w ) const
   {
     return libMesh::Tensor( 1.0+grad_u(0), grad_u(1), grad_u(2),
                             grad_v(0), 1.0+grad_v(1), grad_v(2),
                             grad_w(0), grad_w(1), 1.0+grad_w(2) );
   }
 
-  void ThreeDSolidMechanicsBase::compute_invariants( const libMesh::Tensor & C,
-                                                     libMesh::Number & I1,
-                                                     libMesh::Number & I2,
-                                                     libMesh::Number & I3 ) const
-  {
-    I1 = C.tr();
-
-    // I2 = 0.5*( (tr(C))^2 - tr(C^2) )
-    I2 = 0.5*( I1*I1 - (C*C).tr() );
-
-    I3 = C.det();
-  }
-
-  void ThreeDSolidMechanicsBase::mass_residual( bool compute_jacobian, AssemblyContext & context )
+  template<unsigned int Dim>
+  void CartesianSolidMechanics<Dim>::mass_residual( bool compute_jacobian, AssemblyContext & context )
   {
     const MultiphysicsSystem & system = context.get_multiphysics_system();
 
@@ -96,16 +102,24 @@ namespace GRINS
     // populate the _u_var, etc. blocks of the residual and Jacobian.
     unsigned int u_dot_var = system.get_second_order_dot_var(this->_disp_vars.u());
     unsigned int v_dot_var = system.get_second_order_dot_var(this->_disp_vars.v());
-    unsigned int w_dot_var = system.get_second_order_dot_var(this->_disp_vars.w());
+    unsigned int w_dot_var = libMesh::invalid_uint;
+    if(Dim==3)
+      w_dot_var = system.get_second_order_dot_var(this->_disp_vars.w());
 
     // Residuals that we're populating
     libMesh::DenseSubVector<libMesh::Number> & Fu = context.get_elem_residual(u_dot_var);
     libMesh::DenseSubVector<libMesh::Number> & Fv = context.get_elem_residual(v_dot_var);
-    libMesh::DenseSubVector<libMesh::Number> & Fw = context.get_elem_residual(w_dot_var);
+    libMesh::DenseSubVector<libMesh::Number> * Fw = nullptr;
+
+    if(Dim==3)
+      Fw = &context.get_elem_residual(w_dot_var);
 
     libMesh::DenseSubMatrix<libMesh::Number> & Kuu = context.get_elem_jacobian(u_dot_var, u_dot_var);
     libMesh::DenseSubMatrix<libMesh::Number> & Kvv = context.get_elem_jacobian(v_dot_var, v_dot_var);
-    libMesh::DenseSubMatrix<libMesh::Number> & Kww = context.get_elem_jacobian(w_dot_var, w_dot_var);
+    libMesh::DenseSubMatrix<libMesh::Number> * Kww = nullptr;
+
+    if(Dim==3)
+      Kww = &context.get_elem_jacobian(w_dot_var, w_dot_var);
 
     const std::vector<libMesh::Real> & JxW = this->get_fe(context)->get_JxW();
 
@@ -118,15 +132,19 @@ namespace GRINS
         libMesh::Real u_ddot, v_ddot, w_ddot;
         context.interior_accel(u_dot_var, qp, u_ddot);
         context.interior_accel(v_dot_var, qp, v_ddot);
-        context.interior_accel(w_dot_var, qp, w_ddot);
+
+        if(Dim==3)
+          context.interior_accel(w_dot_var, qp, w_ddot);
 
         for (int i=0; i != n_u_dofs; i++)
           {
-            libMesh::Real phi_jac = _rho*phi[i][qp]*JxW[qp];
+            libMesh::Real phi_jac = (this->_rho)*phi[i][qp]*JxW[qp];
 
             Fu(i) += u_ddot*phi_jac;
             Fv(i) += v_ddot*phi_jac;
-            Fw(i) += w_ddot*phi_jac;
+
+            if(Dim==3)
+              (*Fw)(i) += w_ddot*phi_jac;
 
             if (compute_jacobian)
               {
@@ -137,11 +155,16 @@ namespace GRINS
 
                     Kuu(i,j) += jac_term;
                     Kvv(i,j) += jac_term;
-                    Kww(i,j) += jac_term;
+
+                    if(Dim==3)
+                      (*Kww)(i,j) += jac_term;
                   }
               }
           }
       }
   }
+
+  template class CartesianSolidMechanics<2>;
+  template class CartesianSolidMechanics<3>;
 
 } // end namespace GRINS

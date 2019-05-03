@@ -22,36 +22,36 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/oned_curvilinear_solid_mechanics.h"
+#ifndef GRINS_CURVILINEAR_SOLID_MECHANICS_H
+#define GRINS_CURVILINEAR_SOLID_MECHANICS_H
 
-// GRINS
-#include "grins_config.h"
+//GRINS
+#include "grins/solid_mechanics_abstract.h"
 #include "grins/assembly_context.h"
-#include "grins/materials_parsing.h"
 
 // libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
+#include "libmesh/fe_base.h"
 
 namespace GRINS
 {
-  OneDCurvilinearSolidMechanics::OneDCurvilinearSolidMechanics( const PhysicsName& physics_name,
-                                                                const GetPot& input )
-    : SolidMechanicsAbstract<1>(physics_name,PhysicsNaming::elastic_cable(),input)
-  {}
-
-  void OneDCurvilinearSolidMechanics::init_context( AssemblyContext& context )
+  template<unsigned int Dim>
+  class CurvilinearSolidMechanics : public SolidMechanicsAbstract<Dim>
   {
-    this->get_fe(context)->get_JxW();
-    this->get_fe(context)->get_phi();
-    this->get_fe(context)->get_dphidxi();
+  public:
 
-    // Need for constructing metric tensors
-    this->get_fe(context)->get_dxyzdxi();
-    this->get_fe(context)->get_dxidx();
-    this->get_fe(context)->get_dxidy();
-    this->get_fe(context)->get_dxidz();
-  }
+    CurvilinearSolidMechanics( const PhysicsName & physics_name,
+                               const GRINS::PhysicsName & core_physics_name,
+                               const GetPot & input );
+
+    CurvilinearSolidMechanics() = delete;
+
+    virtual ~CurvilinearSolidMechanics() = default;
+
+    //! Initialize context for added physics variables
+    virtual void init_context( AssemblyContext & context ) override;
+
+  };
 
 } // end namespace GRINS
+
+#endif // GRINS_CURVILINEAR_SOLID_MECHANICS_H

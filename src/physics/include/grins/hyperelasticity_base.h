@@ -22,33 +22,33 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H
-#define GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H
+#ifndef GRINS_HYPERELASTICITY_BASE_H
+#define GRINS_HYPERELASTICITY_BASE_H
 
-//GRINS
-#include "grins/solid_mechanics_abstract.h"
-#include "grins/assembly_context.h"
-
-// libMesh
-#include "libmesh/fe_base.h"
+// GRINS
+#include "grins/cartesian_solid_mechanics.h"
+#include "grins/hyperelastic_strain_energy.h"
 
 namespace GRINS
 {
-  class OneDCurvilinearSolidMechanics : public SolidMechanicsAbstract<1>
+  template<unsigned int Dim,typename StrainEnergy>
+  class HyperelasticityBase : public CartesianSolidMechanics<Dim>
   {
   public:
 
-    OneDCurvilinearSolidMechanics( const PhysicsName& physics_name, const GetPot& input );
+    HyperelasticityBase( const PhysicsName & physics_name,
+                         const PhysicsName & core_physics_name,
+                         const GetPot & input );
 
-    OneDCurvilinearSolidMechanics() = delete;
+    HyperelasticityBase() = delete;
 
-    virtual ~OneDCurvilinearSolidMechanics() = default;
+    virtual ~HyperelasticityBase() = default;
 
-    //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+  protected:
 
+    std::unique_ptr<HyperelasticStrainEnergy<StrainEnergy>> _strain_energy;
   };
 
-}
+} // end namespace GRINS
 
-#endif // GRINS_ONED_CURVILINEAR_SOLID_MECHANICS_H
+#endif // GRINS_HYPERELASTICITY_BASE_H

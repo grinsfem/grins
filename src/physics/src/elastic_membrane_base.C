@@ -41,7 +41,7 @@ namespace GRINS
   ElasticMembraneBase<StressStrainLaw>::ElasticMembraneBase( const PhysicsName& physics_name,
                                                              const GetPot& input,
                                                              bool is_compressible )
-    : TwoDCurvilinearSolidMechanics(physics_name,input),
+    : CurvilinearSolidMechanics<2>(physics_name,PhysicsNaming::elastic_membrane(),input),
       _stress_strain_law(input,MaterialsParsing::material_name(input,PhysicsNaming::elastic_membrane())),
       _is_compressible(is_compressible),
       _h0(0.0)
@@ -60,7 +60,7 @@ namespace GRINS
   void ElasticMembraneBase<StressStrainLaw>::init_variables( libMesh::FEMSystem* system )
   {
     // First call base class
-    TwoDCurvilinearSolidMechanics::init_variables(system);
+    CurvilinearSolidMechanics<2>::init_variables(system);
 
     // Now build lambda_sq variable if we need it
     if(_is_compressible)
