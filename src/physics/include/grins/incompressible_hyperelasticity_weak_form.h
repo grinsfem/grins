@@ -110,6 +110,20 @@ namespace GRINS
                                                const libMesh::Real & phi_times_JxW,
                                                libMesh::Number & Fp) const;
 
+    void evaluate_pressure_constraint_jacobian( libMesh::Number J,
+                                                const libMesh::Tensor & F_times_Cinv,
+                                                const libMesh::RealGradient & dphi_j,
+                                                const libMesh::Real & phi_times_JxW,
+                                                libMesh::Number & Kpu,
+                                                libMesh::Number & Kpv ) const;
+
+    void evaluate_pressure_constraint_jacobian( libMesh::Number J,
+                                                const libMesh::Tensor & F_times_Cinv,
+                                                const libMesh::RealGradient & dphi_j,
+                                                const libMesh::Real & phi_times_JxW,
+                                                libMesh::Number & Kpu,
+                                                libMesh::Number & Kpv,
+                                                libMesh::Number & Kpw ) const;
 
 
   protected:
@@ -368,6 +382,43 @@ namespace GRINS
     libMesh::Number Up = this->dU(J);
     Fp += Up*phi_times_JxW;
   }
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_constraint_jacobian
+  ( libMesh::Number J,
+    const libMesh::Tensor & F_times_Cinv,
+    const libMesh::RealGradient & dphi_j,
+    const libMesh::Real & phi_times_JxW,
+    libMesh::Number & Kpu,
+    libMesh::Number & Kpv ) const
+  {
+    libMesh::Number JUpp = J*this->d2U(J);
+    libMesh::Gradient FCinv_times_phij = F_times_Cinv*dphi_j;
+
+    Kpu += JUpp*FCinv_times_phij(0)*phi_times_JxW;
+    Kpv += JUpp*FCinv_times_phij(1)*phi_times_JxW;
+  }
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_constraint_jacobian
+  ( libMesh::Number J,
+    const libMesh::Tensor & F_times_Cinv,
+    const libMesh::RealGradient & dphi_j,
+    const libMesh::Real & phi_times_JxW,
+    libMesh::Number & Kpu,
+    libMesh::Number & Kpv,
+    libMesh::Number & Kpw ) const
+  {
+    libMesh::Number JUpp = J*this->d2U(J);
+    libMesh::Gradient FCinv_times_phij = F_times_Cinv*dphi_j;
+
+    Kpu += JUpp*FCinv_times_phij(0)*phi_times_JxW;
+    Kpv += JUpp*FCinv_times_phij(1)*phi_times_JxW;
+    Kpw += JUpp*FCinv_times_phij(2)*phi_times_JxW;
+  }
+
 
   template<typename StrainEnergy>
   inline
