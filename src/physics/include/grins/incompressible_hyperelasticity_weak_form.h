@@ -62,6 +62,35 @@ namespace GRINS
                                             libMesh::Number & Fv,
                                             libMesh::Number & Fw ) const;
 
+    void evaluate_pressure_stress_displacement_jacobian( libMesh::Number J,
+                                                         libMesh::Number press,
+                                                         const libMesh::Tensor & F,
+                                                         const libMesh::Tensor & Cinv,
+                                                         const libMesh::Tensor & F_times_Cinv,
+                                                         const libMesh::RealGradient & dphi_i_times_JxW,
+                                                         const libMesh::RealGradient & dphi_j,
+                                                         libMesh::Number & Kuu,
+                                                         libMesh::Number & Kuv,
+                                                         libMesh::Number & Kvu,
+                                                         libMesh::Number & Kvv ) const;
+
+    void evaluate_pressure_stress_displacement_jacobian( libMesh::Number J,
+                                                         libMesh::Number press,
+                                                         const libMesh::Tensor & F,
+                                                         const libMesh::Tensor & Cinv,
+                                                         const libMesh::Tensor & F_times_Cinv,
+                                                         const libMesh::RealGradient & dphi_i_times_JxW,
+                                                         const libMesh::RealGradient & dphi_j,
+                                                         libMesh::Number & Kuu,
+                                                         libMesh::Number & Kuv,
+                                                         libMesh::Number & Kuw,
+                                                         libMesh::Number & Kvu,
+                                                         libMesh::Number & Kvv,
+                                                         libMesh::Number & Kvw,
+                                                         libMesh::Number & Kwu,
+                                                         libMesh::Number & Kwv,
+                                                         libMesh::Number & Kww ) const;
+
     void evaluate_pressure_stress_pressure_jacobian( libMesh::Number J,
                                                      const libMesh::Tensor & F_times_Cinv,
                                                      const libMesh::Real & p_phi_j,
@@ -158,6 +187,154 @@ namespace GRINS
         Kup += F_times_Cinv(0,alpha)*c;
         Kvp += F_times_Cinv(1,alpha)*c;
       }
+  }
+
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_stress_displacement_jacobian
+  ( libMesh::Number J,
+    libMesh::Number press,
+    const libMesh::Tensor & F,
+    const libMesh::Tensor & Cinv,
+    const libMesh::Tensor & F_times_Cinv,
+    const libMesh::RealGradient & dphi_i_times_JxW,
+    const libMesh::RealGradient & dphi_j,
+    libMesh::Number & Kuu,
+    libMesh::Number & Kuv,
+    libMesh::Number & Kvu,
+    libMesh::Number & Kvv ) const
+  {
+    // residual is
+    // p*J*F_times_Cinv*dphi_i*JxW
+    // So we have three term: J, then F, then Cinv
+
+    libMesh::Number pJ = press*J;
+
+    // We'll need these in a couple of places
+    libMesh::Gradient FCinv_i = F_times_Cinv*dphi_i_times_JxW;
+    libMesh::Gradient FCinv_j = pJ*(F_times_Cinv*dphi_j);
+    libMesh::Number dphi_j_Cinv_phi_i = pJ*dphi_j*(Cinv*dphi_i_times_JxW);
+
+    // J term: p*dJ/du*F*Cinv*dphi_i*JxW
+    // --> p*J*( (F*Cinv)*dphi_j * (F*Cinv)*dphi_i )*JxW
+    {
+      Kuu += FCinv_j(0)*FCinv_i(0);
+      Kuv += FCinv_j(1)*FCinv_i(0);
+      Kvu += FCinv_j(0)*FCinv_i(1);
+      Kvv += FCinv_j(1)*FCinv_i(1);
+    }
+
+    // F term: p*J*dF/du*Cinv*dphi_i*JxW
+    // --> p*J*dphi_j*Cinv*dphi_i*JxW
+    {
+      libMesh::Number term2 = dphi_j_Cinv_phi_i;
+      Kuu += term2;
+      Kvv += term2;
+    }
+
+    // Cinv term: p*J*F*dCinv/du*dphi_i*JxW
+    {
+      Kuu -= FCinv_j(0)*FCinv_i(0);
+      Kuv -= FCinv_j(0)*FCinv_i(1);
+      Kvu -= FCinv_j(1)*FCinv_i(0);
+      Kvv -= FCinv_j(1)*FCinv_i(1);
+
+      const int dim = 2;
+      libMesh::Number term3 = dphi_j_Cinv_phi_i;
+      for (int M = 0; M < dim; M++)
+        for (int K=0; K < dim; K++)
+          {
+            Kuu -= term3*F(0,K)*Cinv(K,M)*F(0,M);
+            Kuv -= term3*F(0,K)*Cinv(K,M)*F(1,M);
+            Kvu -= term3*F(1,K)*Cinv(K,M)*F(0,M);
+            Kvv -= term3*F(1,K)*Cinv(K,M)*F(1,M);
+          }
+    }
+  }
+
+  template<typename StrainEnergy>
+  inline
+  void IncompressibleHyperelasticityWeakForm<StrainEnergy>::evaluate_pressure_stress_displacement_jacobian
+  ( libMesh::Number J,
+    libMesh::Number press,
+    const libMesh::Tensor & F,
+    const libMesh::Tensor & Cinv,
+    const libMesh::Tensor & F_times_Cinv,
+    const libMesh::RealGradient & dphi_i_times_JxW,
+    const libMesh::RealGradient & dphi_j,
+    libMesh::Number & Kuu,
+    libMesh::Number & Kuv,
+    libMesh::Number & Kuw,
+    libMesh::Number & Kvu,
+    libMesh::Number & Kvv,
+    libMesh::Number & Kvw,
+    libMesh::Number & Kwu,
+    libMesh::Number & Kwv,
+    libMesh::Number & Kww ) const
+  {
+    // residual is
+    // p*J*F_times_Cinv*dphi_i*JxW
+    // So we have three term: J, then F, then Cinv
+
+    libMesh::Number pJ = press*J;
+
+    // We'll need these in a couple of places
+    libMesh::Gradient FCinv_i = F_times_Cinv*dphi_i_times_JxW;
+    libMesh::Gradient FCinv_j = pJ*(F_times_Cinv*dphi_j);
+    libMesh::Number dphi_j_Cinv_phi_i = pJ*dphi_j*(Cinv*dphi_i_times_JxW);
+
+    // J term: p*dJ/du*F*Cinv*dphi_i*JxW
+    // --> p*J*( (F*Cinv)*dphi_j * (F*Cinv)*dphi_i )*JxW
+    {
+      Kuu += FCinv_j(0)*FCinv_i(0);
+      Kuv += FCinv_j(1)*FCinv_i(0);
+      Kuw += FCinv_j(2)*FCinv_i(0);
+      Kvu += FCinv_j(0)*FCinv_i(1);
+      Kvv += FCinv_j(1)*FCinv_i(1);
+      Kvw += FCinv_j(2)*FCinv_i(1);
+      Kwu += FCinv_j(0)*FCinv_i(2);
+      Kwv += FCinv_j(1)*FCinv_i(2);
+      Kww += FCinv_j(2)*FCinv_i(2);
+    }
+
+    // F term: p*J*dF/du*Cinv*dphi_i*JxW
+    // --> p*J*dphi_j*Cinv*dphi_i*JxW
+    {
+      libMesh::Number term2 = dphi_j_Cinv_phi_i;
+      Kuu += term2;
+      Kvv += term2;
+      Kww += term2;
+    }
+
+    // Cinv term: p*J*F*dCinv/du*dphi_i*JxW
+    {
+      Kuu -= FCinv_j(0)*FCinv_i(0);
+      Kuv -= FCinv_j(0)*FCinv_i(1);
+      Kuw -= FCinv_j(0)*FCinv_i(2);
+      Kvu -= FCinv_j(1)*FCinv_i(0);
+      Kvv -= FCinv_j(1)*FCinv_i(1);
+      Kvw -= FCinv_j(1)*FCinv_i(2);
+      Kwu -= FCinv_j(2)*FCinv_i(0);
+      Kwv -= FCinv_j(2)*FCinv_i(1);
+      Kww -= FCinv_j(2)*FCinv_i(2);
+
+      const int dim = 3;
+      libMesh::Number term3 = dphi_j_Cinv_phi_i;
+      for (int M = 0; M < dim; M++)
+        for (int K=0; K < dim; K++)
+          {
+            Kuu -= term3*F(0,K)*Cinv(K,M)*F(0,M);
+            Kuv -= term3*F(0,K)*Cinv(K,M)*F(1,M);
+            Kuw -= term3*F(0,K)*Cinv(K,M)*F(2,M);
+            Kvu -= term3*F(1,K)*Cinv(K,M)*F(0,M);
+            Kvv -= term3*F(1,K)*Cinv(K,M)*F(1,M);
+            Kvw -= term3*F(1,K)*Cinv(K,M)*F(2,M);
+            Kwu -= term3*F(2,K)*Cinv(K,M)*F(0,M);
+            Kwv -= term3*F(2,K)*Cinv(K,M)*F(1,M);
+            Kww -= term3*F(2,K)*Cinv(K,M)*F(2,M);
+          }
+    }
   }
 
   template<typename StrainEnergy>
