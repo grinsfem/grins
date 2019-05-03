@@ -161,7 +161,9 @@ namespace GRINS
 
         libMesh::Number J = stress_law.get_J();
 
-        libMesh::Tensor FCinv(F*(stress_law.get_C_inverse()));
+        const libMesh::Tensor & Cinv = stress_law.get_C_inverse();
+
+        libMesh::Tensor FCinv(F*Cinv);
 
         libMesh::Number press;
         context.interior_value(p_var, qp, press);
@@ -190,6 +192,10 @@ namespace GRINS
                         weak_form.evaluate_internal_stress_jacobian(S,F,dphiJ,dphi[j][qp],stress_law,
                                                                     Kuu(i,j),Kuv(i,j),
                                                                     Kvu(i,j),Kvv(i,j));
+
+                        weak_form.evaluate_pressure_stress_displacement_jacobian
+                          (J,press, F,Cinv,FCinv,dphiJ,dphi[j][qp],
+                           Kuu(i,j),Kuv(i,j),Kvu(i,j),Kvv(i,j) );
                       }
                     else if(Dim==3)
                       {
@@ -197,6 +203,12 @@ namespace GRINS
                                                                     Kuu(i,j), Kuv(i,j), (*Kuw)(i,j),
                                                                     Kvu(i,j), Kvv(i,j), (*Kvw)(i,j),
                                                                     (*Kwu)(i,j), (*Kwv)(i,j), (*Kww)(i,j));
+
+                        weak_form.evaluate_pressure_stress_displacement_jacobian
+                          (J,press, F,Cinv,FCinv,dphiJ,dphi[j][qp],
+                           Kuu(i,j), Kuv(i,j), (*Kuw)(i,j),
+                           Kvu(i,j), Kvv(i,j), (*Kvw)(i,j),
+                           (*Kwu)(i,j), (*Kwv)(i,j), (*Kww)(i,j) );
                       }
                   } // end displacement dof loop
 
@@ -230,8 +242,15 @@ namespace GRINS
 
     libMesh::DenseSubVector<libMesh::Number> & Fp = context.get_elem_residual(p_var);
 
+    libMesh::DenseSubMatrix<libMesh::Number> & Kpu = context.get_elem_jacobian(p_var,u_var);
+    libMesh::DenseSubMatrix<libMesh::Number> & Kpv = context.get_elem_jacobian(p_var,v_var);
+    libMesh::DenseSubMatrix<libMesh::Number> * Kpw = nullptr;
+    if(Dim==3)
+      Kpw = &context.get_elem_jacobian(p_var,w_var);
+
     int n_qpoints = context.get_element_qrule().n_points();
 
+    const int n_u_dofs = context.get_dof_indices(u_var).size();
     const int n_p_dofs = context.get_dof_indices(p_var).size();
 
     libMesh::FEGenericBase<libMesh::Real> * fe;
@@ -240,6 +259,8 @@ namespace GRINS
     const std::vector<libMesh::Real> & JxW = fe->get_JxW();
 
     const std::vector<std::vector<libMesh::Real> > & p_phi = fe->get_phi();
+
+    const std::vector<std::vector<libMesh::RealGradient> > & dphi = this->get_fe(context)->get_dphi();
 
     IncompressibleHyperelasticityWeakForm<StrainEnergy> weak_form;
 
@@ -263,15 +284,29 @@ namespace GRINS
 
         libMesh::Number J = F.det();
 
+        libMesh::Tensor C(F.transpose()*F);
+        libMesh::Tensor Cinv(C.inverse());
+        libMesh::Tensor FCinv(F*Cinv);
+
         for( int i=0; i != n_p_dofs; i++)
           {
             libMesh::Real phiJ = p_phi[i][qp]*JxW[qp];
             weak_form.evaluate_pressure_constraint_residual(J,phiJ,Fp(i));
-          }
 
-        if( compute_jacobian )
-          {
-            libmesh_not_implemented();
+
+            if( compute_jacobian )
+              {
+                for( int j = 0; j != n_u_dofs; j++ )
+                  {
+                    if(Dim==2)
+                      weak_form.evaluate_pressure_constraint_jacobian
+                        ( J, FCinv, dphi[j][qp], phiJ, Kpu(i,j), Kpv(i,j) );
+
+                    else if(Dim==3)
+                      weak_form.evaluate_pressure_constraint_jacobian
+                        ( J, FCinv, dphi[j][qp], phiJ, Kpu(i,j), Kpv(i,j), (*Kpw)(i,j) );
+                  }
+              }
           }
       }
   }
