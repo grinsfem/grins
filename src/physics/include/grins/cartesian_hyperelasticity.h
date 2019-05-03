@@ -55,6 +55,12 @@ namespace GRINS
     const libMesh::Tensor & get_pk2_stress() const
     { return _S;}
 
+    const libMesh::Tensor & get_C_inverse() const
+    { return _Cinv; }
+
+    libMesh::Number get_J() const
+    { return std::sqrt(_I3); }
+
   private:
 
     const HyperelasticStrainEnergy<StrainEnergy> & _W;

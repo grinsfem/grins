@@ -1,0 +1,121 @@
+
+# Input file for uniaxial extension with lateral contraction
+# of a cubical bar modeled with IncompressibleHyperelastcity
+[Physics]
+
+   enabled_physics = 'IncompressibleHyperelasticity'
+
+   [./IncompressibleHyperelasticity]
+      material = 'Solid'
+   [../]
+[]
+
+# Material properties
+[Materials]
+   [./Solid]
+      [./Density]
+         value = '1.0'
+      [../]
+      [./StressStrainLaw]
+         strain_energy = 'mooney_rivlin'
+         [./MooneyRivlin]
+            C1 = '3.14'
+            C2 = '2.71'
+         [../]
+      [../]
+   [../]
+[]
+
+[BoundaryConditions]
+   bc_ids = '5 0 4 1 2:3'
+   bc_id_name_map = 'ZTop ZBottom XBottom YBottom TractionFree'
+
+   [./ZTop]
+      [./Displacement]
+         type = 'parsed_dirichlet_component'
+         Uz = '0.2'
+      [../]
+   [../]
+
+   [./ZBottom]
+      [./Displacement]
+         type = 'xy_symmetry'
+      [../]
+   [../]
+
+   [./XBottom]
+      [./Displacement]
+         type = 'yz_symmetry'
+      [../]
+   [../]
+
+   [./YBottom]
+      [./Displacement]
+         type = 'xz_symmetry'
+      [../]
+   [../]
+
+   [./TractionFree]
+      [./Displacement]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+[]
+
+[Variables]
+   [./Displacement]
+      names = 'Ux Uy Uz'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../]
+   [./Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../]
+[]
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '3'
+      element_type = 'HEX27'
+      x_min = '0.0'
+      x_max = '1.0'
+      y_min = '0.0'
+      y_max = '1.0'
+      z_min = '0.0'
+      z_max = '1.0'
+      n_elems_x = '1'
+      n_elems_y = '1'
+      n_elems_z = '1'
+[]
+
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  '30'
+   max_linear_iterations = '30'
+   verify_analytic_jacobians = '1.0e-6'
+   use_numerical_jacobians_only = 'false'
+   relative_residual_tolerance = '1.0e-10'
+   relative_step_tolerance = '1.0e-8'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'incompressible_hyperelasticity_uniaxial_tension_mooney_rivlin'
+   output_format = 'xdr'
+[]
+
+# Options for print info to the screen
+[screen-options]
+   system_name = 'GRINS-TEST'
+
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+[]

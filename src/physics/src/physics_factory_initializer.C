@@ -33,6 +33,7 @@
 #include "grins/physics_factory_one_d_stress_solids.h"
 #include "grins/physics_factory_plane_stress_solids.h"
 #include "grins/physics_factory_compressible_hyperelasticity.h"
+#include "grins/physics_factory_incompressible_hyperelasticity.h"
 #include "grins/physics_factory_variable_density_flow.h"
 #include "grins/physics_factory_reacting_flows.h"
 
@@ -80,6 +81,7 @@
 #include "grins/parsed_pressure.h"
 
 #include "grins/compressible_hyperelasticity.h"
+#include "grins/incompressible_hyperelasticity.h"
 
 #include "grins/low_mach_navier_stokes.h"
 #include "grins/low_mach_navier_stokes_braack_stab.h"
@@ -235,6 +237,14 @@ namespace GRINS
       (PhysicsNaming::plane_strain_compressible_hyperelasticity(),
        PhysicsNaming::plane_strain_compressible_hyperelasticity());
 
+    static PhysicsFactoryIncompressibleHyperelasticity<3,IncompressibleHyperelasticity>
+      grins_factory_incompressible_hyperelasticity
+      (PhysicsNaming::incompressible_hyperelasticity(),PhysicsNaming::incompressible_hyperelasticity());
+
+    static PhysicsFactoryIncompressibleHyperelasticity<2,IncompressibleHyperelasticity>
+      grins_factory_plane_strain_incompressible_hyperelasticity
+      (PhysicsNaming::plane_strain_incompressible_hyperelasticity(),
+       PhysicsNaming::plane_strain_incompressible_hyperelasticity());
 
     static PhysicsFactoryVariableDensityFlow<LowMachNavierStokes> grins_factory_low_mach_navier_stokes
       (PhysicsNaming::low_mach_navier_stokes(),PhysicsNaming::low_mach_navier_stokes());
