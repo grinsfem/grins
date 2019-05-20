@@ -396,6 +396,7 @@ AC_CONFIG_FILES(examples/ozone_flame/crun.sh,                 [chmod +x examples
 AC_CONFIG_FILES(examples/spectroscopy/run.sh,                 [chmod +x examples/spectroscopy/run.sh])
 AC_CONFIG_FILES(examples/multigrid/run_poisson.sh,            [chmod +x examples/multigrid/run_poisson.sh])
 AC_CONFIG_FILES(examples/multigrid/run_stokes.sh,             [chmod +x examples/multigrid/run_stokes.sh])
+AC_CONFIG_FILES(examples/multigrid/run_thermo_coupled_flow.sh, [chmod +x examples/multigrid/run_thermo_coupled_flow.sh])
 AC_CONFIG_FILES(examples/torsion_hyperelasticity/run.sh,     [chmod +x examples/torsion_hyperelasticity/run.sh])
 
 dnl-----------------------------------------------
