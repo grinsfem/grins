@@ -63,7 +63,8 @@ namespace GRINS
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context )
+    { this->mass_residual_impl(compute_jacobian,context); }
 
   protected:
 

@@ -68,7 +68,8 @@ namespace GRINS
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context )
+    { this->mass_residual_impl(compute_jacobian,context); }
 
     //! Compute value of postprocessed quantities at libMesh::Point.
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
