@@ -80,6 +80,8 @@ namespace GRINS
     //! Viscosity object
     Viscosity _mu;
 
+    void mass_residual_impl( bool compute_jacobian, AssemblyContext & context );
+
   private:
     IncompressibleNavierStokesBase();
 
