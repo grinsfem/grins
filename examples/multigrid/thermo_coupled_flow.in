@@ -1,0 +1,160 @@
+
+[Physics]
+   enabled_physics = 'IncompressibleNavierStokes HeatTransfer BoussinesqBuoyancy'
+
+   # Options related to all Physics
+   [./IncompressibleNavierStokes]
+      material = 'Gas'
+      pin_pressure = true
+      pin_location = '0.5 0.5'
+      pin_value = '1.0'
+
+   [../]
+    [./HeatTransfer]
+       material = 'Gas'
+       ic_ids = '0'
+       ic_types = 'parsed'
+       ic_variables = 'T'
+       ic_values = 'y'
+    [../]
+    [./BoussinesqBuoyancy]
+       material = 'Gas'
+       # Gravity vector
+       g   = '0.0 -9.81' #[m/s^2]
+    [../]
+
+[]
+
+[Variables]
+   [./Velocity]
+      names = 'Ux Uy'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+   [../Pressure]
+      names = 'p'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+   [../Temperature]
+      names = 'T'
+      fe_family = 'LAGRANGE'
+      order = 'SECOND'
+[]
+
+# Mesh related options
+[Mesh]
+   [./Generation]
+      dimension = '2'
+      element_type = 'QUAD9'
+      x_min = '0.0'
+      x_max = '1.0'
+      y_min = '0.0'
+      y_max = '1.0'
+      n_elems_x = '5'
+      n_elems_y = '5'
+   [../]
+   [./Refinement]
+     uniformly_refine = '2'
+     allow_renumbering = 'true'
+     allow_remote_elem_deletion = 'false'
+     disable_partitioning = 'true'
+   [../]
+[]
+
+# Materials section
+[Materials]
+   [./Gas]
+      [./ThermalConductivity]
+         model = 'constant'
+         value = '1.0'
+      [../Density]
+         value = '1.0'
+      [../Viscosity]
+         model = 'constant'
+         value = '1.0'
+      [../SpecificHeat]
+         model = 'constant'
+         value =  '1.0'
+      [../ReferenceTemperature]
+         value = '0.5'
+      [../ThermalExpansionCoeff]
+         value = '1e5'
+      [../ThermodynamicPressure]
+         value = '1'
+      [../GasConstant]
+         value = '1'
+[]
+
+[BoundaryConditions]
+   bc_ids = '3 1 0 2'
+   bc_id_name_map = 'Left Right Bottom Top'
+
+   [./Left]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'parsed_dirichlet'
+         T = '1.0'
+      [../]
+   [../]
+
+   [./Right]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'parsed_dirichlet'
+         T = '2.0'
+      [../]
+   [../]
+
+   [./Bottom]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'adiabatic'
+      [../]
+   [../]
+
+   [./Top]
+      [./Velocity]
+         type = 'no_slip'
+      [../]
+      [./Temperature]
+         type = 'adiabatic'
+      [../]
+   [../]
+[]
+
+# Options for solvers
+[SolverOptions]
+ solver_type = 'grins_steady_solver'
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+  type = 'libmesh_petsc_diff'
+  relative_residual_tolerance = '1.0e-10'
+  verify_analytic_jacobians = '0.0'
+  use_numerical_jacobians_only = 'true'
+[]
+
+# Visualization options
+[vis-options]
+  vis_output_file_prefix = 'thermo_coupled_flow_output'
+  output_vis = 'true'
+  output_residual = 'true'
+  output_format = 'ExodusII'
+[]
+
+# Options for print info to the screen
+[screen-options]
+  system_name = 'thermo_coupled_flow'
+  print_equation_system_info = 'true'
+  print_mesh_info = 'true'
+  print_log_info = 'true'
+  solver_verbose = 'true'
+  solver_quiet = 'false'
+  print_element_jacobians = 'false'
+[]

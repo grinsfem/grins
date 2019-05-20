@@ -1,0 +1,151 @@
+#!/bin/sh
+
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+
+GRINS_SOLVER_OPTIONS="--use_petsc_dm --node-major-dofs
+
+-snes_view -snes_monitor -snes_converged_reason
+-snes_atol 1.0e-5 -snes_error_if_not_converged
+
+-ksp_type fgmres -ksp_converged_reason -ksp_monitor
+-ksp_rtol 1.0e-8 -ksp_atol 1.0e-8
+-ksp_gmres_modifiedgramschmidt
+
+-pc_type fieldsplit
+-pc_fieldsplit_0_fields 0,1,2
+-pc_fieldsplit_1_fields 3
+-pc_fieldsplit_type schur
+-pc_fieldsplit_schur_fact_type full
+-pc_fieldsplit_schur_precondition selfp
+
+-fieldsplit_T_inner_pc_type lu
+-fieldsplit_T_inner_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_T_inner_ksp_type gmres
+-fieldsplit_T_inner_ksp_rtol 1.0e-10
+-fieldsplit_T_inner_ksp_converged_reason
+-fieldsplit_T_inner_ksp_monitor
+
+-fieldsplit_T_upper_pc_type lu
+-fieldsplit_T_upper_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_T_upper_ksp_type gmres
+-fieldsplit_T_upper_ksp_rtol 1.0e-10
+-fieldsplit_T_upper_ksp_converged_reason
+-fieldsplit_T_upper_ksp_monitor
+
+-fieldsplit_0_pc_type fieldsplit
+-fieldsplit_0_ksp_monitor
+-fieldsplit_0_ksp_type gmres
+-fieldsplit_0_pc_fieldsplit_0_fields 0,1 -fieldsplit_0_pc_fieldsplit_1_fields 2
+-fieldsplit_0_pc_fieldsplit_type schur -fieldsplit_0_pc_fieldsplit_schur_fact_type full
+-fieldsplit_0_pc_fieldsplit_schur_precondition selfp
+
+-fieldsplit_0_fieldsplit_0_pc_type lu
+-fieldsplit_0_fieldsplit_0_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_0_fieldsplit_0_ksp_max_it 1 -fieldsplit_0_fieldsplit_0_ksp_type gmres
+-fieldsplit_0_fieldsplit_0_ksp_monitor
+
+-fieldsplit_0_fieldsplit_p_pc_type lu
+-fieldsplit_0_fieldsplit_p_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_0_fieldsplit_p_ksp_type gmres
+-fieldsplit_0_fieldsplit_p_ksp_monitor
+-fieldsplit_0_fieldsplit_p_ksp_rtol 1.0e-5
+
+-fieldsplit_0_fieldsplit_p_inner_pc_type lu
+-fieldsplit_0_fieldsplit_p_inner_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_0_fieldsplit_p_inner_ksp_type gmres
+-fieldsplit_0_fieldsplit_p_inner_ksp_rtol 1.0e-10
+-fieldsplit_0_fieldsplit_p_inner_ksp_converged_reason
+-fieldsplit_0_fieldsplit_p_inner_ksp_monitor
+
+-fieldsplit_0_fieldsplit_p_upper_pc_type lu
+-fieldsplit_0_fieldsplit_p_upper_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_0_fieldsplit_p_upper_ksp_type gmres
+-fieldsplit_0_fieldsplit_p_upper_ksp_rtol 1.0e-10
+-fieldsplit_0_fieldsplit_p_upper_ksp_converged_reason
+-fieldsplit_0_fieldsplit_p_upper_ksp_monitor
+
+-fieldsplit_T_pc_type lu
+-fieldsplit_T_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_T_ksp_rtol 1.0e-10 -fieldsplit_T_ksp_type gmres
+-fieldsplit_T_ksp_monitor"
+
+echo "Running Thermally Coupled Boussinesq Multigrid Example with: recursive Schur complement settings"
+
+$GRINS_RUN @prefix@/bin/grins @prefix@/examples/multigrid/thermo_coupled_flow.in $GRINS_SOLVER_OPTIONS
+
+
+echo "Running Thermally Coupled Boussinesq Multigrid Example with: multiplicative FS with GMG on velocity and GMG on Temp"
+
+GRINS_SOLVER_OPTIONS="--use_petsc_dm --node-major-dofs
+
+-snes_view -snes_monitor -snes_converged_reason
+-snes_rtol 1.0e-5 -snes_error_if_not_converged 0
+
+-ksp_type fgmres -ksp_converged_reason -ksp_monitor
+-ksp_rtol 1.0e-8 -ksp_atol 1.0e-8
+-ksp_gmres_modifiedgramschmidt
+
+-pc_type fieldsplit
+-pc_fieldsplit_0_fields 0,1,2
+-pc_fieldsplit_1_fields 3
+-pc_fieldsplit_type multiplicative
+
+-fieldsplit_0_pc_type fieldsplit
+-fieldsplit_0_ksp_monitor
+-fieldsplit_0_ksp_type gmres
+-fieldsplit_0_pc_fieldsplit_0_fields 0,1 -fieldsplit_0_pc_fieldsplit_1_fields 2
+-fieldsplit_0_pc_fieldsplit_type schur -fieldsplit_0_pc_fieldsplit_schur_fact_type full
+-fieldsplit_0_pc_fieldsplit_schur_precondition selfp
+
+-fieldsplit_0_fieldsplit_0_pc_type mg
+-fieldsplit_0_fieldsplit_0_pc_mg_galerkin both
+-fieldsplit_0_fieldsplit_0_pc_mg_type full
+-pc_mg_levels 3
+-fieldsplit_0_fieldsplit_0_pc_mg_levels 3
+
+-fieldsplit_0_fieldsplit_0_mg_levels_pc_type sor
+-fieldsplit_0_fieldsplit_0_mg_levels_pc_sor_its 5
+-fieldsplit_0_fieldsplit_0_mg_levels_ksp_type richardson
+-fieldsplit_0_fieldsplit_0_mg_levels_ksp_richardson_self_scale
+-fieldsplit_0_fieldsplit_0_mg_levels_ksp_monitor
+-fieldsplit_0_fieldsplit_0_mg_levels_ksp_converged_reason
+
+-fieldsplit_0_fieldsplit_p_pc_type lu
+-fieldsplit_0_fieldsplit_p_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_0_fieldsplit_p_ksp_type gmres
+-fieldsplit_0_fieldsplit_p_ksp_monitor
+-fieldsplit_0_fieldsplit_p_ksp_rtol 1.0e-10
+
+-fieldsplit_0_fieldsplit_p_inner_pc_type lu
+-fieldsplit_0_fieldsplit_p_inner_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_0_fieldsplit_p_inner_ksp_type gmres
+-fieldsplit_0_fieldsplit_p_inner_ksp_rtol 1.0e-10
+-fieldsplit_0_fieldsplit_p_inner_ksp_converged_reason
+-fieldsplit_0_fieldsplit_p_inner_ksp_monitor
+
+-fieldsplit_0_fieldsplit_p_upper_pc_type lu
+-fieldsplit_0_fieldsplit_p_upper_pc_factor_mat_solver_type superlu_dist
+-fieldsplit_0_fieldsplit_p_upper_ksp_type gmres
+-fieldsplit_0_fieldsplit_p_upper_ksp_rtol 1.0e-10
+-fieldsplit_0_fieldsplit_p_upper_ksp_converged_reason
+-fieldsplit_0_fieldsplit_p_upper_ksp_monitor
+
+-fieldsplit_T_ksp_max_it 5 -fieldsplit_T_ksp_type gmres
+-fieldsplit_T_ksp_rtol 1.0e-5
+-fieldsplit_T_ksp_converged_reason -fieldsplit_T_ksp_monitor_true_residual
+
+-fieldsplit_T_pc_type mg
+-fieldsplit_T_pc_mg_galerkin both
+-fieldsplit_T_pc_mg_type full
+-pc_mg_levels 3
+-fieldsplit_T_pc_mg_levels 3
+
+-fieldsplit_T_mg_levels_pc_type sor
+-fieldsplit_T_mg_levels_pc_sor_its 5
+-fieldsplit_T_mg_levels_ksp_type richardson
+-fieldsplit_T_mg_levels_ksp_richardson_self_scale
+-fieldsplit_T_mg_levels_ksp_max_it 5
+-fieldsplit_T_mg_levels_ksp_monitor
+-fieldsplit_T_mg_levels_ksp_converged_reason"
+
+$GRINS_RUN @prefix@/bin/grins @prefix@/examples/multigrid/thermo_coupled_flow.in $GRINS_SOLVER_OPTIONS
