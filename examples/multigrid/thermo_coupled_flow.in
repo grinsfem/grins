@@ -77,7 +77,7 @@
       [../ReferenceTemperature]
          value = '0.5'
       [../ThermalExpansionCoeff]
-         value = '1e5'
+         value = '1e3'
       [../ThermodynamicPressure]
          value = '1'
       [../GasConstant]
