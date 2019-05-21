@@ -52,12 +52,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  Stokes<Mu>::~Stokes()
-  {
-    return;
-  }
-
-  template<class Mu>
   void Stokes<Mu>::auxiliary_init( MultiphysicsSystem& system )
   {
     if( _pin_pressure )
