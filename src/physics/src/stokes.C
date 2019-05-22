@@ -204,84 +204,11 @@ namespace GRINS
   void Stokes<Mu>::element_constraint
   ( bool compute_jacobian, AssemblyContext & context )
   {
-    // The number of local degrees of freedom in each variable.
-    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
-    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
-
-    // We get some references to cell-specific data that
-    // will be used to assemble the linear system.
-
-    // Element Jacobian * quadrature weights for interior integration.
-    const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u())->get_JxW();
-
-    // The velocity shape function gradients (in global coords.)
-    // at interior quadrature points.
-    const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
-      context.get_element_fe(this->_flow_vars.u())->get_dphi();
-
-    // The pressure shape functions at interior quadrature points.
-    const std::vector<std::vector<libMesh::Real> >& p_phi =
-      context.get_element_fe(this->_press_var.p())->get_phi();
-
-    // The subvectors and submatrices we need to fill:
-    //
-    // Kpu, Kpv, Kpw, Fp
-
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpu = context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.u()); // R_{p},{u}
-    libMesh::DenseSubMatrix<libMesh::Number> &Kpv = context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.v()); // R_{p},{v}
-    libMesh::DenseSubMatrix<libMesh::Number>* Kpw = NULL;
-
-    libMesh::DenseSubVector<libMesh::Number> &Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
-
-
-    if( this->_flow_vars.dim() == 3 )
-      {
-        Kpw = &context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.w()); // R_{p},{w}
-      }
-
-    // Add the constraint given by the continuity equation.
-    unsigned int n_qpoints = context.get_element_qrule().n_points();
-    for (unsigned int qp=0; qp != n_qpoints; qp++)
-      {
-        // Compute the velocity gradient at the old Newton iterate.
-        libMesh::Gradient grad_u, grad_v, grad_w;
-        grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
-        grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
-        if (this->_flow_vars.dim() == 3)
-          grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
-
-        // Now a loop over the pressure degrees of freedom.  This
-        // computes the contributions of the continuity equation.
-        for (unsigned int i=0; i != n_p_dofs; i++)
-          {
-            Fp(i) += JxW[qp] * p_phi[i][qp] *
-              (grad_u(0) + grad_v(1));
-            if (this->_flow_vars.dim() == 3)
-              Fp(i) += JxW[qp] * p_phi[i][qp] *
-                (grad_w(2));
-
-            if (compute_jacobian)
-              {
-                for (unsigned int j=0; j != n_u_dofs; j++)
-                  {
-                    Kpu(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](0);
-                    Kpv(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](1);
-                    if (this->_flow_vars.dim() == 3)
-                      (*Kpw)(i,j) += context.get_elem_solution_derivative() * JxW[qp]*p_phi[i][qp]*u_gradphi[j][qp](2);
-                  } // end of the inner dof (j) loop
-
-              } // end - if (compute_jacobian && context.get_elem_solution_derivative())
-
-          } // end of the outer dof (i) loop
-      } // end of the quadrature point (qp) loop
-
+    this->element_constraint_impl(compute_jacobian,context);
 
     // Pin p = p_value at p_point
     if( _pin_pressure )
-      {
-        _p_pinning.pin_value( context, compute_jacobian, this->_press_var.p() );
-      }
+      _p_pinning.pin_value( context, compute_jacobian, this->_press_var.p() );
   }
 
 } // namespace GRINS
