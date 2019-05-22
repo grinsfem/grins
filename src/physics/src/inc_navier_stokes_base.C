@@ -201,6 +201,109 @@ namespace GRINS
       } // End quadrature loop
   }
 
+  template<class Mu>
+  void IncompressibleNavierStokesBase<Mu>::element_constraint_impl
+  ( bool compute_jacobian, AssemblyContext & context )
+  {
+    // The number of local degrees of freedom in each variable.
+    const unsigned int n_u_dofs = context.get_dof_indices(this->_flow_vars.u()).size();
+    const unsigned int n_p_dofs = context.get_dof_indices(this->_press_var.p()).size();
+
+    // We get some references to cell-specific data that
+    // will be used to assemble the linear system.
+
+    // Element Jacobian * quadrature weights for interior integration.
+    const std::vector<libMesh::Real> & JxW =
+      context.get_element_fe(this->_flow_vars.u())->get_JxW();
+
+    // The velocity shape function gradients (in global coords.)
+    // at interior quadrature points.
+    const std::vector<std::vector<libMesh::RealGradient> > & u_gradphi =
+      context.get_element_fe(this->_flow_vars.u())->get_dphi();
+
+    // The velocity shape function gradients (in global coords.)
+    // at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> > & u_phi =
+      context.get_element_fe(this->_flow_vars.u())->get_phi();
+
+    // The pressure shape functions at interior quadrature points.
+    const std::vector<std::vector<libMesh::Real> > & p_phi =
+      context.get_element_fe(this->_press_var.p())->get_phi();
+
+    const std::vector<libMesh::Point> & u_qpoint =
+      context.get_element_fe(this->_flow_vars.u())->get_xyz();
+
+    // The subvectors and submatrices we need to fill:
+    //
+    // Kpu, Kpv, Kpw, Fp
+
+    libMesh::DenseSubMatrix<libMesh::Number> & Kpu =
+      context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.u()); // R_{p},{u}
+
+    libMesh::DenseSubMatrix<libMesh::Number> & Kpv =
+      context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.v()); // R_{p},{v}
+    libMesh::DenseSubMatrix<libMesh::Number> * Kpw = NULL;
+
+    libMesh::DenseSubVector<libMesh::Number> & Fp = context.get_elem_residual(this->_press_var.p()); // R_{p}
+
+
+    if( this->_flow_vars.dim() == 3 )
+      Kpw = &context.get_elem_jacobian(this->_press_var.p(), this->_flow_vars.w()); // R_{p},{w}
+
+    // Add the constraint given by the continuity equation.
+    unsigned int n_qpoints = context.get_element_qrule().n_points();
+    for (unsigned int qp=0; qp != n_qpoints; qp++)
+      {
+        // Compute the velocity gradient at the old Newton iterate.
+        libMesh::Gradient grad_u, grad_v, grad_w;
+        grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
+        grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
+        if (this->_flow_vars.dim() == 3)
+          grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
+
+        libMesh::Number divU = grad_u(0) + grad_v(1);
+        if (this->_flow_vars.dim() == 3)
+          divU += grad_w(2);
+
+        const libMesh::Number r = u_qpoint[qp](0);
+
+        libMesh::Real jac = JxW[qp];
+
+        if(Physics::is_axisymmetric())
+          {
+            libMesh::Number u = context.interior_value( this->_flow_vars.u(), qp );
+            divU += u/r;
+            jac *= r;
+          }
+
+        // Now a loop over the pressure degrees of freedom.  This
+        // computes the contributions of the continuity equation.
+        for (unsigned int i=0; i != n_p_dofs; i++)
+          {
+            Fp(i) += p_phi[i][qp]*divU*jac;
+
+            if (compute_jacobian)
+              {
+                libmesh_assert_equal_to (context.get_elem_solution_derivative(), 1.0);
+
+                for (unsigned int j=0; j != n_u_dofs; j++)
+                  {
+                    Kpu(i,j) += p_phi[i][qp]*u_gradphi[j][qp](0)*jac * context.get_elem_solution_derivative();
+                    Kpv(i,j) += p_phi[i][qp]*u_gradphi[j][qp](1)*jac * context.get_elem_solution_derivative();
+                    if (this->_flow_vars.dim() == 3)
+                      (*Kpw)(i,j) += p_phi[i][qp]*u_gradphi[j][qp](2)*jac * context.get_elem_solution_derivative();
+
+                    if(Physics::is_axisymmetric())
+                      Kpu(i,j) += p_phi[i][qp]*u_phi[j][qp]/r*jac * context.get_elem_solution_derivative();
+
+                  } // end of the inner dof (j) loop
+
+              } // end - if (compute_jacobian)
+
+          } // end of the outer dof (i) loop
+      } // end of the quadrature point (qp) loop
+  }
+
 } // namespace GRINS
 
 // Instantiate

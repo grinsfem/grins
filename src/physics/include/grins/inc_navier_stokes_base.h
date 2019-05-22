@@ -82,6 +82,8 @@ namespace GRINS
 
     void mass_residual_impl( bool compute_jacobian, AssemblyContext & context );
 
+    void element_constraint_impl( bool compute_jacobian, AssemblyContext & context );
+
   private:
     IncompressibleNavierStokesBase();
 
