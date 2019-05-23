@@ -46,24 +46,27 @@ namespace GRINS
 
     Stokes(const std::string& physics_name, const GetPot& input);
 
-    ~Stokes();
+    Stokes() = delete;
 
-    virtual void auxiliary_init( MultiphysicsSystem& system );
+    ~Stokes() = default;
+
+    virtual void auxiliary_init( MultiphysicsSystem& system ) override;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     // Constraint part(s)
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext& context );
+                                     AssemblyContext& context ) override;
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override
+    { this->mass_residual_impl(compute_jacobian,context); }
 
   protected:
 
@@ -71,10 +74,6 @@ namespace GRINS
 
     //! Enable pressure pinning
     bool _pin_pressure;
-
-  private:
-
-    Stokes();
 
   };
 

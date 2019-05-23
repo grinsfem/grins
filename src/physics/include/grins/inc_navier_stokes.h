@@ -47,34 +47,37 @@ namespace GRINS
 
     IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input);
 
-    ~IncompressibleNavierStokes(){};
+    IncompressibleNavierStokes() = delete;
 
-    virtual void auxiliary_init( MultiphysicsSystem& system );
+    ~IncompressibleNavierStokes() = default;
+
+    virtual void auxiliary_init( MultiphysicsSystem& system ) override;
 
     //! Register postprocessing variables for IncompressibleNavierStokes
     virtual void register_postprocessing_vars( const GetPot& input,
-                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing ) override;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     // Constraint part(s)
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext & context );
+                                     AssemblyContext & context ) override;
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override
+    { this->mass_residual_impl(compute_jacobian,context); }
 
     //! Compute value of postprocessed quantities at libMesh::Point.
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
-                                                 libMesh::Real& value );
+                                                 libMesh::Real& value ) override;
 
   protected:
 
@@ -85,9 +88,6 @@ namespace GRINS
 
     //! Index from registering this quantity
     unsigned int _mu_index;
-
-  private:
-    IncompressibleNavierStokes();
 
   };
 
