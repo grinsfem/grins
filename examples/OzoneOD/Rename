@@ -1,5 +1,0 @@
-#!/bin/bash
-for i in {1..1600..1}
-	 do
-mv output.$(($i * $1 - 1)).exo output.e-s.$(($i * $1 - 1))
-	 done

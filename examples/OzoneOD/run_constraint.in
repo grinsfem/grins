@@ -1,7 +1,0 @@
-#!/bin/sh
-
-GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
-DEFAULT_SOLVER_OPTIONS="-ksp_type gmeres -pc_type bjacobi -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
-GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS:$DEFAULT_SOLVER_OPTIONS}
-$GRINS_RUN /zoidberg1/data/shared/klbudzin/WorkingGrins/OptBuild/bin/grins /zoidberg1/data/shared/klbudzin/WorkingGrins/grins/examples/OzoneOD/ozone_constraint.in $GRINS_SOLVER_OPTIONS
-
