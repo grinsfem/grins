@@ -64,6 +64,8 @@ namespace GRINS
    unsigned int /*qoi_num*/ )
   {
     _temp_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,std::string("AdiabiaticFlameTemperature"),VariablesParsing::QOI));
+    this->set_parameter
+      ( _T_point, input, "QoI/AdiabiaticFlameTemperature/point", .01 );
   }
 
 
@@ -86,7 +88,7 @@ namespace GRINS
   void AdiabiaticFlameTemperature::element_qoi( AssemblyContext & context,
                                            const unsigned qoi_index)
   {
-    if(context.get_elem().contains_point(0.01) ) //if were at 1 cm off the boundary
+    if(context.get_elem().contains_point(this->_T_point) ) //if were at 1 cm off the boundary
       {
 
         libMesh::Number& qoi = context.get_qois()[qoi_index];

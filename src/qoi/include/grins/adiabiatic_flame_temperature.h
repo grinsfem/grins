@@ -65,6 +65,8 @@ namespace GRINS
   protected:
     const PrimitiveTempFEVariables * _temp_vars;
 
+    libMesh::Real _T_point;
+
   private:
 
     AdiabiaticFlameTemperature();
