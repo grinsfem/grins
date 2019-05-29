@@ -9,9 +9,11 @@ vanilla multigrid usage for a forced Poisson problem with homogeneous
 boundary conditions. Next, run_stokes.sh demonstrates the coupling
 between fieldsplit and multigrid capabilities by applying multigrid
 directly to the velocity sub-block of a lid driven cavity Stokes flow
-formulation.
+formulation. Finally, the thermo coupled flow example demonstrates
+recursive fieldsplit capabilities as well as the ability to do GMG on
+multiple subblocks via two different sets of solver configurations.
 
-Both examples contain a set of default solver settings which perform
+These examples contain a set of default solver settings which perform
 adequately, but a large variety of further options can be employed to
 further customize the solve. The single required option is
 -pc_mg_levels which must be specified at all times in order to dictate
