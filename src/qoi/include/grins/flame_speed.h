@@ -51,10 +51,8 @@ namespace GRINS
 
     virtual bool assemble_on_sides() const;
 
-    virtual void element_qoi( AssemblyContext& context,
+    virtual void side_qoi( AssemblyContext& context,
                               const unsigned int qoi_index);
-
-
 
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
@@ -77,6 +75,7 @@ namespace GRINS
     std::shared_ptr<Chemistry> _chemistry;
 
     libMesh::Real _P0;
+
     libMesh::Real _T_unburnt;
 
   private:
@@ -91,8 +90,7 @@ namespace GRINS
 				   libMesh::Real p0,
 				   libMesh::Real R_mix) const
   {
-    libMesh::Real value = 0;
-    value = p0/(R_mix*T);
+    libMesh::Real value = p0/(R_mix*T);
     return value;
   }
 
@@ -102,20 +100,17 @@ namespace GRINS
 				     const AssemblyContext& c ) const
   { return c.point_value(_mass_flux_vars->var(),p); }
 
-
   template< typename Chemistry>
     inline
     bool FlameSpeed<Chemistry>::assemble_on_interior() const
   {
-    return true;
+    return false;
   }
   template< typename Chemistry>
   inline
     bool FlameSpeed<Chemistry>::assemble_on_sides() const
   {
-   return false;
+   return true;
   }
-
-
 }
 #endif //GRINS_Flame_Speed_H

@@ -76,13 +76,12 @@ namespace GRINS
   {
     //grab the pressure value
     this->parse_Pressure(input);
+
     //grab the unburnt temperature value
     this->set_parameter
       ( _T_unburnt, input,"QoI/FlameSpeed/Unburnt_Temperature" , -1.0 );
 
-
-
-    //figure out the chemistry
+    //Parse the chemistry
      std::string material = input("QoI/FlameSpeed/material","DIE!");
      _chemistry.reset( new Chemistry(input,material));
 
@@ -95,15 +94,11 @@ namespace GRINS
                              +_chemistry->species_name(s), 0.0);
        }
 
-    //Set our Vaiables
     _mass_flux_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_variable_name(input,std::string("FlameSpeed"),VariablesParsing::QOI));
 
   }
 
 
-
-
-  ///Probaly NEED CHANGING OF SOME KIND
   template< typename Chemistry>
   void FlameSpeed<Chemistry>::init_context( AssemblyContext& context )
   {
@@ -119,22 +114,22 @@ namespace GRINS
   }
 
   template< typename Chemistry>
-  void FlameSpeed<Chemistry>::element_qoi( AssemblyContext & context,
-                                           const unsigned qoi_index)
+  void FlameSpeed<Chemistry>::side_qoi( AssemblyContext & context,
+                                        const unsigned qoi_index)
   {
-    if(context.get_elem().contains_point(0.01) ) //if were at 1 cm off the boundary
-      {
-
-        libMesh::Number& qoi = context.get_qois()[qoi_index];
-        libMesh::Real p0 = this->_P0;
-        libMesh::Real Mdot = context.point_value(this->_mass_flux_vars->var(),0.01);
+    if( context.has_side_boundary_id( 0 ) )
+           {
 
 
-        libMesh::Real Rmix = _chemistry->R_mix(Mass_Fractions);
+             libMesh::Number& qoi = context.get_qois()[qoi_index];
+             libMesh::Real p0 = this->_P0;
+             libMesh::Real Mdot = context.side_value(this->_mass_flux_vars->var(),0);
+             libMesh::Real Rmix = _chemistry->R_mix(Mass_Fractions);
 
-        qoi += Mdot/(this->rho(_T_unburnt,p0, Rmix));
-      }
-  }
+             qoi += Mdot/(this->rho(_T_unburnt,p0, Rmix));
+           }
+
+  } //end side_qoi
 
   template< typename Chemistry>
   void FlameSpeed<Chemistry>::parse_Pressure( const GetPot& input)
@@ -155,11 +150,11 @@ namespace GRINS
 
 
 
-  #if GRINS_HAVE_ANTIOCH
+#if GRINS_HAVE_ANTIOCH
   template class FlameSpeed<AntiochChemistry>;
 #endif
 
 #if GRINS_HAVE_CANTERA
   template class FlameSpeed<CanteraMixture>;
-  #endif
+#endif
 } //namespace GRINS
