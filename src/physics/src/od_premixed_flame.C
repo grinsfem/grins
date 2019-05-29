@@ -35,8 +35,6 @@ namespace GRINS
       _species_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<SpeciesMassFractionsVariable>(VariablesParsing::species_mass_frac_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
       _mass_flux_vars(GRINSPrivate::VariableWarehouse::get_variable_subclass<SingleVariable>(VariablesParsing::single_variable_name(input,physics_name,VariablesParsing::PHYSICS))),
       _n_species(_species_vars.n_species()),
-      _fixed_density( input("Physics/"+PhysicsNaming::od_premixed_flame()+"/fixed_density", false ) ),
-      _fixed_rho_value(0.0),
       _gas_mixture(gas_mix.release()),
       _rho_index(0),
       _k_index(0),
@@ -44,29 +42,6 @@ namespace GRINS
       _u_index(0),
       _mu_index(0)
   {
-    this->set_parameter
-      (_fixed_rho_value, input,
-       "Physics/"+PhysicsNaming::od_premixed_flame()+"/fixed_rho_value", 0.0 );
-
-
-    //Parsing the Unburnt Temperature
-    this->set_parameter(_Tu, input,
-	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Unburnt_Temperature", 0.0);
-    if(_Tu ==0)
-      {
-	std::cout << "Unburnt gas Temperature not set in the input!!" << std::endl;
-	libmesh_not_implemented();
-      }
-
-    //Initial Inflow Equivalence ratio
-    _Inflow_Species.resize(this->_n_species);
-    std::cout << std::endl;
-    for (unsigned int s = 0; s < this->_n_species; s++)
-	  {
-	    this->set_parameter(_Inflow_Species[s], input, "Physics/"+PhysicsNaming::od_premixed_flame()+"/"
-				+_gas_mixture->species_name(s), 0.0);
-            std::cout << "Y_" + _gas_mixture->species_name(s) + " = " <<  _Inflow_Species[s] << " \n";
-	  }
 
     this->read_input_options(input);
 
@@ -77,10 +52,31 @@ namespace GRINS
     this->_ic_handler = new GenericICHandler( physics_name, input );
   }
 
-  //Reading and setting the Thermodynamic Pressure
+
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::read_input_options( const GetPot& input )
   {
+
+     //Parsing the Unburnt Temperature.
+    this->set_parameter(_Tu, input,
+	                "Physics/"+PhysicsNaming::od_premixed_flame()+"/Unburnt_Temperature", 0.0);
+    if(_Tu == 0)
+      {
+	std::cout << "Unburnt gas Temperature not set in the input!" << std::endl;
+	libmesh_not_implemented();
+      }
+
+    //Setting the inflow mixture mass fractions.
+    //Currently Always outputting the values read. TODO:: add this as an input option.
+    _Inflow_Species.resize(this->_n_species);
+    std::cout <<"Unburnt Mixture Mass Fractions:" << std::endl;
+    for (unsigned int s = 0; s < this->_n_species; s++)
+	  {
+	    this->set_parameter(_Inflow_Species[s], input, "Physics/"+PhysicsNaming::od_premixed_flame()+"/"
+				+_gas_mixture->species_name(s), 0.0);
+            std::cout << "Y_" + _gas_mixture->species_name(s) + " = " <<  _Inflow_Species[s] << " \n";
+	  }
+
     // Read thermodynamic pressure info
     MaterialsParsing::read_property( input,
 				     "ThermodynamicPressure",
@@ -510,9 +506,8 @@ namespace GRINS
 
 
 
-
-
-
+  //Currently use side_time_derivative to evaluate the mass flux value due to boundary values of the temperature,
+  //temperature gradient and unburnt conditions.
   template<typename Mixture, typename Evaluator>
   void ODPremixedFlame<Mixture,Evaluator>::side_time_derivative( bool compute_jacobian, AssemblyContext & context)
   {
@@ -520,7 +515,7 @@ namespace GRINS
       libmesh_not_implemented();
 
     //Check if were on the right boundary,
-    //TODO:: make this specified in input file probably
+    //TODO:: make this specified in input file
     if( context.has_side_boundary_id( 0 ))
       {
 	const std::vector<libMesh::Real> &JxW =
