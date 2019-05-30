@@ -98,6 +98,9 @@ namespace GRINS
     void omega_dot( const libMesh::Real& T, libMesh::Real rho,
                     const std::vector<libMesh::Real> mass_fractions,
                     std::vector<libMesh::Real>& omega_dot );
+    
+    libMesh::Real clip_T(const libMesh::Real&T) const;
+    libMesh::Real clip_rho(const libMesh::Real&rho) const;
 
   protected:
 
@@ -117,10 +120,27 @@ namespace GRINS
 
   /* ------------------------- Inline Functions -------------------------*/
   inline
-  libMesh::Real CanteraEvaluator::M( unsigned int species ) const
+    libMesh::Real CanteraEvaluator::clip_T( const libMesh::Real& T ) const
+  {
+    if (T>200)
+      return T;
+    return 200;
+  }
+
+  inline
+    libMesh::Real CanteraEvaluator::clip_rho(const libMesh::Real& rho ) const
+  {
+    if(rho > 1e-6)
+      return rho;
+    return 1e-6;
+  }
+ 
+ inline
+ libMesh::Real CanteraEvaluator::M( unsigned int species ) const
   {
     return _chem.M(species);
   }
+
 
   inline
   libMesh::Real CanteraEvaluator::M_mix( const std::vector<libMesh::Real>& mass_fractions ) const
@@ -171,31 +191,32 @@ namespace GRINS
                                       const libMesh::Real P,
                                       const std::vector<libMesh::Real>& Y )
   {
-    return _thermo.cp(T,P,Y);
+    return _thermo.cp(this->clip_T(T),P,Y);
   }
 
   inline
-  void CanteraEvaluator::cp_s( const libMesh::Real& T,
+    void CanteraEvaluator::cp_s( const libMesh::Real& T,
 				 const libMesh::Real P,
 				 const std::vector<libMesh::Real>& Y,
 				 std::vector<libMesh::Real>& Cp_s)
   {
-    _thermo.cp_s(T,P,Y,Cp_s);
+    _thermo.cp_s(this->clip_T(T),P,Y,Cp_s);
     return;
   }
 
+ 
   inline
   libMesh::Real CanteraEvaluator::cv( const libMesh::Real& T,
                                       const libMesh::Real P,
                                       const std::vector<libMesh::Real>& Y )
   {
-    return _thermo.cv(T,P,Y);
+    return _thermo.cv(this->clip_T(T),P,Y);
   }
 
   inline
   libMesh::Real CanteraEvaluator::h_s( const libMesh::Real& T, unsigned int species )
   {
-    return _thermo.h(T,species);
+    return _thermo.h(this->clip_T(T),species);
   }
 
   inline
@@ -203,7 +224,7 @@ namespace GRINS
                                       const libMesh::Real P,
                                       const std::vector<libMesh::Real>& Y )
   {
-    return _transport.mu(T,P,Y);
+    return _transport.mu(this->clip_T(T),P,Y);
   }
 
   inline
@@ -211,7 +232,7 @@ namespace GRINS
                                      const libMesh::Real P,
                                      const std::vector<libMesh::Real>& Y )
   {
-    return _transport.k(T,P,Y);
+    return _transport.k(this->clip_T(T),P,Y);
   }
 
   inline
@@ -220,8 +241,8 @@ namespace GRINS
                                    const std::vector<libMesh::Real>& Y,
                                    libMesh::Real& mu, libMesh::Real& k )
   {
-    mu = _transport.mu(T,P,Y);
-    k = _transport.k(T,P,Y);
+    mu = _transport.mu(this->clip_T(T),P,Y);
+    k = _transport.k(this->clip_T(T),P,Y);
   }
 
   inline
@@ -232,7 +253,7 @@ namespace GRINS
                                          libMesh::Real& mu, libMesh::Real& k,
                                          std::vector<libMesh::Real>& D )
   {
-    _transport.mu_and_k_and_D( T, rho, cp, Y, mu, k, D );
+    _transport.mu_and_k_and_D( this->clip_T(T), this->clip_rho(rho), cp, Y, mu, k, D );
   }
 
   inline
@@ -240,8 +261,10 @@ namespace GRINS
                                     const std::vector<libMesh::Real> mass_fractions,
                                     std::vector<libMesh::Real>& omega_dot )
   {
-    _kinetics.omega_dot(T,rho,mass_fractions,omega_dot);
+    _kinetics.omega_dot(this->clip_T(T),this->clip_rho(rho),mass_fractions,omega_dot);
   }
+
+
 
 } // end namespace GRINS
 

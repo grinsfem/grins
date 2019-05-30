@@ -3,7 +3,7 @@
 //
 // GRINS - General Reacting Incompressible Navier-Stokes
 //
-// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2014-2017 Paul T. Bauman, Roy H. Stogner
 // Copyright (C) 2010-2013 The PECOS Development Team
 //
 // This library is free software; you can redistribute it and/or
@@ -22,21 +22,32 @@
 //
 //-----------------------------------------------------------------------el-
 
-#ifndef GRINS_QOI_NAMES_H
-#define GRINS_QOI_NAMES_H
 
-namespace GRINS
-{
-  const std::string avg_nusselt = "average_nusselt_number";
-  const std::string vorticity = "vorticity";
-  const std::string parsed_boundary = "parsed_boundary";
-  const std::string parsed_interior = "parsed_interior";
-  const std::string weighted_flux = "weighted_flux";
-  const std::string integrated_function = "integrated_function";
-  const std::string spectroscopic_transmission = "spectroscopic_transmission";
-  const std::string spectroscopic_absorption = "spectroscopic_absorption";
-  const std::string laser_absorption = "laser_absorption";
-  const std::string flame_speed = "flame_speed";
-  const std::string adiabiatic_flame_temperature = "adiabiatic_flame_temperature";
-}
-#endif //GRINS_QOI_NAMES_H
+#include "grins_config.h"
+
+#include "grins/od_premixed_flame.h"
+#include "od_premixed_flame.C"
+
+#ifdef GRINS_HAVE_CANTERA
+
+#include "grins/cantera_mixture.h"
+#include "grins/cantera_evaluator.h"
+
+
+template class GRINS::ODPremixedFlame<GRINS::CanteraMixture,GRINS::CanteraEvaluator>;
+
+#endif // GRINS_HAVE_CANTERA
+
+
+#ifdef GRINS_HAVE_ANTIOCH
+
+#include "grins/reacting_low_mach_navier_stokes_macro.h"
+
+
+INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_CONSTANT_MIXTURE_AND_CONSTANT_EVALUATOR(ODPremixedFlame);
+
+
+INSTANTIATE_REACTING_LOW_MACH_SUBCLASS_MIXTURE_AND_EVALUATOR(ODPremixedFlame);
+
+
+#endif //GRINS_HAVE_ANTIOCH

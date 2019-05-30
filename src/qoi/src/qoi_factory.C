@@ -43,6 +43,8 @@
 #include "grins/constant_laser_intensity_profile.h"
 #include "grins/collimated_gaussian_laser_intensity_profile.h"
 #include "grins/laser_absorption.h"
+#include "grins/flame_speed.h"
+#include "grins/adiabiatic_flame_temperature.h"
 
 #if GRINS_HAVE_ANTIOCH
 #include "grins/antioch_chemistry.h"
@@ -110,6 +112,7 @@ namespace GRINS
         qoi = new AverageNusseltNumber( avg_nusselt );
       }
 
+
     else if( qoi_name == parsed_boundary )
       {
         qoi =  new ParsedBoundaryQoI( parsed_boundary );
@@ -130,6 +133,22 @@ namespace GRINS
         qoi =  new WeightedFluxQoI( weighted_flux );
       }
 
+   else if ( qoi_name == flame_speed )
+      {
+        std::string material = input("QoI/FlameSpeed/material","NONE");
+        std::string ChemistryModel = input("Materials/" + material + "/GasMixture/thermochemistry_library", "none" );
+        if(ChemistryModel == "antioch")
+          qoi = new FlameSpeed<AntiochChemistry>( flame_speed);
+        else if(ChemistryModel == "cantera")
+          qoi = new FlameSpeed<CanteraMixture>(flame_speed);
+        else
+          libmesh_error_msg("ERROR: Must Specify material name in the flamespeed qoi section, and make sure the thermochemistry_library is either: 'cantera' or 'antioch'.");
+      }
+
+   else if ( qoi_name == adiabiatic_flame_temperature )
+     {
+       qoi = new AdiabiaticFlameTemperature(adiabiatic_flame_temperature);
+     }
     else if( qoi_name == integrated_function )
       {
         std::string function;
@@ -192,7 +211,7 @@ namespace GRINS
           this->get_var_value<libMesh::Real>(input,phi,"QoI/"+qoi_string+"/Rayfire/phi",-1.0);
 
         unsigned int n_qp = input("QoI/"+qoi_string+"/n_quadrature_points", 1); // default to single rayfire
-        
+
         std::shared_ptr<LaserIntensityProfileBase> intensity_profile;
         std::string profile_name;
         this->get_var_value<std::string>(input,profile_name,"QoI/"+qoi_string+"/intensity_profile","");
@@ -342,7 +361,7 @@ namespace GRINS
 
         // Output the QoI value normally
         bool output_as_csv = false;
-        
+
         if (qoi_name == spectroscopic_absorption)
           *qoi = new SpectroscopicAbsorption(absorb,rayfire,qoi_name,output_as_csv);
         else // spectroscopic_transmission
@@ -358,11 +377,11 @@ namespace GRINS
 
         // We don't want to duplicate the last qoi
         do_final_add = false;
-        
+
         libMesh::Real min_nu = input(desired_wavenumber_var,0.0,0);
         libMesh::Real max_nu = input(desired_wavenumber_var,0.0,1);
         libMesh::Real step_nu = input(desired_wavenumber_var,0.0,2);
-        
+
         // sanity check the given range
         if ( (min_nu>max_nu) || (step_nu>(max_nu-min_nu)) )
           {
@@ -373,9 +392,9 @@ namespace GRINS
                <<"nu_step: " <<step_nu <<std::endl;
             libmesh_error_msg(ss.str());
           }
-        
+
         for (libMesh::Real nu = min_nu; nu <= max_nu; nu += step_nu)
-          {            
+          {
             libMesh::Real nu_desired = nu;
 
             AbsorptionCoeffBase * coeff = libMesh::cast_ptr<AbsorptionCoeffBase *>(absorb->clone().release());
@@ -457,7 +476,7 @@ namespace GRINS
 #else
     libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the LaserAbsorption QoI");
 #endif
-    
+
     return absorb;
   }
 

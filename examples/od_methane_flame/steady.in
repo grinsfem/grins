@@ -1,0 +1,30 @@
+# Mesh related options
+[Mesh]
+  [./Read]
+    filename= './restart.exo'
+[]
+
+# Restart file option
+[restart-options]
+  restart_file = ''
+[]
+
+# Quantities of Interest Options
+[Output]
+  [./Display]
+    print_qoi ='true'
+[]
+
+[QoI]
+  enabled_qois = 'flame_speed adiabiatic_flame_temperature'
+  [./FlameSpeed]
+    material = 'MethaneGas'
+    Unburnt_Temperature='298'
+  [../]
+
+  [./AdiabiaticFlameTemperature]
+    point = 0.01
+[]
+
+# Include things similar between steady/unsteady and continued runs.
+[include similar.in]

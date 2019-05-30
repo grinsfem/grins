@@ -397,6 +397,7 @@ AC_CONFIG_FILES(examples/spectroscopy/run.sh,                 [chmod +x examples
 AC_CONFIG_FILES(examples/multigrid/run_poisson.sh,            [chmod +x examples/multigrid/run_poisson.sh])
 AC_CONFIG_FILES(examples/multigrid/run_stokes.sh,             [chmod +x examples/multigrid/run_stokes.sh])
 AC_CONFIG_FILES(examples/torsion_hyperelasticity/run.sh,     [chmod +x examples/torsion_hyperelasticity/run.sh])
+AC_CONFIG_FILES(examples/od_methane_flame/run.sh,             [chmod +x examples/od_methane_flame/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files
