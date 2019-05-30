@@ -39,7 +39,6 @@
 
 # Visualization options
 [vis-options]
-  output_vis_time_series = 'false'
   output_vis = 'true'
   vis_output_file_prefix = 'ns'
   output_format = 'ExodusII'
