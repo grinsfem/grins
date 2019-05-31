@@ -19,8 +19,8 @@
    restart_file = './turbulent_airfoil_Re_6000000.xda'
 []
 
-[unsteady-solver]
-transient = false
+[SolverOptions]
+  solver_type = 'grins_steady_solver'
 []
 
 #Linear and nonlinear solver options
@@ -55,7 +55,12 @@ solver_quiet = 'false'
 
 echo_physics = 'true'
 echo_qoi = 'true' # which QoIs activated
-print_qoi = 'true' # print numerical values of QoIs
+[]
+
+[Output]
+  [./Display]
+    print_qoi = 'true' # print numerical values of QoIs
+  [../]
 []
 
 [Physics]

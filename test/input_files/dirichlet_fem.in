@@ -9,7 +9,7 @@
       n_elems_y = '10'
 []
 
-# Options for tiem solvers
+# Options for time solvers
 [SolverOptions]
    [./TimeStepping]
       solver_type = 'libmesh_euler_solver'

@@ -34,7 +34,7 @@ namespace GRINS
 {
   //! Adds Boussinesq bouyancy adjoint stabilization source term
   /*!
-    This class implements the adjiont stabilization term for the BoussinesqBuoyancy
+    This class implements the adjoint stabilization term for the BoussinesqBuoyancy
     Physics. Intended to be used with IncompressibleNavierStokesAdjointStabilization
     and HeatTransferStabilization.
   */

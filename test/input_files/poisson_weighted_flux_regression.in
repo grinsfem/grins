@@ -83,7 +83,7 @@ weights = 'y*(1-y)' # This 'fixes' the spill
       element_type = 'QUAD4'
 []
 
-# Options for tiem solvers
+# Options for time solvers
 
 
 []

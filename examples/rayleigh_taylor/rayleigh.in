@@ -117,12 +117,16 @@ tau_factor = '0.05'
       n_elems_y = '50'
 []
 
-# Options for tiem solvers
-[unsteady-solver]
-transient = true
-theta = 1.0
-n_timesteps = 500
-deltat = 0.01
+# Options for time solvers
+[SolverOptions]
+  solver_type = 'grins_unsteady_solver'
+  [./TimeStepping]
+    solver_type = 'libmesh_euler_solver'
+    theta = 1.0
+    n_timesteps = 500
+    delta_t = 0.01
+  [../]
+[]
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]

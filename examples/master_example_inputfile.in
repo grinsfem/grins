@@ -22,8 +22,8 @@
 #
 # GRINS uses GetPot's UFO capability so that if there are variables in the
 # input file that are unused during your program, GRINS will throw
-# an error. This is to reduce the chance of errors in the input
-# file specification.
+# an error (unless --warn-only-unused-var is passed). This is to reduce
+# the chance of errors in the input file specification.
 #
 # In the default grins binary, as well as in any libgrins.so
 # application that so chooses, it is possible to override input-file
