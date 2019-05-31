@@ -246,14 +246,16 @@ spec_SOURCES  = spectroscopy/spectroscopy.C
 spec_LDADD = $(LIBGRINS_LIBS)
 
 #=======================================================================
-# Multigrid Example
+# Multigrid Examples
 #=======================================================================
 multigriddir       = $(prefix)/examples/multigrid
 multigrid_DATA     = $(top_srcdir)/examples/multigrid/forced_poisson.in
 multigrid_DATA    += $(top_srcdir)/examples/multigrid/stokes_fieldsplit.in
+multigrid_DATA    += $(top_srcdir)/examples/multigrid/thermo_coupled_flow.in
 multigrid_DATA    += $(top_srcdir)/examples/multigrid/README
 multigrid_SCRIPTS  = $(top_builddir)/examples/multigrid/run_poisson.sh
 multigrid_SCRIPTS += $(top_builddir)/examples/multigrid/run_stokes.sh
+multigrid_SCRIPTS += $(top_builddir)/examples/multigrid/run_thermo_coupled_flow.sh
 
 EXTRA_DIST += $(multigrid_DATA)
 
