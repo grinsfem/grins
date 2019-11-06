@@ -34,6 +34,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/node.h"
 #include "libmesh/system.h"
+#include "libmesh/parallel.h"
 
 namespace GRINS
 {
