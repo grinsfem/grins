@@ -32,6 +32,7 @@
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/communicator.h"
 
 // C++
 #include <fstream>

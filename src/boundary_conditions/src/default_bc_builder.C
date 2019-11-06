@@ -39,6 +39,7 @@
 #include "libmesh/boundary_info.h"
 #include "libmesh/parallel_mesh.h"
 #include "libmesh/elem.h"
+#include "libmesh/parallel.h"
 
 namespace GRINS
 {
