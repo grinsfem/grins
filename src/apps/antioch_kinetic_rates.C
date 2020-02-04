@@ -22,12 +22,10 @@
 //
 //-----------------------------------------------------------------------el-
 
-
 // GRINS
 #include "grins_config.h"
 
 #ifdef GRINS_HAVE_ANTIOCH
-
 // C++
 #include <iomanip>
 #include <vector>
