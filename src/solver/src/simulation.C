@@ -65,6 +65,7 @@ namespace GRINS
        _print_scalars( input("screen-options/print_scalars", false ) ),
        _qoi_output( new QoIOutput(input) ),
        _output_vis( input("vis-options/output_vis", false ) ),
+       _output_every_amr( input("vis-options/output_every_amr", false ) ),
        _output_adjoint( input("vis-options/output_adjoint", false ) ),
        _output_residual( input( "vis-options/output_residual", false ) ),
        _output_residual_sensitivities( input( "vis-options/output_residual_sensitivities", false ) ),
@@ -230,6 +231,7 @@ namespace GRINS
     context.timesteps_per_vis = _timesteps_per_vis;
     context.timesteps_per_perflog = _timesteps_per_perflog;
     context.output_vis = _output_vis;
+    context.output_every_amr = _output_every_amr;
     context.output_residual = _output_residual;
     context.output_residual_sensitivities = _output_residual_sensitivities;
     context.output_solution_sensitivities = _output_solution_sensitivities;

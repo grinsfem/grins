@@ -38,6 +38,7 @@ namespace GRINS
       timesteps_per_vis( 1 ),
       timesteps_per_perflog( 1 ),
       output_vis( false ),
+      output_every_amr( false ),
       output_adjoint(false),
       output_residual( false ),
       output_residual_sensitivities( false ),

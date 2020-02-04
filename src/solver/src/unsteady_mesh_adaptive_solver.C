@@ -44,6 +44,11 @@ namespace GRINS
 
   void UnsteadyMeshAdaptiveSolver::solve(  SolverContext& context )
   {
+    if (context.output_every_amr)
+      std::cout << std::endl
+                << "WARNING: 'output_every_amr' flag is not yet implemented"
+                << "in UnsteadyMeshAdaptiveSolver" <<std::endl;
+
     context.system->deltat = this->_deltat;
 
     libMesh::Real sim_time;
