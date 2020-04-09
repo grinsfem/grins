@@ -34,9 +34,10 @@
 #include "libmesh/auto_ptr.h"
 #include "libmesh/dense_vector.h"
 #include "libmesh/dense_matrix.h"
+#include "libmesh/elem.h"
 #include "libmesh/fe_base.h"
 #include "libmesh/system.h"
-#include "libmesh/elem.h"
+#include "libmesh/unstructured_mesh.h"
 
 // Forward Declarations
 namespace libMesh {

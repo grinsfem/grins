@@ -36,6 +36,7 @@
 #include "grins/nonlinear_solver_options.h"
 
 // libMesh
+#include "libmesh/boundary_info.h"
 #include "libmesh/composite_function.h"
 #include "libmesh/getpot.h"
 #include "libmesh/parameter_multiaccessor.h"
