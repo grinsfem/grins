@@ -51,8 +51,7 @@ namespace GRINS
     //! Builds the libMesh::Mesh according to input options.
     std::shared_ptr<libMesh::UnstructuredMesh> build
     ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm
-      LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
+      const libMesh::Parallel::Communicator &comm );
 
     //! Refine the mesh based on user input parameters
     /*! There are several parameters that allow for the user to specify

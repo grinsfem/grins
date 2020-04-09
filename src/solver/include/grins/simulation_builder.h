@@ -44,13 +44,11 @@ namespace GRINS
 
     std::shared_ptr<libMesh::UnstructuredMesh> build_mesh
     ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm
-      LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
+      const libMesh::Parallel::Communicator &comm );
 
     std::shared_ptr<Visualization> build_vis
     ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm
-      LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
+      const libMesh::Parallel::Communicator &comm );
 
     std::shared_ptr<CompositeQoI> build_qoi( const GetPot& input );
 

@@ -35,8 +35,7 @@ namespace GRINS
   public:
 
     SteadyVisualization(const GetPot& input,
-                        const libMesh::Parallel::Communicator &comm
-                        LIBMESH_CAN_DEFAULT_TO_COMMWORLD);
+                        const libMesh::Parallel::Communicator &comm );
     ~SteadyVisualization();
 
     virtual void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
