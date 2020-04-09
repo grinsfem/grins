@@ -40,8 +40,7 @@ namespace GRINS
 
     virtual std::shared_ptr<Visualization> build
     ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm
-      LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
+      const libMesh::Parallel::Communicator &comm );
   };
 
 } // end namespace GRINS
