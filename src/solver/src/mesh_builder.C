@@ -35,6 +35,7 @@
 #include "libmesh/mesh_generation.h"
 #include "libmesh/mesh_modification.h"
 #include "libmesh/mesh_refinement.h"
+#include "libmesh/parallel.h"
 #include "libmesh/parallel_mesh.h"
 #include "libmesh/partitioner.h"
 #include "libmesh/parsed_function.h"

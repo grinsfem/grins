@@ -30,6 +30,7 @@
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
+#include "libmesh/parallel.h"
 
 // GRINS
 #include "grins/assembly_context.h"
