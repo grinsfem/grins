@@ -35,10 +35,11 @@
 #include "grins/single_variable.h"
 
 // libMesh
-#include "libmesh/getpot.h"
-#include "libmesh/fem_system.h"
-#include "libmesh/quadrature.h"
 #include "libmesh/fem_function_base.h"
+#include "libmesh/fem_system.h"
+#include "libmesh/getpot.h"
+#include "libmesh/numeric_vector.h"
+#include "libmesh/quadrature.h"
 
 namespace GRINS
 {

@@ -32,6 +32,7 @@
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/numeric_vector.h"
 #include "libmesh/parameter_vector.h"
 #include "libmesh/steady_solver.h"
 
