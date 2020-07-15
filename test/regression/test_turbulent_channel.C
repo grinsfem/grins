@@ -35,21 +35,21 @@
 #include "grins/var_typedefs.h"
 
 //libMesh
+#include "libmesh/composite_function.h"
 #include "libmesh/dirichlet_boundaries.h"
 #include "libmesh/dof_map.h"
+#include "libmesh/edge_edge2.h"
+#include "libmesh/enum_xdr_mode.h"
+#include "libmesh/exact_solution.h"
 #include "libmesh/fe_base.h"
 #include "libmesh/fe_interface.h"
-#include "libmesh/mesh_function.h"
-#include "libmesh/serial_mesh.h"
-#include "libmesh/edge_edge2.h"
-#include "libmesh/mesh_generation.h"
-#include "libmesh/linear_implicit_system.h"
 #include "libmesh/gmv_io.h"
-#include "libmesh/exact_solution.h"
+#include "libmesh/linear_implicit_system.h"
+#include "libmesh/mesh_function.h"
+#include "libmesh/mesh_generation.h"
+#include "libmesh/numeric_vector.h"
+#include "libmesh/serial_mesh.h"
 #include "libmesh/zero_function.h"
-#include "libmesh/composite_function.h"
-#include "libmesh/zero_function.h"
-#include "libmesh/enum_xdr_mode.h"
 
 namespace GRINS
 {
