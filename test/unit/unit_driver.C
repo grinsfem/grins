@@ -60,6 +60,8 @@ int main(int argc, char **argv)
   return 1;
 
 #else
+  libMesh::libmesh_ignore(argc, argv);
+
   // If we don't have CPPUnit, report we skipped
   // 77 return code tells Automake we skipped this.
   return 77;
