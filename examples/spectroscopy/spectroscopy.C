@@ -87,6 +87,7 @@ int main(int argc, char* argv[])
   if (system->get_mesh().comm().rank() == 0)
     output.close();
 #else
+  libMesh::libmesh_ignore(argc, argv);
   libmesh_error_msg("ERROR: GRINS must be built with Antioch to use the Spectroscopy example. Please reconfigure your build to include the Antioch library.");
 #endif
   return 0;
