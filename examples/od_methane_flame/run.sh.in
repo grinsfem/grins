@@ -1,0 +1,22 @@
+#!/bin/sh
+
+GRINS_RUN=${GRINS_RUN:-$LIBMESH_RUN}
+DEFAULT_SOLVER_OPTIONS="-ksp_type gmres -pc_type asm -pc_asm_overlap 10 -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
+GRINS_SOLVER_OPTIONS=${GRINS_SOLVER_OPTIONS:-$LIBMESH_OPTIONS:$DEFAULT_SOLVER_OPTIONS}
+
+GRINS=@prefix@/bin/grins
+Initial=@prefix@/examples/od_methane_flame/initial.in
+Continue=@prefix@/examples/od_methane_flame/continue.in
+Steady=@prefix@/examples/od_methane_flame/steady.in
+
+mkdir -p Run0
+$GRINS_RUN $GRINS $Initial SolverOptions/TimeStepping/delta_t='1e-6' vis-options/vis_output_file_prefix='Run0/output' SolverOptions/TimeStepping/n_timesteps='25' vis-options/timesteps_per_vis='25' $GRINS_SOLVER_OPTIONS
+
+mkdir -p Run1
+$GRINS_RUN $GRINS $Continue SolverOptions/TimeStepping/delta_t='1e-5' vis-options/vis_output_file_prefix='Run1/output' Mesh/Read/filename='./Run0/output.24.exo' restart-options/restart_file='./Run0/output.24.xdr' SolverOptions/TimeStepping/n_timesteps='25' vis-options/timesteps_per_vis='25' $GRINS_SOLVER_OPTIONS
+
+mkdir -p Run2
+$GRINS_RUN $GRINS $Continue SolverOptions/TimeStepping/delta_t='5e-4' vis-options/vis_output_file_prefix='Run2/output' Mesh/Read/filename='./Run1/output.24.exo' restart-options/restart_file='./Run1/output.24.xdr' SolverOptions/TimeStepping/n_timesteps='10' vis-options/timesteps_per_vis='10' $GRINS_SOLVER_OPTIONS
+
+mkdir -p Run_Steady
+$GRINS_RUN $GRINS $Steady vis-options/vis_output_file_prefix='Run_Steady/output' Mesh/Read/filename='./Run2/output.9.exo' restart-options/restart_file='./Run2/output.9.xdr' $GRINS_SOLVER_OPTIONS 2>&1 |tee Run_Steady.log

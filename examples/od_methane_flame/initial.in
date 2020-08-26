@@ -1,0 +1,24 @@
+# Mesh related options
+[Mesh]
+  [./Generation]
+    dimension = '1'
+    element_type = 'EDGE2'
+    x_min = '0.0'
+    x_max = '0.015'
+    n_elems_x = '100'
+  [../Redistribution]
+    function = '{x*x/.015}{y}{z}'
+[]
+
+# Solver options
+[SolverOptions]
+  [./TimeStepping]
+    solver_type = 'libmesh_euler_solver'
+    delta_t = '5.0e-6'
+    n_timesteps = '100'
+    theta = '1.0'
+[]
+
+
+# Included things that are common between steady/unsteady and continued runs.
+[include similar.in]

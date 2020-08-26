@@ -1,0 +1,148 @@
+# Run Specific Variables
+[RunVars]
+  TmaxCubic = '2300'
+  TmaxLinear = '2400'
+  Tinit = '325'
+  YOxidizer_Start='0.220147'
+  YOxidizer_MaxCubic='0.04'
+  YOxidizer_MaxLinear='0.01'
+  YFuel_Start='0.0551778'
+  YDilute_Start='0.7246752'
+  xstart='0'
+  xend='0.001'
+[]
+
+# Physics
+[Physics]
+  enabled_physics = 'ODPremixedFlame'
+  [./ODPremixedFlame]
+    material = 'MethaneGas'
+
+    # Unburnt properties of the premixed mixture
+    Unburnt_Temperature ='298'
+    O2 = '0.220147'
+    CH4 ='0.0551778'
+    N2 = '.7246752'
+
+    # Initial Conditions
+    ic_ids = '0'
+    ic_types = 'parsed'
+    ic_variables = 'Y_O2:Y_N2:Y_CH4:Y_H2O:T'
+
+    ic_values = '{Ymc:=${RunVars/YOxidizer_MaxCubic};Yi:=${RunVars/YOxidizer_Start};Yml:=${RunVars/YOxidizer_MaxLinear};xs:=${RunVars/xstart}+.001;xe:=${RunVars/xend}+.001;Yi+(x<xe)*(x>xs)*(((Ymc-Yi)*((x-xs)/(xe-xs))^2*(3-2*((x-xs)/(xe-xs))))+(((x-xs)/(xe-xs))^3-((x-xs)/(xe-xs))^2)*(Yml-Ymc)*(xe-xs)/(.015-xe))+(x>xe)*((Ymc-Yi)+(Yml-Ymc)*(x-xe)/(.015-xe))}{YC:=${RunVars/YDilute_Start};YC}{Yi:=${RunVars/YFuel_Start};xs:=${RunVars/xstart}+.001;xe:=${RunVars/xend}+.001;Yi+(x<xe)*(x>xs)*(((-Yi)*((x-xs)/(xe-xs))^2*(3-2*((x-xs)/(xe-xs)))))+(x>xe)*((-Yi))}{Ymc:=${RunVars/YOxidizer_MaxCubic};Yi:=${RunVars/YOxidizer_Start};Yml:=${RunVars/YOxidizer_MaxLinear};xs:=${RunVars/xstart}+.001;xe:=${RunVars/xend}+.001;YiF:=${RunVars/YFuel_Start};YC:=${RunVars/YDilute_Start};1-(Yi+(x<xe)*(x>xs)*(((Ymc-Yi)*((x-xs)/(xe-xs))^2*(3-2*((x-xs)/(xe-xs))))+(((x-xs)/(xe-xs))^3-((x-xs)/(xe-xs))^2)*(Yml-Ymc)*(xe-xs)/(.015-xe))+(x>xe)*((Ymc-Yi)+(Yml-Ymc)*(x-xe)/(.015-xe)))-YC-(YiF+(x<xe)*(x>xs)*(((-YiF)*((x-xs)/(xe-xs))^2*(3-2*((x-xs)/(xe-xs)))))+(x>xe)*((-YiF)))}{Tmc:=${RunVars/TmaxCubic};Ti:=${RunVars/Tinit};Tml:=${RunVars/TmaxLinear};xs:=${RunVars/xstart};xe:=${RunVars/xend};Ti+(x<xe)*(x>xs)*(((Tmc-Ti)*((x-xs)/(xe-xs))^2*(3-2*((x-xs)/(xe-xs))))+(((x-xs)/(xe-xs))^3-((x-xs)/(xe-xs))^2)*(Tml-Tmc)*(xe-xs)/(.015-xe))+(x>xe)*((Tmc-Ti)+(Tml-Tmc)*(x-xe)/(.015-xe))}'
+    output_vars = 'mole_fractions omega_dot u'
+[]
+
+# Boundary Conditions
+[BoundaryConditions]
+  bc_ids = '0 1'
+  bc_id_name_map = 'Inlet Outlet'
+
+  [./Inlet]
+    [./SingleVariable]
+      type = 'homogeneous_neumann'
+    [../]
+
+    [./Temperature]
+      type = 'isothermal'
+      T = '325'
+    [../]
+
+    [./SpeciesMassFractions]
+      type = 'parsed_fem_neumann'
+      normal_flux = '-M_dot*(Y_H2) -M_dot*(Y_H) -M_dot*(Y_O) YO2:=${RunVars/YOxidizer_Start};-M_dot*(Y_O2-YO2) -M_dot*(Y_OH) -M_dot*(Y_H2O) -M_dot*(Y_HO2) -M_dot*(Y_H2O2) -M_dot*(Y_C) -M_dot*(Y_CH) -M_dot*(Y_CH2) -M_dot*(Y_CH2Q) -M_dot*(Y_CH3) YCH4:=${RunVars/YFuel_Start};-M_dot*(Y_CH4-YCH4) -M_dot*(Y_CO) -M_dot*(Y_CO2) -M_dot*(Y_HCO) -M_dot*(Y_CH2O) -M_dot*(Y_CH2OH) -M_dot*(Y_CH3O) -M_dot*(Y_CH3OH) -M_dot*(Y_C2H) -M_dot*(Y_C2H2) -M_dot*(Y_C2H3) -M_dot*(Y_C2H4) -M_dot*(Y_C2H5) -M_dot*(Y_C2H6) -M_dot*(Y_HCCO) -M_dot*(Y_CH2CO) -M_dot*(Y_HCCOH) -M_dot*(Y_N) -M_dot*(Y_NH) -M_dot*(Y_NH2) -M_dot*(Y_NH3) -M_dot*(Y_NNH) -M_dot*(Y_NO) -M_dot*(Y_NO2) -M_dot*(Y_N2O) -M_dot*(Y_HNO) -M_dot*(Y_CN) -M_dot*(Y_HCN) -M_dot*(Y_H2CN) -M_dot*(Y_HCNN) -M_dot*(Y_HCNO) -M_dot*(Y_HOCN) -M_dot*(Y_HNCO) -M_dot*(Y_NCO) YN2:=${RunVars/YDilute_Start};-M_dot*(Y_N2-YN2) -M_dot*(Y_AR) -M_dot*(Y_C3H7) -M_dot*(Y_C3H8) -M_dot*(Y_CH2CHO) -M_dot*(Y_CH3CHO)'
+    [../]
+  [../]
+
+  [./Outlet]
+    [./SingleVariable]
+      type = 'homogeneous_neumann'
+    [../]
+
+    [./Temperature]
+      type = 'homogeneous_neumann'
+    [../]
+
+    [./SpeciesMassFractions]
+      type = 'homogeneous_neumann'
+[]
+
+# Visualization options
+[vis-options]
+  output_vis = 'true'
+  vis_output_file_prefix = './Run0/output'
+  output_residual = 'false'
+  output_format = 'ExodusII xdr'
+  timesteps_per_vis = '25'
+[]
+
+# Gas Material
+[Materials]
+  [./MethaneGas]
+    [./ThermodynamicPressure]
+      value = '1e5' #[Pa]
+    [../GasMixture]
+
+      #Cantera ThermoChemistry
+      thermochemistry_library = 'cantera'
+      [./Cantera]
+        chemical_data = './gri30.xml'
+        gas_mixture = 'gri30_mix'
+
+    #  #Antioch Thermochemistry
+    #  thermochemistry_library = 'antioch'
+    #  [./Antioch]
+    #    chemical_data = './gri30.xml'
+    #    gas_mixture = 'gri30_mix'
+    #    transport_model = 'mixture_averaged'
+    #    thermo_model = 'kinetics_theory'
+    #    viscosity_model = 'kinetics_theory'
+    #    thermal_conductivity_model = 'kinetics_theory'
+    #    mass_diffusivity_model = 'kinetics_theory'
+    #    thermo_model ='ideal_gas'
+    #    species_data = './gri30_chemical_mixture.dat'
+
+[]
+
+# Variables
+[Variables]
+  [./Temperature]
+    names = 'T'
+    fe_family = 'LAGRANGE'
+    order = 'FIRST'
+
+  [../SingleVariable]
+    names = 'M_dot'
+    fe_family = 'LAGRANGE'
+    order = 'FIRST'
+
+  [../SpeciesMassFractions]
+    names = 'Y_'
+    fe_family = 'LAGRANGE'
+    order = 'FIRST'
+    material = 'MethaneGas'
+[]
+
+# Linear and nonlinear solver options
+[linear-nonlinear-solver]
+  continue_after_max_iterations = 'true'
+  max_nonlinear_iterations = '200'
+  max_linear_iterations = '2500'
+  minimum_linear_tolerance = '1.0e-10'
+  initial_linear_tolerance = '1.0e-10'
+  use_numerical_jacobians_only = 'true'
+  relative_residual_tolerance = '1.0e-10'
+  relative_step_tolerance = '1.0e-6'
+[]
+
+# Options for printing info to the screen
+[screen-options]
+  system_name = 'Methane'
+  print_equation_system_info = 'true'
+  print_mesh_info = 'true'
+  print_log_info = 'true'
+  solver_verbose = 'true'
+  solver_quiet = 'false'
+  print_element_jacobians = 'false'
+[]
+

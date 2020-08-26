@@ -269,6 +269,21 @@ torsionhyperelasticity_DATA += $(top_srcdir)/examples/torsion_hyperelasticity/in
 
 EXTRA_DIST += $(torsionhyperelasticity_DATA)
 
+#=======================================================================
+# One Dimensional Flame Example
+#=======================================================================
+methanedir = $(prefix)/examples/od_methane_flame
+methane_DATA  = $(top_srcdir)/examples/od_methane_flame/similar.in
+methane_DATA += $(top_srcdir)/examples/od_methane_flame/initial.in
+methane_DATA += $(top_srcdir)/examples/od_methane_flame/continue.in
+methane_DATA += $(top_srcdir)/examples/od_methane_flame/steady.in
+methane_DATA += $(top_srcdir)/examples/od_methane_flame/gri30.xml
+methane_DATA += $(top_srcdir)/examples/od_methane_flame/gri30_chemical_mixture.dat
+methane_DATA += $(top_srcdir)/examples/od_methane_flame/README
+methane_SCRIPTS = $(top_builddir)/examples/od_methane_flame/run.sh
+
+EXTRA_DIST += $(methane_DATA)
+
 MAINTAINERCLEANFILES = Makefile.in
 
 MOSTLYCLEANFILES = *.gcno

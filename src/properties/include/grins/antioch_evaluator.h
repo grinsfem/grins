@@ -82,6 +82,7 @@ namespace GRINS
     std::string species_name( unsigned int species_index ) const;
 
     // Thermo
+
     libMesh::Real cp( const libMesh::Real & T, const libMesh::Real P, const std::vector<libMesh::Real> & Y )
     { return this->specialized_cp(T,P,Y,*_thermo); }
 
@@ -90,6 +91,7 @@ namespace GRINS
                const std::vector<libMesh::Real> & Y,
                std::vector<libMesh::Real> & cp_s )
     { this->specialized_cp_s(T,P,Y,*_thermo,cp_s); }
+
 
     libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y )
     { return this->specialized_cv(T,P,Y,*_thermo); }

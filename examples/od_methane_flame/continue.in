@@ -1,0 +1,22 @@
+# Mesh related options
+[Mesh]
+  [./Read]
+    filename= './restart.exo'
+[]
+
+# Restart file option
+[restart-options]
+  restart_file = ''
+[]
+
+# Solver Options
+[SolverOptions]
+  [./TimeStepping]
+    solver_type = 'libmesh_euler_solver'
+    delta_t = '5.0e-6'
+    n_timesteps = '100'
+    theta = '1.0'
+[]
+
+# Include things similar between steady/unsteady and continued runs.
+[include similar.in]
