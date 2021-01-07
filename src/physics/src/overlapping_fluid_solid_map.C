@@ -31,6 +31,7 @@
 
 // libMesh
 #include "libmesh/elem.h"
+#include "libmesh/numeric_vector.h"
 #include "libmesh/parallel_sync.h"
 #include "libmesh/unsteady_solver.h"
 
@@ -284,7 +285,7 @@ namespace GRINS
     if( !unsteady_solver )
       libmesh_error_msg("ERROR: Can only call swap_old_solution when using an UnsteadySolver!");
 
-    std::swap( unsteady_solver->old_local_nonlinear_solution, system.current_local_solution );
+    unsteady_solver->old_local_nonlinear_solution->swap(*system.current_local_solution);
   }
 
 } // end namespace GRINS
