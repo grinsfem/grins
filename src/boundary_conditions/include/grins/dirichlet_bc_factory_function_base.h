@@ -31,6 +31,9 @@
 
 namespace GRINS
 {
+  template <>
+  const FEVariablesBase* BCFactoryAbstract<libMesh::DirichletBoundary>::_fe_var;
+
   template<typename FunctionType>
   class DirichletBCFactoryFunctionBase : public DirichletBCFactoryAbstract
   {
