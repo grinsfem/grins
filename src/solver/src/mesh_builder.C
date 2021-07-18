@@ -54,15 +54,12 @@ namespace GRINS
     // or a Mesh/Generation section
     if( !input.have_section("Mesh/Read/") &&
         !input.have_section("Mesh/Generation/") )
-      {
-        libmesh_error_msg("ERROR: Must specify either Mesh/Read or Mesh/Generation in input.");
-      }
+      libmesh_error_msg("ERROR: Must specify either Mesh/Read or Mesh/Generation in input.");
 
     // But you can't have it both ways
-    if( input.have_section("Mesh/Read/") && input.have_section("Mesh/Generation/") )
-      {
-        libmesh_error_msg("ERROR: Can only specify one of Mesh/Read and Mesh/Generation");
-      }
+    if( input.have_section("Mesh/Read/") &&
+        input.have_section("Mesh/Generation/") )
+      libmesh_error_msg("ERROR: Can only specify one of Mesh/Read and Mesh/Generation");
 
     // Are we generating the mesh or are we reading one in from a file?
     std::string mesh_build_type = "NULL";
