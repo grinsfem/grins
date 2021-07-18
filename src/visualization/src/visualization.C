@@ -87,8 +87,6 @@ namespace GRINS
       {
         _output_format.push_back( input("vis-options/output_format", "DIE", i ) );
       }
-
-    return;
   }
 
   Visualization::~Visualization()
@@ -99,8 +97,6 @@ namespace GRINS
   void Visualization::output( std::shared_ptr<libMesh::EquationSystems> equation_system )
   {
     this->dump_visualization( equation_system, _vis_output_file_prefix, 0.0 );
-
-    return;
   }
 
   void Visualization::output
@@ -116,15 +112,26 @@ namespace GRINS
     filename+="."+suffix.str();
 
     this->dump_visualization( equation_system, filename, time );
+  }
 
-    return;
+  void Visualization::output_amr
+  ( std::shared_ptr<libMesh::EquationSystems> equation_system,
+    const unsigned int amr_step )
+  {
+    std::stringstream suffix;
+
+    suffix << "amr" << amr_step;
+
+    std::string filename = this->_vis_output_file_prefix;
+    filename+="."+suffix.str();
+
+    this->dump_visualization( equation_system, filename, 0.0 );
   }
 
   void Visualization::output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                        MultiphysicsSystem* system )
   {
     this->output_residual( equation_system, system, 0, 0.0 );
-    return;
   }
 
   void Visualization::output_residual_sensitivities
@@ -249,8 +256,6 @@ namespace GRINS
             libmesh_error();
           }
       } // End loop over formats
-
-    return;
   }
 
 } // namespace GRINS

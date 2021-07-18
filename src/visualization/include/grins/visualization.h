@@ -57,8 +57,12 @@ namespace GRINS
     virtual ~Visualization();
 
     void output( std::shared_ptr<libMesh::EquationSystems> equation_system );
+    
     void output( std::shared_ptr<libMesh::EquationSystems> equation_system,
                  const unsigned int time_step, const libMesh::Real time );
+
+    void output_amr( std::shared_ptr<libMesh::EquationSystems> equation_system,
+                 const unsigned int amr_step );
 
     void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
                           MultiphysicsSystem* system );
