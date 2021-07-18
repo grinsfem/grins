@@ -144,33 +144,15 @@ namespace GRINS
   {
     unsigned int dimension = input("Mesh/Generation/dimension",0);
 
-    if( !input.have_variable("mesh-options/mesh_option") /* Deprecated */ &&
-        !input.have_variable("Mesh/Generation/dimension") )
-      {
-        libmesh_error_msg("ERROR: Must specify Mesh/Generation/dimension for generating mesh.");
-      }
-
-    /* Remove these once suport for mesh-options/mesh_option is removed */
-    if( mesh_build_type == "create_1D_mesh" /* This is deprecated */ )
-      dimension = 1;
-
-    if( mesh_build_type=="create_2D_mesh" /* This is deprecated */ )
-      dimension = 2;
-
-    if( mesh_build_type=="create_3D_mesh" /* This is deprecated */ )
-      dimension = 3;
+    if( !input.have_variable("Mesh/Generation/dimension") )
+      libmesh_error_msg("ERROR: Must specify Mesh/Generation/dimension for generating mesh.");
 
     // Set the mesh dimension
     mesh.set_mesh_dimension(dimension);
 
     /* Now look for spatial extent of the grid that the user wants to generate. */
-
     libMesh::Real x_min = input("Mesh/Generation/x_min", 0.0);
-    this->deprecated_option( input, "mesh-options/domain_x1_min", "Mesh/Generation/x_min", 0.0, x_min );
-
     libMesh::Real x_max = input("Mesh/Generation/x_max", 1.0);
-    this->deprecated_option( input, "mesh-options/domain_x1_max", "Mesh/Generation/x_max", 1.0, x_max );
-
 
     /* We only check the y_{min,max} input if dimension is > 1 so that GetPot
        UFO detection will give us an error if we have this in the input file
@@ -181,10 +163,7 @@ namespace GRINS
     if( dimension > 1 )
       {
         y_min = input("Mesh/Generation/y_min", 0.0);
-        this->deprecated_option( input, "mesh-options/domain_x2_min", "Mesh/Generation/y_min", 0.0, y_min );
-
         y_max = input("Mesh/Generation/y_max", 1.0);
-        this->deprecated_option( input, "mesh-options/domain_x2_max", "Mesh/Generation/y_max", 1.0, y_max );
       }
 
     /* We only check the z_{min,max} input if dimension is > 2 so that GetPot
@@ -196,23 +175,16 @@ namespace GRINS
     if( dimension > 2 )
       {
         z_min = input("Mesh/Generation/z_min", 0.0);
-        this->deprecated_option( input, "mesh-options/domain_x3_min", "Mesh/Generation/z_min", 0.0, z_min );
-
         z_max = input("Mesh/Generation/z_max", 1.0);
-        this->deprecated_option( input, "mesh-options/domain_x3_max", "Mesh/Generation/z_max", 1.0, z_max );
       }
 
     /* Now check for the number of elements in each direction */
 
     // Make sure user gave us info about how many elements to use
-    if( !input.have_variable("mesh-options/mesh_nx1") /* Deprecated */ &&
-        !input.have_variable("Mesh/Generation/n_elems_x") )
-      {
-        libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_x for mesh generation.");
-      }
+    if( !input.have_variable("Mesh/Generation/n_elems_x") )
+      libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_x for mesh generation.");
 
     unsigned int n_elems_x = input("Mesh/Generation/n_elems_x", 0);
-    this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx1", "Mesh/Generation/n_elems_x", 0, n_elems_x );
 
     /* We only check n_elems_y input if dimension is > 1 so that GetPot
        UFO detection will give us an error if we have this in the input file
@@ -220,14 +192,10 @@ namespace GRINS
     unsigned int n_elems_y = 0;
     if( dimension > 1 )
       {
-        if( !input.have_variable("mesh-options/mesh_nx2") /* Deprecated */ &&
-            !input.have_variable("Mesh/Generation/n_elems_y") )
-          {
-            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_y for mesh generation.");
-          }
+        if( !input.have_variable("Mesh/Generation/n_elems_y") )
+          libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_y for mesh generation.");
 
         n_elems_y = input("Mesh/Generation/n_elems_y", 0);
-        this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx2", "Mesh/Generation/n_elems_y", 0, n_elems_y );
       }
 
     /* We only check n_elems_z input if dimension is > 2 so that GetPot
@@ -236,20 +204,15 @@ namespace GRINS
     unsigned int n_elems_z = 0;
     if( dimension > 2 )
       {
-        if( !input.have_variable("mesh-options/mesh_nx3") /* Deprecated */ &&
-            !input.have_variable("Mesh/Generation/n_elems_z") )
-          {
-            libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_z for mesh generation.");
-          }
+        if( !input.have_variable("Mesh/Generation/n_elems_z") )
+          libmesh_error_msg("ERROR: Must supply Mesh/Generation/n_elems_z for mesh generation.");
 
         n_elems_z = input("Mesh/Generation/n_elems_z", 0);
-        this->deprecated_option<unsigned int>( input, "mesh-options/mesh_nx3", "Mesh/Generation/n_elems_z", 0, n_elems_z );
       }
 
     /* Now grab the element_type the user wants for the mesh. */
 
     std::string element_type = input("Mesh/Generation/element_type", "default");
-    this->deprecated_option<std::string>( input, "mesh-options/element_type", "Mesh/Generation/element_type", "default", element_type );
 
     /* Now generate the mesh. */
     if( dimension == 1 )
