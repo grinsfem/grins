@@ -67,31 +67,9 @@ namespace GRINS
     void generate_mesh( const GetPot& input,
                         libMesh::UnstructuredMesh& mesh );
 
-    //! Helper function for displaying deprecated warnings.
-    template <typename T>
-    void deprecated_option( const GetPot& input, const std::string& old_option,
-                            const std::string& new_option, const T& default_value,
-                            T& option_value ) const;
 
   };
 
-  template <typename T>
-  inline
-  void MeshBuilder::deprecated_option( const GetPot& input, const std::string& old_option,
-                                       const std::string& new_option, const T& default_value,
-                                       T& option_value ) const
-  {
-    if( input.have_variable(old_option) )
-      {
-        std::string warning = "WARNING: "+old_option+" is DEPRECATED.\n";
-        warning += "         Please update to use "+new_option+".\n";
-        grins_warning(warning);
-
-        option_value = input(old_option, default_value);
-      }
-
-    return;
-  }
 } // end namespace block
 
 #endif // GRINS_MESH_BUILDER_H
