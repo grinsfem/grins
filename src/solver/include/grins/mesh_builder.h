@@ -64,7 +64,7 @@ namespace GRINS
 
   private:
 
-    void generate_mesh( const std::string& mesh_build_type, const GetPot& input,
+    void generate_mesh( const GetPot& input,
                         libMesh::UnstructuredMesh& mesh );
 
     //! Helper function for displaying deprecated warnings.

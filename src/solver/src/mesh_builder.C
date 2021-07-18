@@ -124,7 +124,7 @@ namespace GRINS
 
     // Generate the mesh using built-in libMesh functions
     else if(mesh_build_type=="generate")
-      this->generate_mesh(mesh_build_type,input,*mesh);
+      this->generate_mesh(input,*mesh);
 
     // Shouldn't have gotten here
     else
@@ -139,7 +139,7 @@ namespace GRINS
     return mesh;
   }
 
-  void MeshBuilder::generate_mesh( const std::string& mesh_build_type, const GetPot& input,
+  void MeshBuilder::generate_mesh( const GetPot& input,
                                    libMesh::UnstructuredMesh& mesh )
   {
     unsigned int dimension = input("Mesh/Generation/dimension",0);
