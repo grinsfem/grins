@@ -127,7 +127,7 @@ namespace GRINS
 
     // Generate the mesh using built-in libMesh functions
     else if(mesh_build_type=="generate")
-      this->generate_mesh(mesh_build_type,input,mesh);
+      this->generate_mesh(mesh_build_type,input,*mesh);
 
     // Shouldn't have gotten here
     else
@@ -143,7 +143,7 @@ namespace GRINS
   }
 
   void MeshBuilder::generate_mesh( const std::string& mesh_build_type, const GetPot& input,
-                                   libMesh::UnstructuredMesh* mesh )
+                                   libMesh::UnstructuredMesh& mesh )
   {
     unsigned int dimension = input("Mesh/Generation/dimension",0);
 
@@ -164,7 +164,7 @@ namespace GRINS
       dimension = 3;
 
     // Set the mesh dimension
-    mesh->set_mesh_dimension(dimension);
+    mesh.set_mesh_dimension(dimension);
 
     /* Now look for spatial extent of the grid that the user wants to generate. */
 
@@ -265,7 +265,7 @@ namespace GRINS
         GRINSEnums::ElemType element_enum_type =
           libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
-        libMesh::MeshTools::Generation::build_line(*mesh,
+        libMesh::MeshTools::Generation::build_line(mesh,
                                                    n_elems_x,
                                                    x_min,
                                                    x_max,
@@ -282,7 +282,7 @@ namespace GRINS
         GRINSEnums::ElemType element_enum_type =
           libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
-        libMesh::MeshTools::Generation::build_square(*mesh,
+        libMesh::MeshTools::Generation::build_square(mesh,
                                                      n_elems_x,
                                                      n_elems_y,
                                                      x_min,
@@ -302,7 +302,7 @@ namespace GRINS
         GRINSEnums::ElemType element_enum_type =
           libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
 
-        libMesh::MeshTools::Generation::build_cube(*mesh,
+        libMesh::MeshTools::Generation::build_cube(mesh,
                                                    n_elems_x,
                                                    n_elems_y,
                                                    n_elems_z,
