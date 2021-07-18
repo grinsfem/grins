@@ -176,6 +176,9 @@ namespace GRINS
     static PhysicsName plane_strain_incompressible_hyperelasticity()
     { return "PlaneStrainIncompressibleHyperelasticity"+suffix(); }
 
+    static PhysicsName od_premixed_flame()
+    { return "ODPremixedFlame"+suffix(); }
+
     static PhysicsName elastic_membrane()
     { return "ElasticMembrane"+suffix(); }
 

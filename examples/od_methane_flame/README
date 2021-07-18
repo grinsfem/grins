@@ -1,0 +1,17 @@
+This example the progression to steady state for a one dimensional methane flame using the freely propogating OdPremixedFlame physics. Here there are three input files used. The initial.in file contains options for the first time step and generates a one dimensional mesh that contains 100 elements going from 0 to 1.5 centimeters. This mesh is then redistributed quadratically towards the inlet(left) boundary, which is where the flame will be balance on. For the inital guess a cubic was used to estimate the change in the temperature, fuel, oxidizer, and water over the flame front. The specific values of these fits are given through the RunVars section of the input file, where:
+TmaxCubic          : The end point value of the cubic fit to the flame front of the temperature profile.
+TmaxLinear         : The end point value of the linear extrapolation of the end of the cubic fit of the temperature to the end of the domain.
+Tinit              : The boundary value of the temperature, and should be the same as that set in the boundary condition section.
+YOxidizer_Start    : Unburnt mass fraction of the oxidizer (in this case O2).
+YOxidizer_MaxCubic : The end point value of the cubic fit to the flame front of the oxidizer profile.
+YOxidizer_MaxLinear: The end point value of the linear extrapolation of the end of the cubic fit of the oxidizer to the end of the domain.
+YFuel_Start        : Unburnt mass fraction of the fuel (in this case CH4).
+YDilute_Start      : Unburnt mass fraction of the dilutent (in this case N2).
+xstart             : Starting point for the flame front cubic fit, this should almost always be at the start of the domain, as that is where the flame will burn to.
+xend               : Ending point for the flame front cubic fit, this value should depend on the starting point and estimated width of the flame front.
+
+The other two files are for restarting the example from a previous simulation, and for solving the steady state problem (continue.in and steady.in respectively). The similar.in input file contains all the input fields that were similar between the three input files, and the reason for doing this can be seen if wishing to change the chemistry model.
+This example is configured to using cantera as the thermochemistry library with mixed transport. This can be seen in the similar input file. To change to a different mode of transport with cantera, alter the gas_mixture field value to the appropriate phase in the xml file using a different model for transport. To switch to Antioch with mixed tranpsort, uncomment the Antioch section in the input file, and comment the Cantera Section.
+
+This example currently runs with the GRI-Mech 3.0 reaction mechanism. This can be changed by altering the gas_mixture fields in the similar.in file to a different xml file.
+The Run script will run this example from the initial state to its appropriate steady state solution and output the speed of the flame as well as the temperature 1 cm into the domain.

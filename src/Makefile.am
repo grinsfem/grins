@@ -71,6 +71,8 @@ libgrins_la_SOURCES += physics/src/multiphysics_sys.C
 libgrins_la_SOURCES += physics/src/assembly_context.C
 libgrins_la_SOURCES += physics/src/physics.C
 libgrins_la_SOURCES += physics/src/stokes.C
+libgrins_la_SOURCES += physics/src/od_premixed_flame.C
+libgrins_la_SOURCES += physics/src/od_premixed_flame_instantiate.C
 libgrins_la_SOURCES += physics/src/inc_navier_stokes_base.C
 libgrins_la_SOURCES += physics/src/inc_navier_stokes.C
 libgrins_la_SOURCES += physics/src/inc_navier_stokes_stab_base.C
@@ -210,6 +212,8 @@ libgrins_la_SOURCES += qoi/src/laser_intensity_profile_base.C
 libgrins_la_SOURCES += qoi/src/constant_laser_intensity_profile.C
 libgrins_la_SOURCES += qoi/src/collimated_gaussian_laser_intensity_profile.C
 libgrins_la_SOURCES += qoi/src/laser_absorption.C
+libgrins_la_SOURCES += qoi/src/flame_speed.C
+libgrins_la_SOURCES += qoi/src/adiabiatic_flame_temperature.C
 
 # src/solver files
 libgrins_la_SOURCES += solver/src/solver.C
@@ -375,6 +379,7 @@ include_HEADERS += physics/include/grins/assembly_context.h
 include_HEADERS += physics/include/grins/physics.h
 include_HEADERS += physics/include/grins/var_typedefs.h
 include_HEADERS += physics/include/grins/stokes.h
+include_HEADERS += physics/include/grins/od_premixed_flame.h
 include_HEADERS += physics/include/grins/inc_navier_stokes_base.h
 include_HEADERS += physics/include/grins/inc_navier_stokes.h
 include_HEADERS += physics/include/grins/inc_navier_stokes_stab_base.h
@@ -551,6 +556,8 @@ include_HEADERS += qoi/include/grins/laser_intensity_profile_base.h
 include_HEADERS += qoi/include/grins/constant_laser_intensity_profile.h
 include_HEADERS += qoi/include/grins/collimated_gaussian_laser_intensity_profile.h
 include_HEADERS += qoi/include/grins/laser_absorption.h
+include_HEADERS += qoi/include/grins/flame_speed.h
+include_HEADERS += qoi/include/grins/adiabiatic_flame_temperature.h
 
 # src/solver headers
 include_HEADERS += solver/include/grins/solver.h
