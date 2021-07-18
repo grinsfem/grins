@@ -49,18 +49,10 @@ namespace GRINS
   (const GetPot& input,
    const libMesh::Parallel::Communicator &comm)
   {
-    // First check if the user has both old and new versions of mesh input
-    if( input.have_section("mesh-options/") &&
-        input.have_section("Mesh/") )
-      {
-        libmesh_error_msg("Error: Detected illegal simulataneous use of [mesh-options] and [Mesh] in input!");
-      }
-
     // User needs to tell us if we are generating or reading a mesh
     // We infer this by checking and seeing if the use has a Mesh/Read
     // or a Mesh/Generation section
-    if( !input.have_variable("mesh-options/mesh_option") &&
-        !input.have_section("Mesh/Read/") &&
+    if( !input.have_section("Mesh/Read/") &&
         !input.have_section("Mesh/Generation/") )
       {
         libmesh_error_msg("ERROR: Must specify either Mesh/Read or Mesh/Generation in input.");
@@ -80,16 +72,10 @@ namespace GRINS
     else if( input.have_section("Mesh/Generation/") )
       mesh_build_type = "generate";
 
-    this->deprecated_option<std::string>( input, "mesh-options/mesh_option", "Mesh/Read or Mesh/Generation", "DIE!", mesh_build_type);
-
     // Make sure the user gave a valid option
     /*! \todo Can remove last 4 checks once mesh-options/mesh_option support is removed. */
     if( mesh_build_type != std::string("generate") &&
-        mesh_build_type != std::string("read") &&
-        mesh_build_type != std::string("read_mesh_from_file") &&
-        mesh_build_type != std::string("create_1D_mesh") &&
-        mesh_build_type != std::string("create_2D_mesh") &&
-        mesh_build_type != std::string("create_3D_mesh") )
+        mesh_build_type != std::string("read") )
       {
         std::string error = "ERROR: Invalid value of "+mesh_build_type+" for Mesh/type.\n";
         error += "       Valid values are: generate\n";
@@ -103,8 +89,6 @@ namespace GRINS
     // Were we specifically asked to use a ParallelMesh or SerialMesh?
     {
       std::string mesh_class = input("Mesh/class", "default");
-
-      this->deprecated_option<std::string>( input, "mesh-options/mesh_class", "Mesh/class", "default", mesh_class);
 
       if (mesh_class == "parallel")
         mesh = new libMesh::ParallelMesh(comm);
@@ -121,19 +105,13 @@ namespace GRINS
     }
 
     // Read mesh from file
-    if(mesh_build_type =="read_mesh_from_file" /* This is deprecated */ ||
-       mesh_build_type == "read" )
+    if( mesh_build_type == "read" )
       {
         // Make sure the user set the filename to read
-        if( !input.have_variable("mesh-options/mesh_filename") /* This is deprecated */ &&
-            !input.have_variable("Mesh/Read/filename") )
-          {
-            libmesh_error_msg("ERROR: Must specify Mesh/Read/filename for reading mesh.");
-          }
+        if( !input.have_variable("Mesh/Read/filename") )
+          libmesh_error_msg("ERROR: Must specify Mesh/Read/filename for reading mesh.");
 
         std::string mesh_filename = input("Mesh/Read/filename", "DIE!");
-
-        this->deprecated_option<std::string>( input, "mesh-options/mesh_filename", "Mesh/Read/filename", "DIE!", mesh_filename);
 
         // According to Roy Stogner, the only read format
         // that won't properly reset the dimension is gmsh.
@@ -148,13 +126,8 @@ namespace GRINS
       }
 
     // Generate the mesh using built-in libMesh functions
-    else if(mesh_build_type=="create_1D_mesh" /* This is deprecated */ ||
-            mesh_build_type=="create_2D_mesh" /* This is deprecated */ ||
-            mesh_build_type=="create_3D_mesh" /* This is deprecated */ ||
-            mesh_build_type=="generate")
-      {
-        this->generate_mesh(mesh_build_type,input,mesh);
-      }
+    else if(mesh_build_type=="generate")
+      this->generate_mesh(mesh_build_type,input,mesh);
 
     else
       {
