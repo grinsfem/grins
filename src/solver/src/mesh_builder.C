@@ -46,8 +46,8 @@
 namespace GRINS
 {
   std::shared_ptr<libMesh::UnstructuredMesh> MeshBuilder::build
-  (const GetPot& input,
-   const libMesh::Parallel::Communicator &comm)
+  ( const GetPot & input,
+    const libMesh::Parallel::Communicator & comm )
   {
     // User needs to tell us if we are generating or reading a mesh
     // We infer this by checking and seeing if the use has a Mesh/Read
@@ -129,19 +129,15 @@ namespace GRINS
     else if(mesh_build_type=="generate")
       this->generate_mesh(mesh_build_type,input,mesh);
 
+    // Shouldn't have gotten here
     else
-      {
-        // Shouldn't have gotten here
-        libmesh_error();
-      }
+      libmesh_error();
 
     /* Only do the mesh refinement here if we don't have a restart file.
        Otherwise, we need to wait until we've read in the restart file.
        That is done in Simulation::check_for_restart */
     if( !input.have_variable("restart-options/restart_file") )
-      {
-        this->do_mesh_refinement_from_input( input, comm, *mesh );
-      }
+      this->do_mesh_refinement_from_input( input, comm, *mesh );
 
     return std::shared_ptr<libMesh::UnstructuredMesh>(mesh);
   }
