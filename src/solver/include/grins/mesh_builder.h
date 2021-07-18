@@ -58,15 +58,14 @@ namespace GRINS
       mesh refinements. They are factored out here because where we
       need to apply the refinements depends on the existence of a
       restart file. */
-    void do_mesh_refinement_from_input( const GetPot& input,
-                                        const libMesh::Parallel::Communicator &comm,
-                                        libMesh::UnstructuredMesh& mesh ) const;
+    void do_mesh_refinement_from_input( const GetPot & input,
+                                        const libMesh::Parallel::Communicator & comm,
+                                        libMesh::UnstructuredMesh & mesh ) const;
 
   private:
 
-    void generate_mesh( const GetPot& input,
-                        libMesh::UnstructuredMesh& mesh );
-
+    void generate_mesh( const GetPot & input,
+                        libMesh::UnstructuredMesh & mesh );
 
   };
 

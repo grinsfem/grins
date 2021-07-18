@@ -139,8 +139,8 @@ namespace GRINS
     return mesh;
   }
 
-  void MeshBuilder::generate_mesh( const GetPot& input,
-                                   libMesh::UnstructuredMesh& mesh )
+  void MeshBuilder::generate_mesh( const GetPot & input,
+                                   libMesh::UnstructuredMesh & mesh )
   {
     unsigned int dimension = input("Mesh/Generation/dimension",0);
 
@@ -218,9 +218,7 @@ namespace GRINS
     if( dimension == 1 )
       {
         if(element_type=="default")
-          {
-            element_type = "EDGE3";
-          }
+          element_type = "EDGE3";
 
         GRINSEnums::ElemType element_enum_type =
           libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
@@ -235,9 +233,7 @@ namespace GRINS
     else if( dimension == 2 )
       {
         if(element_type=="default")
-          {
-            element_type = "TRI6";
-          }
+          element_type = "TRI6";
 
         GRINSEnums::ElemType element_enum_type =
           libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
@@ -255,9 +251,7 @@ namespace GRINS
     else if( dimension == 3 )
       {
         if(element_type=="default")
-          {
-            element_type = "TET10";
-          }
+          element_type = "TET10";
 
         GRINSEnums::ElemType element_enum_type =
           libMesh::Utility::string_to_enum<GRINSEnums::ElemType>(element_type);
@@ -280,13 +274,11 @@ namespace GRINS
         // This shouldn't have happened
         libmesh_error();
       }
-
-    return;
   }
 
-  void MeshBuilder::do_mesh_refinement_from_input( const GetPot& input,
-                                                   const libMesh::Parallel::Communicator &comm,
-                                                   libMesh::UnstructuredMesh& mesh ) const
+  void MeshBuilder::do_mesh_refinement_from_input( const GetPot & input,
+                                                   const libMesh::Parallel::Communicator & comm,
+                                                   libMesh::UnstructuredMesh & mesh ) const
   {
     std::string redistribution_function_string =
       input("Mesh/Redistribution/function", std::string("0"));
@@ -331,9 +323,7 @@ namespace GRINS
     int uniformly_refine = input("Mesh/Refinement/uniformly_refine", 0);
 
     if( uniformly_refine > 0 )
-      {
-        libMesh::MeshRefinement(mesh).uniformly_refine(uniformly_refine);
-      }
+      libMesh::MeshRefinement(mesh).uniformly_refine(uniformly_refine);
 
     std::string h_refinement_function_string =
       input("Mesh/Refinement/locally_h_refine", std::string("0"));
@@ -346,6 +336,7 @@ namespace GRINS
         libMesh::MeshRefinement mesh_refinement(mesh);
 
         libMesh::dof_id_type found_refinements = 0;
+
         do {
           found_refinements = 0;
           unsigned int max_level_refining = 0;
@@ -380,7 +371,9 @@ namespace GRINS
             {
               std::cout << "Found up to " << found_refinements <<
                 " elements to refine on each processor," << std::endl;
+
               std::cout << "with max level " << max_level_refining << std::endl;
+
               mesh_refinement.refine_and_coarsen_elements();
 
               if( input.have_variable("restart-options/restart_file") )
@@ -394,9 +387,7 @@ namespace GRINS
 
         } while(found_refinements);
 
-      }
-
-    return;
+      } // if (h_refinement_function_string != "0")
   }
 
 } // namespace GRINS
