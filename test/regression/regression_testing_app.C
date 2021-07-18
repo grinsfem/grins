@@ -48,7 +48,7 @@ void parse_qoi_data( const std::vector<std::string> & qoi_names,
                      std::vector<libMesh::Real> & qoi_data_values,
                      std::vector<libMesh::Real> & qoi_gold_values );
 
-void test_convergence_iterations( libMesh::EquationSystems eq_sys,
+void test_convergence_iterations( libMesh::EquationSystems & eq_sys,
                                   const GetPot & input,
                                   GetPot & command_line,
                                   const unsigned int & max_nl,
@@ -374,7 +374,7 @@ void parse_qoi_data( const std::vector<std::string> & qoi_names,
   qoi_input.close();
 }
 
-void test_convergence_iterations( libMesh::EquationSystems eq_sys,
+void test_convergence_iterations( libMesh::EquationSystems & eq_sys,
                                   const GetPot & input,
                                   GetPot & command_line,
                                   const unsigned int & max_nl,
