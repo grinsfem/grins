@@ -54,7 +54,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<libMesh::DiffSolver> create();
+    virtual std::unique_ptr<libMesh::DiffSolver> create() override;
 
     DiffSolverFactoryAbstract();
   };
@@ -76,7 +76,7 @@ namespace GRINS
 
   protected:
 
-    virtual std::unique_ptr<libMesh::DiffSolver> build_diff_solver( MultiphysicsSystem & system )
+    virtual std::unique_ptr<libMesh::DiffSolver> build_diff_solver( MultiphysicsSystem & system ) override
     { return std::unique_ptr<libMesh::DiffSolver>( new DiffSolverType(system) ); }
 
   private:

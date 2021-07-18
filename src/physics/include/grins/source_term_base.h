@@ -55,7 +55,7 @@ namespace GRINS
 
     virtual ~SourceTermBase();
 
-    virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init_variables( libMesh::FEMSystem* system ) override;
 
   protected:
 

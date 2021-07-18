@@ -62,14 +62,14 @@ namespace GRINS
 
     ~AxisymmetricBoussinesqBuoyancy(){};
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     //! Source term contribution for AxisymmetricBoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
       the AxisymmetricIncompNavierStokes class.
     */
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
   protected:
 

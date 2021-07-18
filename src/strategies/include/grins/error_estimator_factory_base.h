@@ -76,7 +76,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<libMesh::ErrorEstimator> create();
+    virtual std::unique_ptr<libMesh::ErrorEstimator> create() override;
 
   };
 

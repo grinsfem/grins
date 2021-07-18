@@ -68,7 +68,7 @@ namespace GRINS {
     /**
      * Initializes the distance
      */
-    virtual void initialize ();
+    virtual void initialize () override;
 
     /**
      * Compute distance from input node to boundary_mesh

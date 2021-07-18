@@ -63,7 +63,7 @@ namespace GRINS
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
-                const std::string& section );
+                const std::string& section ) override;
 
     //! Adds the vars_found to the composite_func
     /*! It is expected that this function returns the names of the vars actually added
@@ -112,14 +112,14 @@ namespace GRINS
                                 const std::string& section,
                                 const std::set<std::string>& vars_found,
                                 libMesh::CompositeFunction<libMesh::Number>& composite_func,
-                                std::set<std::string>& vars_added) const;
+                                std::set<std::string>& vars_added) const override;
 
     //! We'll search for mole fractions: X_<species_name>.
     /*! We extract the species name from var_names and then set the corresponding
       vars_to_search_for to X_<species_name>. */
     virtual void set_vars_to_search_for( const std::string& section,
                                          const std::vector<std::string>& var_names,
-                                         std::vector<std::string>&vars_to_search_for ) const;
+                                         std::vector<std::string>&vars_to_search_for ) const override;
 
     template<typename ChemistryType>
     void add_mole_frac_to_mass_frac(const GetPot& input,

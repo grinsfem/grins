@@ -63,7 +63,7 @@ namespace GRINS
     virtual bool eval_flux( bool compute_jacobian,
                             AssemblyContext& context,
                             libMesh::Real sign,
-                            bool is_axisymmetric );
+                            bool is_axisymmetric ) override;
 
   protected:
 

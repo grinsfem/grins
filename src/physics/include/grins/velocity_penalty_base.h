@@ -51,7 +51,7 @@ namespace GRINS
     ~VelocityPenaltyBase(){};
 
     // Hack to read ParsedFEMFunction options after System init
-    void set_time_evolving_vars (libMesh::FEMSystem* system);
+    virtual void set_time_evolving_vars (libMesh::FEMSystem* system) override;
 
     bool compute_force ( const libMesh::Point& point,
                          const AssemblyContext& context,

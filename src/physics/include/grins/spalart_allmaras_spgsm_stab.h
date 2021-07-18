@@ -41,20 +41,20 @@ namespace GRINS
     SpalartAllmarasSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
     virtual ~SpalartAllmarasSPGSMStabilization(){};
 
-    virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init_variables( libMesh::FEMSystem* system ) override;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override;
 
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      const override;
 
   private:
 

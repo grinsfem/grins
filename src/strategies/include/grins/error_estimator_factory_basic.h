@@ -44,7 +44,7 @@ namespace GRINS
     virtual std::unique_ptr<libMesh::ErrorEstimator>
     build_error_estimator( const GetPot & /*input*/,
                            MultiphysicsSystem & /*system*/,
-                           const ErrorEstimatorOptions & /*estimator_options*/ )
+                           const ErrorEstimatorOptions & /*estimator_options*/ ) override
     {
       return std::unique_ptr<libMesh::ErrorEstimator>( new EstimatorType );
     }

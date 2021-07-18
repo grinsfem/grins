@@ -41,7 +41,7 @@ namespace GRINS
 
   protected:
 
-    virtual std::unique_ptr<Solver> build_solver( const GetPot & input );
+    virtual std::unique_ptr<Solver> build_solver( const GetPot & input ) override;
 
   private:
 

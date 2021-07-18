@@ -54,7 +54,8 @@ namespace GRINS
                             const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv);
 
     // Allow for outputting in CSV format
-    virtual void output_qoi(std::ostream & out) const;
+    virtual void output_qoi(std::ostream & out) const override;
+
 
     SpectroscopicQoIBase() = delete;
 

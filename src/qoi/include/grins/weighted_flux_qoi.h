@@ -49,15 +49,15 @@ namespace GRINS
 
     virtual ~WeightedFluxQoI();
 
-    virtual QoIBase* clone() const;
+    virtual QoIBase* clone() const override;
 
-    virtual bool assemble_on_interior() const;
+    virtual bool assemble_on_interior() const override;
 
-    virtual bool assemble_on_sides() const;
+    virtual bool assemble_on_sides() const override;
 
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
-                       unsigned int qoi_num );
+                       unsigned int qoi_num ) override;
 
   private:
 

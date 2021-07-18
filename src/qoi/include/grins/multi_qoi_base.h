@@ -59,22 +59,22 @@ namespace GRINS
     QoIBase & get_qoi(unsigned int qoi_index);
 
     //! Uses clone() to deep copy all internal QoI objects
-    virtual QoIBase * clone() const;
+    virtual QoIBase * clone() const override;
 
-    virtual bool assemble_on_sides() const;
+    virtual bool assemble_on_sides() const override;
 
-    virtual bool assemble_on_interior() const;
+    virtual bool assemble_on_interior() const override;
 
     //! init all internal QoI objects
     virtual void init( const GetPot & input,
                        const MultiphysicsSystem & system,
-                       unsigned int qoi_num);
+                       unsigned int qoi_num) override;
 
     //! call init_context on all internal QoI objects
-    virtual void init_context(AssemblyContext & context);
+    virtual void init_context(AssemblyContext & context) override;
 
     //! reinit all internal QoI objects
-    virtual void reinit(MultiphysicsSystem & system);
+    virtual void reinit(MultiphysicsSystem & system) override;
 
   protected:
     //! A vector of internal QoIs that are *NOT* known to the context or CompositeQoI

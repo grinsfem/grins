@@ -50,7 +50,7 @@ namespace GRINS
     build_func( const GetPot& /*input*/,
                 MultiphysicsSystem& /*system*/,
                 std::vector<std::string>& /*var_names*/,
-                const std::string& /*section*/ )
+                const std::string& /*section*/ ) override
     {
       return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ZeroFunction<libMesh::Number> );
     }

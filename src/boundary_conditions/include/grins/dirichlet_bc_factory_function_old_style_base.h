@@ -57,12 +57,12 @@ namespace GRINS
   protected:
 
     //! Helper function
-    virtual void check_state() const;
+    virtual void check_state() const override;
 
     //! Helper function
-    virtual void reset_state();
+    virtual void reset_state() override;
 
-    virtual const std::vector<std::string>& get_var_names() const
+    virtual const std::vector<std::string>& get_var_names() const override
     { return *(this->_var_names_old_style); }
 
     static std::string _value_var_old_style;

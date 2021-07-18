@@ -49,7 +49,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<CatalycityBase>
-    build_catalycity( const GetPot& input, const std::string& section )
+    build_catalycity( const GetPot& input, const std::string& section ) override
     {
       std::string param_base = section+"/ConstantCatalycity/";
 
@@ -79,7 +79,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<CatalycityBase>
-    build_catalycity( const GetPot& input, const std::string& section )
+    build_catalycity( const GetPot& input, const std::string& section ) override
     {
       std::string param_base = section+"/ArrheniusCatalycity/";
 
@@ -114,7 +114,7 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<CatalycityBase>
-    build_catalycity( const GetPot& input, const std::string& section )
+    build_catalycity( const GetPot& input, const std::string& section ) override
     {
       std::string param_base = section+"/PowerLawCatalycity/";
 

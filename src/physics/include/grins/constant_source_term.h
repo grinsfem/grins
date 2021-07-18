@@ -41,7 +41,7 @@ namespace GRINS
     virtual ~ConstantSourceTerm(){}
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
   protected:
 

@@ -44,7 +44,7 @@ namespace GRINS
     virtual ~LowMachNavierStokesStabilizationBase(){};
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     libMesh::Real compute_res_continuity_steady( AssemblyContext& context,
                                                  unsigned int qp ) const;

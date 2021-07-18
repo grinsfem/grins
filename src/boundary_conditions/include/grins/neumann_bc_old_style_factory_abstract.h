@@ -52,10 +52,10 @@ namespace GRINS
   protected:
 
     //! Helper function to reduce code duplication
-    virtual void check_state() const;
+    virtual void check_state() const override;
 
     //! Helper function to reduce code duplication
-    virtual void reset_state();
+    virtual void reset_state() override;
 
     static std::string _value_var_old_style;
 

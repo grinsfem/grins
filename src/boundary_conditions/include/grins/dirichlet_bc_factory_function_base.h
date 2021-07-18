@@ -80,7 +80,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<libMesh::DirichletBoundary> create();
+    virtual std::unique_ptr<libMesh::DirichletBoundary> create() override;
 
   };
 

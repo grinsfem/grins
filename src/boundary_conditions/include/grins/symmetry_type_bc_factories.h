@@ -57,7 +57,7 @@ namespace GRINS
     build_func( const GetPot& /*input*/,
                 MultiphysicsSystem& /*system*/,
                 std::vector<std::string>& var_names,
-                const std::string& /*section*/ )
+                const std::string& /*section*/ ) override
     {
       this->trim_var_names(var_names);
       return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> >( new libMesh::ZeroFunction<libMesh::Number> );
@@ -74,7 +74,7 @@ namespace GRINS
     {}
 
   protected:
-    virtual void trim_var_names( std::vector<std::string>& var_names )
+    virtual void trim_var_names( std::vector<std::string>& var_names ) override
     {
       if( var_names.size() !=3 )
         libmesh_error_msg("ERROR: YZSymmetry requires 3 components in the Variable!");
@@ -96,7 +96,7 @@ namespace GRINS
     {}
 
   protected:
-    virtual void trim_var_names( std::vector<std::string>& var_names )
+    virtual void trim_var_names( std::vector<std::string>& var_names ) override
     {
       if( var_names.size() < 2 )
         libmesh_error_msg("ERROR: XZSymmetry requires at least 2 components in the Variable!");
@@ -121,7 +121,7 @@ namespace GRINS
     {}
 
   protected:
-    virtual void trim_var_names( std::vector<std::string>& var_names )
+    virtual void trim_var_names( std::vector<std::string>& var_names ) override
     {
       if( var_names.size() !=3 )
         libmesh_error_msg("ERROR: XYSymmetry requires 3 components in the Variable!");
@@ -143,7 +143,7 @@ namespace GRINS
     {}
 
   protected:
-    virtual void trim_var_names( std::vector<std::string>& var_names )
+    virtual void trim_var_names( std::vector<std::string>& var_names ) override
     {
       if( var_names.size() < 2 )
         libmesh_error_msg("ERROR: RollerX requires at least 2 components in the Variable!");
@@ -164,7 +164,7 @@ namespace GRINS
     {}
 
   protected:
-    virtual void trim_var_names( std::vector<std::string>& var_names )
+    virtual void trim_var_names( std::vector<std::string>& var_names ) override
     {
       if( var_names.size() < 2 )
         libmesh_error_msg("ERROR: RollerY requires at least 2 components in the Variable!");
@@ -185,7 +185,7 @@ namespace GRINS
     {}
 
   protected:
-    virtual void trim_var_names( std::vector<std::string>& var_names )
+    virtual void trim_var_names( std::vector<std::string>& var_names ) override
     {
       if( var_names.size() !=3 )
         libmesh_error_msg("ERROR: RollerZ requires 3 components in the Variable!");
@@ -207,7 +207,7 @@ namespace GRINS
     {}
 
   protected:
-    virtual void trim_var_names( std::vector<std::string>& var_names )
+    virtual void trim_var_names( std::vector<std::string>& var_names ) override
     {
       if( var_names.size() !=2 )
         libmesh_error_msg("ERROR: Axisymmetry requires 2 components in the Variable!");

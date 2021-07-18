@@ -96,20 +96,20 @@ namespace GRINS
                     const std::string & qoi_name);
 
     //! Just call the default copy constructor
-    virtual QoIBase * clone() const;
+    virtual QoIBase * clone() const override;
 
     virtual void element_qoi( AssemblyContext& context,
-                              const unsigned int qoi_index);
+                              const unsigned int qoi_index) override;
 
     //! AMR not yet supported
     virtual void element_qoi_derivative(AssemblyContext & context,
-                                        const unsigned int qoi_index);
+                                        const unsigned int qoi_index) override;
 
     //! Sum _qoi_vals from all processors and then do the gauss quadrature
     //! integration to find the total absorbed laser intensity
     virtual void parallel_op( const libMesh::Parallel::Communicator & communicator,
                               libMesh::Number & sys_qoi,
-                              libMesh::Number & local_qoi );
+                              libMesh::Number & local_qoi ) override;
 
   private:
     //! intensity profile object used to get the laser intensity at the quadrature points

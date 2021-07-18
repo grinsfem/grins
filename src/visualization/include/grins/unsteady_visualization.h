@@ -42,26 +42,26 @@ namespace GRINS
     virtual void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                   MultiphysicsSystem* system,
                                   const unsigned int time_step,
-                                  const libMesh::Real time);
+                                  const libMesh::Real time) override;
 
     virtual void output_residual_sensitivities
     (std::shared_ptr<libMesh::EquationSystems> equation_system,
      MultiphysicsSystem* system,
      const libMesh::ParameterVector & params,
      const unsigned int time_step,
-     const libMesh::Real time);
+     const libMesh::Real time) override;
 
     virtual void output_adjoint( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                  MultiphysicsSystem* system,
                                  const unsigned int time_step,
-                                 const libMesh::Real time );
+                                 const libMesh::Real time ) override;
 
     virtual void output_solution_sensitivities
     (std::shared_ptr<libMesh::EquationSystems> equation_system,
      MultiphysicsSystem* system,
      const libMesh::ParameterVector & params,
      const unsigned int time_step,
-     const libMesh::Real time);
+     const libMesh::Real time) override;
   };
 
 } // end namespace GRINS

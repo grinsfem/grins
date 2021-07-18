@@ -62,7 +62,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<CatalycityBase> create();
+    virtual std::unique_ptr<CatalycityBase> create() override;
   };
 
   inline

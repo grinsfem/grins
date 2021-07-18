@@ -46,32 +46,32 @@ namespace GRINS
 
     ~LowMachNavierStokes(){};
 
-    virtual void auxiliary_init( MultiphysicsSystem& system );
+    virtual void auxiliary_init( MultiphysicsSystem& system ) override;
 
     //! Register postprocessing variables for LowMachNavierStokes
     virtual void register_postprocessing_vars( const GetPot& input,
-                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing ) override;
 
     // Context initialization
-    virtual void init_context( AssemblyContext & context );
+    virtual void init_context( AssemblyContext & context ) override;
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext & context );
+                                     AssemblyContext & context ) override;
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override;
 
-    virtual void compute_element_time_derivative_cache( AssemblyContext & context );
+    virtual void compute_element_time_derivative_cache( AssemblyContext & context ) override;
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
-                                                 libMesh::Real& value );
+                                                 libMesh::Real& value ) override;
 
   protected:
 

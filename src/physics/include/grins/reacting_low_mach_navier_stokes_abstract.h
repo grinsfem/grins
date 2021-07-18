@@ -48,10 +48,10 @@ namespace GRINS
     virtual ~ReactingLowMachNavierStokesAbstract(){};
 
     //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     unsigned int n_species() const;
 

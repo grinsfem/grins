@@ -43,7 +43,7 @@ namespace GRINS
 
     virtual ~ConstrainedPoints(){}
 
-    virtual void constrain ();
+    virtual void constrain () override;
 
   private:
 

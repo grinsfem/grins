@@ -42,10 +42,10 @@ namespace GRINS
 
     virtual ~ParsedSourceTerm(){}
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
   protected:
 

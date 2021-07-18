@@ -46,14 +46,14 @@ namespace GRINS
 
     //! Register postprocessing variables for ElasticCable
     virtual void register_postprocessing_vars( const GetPot& input,
-                                               PostProcessedQuantities<libMesh::Real> & postprocessing );
+                                               PostProcessedQuantities<libMesh::Real> & postprocessing ) override;
 
     //! Time dependent part(s) of physics for element interiors
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context )
+                                AssemblyContext & context ) override
     { this->mass_residual_impl(compute_jacobian,
                                context,
                                &libMesh::FEMContext::interior_accel,
@@ -63,7 +63,7 @@ namespace GRINS
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
-                                                 libMesh::Real& value );
+                                                 libMesh::Real& value ) override;
 
     //! Precompute data needed for residual inline function
     void get_grad_disp( const AssemblyContext & context,

@@ -42,7 +42,7 @@ namespace GRINS
     ~DefaultVariableBuilder(){}
 
     virtual void build_variables_impl( const GetPot& input,
-                                       MultiphysicsSystem& system );
+                                       MultiphysicsSystem& system ) override;
 
   protected:
 

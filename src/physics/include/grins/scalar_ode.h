@@ -57,24 +57,24 @@ namespace GRINS
     ~ScalarODE(){};
 
     //! Sets scalar variable(s) to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem * system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem * system ) override;
 
     //! Prepare the context for evaluations
-    virtual void init_context( AssemblyContext & context );
+    virtual void init_context( AssemblyContext & context ) override;
 
     // residual and jacobian calculations
 
     // User-specified ODE(s)
     virtual void nonlocal_time_derivative ( bool compute_jacobian,
-                                            AssemblyContext & context );
+                                            AssemblyContext & context ) override;
 
     // User-specified constraint equation
     virtual void nonlocal_constraint ( bool compute_jacobian,
-                                       AssemblyContext & context );
+                                       AssemblyContext & context ) override;
 
     // User-specified (or default "s'") mass term
     virtual void nonlocal_mass_residual ( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
     VariableIndex scalar_ode_var() const
     { return _var.var(); }

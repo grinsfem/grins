@@ -68,8 +68,7 @@ namespace GRINS
     // classes
     virtual void register_parameter
     ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const override;
 
   protected:
 

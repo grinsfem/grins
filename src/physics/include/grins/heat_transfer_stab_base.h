@@ -43,7 +43,7 @@ namespace GRINS
     virtual ~HeatTransferStabilizationBase(){};
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
   protected:
 

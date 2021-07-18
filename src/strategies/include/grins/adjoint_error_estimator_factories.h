@@ -49,7 +49,7 @@ namespace GRINS
 
     virtual std::unique_ptr<libMesh::ErrorEstimator>
     build_error_estimator( const GetPot& input, MultiphysicsSystem& system,
-                           const ErrorEstimatorOptions& estimator_options )
+                           const ErrorEstimatorOptions& estimator_options ) override
     {
       std::unique_ptr<libMesh::ErrorEstimator>
         raw_error_estimator( new EstimatorType );
@@ -87,7 +87,7 @@ namespace GRINS
 
     virtual void set_adjoint_estimator_options( const GetPot& input,
                                                 const ErrorEstimatorOptions& estimator_options,
-                                                libMesh::AdjointResidualErrorEstimator& estimator );
+                                                libMesh::AdjointResidualErrorEstimator& estimator ) override;
   };
 
   class AdjointRefinementErrorEstimatorFactory : public AdjointErrorEstimatorFactoryBase<libMesh::AdjointRefinementEstimator>
@@ -104,7 +104,7 @@ namespace GRINS
 
     virtual void set_adjoint_estimator_options( const GetPot& input,
                                                 const ErrorEstimatorOptions& estimator_options,
-                                                libMesh::AdjointRefinementEstimator& estimator );
+                                                libMesh::AdjointRefinementEstimator& estimator ) override;
   };
 } // end namespace GRINS
 

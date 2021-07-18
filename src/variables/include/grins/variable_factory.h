@@ -49,7 +49,7 @@ namespace GRINS
 
     ~VariableFactoryAbstract(){};
 
-    virtual std::unique_ptr<FEVariablesBase> create();
+    virtual std::unique_ptr<FEVariablesBase> create() override;
 
     //! Build the variable names for the FEVariablesBase type (name), returned in the std::vector
     /*! Similarly to build(), this will grab the factory subclass and then
@@ -150,12 +150,12 @@ namespace GRINS
 
   protected:
 
-    virtual std::string parse_fe_family_impl( const GetPot& input, const std::string& var_section )
+    virtual std::string parse_fe_family_impl( const GetPot& input, const std::string& var_section ) override
     {
       return this->parse_var_option(input,var_section,std::string("fe_family"),std::string("DIE!"));
     }
 
-    virtual std::string parse_fe_order_impl( const GetPot& input, const std::string& var_section )
+    virtual std::string parse_fe_order_impl( const GetPot& input, const std::string& var_section ) override
     {
       return this->parse_var_option(input,var_section,std::string("order"),std::string("DIE!"));
     }
@@ -179,14 +179,14 @@ namespace GRINS
     virtual std::unique_ptr<FEVariablesBase>
     build_fe_var( const std::vector<std::string>& var_names,
                   const std::vector<VariableIndex>& var_indices,
-                  const std::set<libMesh::subdomain_id_type>& subdomain_ids )
+                  const std::set<libMesh::subdomain_id_type>& subdomain_ids ) override
     {
       return std::unique_ptr<FEVariablesBase>( new VariableType(var_names,var_indices,subdomain_ids) );
     }
 
     //! The basic factory implementation looks in [Variables/<VariableName>/names].
     virtual std::vector<std::string>
-    parse_var_names( const GetPot& input, const std::string& var_section );
+    parse_var_names( const GetPot& input, const std::string& var_section ) override;
 
   };
 
@@ -206,7 +206,7 @@ namespace GRINS
 
   protected:
 
-    virtual std::string parse_fe_family_impl( const GetPot& input, const std::string& var_section )
+    virtual std::string parse_fe_family_impl( const GetPot& input, const std::string& var_section ) override
     {
       if( input.have_variable(var_section+"/fe_family") )
         libmesh_error_msg("ERROR: Cannot specify fe_family for ScalarVariable. It is implicitly SCALAR!");
@@ -237,11 +237,11 @@ namespace GRINS
       the species variable component names. The, we need to look up the material to figure out
       where to grab the species from. With the material name, then we look up the species names
       and accordingly build up the variable names. */
-    virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section );
+    virtual std::vector<std::string> parse_var_names( const GetPot& input, const std::string& var_section ) override;
 
     virtual std::unique_ptr<FEVariablesBase> build_fe_var( const std::vector<std::string>& var_names,
                                                            const std::vector<VariableIndex>& var_indices,
-                                                           const std::set<libMesh::subdomain_id_type>& subdomain_ids )
+                                                           const std::set<libMesh::subdomain_id_type>& subdomain_ids ) override
     { return std::unique_ptr<FEVariablesBase>( new VariableType(var_names,var_indices,_prefix,_material,subdomain_ids) ); }
 
     std::string _prefix;

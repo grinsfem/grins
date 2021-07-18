@@ -50,7 +50,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<Solver> create();
+    virtual std::unique_ptr<Solver> create() override;
 
     SolverFactoryAbstract();
   };

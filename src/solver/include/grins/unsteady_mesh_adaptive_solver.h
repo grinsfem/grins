@@ -44,7 +44,7 @@ namespace GRINS
 
     virtual ~UnsteadyMeshAdaptiveSolver(){};
 
-    virtual void solve(  SolverContext& context );
+    virtual void solve(  SolverContext& context ) override;
 
   };
 

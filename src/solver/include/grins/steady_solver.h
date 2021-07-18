@@ -36,25 +36,28 @@ namespace GRINS
   public:
 
     SteadySolver( const GetPot& input );
+
+    SteadySolver() = delete;
+
     virtual ~SteadySolver();
 
-    virtual void solve( SolverContext& context );
+    virtual void solve( SolverContext& context ) override;
 
     virtual void adjoint_qoi_parameter_sensitivity
     (SolverContext&                  context,
      const libMesh::QoISet&          qoi_indices,
      const libMesh::ParameterVector& parameters_in,
-     libMesh::SensitivityData&       sensitivities) const;
+     libMesh::SensitivityData&       sensitivities) const override;
 
     virtual void forward_qoi_parameter_sensitivity
     (SolverContext&                  context,
      const libMesh::QoISet&          qoi_indices,
      const libMesh::ParameterVector& parameters_in,
-     libMesh::SensitivityData&       sensitivities) const;
+     libMesh::SensitivityData&       sensitivities) const override;
 
   protected:
 
-    virtual void init_time_solver(MultiphysicsSystem* system);
+    virtual void init_time_solver(MultiphysicsSystem* system) override;
 
   };
 } // namespace GRINS
