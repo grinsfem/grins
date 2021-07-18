@@ -84,18 +84,18 @@ namespace GRINS
       }
 
     // Create UnstructuredMesh object (defaults to dimension 1).
-    libMesh::UnstructuredMesh* mesh;
+    std::shared_ptr<libMesh::UnstructuredMesh> mesh;
 
     // Were we specifically asked to use a ParallelMesh or SerialMesh?
     {
       std::string mesh_class = input("Mesh/class", "default");
 
       if (mesh_class == "parallel")
-        mesh = new libMesh::ParallelMesh(comm);
+        mesh = std::make_shared<libMesh::ParallelMesh>(comm);
       else if (mesh_class == "serial")
-        mesh = new libMesh::SerialMesh(comm);
+        mesh = std::make_shared<libMesh::SerialMesh>(comm);
       else if (mesh_class == "default")
-        mesh = new libMesh::Mesh(comm);
+        mesh = std::make_shared<libMesh::Mesh>(comm);
       else
         {
           std::string error = "ERROR: Invalid class "+mesh_class+" input for Mesh/class.\n";
@@ -139,7 +139,7 @@ namespace GRINS
     if( !input.have_variable("restart-options/restart_file") )
       this->do_mesh_refinement_from_input( input, comm, *mesh );
 
-    return std::shared_ptr<libMesh::UnstructuredMesh>(mesh);
+    return mesh;
   }
 
   void MeshBuilder::generate_mesh( const std::string& mesh_build_type, const GetPot& input,
