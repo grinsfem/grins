@@ -84,7 +84,7 @@ namespace GRINS
                         const unsigned int number );
 
     //! Destructor. Clean up all physics allocations.
-    ~MultiphysicsSystem(){};
+    ~MultiphysicsSystem() = default;
 
     //! PhysicsList gets built by PhysicsFactory and attached here.
     void attach_physics_list( PhysicsList physics_list );

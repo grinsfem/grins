@@ -49,7 +49,7 @@ namespace GRINS
 
     AveragedTurbineBase( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedTurbineBase(){};
+    virtual ~AveragedTurbineBase() = default;
 
     //! Sets turbine_speed and velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;

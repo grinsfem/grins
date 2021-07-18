@@ -43,7 +43,7 @@ namespace GRINS
         CatalyticWallNeumannBCFactoryCommon<ImplType>()
     {}
 
-    ~CatalyticWallNeumannBCFactoryBase(){};
+    ~CatalyticWallNeumannBCFactoryBase() = default;
 
   protected:
 

@@ -35,12 +35,11 @@ namespace GRINS
   template<class Viscosity>
   class SpalartAllmarasStabilizationBase : public SpalartAllmaras<Viscosity>
   {
-
   public:
 
     SpalartAllmarasStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~SpalartAllmarasStabilizationBase(){};
+    virtual ~SpalartAllmarasStabilizationBase() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context ) override;

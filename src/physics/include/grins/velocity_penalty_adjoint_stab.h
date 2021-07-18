@@ -45,7 +45,7 @@ namespace GRINS
 
     VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityPenaltyAdjointStabilization();
+    virtual ~VelocityPenaltyAdjointStabilization();
 
     virtual void init_context( AssemblyContext& context ) override;
 

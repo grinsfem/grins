@@ -47,7 +47,7 @@ namespace GRINS
                       const std::string& core_physics_name,
                       const GetPot& input );
 
-    ~HeatTransferBase(){};
+    virtual ~HeatTransferBase() = default;
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;

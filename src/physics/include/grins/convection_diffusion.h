@@ -43,7 +43,7 @@ namespace GRINS
 
     ConvectionDiffusion( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~ConvectionDiffusion(){};
+    virtual ~ConvectionDiffusion() = default;
 
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 

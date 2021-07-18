@@ -46,7 +46,7 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
-    ~PhysicsFactoryReactingFlows(){};
+    virtual ~PhysicsFactoryReactingFlows() = default;
 
   protected:
 
@@ -178,7 +178,7 @@ namespace GRINS
   {
   public:
     ReactingFlowsPhysicsFactoryInitializer();
-    ~ReactingFlowsPhysicsFactoryInitializer(){}
+    ~ReactingFlowsPhysicsFactoryInitializer() = default;
   };
 
 } // end namespace GRINS

@@ -45,7 +45,7 @@ namespace GRINS
 
     ReactingLowMachNavierStokesAbstract(const PhysicsName& physics_name, const GetPot& input);
 
-    virtual ~ReactingLowMachNavierStokesAbstract(){};
+    virtual ~ReactingLowMachNavierStokesAbstract() = default;
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;

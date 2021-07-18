@@ -37,7 +37,7 @@ namespace GRINS
       : PhysicsFactoryBase(physics_name)
     {}
 
-    ~PhysicsFactoryBasic(){};
+    virtual ~PhysicsFactoryBasic() = default;
 
   protected:
 

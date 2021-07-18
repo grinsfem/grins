@@ -39,7 +39,7 @@ namespace GRINS
       : DirichletBCFactoryFunctionBase<FunctionType>(bc_type_name)
     {}
 
-    ~DirichletBCFactoryFunctionOldStyleBase(){};
+    virtual ~DirichletBCFactoryFunctionOldStyleBase() = default;
 
     //! Input variable for parsing old style
     /*! Deprecated, only used for backward compatibility. */

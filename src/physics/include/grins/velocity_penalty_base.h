@@ -48,7 +48,7 @@ namespace GRINS
 
     VelocityPenaltyBase( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityPenaltyBase(){};
+    virtual ~VelocityPenaltyBase() = default;
 
     // Hack to read ParsedFEMFunction options after System init
     virtual void set_time_evolving_vars (libMesh::FEMSystem* system) override;

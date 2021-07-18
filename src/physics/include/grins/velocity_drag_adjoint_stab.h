@@ -49,7 +49,7 @@ namespace GRINS
 
     VelocityDragAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityDragAdjointStabilization();
+    virtual ~VelocityDragAdjointStabilization();
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual

@@ -44,7 +44,7 @@ namespace GRINS
       : CatalycityFactoryAbstract(physics_name)
     {}
 
-    ~ConstantCatalycityFactory(){};
+    ~ConstantCatalycityFactory() = default;
 
   protected:
 

@@ -34,11 +34,10 @@ namespace GRINS
 
   class VariablePinning : public Physics
   {
-
   public:
 
     VariablePinning( const PhysicsName& physics_name, const GetPot& input );
-    ~VariablePinning(){};
+    virtual ~VariablePinning() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext & context ) override;

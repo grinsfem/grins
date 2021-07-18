@@ -42,7 +42,7 @@ namespace GRINS
 
     UnsteadyMeshAdaptiveSolver( const GetPot& input );
 
-    virtual ~UnsteadyMeshAdaptiveSolver(){};
+    virtual ~UnsteadyMeshAdaptiveSolver() = default;
 
     virtual void solve(  SolverContext& context ) override;
 

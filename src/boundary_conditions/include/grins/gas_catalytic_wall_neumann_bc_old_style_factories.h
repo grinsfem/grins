@@ -41,7 +41,7 @@ namespace GRINS
       : CatalyticWallNeumannBCOldStyleFactoryBase<GasRecombinationCatalyticWallNeumannBCFactoryImpl>(bc_type_name)
     {}
 
-    ~GasRecombinationCatalyticWallNeumannBCOldStyleFactory(){};
+    ~GasRecombinationCatalyticWallNeumannBCOldStyleFactory() = default;
 
   protected:
 
@@ -68,7 +68,7 @@ namespace GRINS
       : CatalyticWallNeumannBCOldStyleFactoryBase<GasSolidCatalyticWallNeumannBCFactoryImpl>(bc_type_name)
     {}
 
-    ~GasSolidCatalyticWallNeumannBCOldStyleFactory(){};
+    ~GasSolidCatalyticWallNeumannBCOldStyleFactory() = default;
 
     virtual std::string reactant_for_catalycity(const std::string& reaction) const override
     {

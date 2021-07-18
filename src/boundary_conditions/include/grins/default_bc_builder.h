@@ -49,12 +49,9 @@ namespace GRINS
   {
   public:
 
-    DefaultBCBuilder()
-      : BCBuilder(),
-        BuilderHelper()
-    {};
+    DefaultBCBuilder() = default;
 
-    ~DefaultBCBuilder(){};
+    ~DefaultBCBuilder() = default;
 
   protected:
 

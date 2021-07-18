@@ -37,7 +37,7 @@ namespace GRINS
       : SolverFactoryAbstract(bc_type_name)
     {}
 
-    virtual ~SolverFactoryBasic(){}
+    virtual ~SolverFactoryBasic() = default;
 
   protected:
 

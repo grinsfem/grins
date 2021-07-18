@@ -41,7 +41,7 @@ namespace GRINS
       : DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<libMesh::Number> >(bc_type_name)
     {}
 
-    ~PrescribedVectorValueDirichletOldStyleBCFactory(){};
+    virtual ~PrescribedVectorValueDirichletOldStyleBCFactory() = default;
 
   protected:
 

@@ -44,7 +44,7 @@ namespace GRINS
 
     SpalartAllmarasHelper(const GetPot& input);
 
-    virtual ~SpalartAllmarasHelper(){};
+    virtual ~SpalartAllmarasHelper() = default;
 
     void init_variables( libMesh::FEMSystem* system );
 

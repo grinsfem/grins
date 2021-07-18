@@ -43,7 +43,7 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
-    ~PhysicsFactoryIncompressibleFlow(){};
+    virtual ~PhysicsFactoryIncompressibleFlow() = default;
 
   protected:
 

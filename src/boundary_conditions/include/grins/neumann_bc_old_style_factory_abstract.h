@@ -37,7 +37,7 @@ namespace GRINS
       : NeumannBCFactoryAbstract(bc_type_name)
     {}
 
-    ~NeumannBCOldStyleFactoryAbstract(){};
+    virtual ~NeumannBCOldStyleFactoryAbstract() = default;
 
     //! Input variable for parsing old style
     /*! Deprecated, only used for backward compatibility. */

@@ -50,7 +50,7 @@ namespace GRINS
                                    const std::string& core_physics_name,
                                    const GetPot& input);
 
-    ~IncompressibleNavierStokesBase(){};
+    ~IncompressibleNavierStokesBase() = default;
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;

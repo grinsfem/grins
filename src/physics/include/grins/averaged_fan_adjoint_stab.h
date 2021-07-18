@@ -48,7 +48,7 @@ namespace GRINS
 
     AveragedFanAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedFanAdjointStabilization();
+    virtual ~AveragedFanAdjointStabilization();
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual

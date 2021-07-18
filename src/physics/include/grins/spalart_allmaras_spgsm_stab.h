@@ -35,11 +35,10 @@ namespace GRINS
   template<class Viscosity>
   class SpalartAllmarasSPGSMStabilization : public SpalartAllmarasStabilizationBase<Viscosity>
   {
-
   public:
 
     SpalartAllmarasSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
-    virtual ~SpalartAllmarasSPGSMStabilization(){};
+    virtual ~SpalartAllmarasSPGSMStabilization() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system ) override;
 

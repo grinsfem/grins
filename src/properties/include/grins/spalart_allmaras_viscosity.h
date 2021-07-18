@@ -57,7 +57,7 @@ namespace GRINS
 
     //! Deprecated constructor
     SpalartAllmarasViscosity( const GetPot& input );
-    ~SpalartAllmarasViscosity(){};
+    ~SpalartAllmarasViscosity() = default;
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 

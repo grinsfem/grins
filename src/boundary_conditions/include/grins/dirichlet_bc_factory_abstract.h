@@ -40,7 +40,7 @@ namespace GRINS
       : BCFactoryAbstract<libMesh::DirichletBoundary>(bc_type_name)
     {}
 
-    ~DirichletBCFactoryAbstract(){};
+    virtual ~DirichletBCFactoryAbstract() = default;
 
   protected:
 

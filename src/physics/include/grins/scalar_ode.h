@@ -54,7 +54,7 @@ namespace GRINS
 
     ScalarODE( const std::string& physics_name, const GetPot& input );
 
-    ~ScalarODE(){};
+    virtual ~ScalarODE() = default;
 
     //! Sets scalar variable(s) to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem * system ) override;

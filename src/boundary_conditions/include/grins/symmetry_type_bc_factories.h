@@ -41,7 +41,7 @@ namespace GRINS
       : DirichletBCFactoryFunctionBase(bc_type_name)
     {}
 
-    ~SymmetryTypeBCFactories(){};
+    ~SymmetryTypeBCFactories() = default;
 
   protected:
 

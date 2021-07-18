@@ -51,7 +51,7 @@ namespace GRINS
 
     TurbulenceModelsBase(const std::string& physics_name, const GetPot& input);
 
-    ~TurbulenceModelsBase(){};
+    virtual ~TurbulenceModelsBase() = default;
 
     // Registers all parameters in this physics and in its property
     // classes

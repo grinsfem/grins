@@ -48,7 +48,7 @@ namespace GRINS
       ParsedFunctionFactoryHelper<libMesh::FunctionBase<libMesh::Number> >()
     {}
 
-    ~ConstantFunctionDirichletBCFactory(){};
+    virtual ~ConstantFunctionDirichletBCFactory() = default;
 
   protected:
     //! Builds ConstantFunction objects for boundary conditions
@@ -99,7 +99,7 @@ namespace GRINS
       : ConstantFunctionDirichletBCFactory(bc_type_name)
     {}
 
-    ~MoleFractionsDirichletBCFactory(){}
+    virtual ~MoleFractionsDirichletBCFactory() = default;
 
   protected:
 

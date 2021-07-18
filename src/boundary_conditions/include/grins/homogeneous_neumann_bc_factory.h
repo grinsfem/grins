@@ -42,7 +42,7 @@ namespace GRINS
       : NeumannBCFactoryAbstract(bc_type_name)
     { _is_homogeneous = true; }
 
-    virtual ~HomogeneousNeumannBCFactory(){};
+    virtual ~HomogeneousNeumannBCFactory() = default;
 
   protected:
 

@@ -40,7 +40,7 @@ namespace GRINS
 
     HeatTransferStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~HeatTransferStabilizationBase(){};
+    virtual ~HeatTransferStabilizationBase() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context ) override;

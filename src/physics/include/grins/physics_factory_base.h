@@ -49,7 +49,7 @@ namespace GRINS
       : FactoryWithGetPotPhysicsName<Physics>(physics_name)
     {}
 
-    ~PhysicsFactoryBase(){};
+    virtual ~PhysicsFactoryBase() = default;
 
   protected:
 

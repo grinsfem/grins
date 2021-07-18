@@ -40,7 +40,7 @@ namespace GRINS
 
     ParsedSourceTerm( const std::string& physics_name, const GetPot& input );
 
-    virtual ~ParsedSourceTerm(){}
+    virtual ~ParsedSourceTerm() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
 

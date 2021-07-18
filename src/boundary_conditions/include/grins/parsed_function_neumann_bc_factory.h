@@ -43,7 +43,7 @@ namespace GRINS
         ParsedFunctionNeumannBCFactoryHelper<FunctionType>()
     {}
 
-    ~ParsedFunctionNeumannBCFactory(){};
+    ~ParsedFunctionNeumannBCFactory() = default;
 
   protected:
 
@@ -74,7 +74,7 @@ namespace GRINS
       : ParsedFunctionNeumannBCFactory<FunctionType>(bc_type_name)
     {}
 
-    ~ParsedTractionBCFactory(){};
+    ~ParsedTractionBCFactory() = default;
 
   protected:
 

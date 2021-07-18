@@ -44,7 +44,7 @@ namespace GRINS
       : CatalycityFactoryOldStyleBase(physics_name)
     {}
 
-    ~ConstantCatalycityFactoryOldStyle(){};
+    ~ConstantCatalycityFactoryOldStyle() = default;
 
   protected:
 
@@ -70,7 +70,7 @@ namespace GRINS
       : CatalycityFactoryOldStyleBase(physics_name)
     {}
 
-    ~ArrheniusCatalycityFactoryOldStyle(){};
+    ~ArrheniusCatalycityFactoryOldStyle() = default;
 
   protected:
 
@@ -102,7 +102,7 @@ namespace GRINS
       : CatalycityFactoryOldStyleBase(physics_name)
     {}
 
-    ~PowerLawCatalycityFactoryOldStyle(){};
+    ~PowerLawCatalycityFactoryOldStyle() = default;
 
   protected:
 

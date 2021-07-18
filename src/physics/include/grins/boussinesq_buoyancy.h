@@ -51,7 +51,7 @@ namespace GRINS
 
     BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancy();
+    virtual ~BoussinesqBuoyancy();
 
     //! Source term contribution for BoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to

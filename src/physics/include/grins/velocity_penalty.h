@@ -53,7 +53,7 @@ namespace GRINS
 
     VelocityPenalty( const std::string& physics_name, const GetPot& input );
 
-    ~VelocityPenalty();
+    virtual ~VelocityPenalty();
 
     virtual void init_context( AssemblyContext& context ) override;
 

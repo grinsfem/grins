@@ -44,7 +44,7 @@ namespace GRINS
 
     LowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input);
 
-    ~LowMachNavierStokes(){};
+    virtual ~LowMachNavierStokes() = default;
 
     virtual void auxiliary_init( MultiphysicsSystem& system ) override;
 

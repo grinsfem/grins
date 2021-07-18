@@ -63,7 +63,7 @@ namespace GRINS {
     /**
      * Destructor
      */
-    ~DistanceFunction () {};
+    ~DistanceFunction () = default;
 
     /**
      * Initializes the distance
@@ -121,10 +121,10 @@ namespace GRINS {
   public:
 
     // ctor
-    ComputeDistanceJacobian(){}
+    ComputeDistanceJacobian() = default;
 
     // dtor
-    ~ComputeDistanceJacobian(){}
+    ~ComputeDistanceJacobian() = default;
 
     /**
      * Finite-differenced Jacobian approximation.
@@ -203,7 +203,7 @@ namespace GRINS {
     }
 
     // dtor
-    ~ComputeDistanceResidual(){}
+    ~ComputeDistanceResidual() = default;
 
     // Calculate the residual
     void operator()(const libMesh::DenseVector<libMesh::Real> &U,

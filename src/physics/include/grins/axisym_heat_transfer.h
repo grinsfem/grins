@@ -51,7 +51,7 @@ namespace GRINS
 
     AxisymmetricHeatTransfer( const std::string& physics_name, const GetPot& input );
 
-    ~AxisymmetricHeatTransfer(){};
+    virtual ~AxisymmetricHeatTransfer() = default;
 
     //! Sets velocity variables to be time-evolving
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;

@@ -45,7 +45,7 @@ namespace GRINS
 
     BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancyAdjointStabilization();
+    virtual ~BoussinesqBuoyancyAdjointStabilization();
 
     virtual void init_context( AssemblyContext & context ) override;
 

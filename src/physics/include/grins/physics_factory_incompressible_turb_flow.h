@@ -41,7 +41,7 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
-    ~PhysicsFactoryIncompressibleTurbFlow(){};
+    virtual ~PhysicsFactoryIncompressibleTurbFlow() = default;
 
   protected:
 

@@ -41,7 +41,7 @@ namespace GRINS
 
     LowMachNavierStokesStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~LowMachNavierStokesStabilizationBase(){};
+    virtual ~LowMachNavierStokesStabilizationBase() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context ) override;

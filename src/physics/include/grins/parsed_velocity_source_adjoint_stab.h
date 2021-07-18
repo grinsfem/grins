@@ -45,7 +45,7 @@ namespace GRINS
 
     ParsedVelocitySourceAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~ParsedVelocitySourceAdjointStabilization();
+    virtual ~ParsedVelocitySourceAdjointStabilization();
 
     virtual void init_context( AssemblyContext& context ) override;
 

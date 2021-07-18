@@ -58,7 +58,7 @@ namespace GRINS
         _vars(vars)
     {}
 
-    virtual ~NeumannBCFunctionBase(){};
+    virtual ~NeumannBCFunctionBase() = default;
 
     virtual bool eval_flux( bool compute_jacobian,
                             AssemblyContext& context,

@@ -47,7 +47,7 @@ namespace GRINS
       _is_homogeneous(false)
     {}
 
-    ~NeumannBCFactoryAbstract(){};
+    virtual ~NeumannBCFactoryAbstract() = default;
 
     //! Creates NeumannBCContainer for this Factory object
     /*! This method will handle the creation and population of all

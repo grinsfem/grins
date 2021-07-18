@@ -38,7 +38,7 @@ namespace GRINS
   public:
 
     IncompressibleNavierStokesSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
-    virtual ~IncompressibleNavierStokesSPGSMStabilization(){};
+    virtual ~IncompressibleNavierStokesSPGSMStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context ) override;
