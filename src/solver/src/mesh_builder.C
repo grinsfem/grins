@@ -290,7 +290,6 @@ namespace GRINS
   {
     std::string redistribution_function_string =
       input("Mesh/Redistribution/function", std::string("0"));
-    this->deprecated_option<std::string>( input, "mesh-options/redistribute", "Mesh/Redistribution/function", "0", redistribution_function_string );
 
     if (redistribution_function_string != "0")
       {
@@ -330,7 +329,6 @@ namespace GRINS
       mesh.partitioner() = nullptr;
 
     int uniformly_refine = input("Mesh/Refinement/uniformly_refine", 0);
-    this->deprecated_option( input, "mesh-options/uniformly_refine", "Mesh/Refinement/uniformly_refine", 0, uniformly_refine );
 
     if( uniformly_refine > 0 )
       {
@@ -339,7 +337,6 @@ namespace GRINS
 
     std::string h_refinement_function_string =
       input("Mesh/Refinement/locally_h_refine", std::string("0"));
-    this->deprecated_option<std::string>( input, "mesh-options/locally_h_refine", "Mesh/Refinement/locally_h_refine", "0", h_refinement_function_string );
 
     if (h_refinement_function_string != "0")
       {
