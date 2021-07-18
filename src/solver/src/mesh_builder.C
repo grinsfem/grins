@@ -341,14 +341,8 @@ namespace GRINS
           found_refinements = 0;
           unsigned int max_level_refining = 0;
 
-          libMesh::MeshBase::element_iterator elem_it =
-            mesh.active_elements_begin();
-          libMesh::MeshBase::element_iterator elem_end =
-            mesh.active_elements_end();
-          for (; elem_it != elem_end; ++elem_it)
+          for (auto & elem : mesh.active_element_ptr_range())
             {
-              libMesh::Elem *elem = *elem_it;
-
               const libMesh::Real refinement_val =
                 h_refinement_function(elem->centroid());
 
