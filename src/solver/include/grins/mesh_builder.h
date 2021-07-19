@@ -45,53 +45,30 @@ namespace GRINS
     //! This Object handles building a libMesh::UnstructuredMesh subclass.
     /*! Based on runtime input, either a generic 1, 2, or 3-dimensional
       mesh is built; or is read from input from a specified file. */
-    MeshBuilder(){};
-    ~MeshBuilder(){};
+    MeshBuilder() = default;
+    ~MeshBuilder() = default;
 
     //! Builds the libMesh::Mesh according to input options.
     std::shared_ptr<libMesh::UnstructuredMesh> build
-    ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm );
+    ( const GetPot & input,
+      const libMesh::Parallel::Communicator & comm );
 
     //! Refine the mesh based on user input parameters
     /*! There are several parameters that allow for the user to specify
       mesh refinements. They are factored out here because where we
       need to apply the refinements depends on the existence of a
       restart file. */
-    void do_mesh_refinement_from_input( const GetPot& input,
-                                        const libMesh::Parallel::Communicator &comm,
-                                        libMesh::UnstructuredMesh& mesh ) const;
+    void do_mesh_refinement_from_input( const GetPot & input,
+                                        const libMesh::Parallel::Communicator & comm,
+                                        libMesh::UnstructuredMesh & mesh ) const;
 
   private:
 
-    void generate_mesh( const std::string& mesh_build_type, const GetPot& input,
-                        libMesh::UnstructuredMesh* mesh );
-
-    //! Helper function for displaying deprecated warnings.
-    template <typename T>
-    void deprecated_option( const GetPot& input, const std::string& old_option,
-                            const std::string& new_option, const T& default_value,
-                            T& option_value ) const;
+    void generate_mesh( const GetPot & input,
+                        libMesh::UnstructuredMesh & mesh );
 
   };
 
-  template <typename T>
-  inline
-  void MeshBuilder::deprecated_option( const GetPot& input, const std::string& old_option,
-                                       const std::string& new_option, const T& default_value,
-                                       T& option_value ) const
-  {
-    if( input.have_variable(old_option) )
-      {
-        std::string warning = "WARNING: "+old_option+" is DEPRECATED.\n";
-        warning += "         Please update to use "+new_option+".\n";
-        grins_warning(warning);
-
-        option_value = input(old_option, default_value);
-      }
-
-    return;
-  }
 } // end namespace block
 
 #endif // GRINS_MESH_BUILDER_H
