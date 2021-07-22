@@ -389,7 +389,7 @@ void test_convergence_iterations( libMesh::EquationSystems & eq_sys,
   // First run the solve to populate the Solver iteration info.
   GRINS::SimulationBuilder sb;
   GRINS::SimulationInitializer si;
-  libMesh::UniquePtr<GRINS::Simulation> sim;
+  std::unique_ptr<GRINS::Simulation> sim;
 
   std::cout << "==========================================================" << std::endl;
   command_line.print();

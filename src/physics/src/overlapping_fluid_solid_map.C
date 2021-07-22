@@ -64,8 +64,8 @@ namespace GRINS
   {
     const libMesh::MeshBase & mesh = system.get_mesh();
 
-    libMesh::UniquePtr<libMesh::DiffContext> raw_context = system.build_context();
-    libMesh::UniquePtr<libMesh::FEMContext>
+    std::unique_ptr<libMesh::DiffContext> raw_context = system.build_context();
+    std::unique_ptr<libMesh::FEMContext>
       fem_context( libMesh::cast_ptr<libMesh::FEMContext *>(raw_context.release()) );
 
     // Swap current_local_solution with old_local_nonlinear_solution
