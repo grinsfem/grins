@@ -1063,7 +1063,7 @@ namespace GRINS
 
     for (unsigned int n=0; n<first_order_elem->n_nodes(); ++n)
       {
-        libMesh::Node * node = new libMesh::Node(elem->node_ref(n));
+        libMesh::Node * node = new libMesh::Node(elem->point(n));
         first_order_elem->set_node(n) = node;
       }
 
