@@ -78,7 +78,7 @@ namespace GRINS
     this->boundary_mesh.reset(new libMesh::SerialMesh(system->get_mesh().comm() , system->get_mesh().mesh_dimension()) );
 
     // Use the _wall_ids set to build the boundary mesh object
-    (system->get_mesh()).boundary_info->sync(_wall_ids, *boundary_mesh);
+    (system->get_mesh()).get_boundary_info().sync(_wall_ids, *boundary_mesh);
 
     //this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), dynamic_cast<libMesh::UnstructuredMesh&>(system->get_mesh()) ));
     this->distance_function.reset(new DistanceFunction(system->get_equation_systems(), *boundary_mesh));
