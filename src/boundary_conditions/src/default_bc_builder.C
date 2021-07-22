@@ -464,31 +464,25 @@ namespace GRINS
   ( const MultiphysicsSystem& system,
     std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >& bc_id_to_subdomain_id_map ) const
   {
-    std::vector<libMesh::dof_id_type> elem_ids;
-    std::vector<unsigned short int> side_ids;
-    std::vector<BoundaryID> bc_ids;
-
     const libMesh::MeshBase& mesh = system.get_mesh();
 
     // Extract the list of elements on the boundary
-    mesh.get_boundary_info().build_active_side_list( elem_ids, side_ids, bc_ids );
+    std::vector<std::tuple<libMesh::dof_id_type, unsigned short int, BoundaryID>> active_side_list =
+      mesh.get_boundary_info().build_active_side_list();
 
-    libmesh_assert_equal_to( elem_ids.size(), side_ids.size() );
-    libmesh_assert_equal_to( elem_ids.size(), bc_ids.size() );
-
-    for( unsigned int i = 0; i < elem_ids.size(); i++ )
+    for( unsigned int i = 0; i < active_side_list.size(); i++ )
       {
-        const libMesh::Elem* elem_ptr = mesh.elem_ptr(elem_ids[i]);
+        const libMesh::Elem* elem_ptr = mesh.elem_ptr(std::get<0>(active_side_list[i]));
 
         libMesh::subdomain_id_type subdomain_id = elem_ptr->subdomain_id();
 
         std::map<BoundaryID,std::vector<libMesh::subdomain_id_type> >::iterator
-          map_it = bc_id_to_subdomain_id_map.find(bc_ids[i]);
+          map_it = bc_id_to_subdomain_id_map.find(std::get<2>(active_side_list[i]));
 
         if( map_it == bc_id_to_subdomain_id_map.end() )
           {
             std::vector<libMesh::subdomain_id_type> sid(1,subdomain_id);
-            bc_id_to_subdomain_id_map.insert(std::make_pair(bc_ids[i],sid));
+            bc_id_to_subdomain_id_map.insert(std::make_pair(std::get<2>(active_side_list[i]),sid));
           }
         else
           {
