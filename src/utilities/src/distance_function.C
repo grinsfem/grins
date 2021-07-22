@@ -637,7 +637,7 @@ namespace GRINS {
     libMesh::System& sys = _equation_systems.get_system<libMesh::System>("distance_function");
     const libMesh::DofMap& dof_map = sys.get_dof_map();
 
-    std::vector<unsigned int> dof_ind;
+    std::vector<libMesh::dof_id_type> dof_ind;
     dof_map.dof_indices(elem, dof_ind);
 
     libMesh::DenseVector<libMesh::Real> nodal_dist;
