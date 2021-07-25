@@ -34,8 +34,8 @@ namespace GRINS
   {
   public:
 
-    SteadyVisualization(const GetPot& input,
-                        const libMesh::Parallel::Communicator &comm );
+    // Use inherited constructor
+    using Visualization::Visualization;
 
     SteadyVisualization() = delete;
 

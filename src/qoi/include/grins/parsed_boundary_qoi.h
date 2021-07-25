@@ -45,10 +45,7 @@ namespace GRINS
   {
   public:
 
-    //! Constructor
-    /*! Constructor takes GetPot object to read any input options associated
-      with this QoI */
-    ParsedBoundaryQoI( const std::string& qoi_name );
+    using QoIBase::QoIBase;
 
     ParsedBoundaryQoI() = delete;
 

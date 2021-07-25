@@ -37,11 +37,14 @@ namespace GRINS
   // Forward declarations
   class MultiphysicsSystem;
 
-  class AssemblyContext : public libMesh::FEMContext
+  using GRINSFEMContext = libMesh::FEMContext;
+
+  class AssemblyContext : public GRINSFEMContext
   {
   public:
 
-    AssemblyContext( const libMesh::System& system );
+    using GRINSFEMContext :: GRINSFEMContext;
+
     virtual ~AssemblyContext() = default;
 
     CachedValues & get_cached_values()

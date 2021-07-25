@@ -41,12 +41,6 @@
 
 namespace GRINS
 {
-  AverageNusseltNumber::AverageNusseltNumber( const std::string& qoi_name )
-    : QoIBase(qoi_name)
-  {
-    return;
-  }
-
   QoIBase* AverageNusseltNumber::clone() const
   {
     AverageNusseltNumber *returnval = new AverageNusseltNumber( *this );

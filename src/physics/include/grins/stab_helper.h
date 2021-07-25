@@ -41,7 +41,9 @@ namespace GRINS
   class StabilizationHelper : public ParameterUser
   {
   public:
-    StabilizationHelper( const std::string & helper_name );
+
+    using ParameterUser::ParameterUser;
+
     virtual ~StabilizationHelper() = default;
 
     /*! \todo Should we inline this? */

@@ -45,7 +45,7 @@ namespace GRINS
   {
   public:
 
-    WeightedFluxQoI( const std::string& qoi_name );
+    using QoIBase::QoIBase;
 
     WeightedFluxQoI() = delete;
 

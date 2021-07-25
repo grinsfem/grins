@@ -31,14 +31,6 @@
 
 namespace GRINS
 {
-
-  StabilizationHelper::StabilizationHelper
-  ( const std::string & helper_name ) :
-    ParameterUser(helper_name)
-  {
-    return;
-  }
-
   libMesh::RealGradient StabilizationHelper::compute_g( libMesh::FEBase* fe,
                                                         AssemblyContext& c,
                                                         unsigned int qp ) const

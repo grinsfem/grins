@@ -35,7 +35,7 @@ namespace GRINS
   {
   public:
 
-    SteadySolver( const GetPot& input );
+    using Solver::Solver;
 
     SteadySolver() = delete;
 

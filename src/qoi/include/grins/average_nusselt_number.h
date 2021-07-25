@@ -38,7 +38,7 @@ namespace GRINS
   {
   public:
 
-    AverageNusseltNumber( const std::string& qoi_name );
+    using QoIBase::QoIBase;
 
     AverageNusseltNumber() = delete;
 

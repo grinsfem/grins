@@ -38,7 +38,7 @@ namespace GRINS
 
   public:
 
-    HeatTransferSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
+    using HeatTransferStabilizationBase<Conductivity>::HeatTransferStabilizationBase;
 
     HeatTransferSPGSMStabilization() = delete;
 

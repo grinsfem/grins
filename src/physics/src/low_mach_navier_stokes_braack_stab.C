@@ -37,15 +37,6 @@
 
 namespace GRINS
 {
-
-  template<class Mu, class SH, class TC>
-  LowMachNavierStokesBraackStabilization<Mu,SH,TC>::LowMachNavierStokesBraackStabilization( const std::string& physics_name,
-                                                                                            const GetPot& input )
-    : LowMachNavierStokesStabilizationBase<Mu,SH,TC>(physics_name,input)
-  {
-    return;
-  }
-
   template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::element_time_derivative
   ( bool compute_jacobian,

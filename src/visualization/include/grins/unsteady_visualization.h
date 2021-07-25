@@ -35,8 +35,8 @@ namespace GRINS
   {
   public:
 
-    UnsteadyVisualization(const GetPot& input,
-                          const libMesh::Parallel::Communicator &comm );
+    // Use inherited constructor
+    using Visualization::Visualization;
 
     UnsteadyVisualization() = delete;
 

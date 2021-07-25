@@ -42,12 +42,6 @@
 
 namespace GRINS
 {
-  Vorticity::Vorticity( const std::string& qoi_name )
-    : QoIBase(qoi_name)
-  {
-    return;
-  }
-
   QoIBase* Vorticity::clone() const
   {
     return new Vorticity( *this );

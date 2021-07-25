@@ -35,14 +35,6 @@ namespace GRINS
 {
 
   template<class K>
-  HeatTransferSPGSMStabilization<K>::HeatTransferSPGSMStabilization( const std::string& physics_name,
-                                                                     const GetPot& input )
-    : HeatTransferStabilizationBase<K>(physics_name,input)
-  {
-    return;
-  }
-
-  template<class K>
   void HeatTransferSPGSMStabilization<K>::element_time_derivative
   ( bool compute_jacobian, AssemblyContext & context )
   {

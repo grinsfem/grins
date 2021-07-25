@@ -37,7 +37,7 @@ namespace GRINS
 
   public:
 
-    LowMachNavierStokesSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
+    using LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>::LowMachNavierStokesStabilizationBase;
 
     LowMachNavierStokesSPGSMStabilization() = delete;
 

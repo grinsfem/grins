@@ -40,7 +40,7 @@ namespace GRINS
   {
   public:
 
-    CatalycityBase();
+    using ParameterUser::ParameterUser;
 
     virtual ~CatalycityBase() = default;
 
