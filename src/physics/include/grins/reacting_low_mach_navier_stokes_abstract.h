@@ -76,11 +76,11 @@ namespace GRINS
 
     libMesh::Number _p0;
 
-    VelocityVariable& _flow_vars;
-    PressureFEVariable& _press_var;
-    PrimitiveTempFEVariables& _temp_vars;
+    VelocityVariable & _flow_vars;
+    PressureFEVariable & _press_var;
+    PrimitiveTempFEVariables & _temp_vars;
 
-    SpeciesMassFractionsVariable& _species_vars;
+    SpeciesMassFractionsVariable & _species_vars;
 
     /*! \todo When we mandate C++11, switch this to a std::shared_ptr. Then, in the VariableWarhouse,
       we can use dynamic_pointer_cast to get a std::shared_ptr. */

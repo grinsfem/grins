@@ -136,10 +136,10 @@ namespace GRINS
 
     libMesh::Real _C, _tau_factor;
 
-    const VelocityVariable& _flow_vars;
-    const PressureFEVariable& _press_var;
+    const VelocityVariable & _flow_vars;
+    const PressureFEVariable & _press_var;
 
-    const TurbulenceFEVariables& _turbulence_vars;
+    const TurbulenceFEVariables & _turbulence_vars;
 
     SpalartAllmarasHelper _spalart_allmaras_helper;
 

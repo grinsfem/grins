@@ -95,7 +95,7 @@ namespace GRINS
 
     const GetPot & _input;
 
-    ScalarVariable& _var;
+    ScalarVariable & _var;
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

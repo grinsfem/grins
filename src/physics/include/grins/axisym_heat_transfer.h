@@ -81,9 +81,9 @@ namespace GRINS
 
   protected:
 
-    const VelocityVariable& _flow_vars;
-    const PressureFEVariable& _press_var;
-    const PrimitiveTempFEVariables& _temp_vars;
+    const VelocityVariable & _flow_vars;
+    const PressureFEVariable & _press_var;
+    const PrimitiveTempFEVariables & _temp_vars;
 
     //! Material parameters, read from input
     /*! \todo Need to generalize material parameters. Right now they

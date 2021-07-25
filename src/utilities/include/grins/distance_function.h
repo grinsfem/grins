@@ -254,15 +254,15 @@ namespace GRINS {
   private:
 
     // Reference to boundary element
-    const libMesh::Elem& _belem;
+    const libMesh::Elem & _belem;
     const unsigned int _dim;
-    const libMesh::Point& _p;
+    const libMesh::Point & _p;
 
     std::unique_ptr<libMesh::FEBase> _fe;
-    libMesh::FEBase *fe;
+    libMesh::FEBase * fe;
 
     // work vectors
-    libMesh::DenseVector<libMesh::Real>    Up, Fp, Um, Fm;
+    libMesh::DenseVector<libMesh::Real> Up, Fp, Um, Fm;
   };
 
 } // end namespace GRINS

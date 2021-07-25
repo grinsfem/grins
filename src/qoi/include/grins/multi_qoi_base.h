@@ -37,7 +37,7 @@ namespace GRINS
 
     /*!
       This class is an amalgamation of CompositeQoI and QoIBase.
-      
+
       The intended purpose is to provide functionality for using multiple QoI objects
       to compute a single QoI value.
     */
@@ -128,4 +128,3 @@ namespace GRINS
 
 }
 #endif // GRINS_MULTI_QOI_BASE_H
-

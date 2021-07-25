@@ -43,10 +43,10 @@ namespace GRINS
                       const libMesh::Point & laser_centerline) override;
 
   private:
+
     libMesh::Real _I0;
 
   };
 
 }
 #endif // GRINS_CONSTANT_LASER_INTENSITY_PROFILE_H
-

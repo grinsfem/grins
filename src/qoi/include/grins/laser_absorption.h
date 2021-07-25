@@ -38,9 +38,9 @@ namespace GRINS
     The LaserAbsorption class is a 2D/3D analogue of SpectroscopicAbsorption that
     can calculate the total absorbed laser intensity of a two-dimensional
     laser beam across a given flow field.
-    
+
     It uses Gauss quadrature to integrate the initial and final laser intensity profiles.
-    
+
     Each quadrature point has a corresponding SpectroscopicTransmission object to calculate the
     transmitted laser intensity along its respective optical path (i.e. RayfireMesh).
   */
@@ -65,12 +65,12 @@ namespace GRINS
                     const libMesh::Point & top_origin, const libMesh::Point & centerline_origin,
                     const libMesh::Point & bottom_origin,
                     libMesh::Real theta, unsigned int n_quadrature_points,
-                    std::shared_ptr<LaserIntensityProfileBase> intensity_profile,   
+                    std::shared_ptr<LaserIntensityProfileBase> intensity_profile,
                     const std::string & qoi_name);
 
       /*!
       Three-dimensional class constructor
-      
+
       <b>top_origin, centerline_origin, and bottom_origin must not all be colinear</b>
 
       @param absorb An AbsorptionCoeff object that will be shared by all internal SpectroscopicTransmission classes
@@ -92,7 +92,7 @@ namespace GRINS
                     const libMesh::Point & top_origin, const libMesh::Point & centerline_origin,
                     const libMesh::Point & bottom_origin,
                     libMesh::Real theta, libMesh::Real phi, unsigned int n_quadrature_points,
-                    std::shared_ptr<LaserIntensityProfileBase> intensity_profile,   
+                    std::shared_ptr<LaserIntensityProfileBase> intensity_profile,
                     const std::string & qoi_name);
 
     LaserAbsorption() = delete;
@@ -114,6 +114,7 @@ namespace GRINS
                               libMesh::Number & local_qoi ) override;
 
   private:
+
     //! intensity profile object used to get the laser intensity at the quadrature points
     std::shared_ptr<LaserIntensityProfileBase> _intensity_profile;
 
@@ -124,4 +125,3 @@ namespace GRINS
 
 }
 #endif // GRINS_LASER_ABSORPTION_H
-

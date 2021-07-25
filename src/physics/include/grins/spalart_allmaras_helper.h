@@ -56,9 +56,8 @@ namespace GRINS
   protected:
 
     // The flow variables
-    const VelocityVariable& _flow_vars;
-    const PressureFEVariable& _press_var;
-
+    const VelocityVariable & _flow_vars;
+    const PressureFEVariable & _press_var;
 
   };
 

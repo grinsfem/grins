@@ -78,7 +78,7 @@ namespace GRINS
     Viscosity _mu;
 
     // These are defined for each physics
-    TurbulenceFEVariables& _turbulence_vars;
+    TurbulenceFEVariables & _turbulence_vars;
 
     SpalartAllmarasParameters _sa_params;
 
