@@ -109,6 +109,9 @@ namespace GRINS
   public:
 
     Physics( const PhysicsName& physics_name, const GetPot& input );
+
+    Physics() = delete;
+
     virtual ~Physics();
 
     //! Initialize variables for this physics.
@@ -284,9 +287,6 @@ namespace GRINS
 
     //! Caches whether we are solving an axisymmetric problem or not
     static bool _is_axisymmetric;
-
-  private:
-    Physics();
 
   }; // End Physics class declarations
 

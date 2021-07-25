@@ -36,6 +36,8 @@ namespace GRINS
 
     PressureContinuationSolver( const GetPot& input );
 
+    PressureContinuationSolver() = delete;
+
     virtual ~PressureContinuationSolver() = default;
 
     virtual void solve( SolverContext& context ) override;

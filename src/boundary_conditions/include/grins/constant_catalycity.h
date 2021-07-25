@@ -36,6 +36,8 @@ namespace GRINS
 
     ConstantCatalycity( const libMesh::Real gamma );
 
+    ConstantCatalycity() = delete;
+
     virtual ~ConstantCatalycity() = default;
 
     virtual libMesh::Real operator()( const libMesh::Real T ) const override;
@@ -56,10 +58,6 @@ namespace GRINS
   protected:
 
     libMesh::Real _gamma;
-
-  private:
-
-    ConstantCatalycity();
 
   };
 
