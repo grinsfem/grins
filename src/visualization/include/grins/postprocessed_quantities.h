@@ -45,7 +45,7 @@ namespace GRINS
 
     PostProcessedQuantities() = delete;
 
-    virtual ~PostProcessedQuantities();
+    virtual ~PostProcessedQuantities() = default;
 
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
     virtual void init_context( const libMesh::FEMContext & context) override;

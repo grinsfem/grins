@@ -47,11 +47,6 @@ namespace GRINS
     return;
   }
 
-  UnsteadyVisualization::~UnsteadyVisualization()
-  {
-    return;
-  }
-
   void UnsteadyVisualization::output_residual
   ( std::shared_ptr<libMesh::EquationSystems> equation_system,
     MultiphysicsSystem* system,

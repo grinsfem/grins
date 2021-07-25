@@ -46,11 +46,6 @@ namespace GRINS
     return;
   }
 
-  SteadyVisualization::~SteadyVisualization()
-  {
-    return;
-  }
-
   void SteadyVisualization::output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                              MultiphysicsSystem* system,
                                              const unsigned int,

@@ -66,11 +66,6 @@ namespace GRINS
     return;
   }
 
-  PressurePinning::~PressurePinning( )
-  {
-    return;
-  }
-
   void PressurePinning::check_pin_location( const libMesh::MeshBase& mesh )
   {
     // We need to reset to invalid_id since this may not be the first time called

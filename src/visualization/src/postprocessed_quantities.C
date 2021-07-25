@@ -49,12 +49,6 @@ namespace GRINS
   }
 
   template<class NumericType>
-  PostProcessedQuantities<NumericType>::~PostProcessedQuantities()
-  {
-    return;
-  }
-
-  template<class NumericType>
   unsigned int PostProcessedQuantities<NumericType>::register_quantity( std::string name )
   {
     // Check if this quantity has already been registered

@@ -62,10 +62,4 @@ namespace GRINS
 
     return;
   }
-
-  GenericICHandler::~GenericICHandler()
-  {
-    return;
-  }
-
 } // namespace GRINS

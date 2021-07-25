@@ -36,7 +36,7 @@ namespace GRINS
 
     ArrheniusCatalycity( const libMesh::Real gamma0, const libMesh::Real Ta );
 
-    virtual ~ArrheniusCatalycity();
+    virtual ~ArrheniusCatalycity() = default;
 
     virtual libMesh::Real operator()( const libMesh::Real T ) const override;
 

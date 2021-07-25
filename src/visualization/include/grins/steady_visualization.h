@@ -39,7 +39,7 @@ namespace GRINS
 
     SteadyVisualization() = delete;
 
-    virtual ~SteadyVisualization();
+    virtual ~SteadyVisualization() = default;
 
     virtual void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,
                                   MultiphysicsSystem* system,

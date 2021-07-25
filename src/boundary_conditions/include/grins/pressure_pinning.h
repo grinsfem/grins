@@ -55,7 +55,8 @@ namespace GRINS
 
     PressurePinning( const GetPot& input,
                      const std::string& physics_name );
-    ~PressurePinning();
+
+    ~PressurePinning() = default;
 
     //! Check the mesh to ensure pin location is found
     /*! If the pin location is found, we set _pin_location_found to true

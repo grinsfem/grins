@@ -40,11 +40,6 @@ namespace GRINS
     return;
   }
 
-  PowerLawCatalycity::~PowerLawCatalycity()
-  {
-    return;
-  }
-
   libMesh::Real PowerLawCatalycity::operator()( const libMesh::Real T ) const
   {
     return _gamma0*std::pow( T/_Tref, _alpha);

@@ -34,9 +34,4 @@ namespace GRINS
     return;
   }
 
-  CatalycityBase::~CatalycityBase()
-  {
-    return;
-  }
-
 } // end namespace GRINS

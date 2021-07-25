@@ -91,11 +91,6 @@ namespace GRINS
     return;
   }
 
-  Visualization::~Visualization()
-  {
-    return;
-  }
-
   void Visualization::output( std::shared_ptr<libMesh::EquationSystems> equation_system )
   {
     this->dump_visualization( equation_system, _vis_output_file_prefix, 0.0 );

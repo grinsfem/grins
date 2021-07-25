@@ -70,11 +70,6 @@ namespace GRINS
     return;
   }
 
-  PressureContinuationSolver::~PressureContinuationSolver()
-  {
-    return;
-  }
-
   void PressureContinuationSolver::solve( SolverContext& context )
   {
     for( unsigned int s = 0; s < _pressure_values.size(); s++ )

@@ -36,7 +36,7 @@ namespace GRINS
 
     PowerLawCatalycity( const libMesh::Real gamma0, const libMesh::Real Ta, const libMesh::Real alpha );
 
-    virtual ~PowerLawCatalycity();
+    virtual ~PowerLawCatalycity() = default;
 
     virtual libMesh::Real operator()( const libMesh::Real T ) const override;
 

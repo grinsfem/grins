@@ -38,11 +38,6 @@ namespace GRINS
     return;
   }
 
-  ArrheniusCatalycity::~ArrheniusCatalycity()
-  {
-    return;
-  }
-
   libMesh::Real ArrheniusCatalycity::operator()( const libMesh::Real T ) const
   {
     return _gamma0*std::exp(-_Ta/T);

@@ -33,11 +33,6 @@ namespace GRINS
     return;
   }
 
-  ConstantCatalycity::~ConstantCatalycity()
-  {
-    return;
-  }
-
   libMesh::Real ConstantCatalycity::operator()( const libMesh::Real /*T*/ ) const
   {
     return _gamma;

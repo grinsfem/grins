@@ -55,11 +55,6 @@ namespace GRINS
     return;
   }
 
-  ICHandlingBase::~ICHandlingBase()
-  {
-    return;
-  }
-
   void ICHandlingBase::attach_initial_func
   ( const libMesh::FunctionBase<libMesh::Number>& initial_val)
   {

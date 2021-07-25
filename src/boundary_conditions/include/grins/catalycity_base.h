@@ -42,7 +42,7 @@ namespace GRINS
 
     CatalycityBase();
 
-    virtual ~CatalycityBase();
+    virtual ~CatalycityBase() = default;
 
     virtual libMesh::Real operator()( const libMesh::Real T ) const =0;
 
