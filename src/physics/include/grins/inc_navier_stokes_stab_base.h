@@ -40,6 +40,8 @@ namespace GRINS
 
     IncompressibleNavierStokesStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
+    IncompressibleNavierStokesStabilizationBase() = delete;
+
     virtual ~IncompressibleNavierStokesStabilizationBase();
 
     //! Initialize context for added physics variables
@@ -48,10 +50,6 @@ namespace GRINS
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
-
-  private:
-
-    IncompressibleNavierStokesStabilizationBase();
 
   }; // End IncompressibleNavierStokesStabilizationBase class declarations
 

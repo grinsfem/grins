@@ -53,6 +53,8 @@ namespace GRINS
 
     SourceTermBase( const std::string& physics_name, const GetPot& input );
 
+    SourceTermBase() = delete;
+
     virtual ~SourceTermBase();
 
     virtual void init_variables( libMesh::FEMSystem* system ) override;
@@ -65,8 +67,6 @@ namespace GRINS
     std::vector<GRINSEnums::Order> _var_order;
 
   private:
-
-    SourceTermBase();
 
     //! Helper function
     void parse_var_info( const GetPot& input );

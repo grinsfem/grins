@@ -38,6 +38,9 @@ namespace GRINS
   public:
 
     SpalartAllmarasSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
+
+    SpalartAllmarasSPGSMStabilization() = delete;
+
     virtual ~SpalartAllmarasSPGSMStabilization() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system ) override;
@@ -54,10 +57,6 @@ namespace GRINS
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
       const override;
-
-  private:
-
-    SpalartAllmarasSPGSMStabilization();
 
   };
 

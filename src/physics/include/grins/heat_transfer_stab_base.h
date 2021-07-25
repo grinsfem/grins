@@ -40,6 +40,8 @@ namespace GRINS
 
     HeatTransferStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
+    HeatTransferStabilizationBase() = delete;
+
     virtual ~HeatTransferStabilizationBase() = default;
 
     //! Initialize context for added physics variables
@@ -48,10 +50,6 @@ namespace GRINS
   protected:
 
     HeatTransferStabilizationHelper _stab_helper;
-
-  private:
-
-    HeatTransferStabilizationBase();
 
   }; // End HeatTransferStabilizationBase class declarations
 

@@ -39,6 +39,9 @@ namespace GRINS
   public:
 
     HeatConduction( const PhysicsName& physics_name, const GetPot& input );
+
+    HeatConduction() = delete;
+
     virtual ~HeatConduction() = default;
 
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
@@ -65,16 +68,12 @@ namespace GRINS
 
   protected:
 
-    PrimitiveTempFEVariables& _temp_vars;
+    PrimitiveTempFEVariables & _temp_vars;
 
     libMesh::Number _rho, _Cp;
 
     //! Conductivity
     Conductivity _k;
-
-  private:
-
-    HeatConduction();
 
   };
 

@@ -41,6 +41,8 @@ namespace GRINS
       : DirichletBCFactoryFunctionBase(bc_type_name)
     {}
 
+    HomogeneousDirichletBCFactory()= delete;
+
     virtual ~HomogeneousDirichletBCFactory() = default;
 
   protected:

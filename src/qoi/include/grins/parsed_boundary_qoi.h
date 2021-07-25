@@ -50,6 +50,8 @@ namespace GRINS
       with this QoI */
     ParsedBoundaryQoI( const std::string& qoi_name );
 
+    ParsedBoundaryQoI() = delete;
+
     virtual ~ParsedBoundaryQoI();
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
@@ -85,10 +87,6 @@ namespace GRINS
 
     //! Manual copy constructor due to the UniquePtr
     ParsedBoundaryQoI(const ParsedBoundaryQoI& original);
-
-  private:
-    //! User never call default constructor.
-    ParsedBoundaryQoI();
 
   };
 

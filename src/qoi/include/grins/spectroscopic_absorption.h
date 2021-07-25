@@ -58,6 +58,8 @@ namespace GRINS
     SpectroscopicAbsorption(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
                             const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv);
 
+    SpectroscopicAbsorption() = delete;
+
     virtual QoIBase * clone() const override;
 
     //! Override the QoIBase implementation to perform exp(-kv*L)
@@ -67,8 +69,6 @@ namespace GRINS
 
     //! Override DifferentiableQoI's empty implementation to add chain rule (QoI is exponential)
     virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index) override;
-
-    SpectroscopicAbsorption() = delete;
 
   };
 }

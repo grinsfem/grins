@@ -55,6 +55,8 @@ namespace GRINS
     //! Constructor with specified material
     SpalartAllmarasViscosity( const GetPot& input, const std::string& material );
 
+    SpalartAllmarasViscosity() = delete;
+
     //! Deprecated constructor
     SpalartAllmarasViscosity( const GetPot& input );
     ~SpalartAllmarasViscosity() = default;
@@ -79,10 +81,6 @@ namespace GRINS
     TurbulenceFEVariables& _turbulence_vars;
 
     SpalartAllmarasParameters _sa_params;
-
-  private:
-
-    SpalartAllmarasViscosity();
 
   };
 

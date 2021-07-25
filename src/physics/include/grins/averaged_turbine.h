@@ -55,6 +55,8 @@ namespace GRINS
 
     AveragedTurbine( const std::string& physics_name, const GetPot& input );
 
+    AveragedTurbine() = delete;
+
     virtual ~AveragedTurbine() = default;
 
     virtual void init_context( AssemblyContext & context ) override;
@@ -74,9 +76,6 @@ namespace GRINS
     virtual void nonlocal_time_derivative ( bool compute_jacobian,
                                             AssemblyContext & context ) override;
 
-  private:
-
-    AveragedTurbine();
   };
 
 } // end namespace block

@@ -41,6 +41,8 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
+    PhysicsFactoryCompressibleHyperelasticity() = delete;
+
     virtual ~PhysicsFactoryCompressibleHyperelasticity() = default;
 
   protected:

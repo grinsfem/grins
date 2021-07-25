@@ -37,6 +37,9 @@ namespace GRINS
 
     UnsteadyVisualization(const GetPot& input,
                           const libMesh::Parallel::Communicator &comm );
+
+    UnsteadyVisualization() = delete;
+
     virtual ~UnsteadyVisualization();
 
     virtual void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,

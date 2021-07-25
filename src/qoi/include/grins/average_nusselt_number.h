@@ -40,6 +40,8 @@ namespace GRINS
 
     AverageNusseltNumber( const std::string& qoi_name );
 
+    AverageNusseltNumber() = delete;
+
     virtual ~AverageNusseltNumber();
 
     virtual QoIBase* clone() const override;
@@ -74,10 +76,6 @@ namespace GRINS
 
     //! Scaling constant
     libMesh::Real _scaling;
-
-  private:
-
-    AverageNusseltNumber();
 
   };
 

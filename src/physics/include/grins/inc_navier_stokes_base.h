@@ -50,6 +50,8 @@ namespace GRINS
                                    const std::string& core_physics_name,
                                    const GetPot& input);
 
+    IncompressibleNavierStokesBase() = delete;
+
     ~IncompressibleNavierStokesBase() = default;
 
     //! Sets velocity variables to be time-evolving
@@ -82,9 +84,6 @@ namespace GRINS
     void mass_residual_impl( bool compute_jacobian, AssemblyContext & context );
 
     void element_constraint_impl( bool compute_jacobian, AssemblyContext & context );
-
-  private:
-    IncompressibleNavierStokesBase();
 
   };
 

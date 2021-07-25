@@ -54,6 +54,8 @@ namespace GRINS
 
     ScalarODE( const std::string& physics_name, const GetPot& input );
 
+    ScalarODE() = delete;
+
     virtual ~ScalarODE() = default;
 
     //! Sets scalar variable(s) to be time-evolving
@@ -94,8 +96,6 @@ namespace GRINS
     const GetPot & _input;
 
     ScalarVariable& _var;
-
-    ScalarODE();
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

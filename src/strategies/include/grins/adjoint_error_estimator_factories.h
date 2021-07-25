@@ -43,6 +43,8 @@ namespace GRINS
       : ErrorEstimatorFactoryBase(estimator_name)
     {}
 
+    AdjointErrorEstimatorFactoryBase() = delete;
+
     virtual ~AdjointErrorEstimatorFactoryBase() = default;
 
   protected:
@@ -81,6 +83,8 @@ namespace GRINS
       : AdjointErrorEstimatorFactoryBase<libMesh::AdjointResidualErrorEstimator>(estimator_name)
     {}
 
+    AdjointResidualErrorEstimatorFactory() = delete;
+
     virtual ~AdjointResidualErrorEstimatorFactory() = default;
 
   protected:
@@ -97,6 +101,8 @@ namespace GRINS
     AdjointRefinementErrorEstimatorFactory( const std::string& estimator_name )
       : AdjointErrorEstimatorFactoryBase<libMesh::AdjointRefinementEstimator>(estimator_name)
     {}
+
+    AdjointRefinementErrorEstimatorFactory() = delete;
 
     virtual ~AdjointRefinementErrorEstimatorFactory() = default;
 

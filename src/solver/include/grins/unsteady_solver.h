@@ -41,6 +41,9 @@ namespace GRINS
   public:
 
     UnsteadySolver( const GetPot& input );
+
+    UnsteadySolver() = delete;
+
     virtual ~UnsteadySolver() = default;
 
     virtual void solve( SolverContext& context ) override;

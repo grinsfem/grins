@@ -45,6 +45,8 @@ namespace GRINS
 
     VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
+    VelocityPenaltyAdjointStabilization() = delete;
+
     virtual ~VelocityPenaltyAdjointStabilization();
 
     virtual void init_context( AssemblyContext& context ) override;
@@ -58,10 +60,6 @@ namespace GRINS
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
-
-  private:
-
-    VelocityPenaltyAdjointStabilization();
 
   };
 

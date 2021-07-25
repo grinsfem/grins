@@ -40,6 +40,8 @@ namespace GRINS
       : DirichletBCFactoryAbstract(bc_type_name)
     {}
 
+    DirichletBCFactoryFunctionBase() = delete;
+
     virtual ~DirichletBCFactoryFunctionBase() = default;
 
   protected:

@@ -41,6 +41,8 @@ namespace GRINS
       : FactoryAbstract<libMesh::DiffSolver>(diff_solver_name)
     {}
 
+    DiffSolverFactoryAbstract() = delete;
+
     virtual ~DiffSolverFactoryAbstract() =0;
 
     static void set_system( MultiphysicsSystem * system )
@@ -56,7 +58,6 @@ namespace GRINS
 
     virtual std::unique_ptr<libMesh::DiffSolver> create() override;
 
-    DiffSolverFactoryAbstract();
   };
 
   inline
@@ -72,16 +73,14 @@ namespace GRINS
       : DiffSolverFactoryAbstract(diff_solver_name)
     {}
 
+    DiffSolverFactoryBasic() = delete;
+
     virtual ~DiffSolverFactoryBasic(){}
 
   protected:
 
     virtual std::unique_ptr<libMesh::DiffSolver> build_diff_solver( MultiphysicsSystem & system ) override
     { return std::unique_ptr<libMesh::DiffSolver>( new DiffSolverType(system) ); }
-
-  private:
-
-    DiffSolverFactoryBasic();
 
   };
 

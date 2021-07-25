@@ -43,6 +43,8 @@ namespace GRINS
     */
     MultiQoIBase(const std::string & qoi_name);
 
+    MultiQoIBase() = delete;
+
     //! Release and delete all internally stored QoIBase objects
     virtual ~MultiQoIBase();
 

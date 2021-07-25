@@ -95,6 +95,8 @@ namespace GRINS
                     std::shared_ptr<LaserIntensityProfileBase> intensity_profile,   
                     const std::string & qoi_name);
 
+    LaserAbsorption() = delete;
+
     //! Just call the default copy constructor
     virtual QoIBase * clone() const override;
 

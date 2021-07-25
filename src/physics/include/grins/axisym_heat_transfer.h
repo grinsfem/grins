@@ -51,6 +51,8 @@ namespace GRINS
 
     AxisymmetricHeatTransfer( const std::string& physics_name, const GetPot& input );
 
+    AxisymmetricHeatTransfer() = delete;
+
     virtual ~AxisymmetricHeatTransfer() = default;
 
     //! Sets velocity variables to be time-evolving
@@ -93,8 +95,6 @@ namespace GRINS
     Conductivity _k;
 
   private:
-
-    AxisymmetricHeatTransfer();
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

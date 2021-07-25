@@ -48,6 +48,8 @@ namespace GRINS
 
     ParsedVelocitySourceBase( const std::string& physics_name, const GetPot& input );
 
+    ParsedVelocitySourceBase() = delete;
+
     virtual ~ParsedVelocitySourceBase();
 
     virtual void set_time_evolving_vars (libMesh::FEMSystem* system) override;
@@ -67,7 +69,6 @@ namespace GRINS
 
     const GetPot & _input;
 
-    ParsedVelocitySourceBase();
   };
 
 } // end namespace block

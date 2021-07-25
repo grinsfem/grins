@@ -40,6 +40,8 @@ namespace GRINS
 
     ParsedSourceTerm( const std::string& physics_name, const GetPot& input );
 
+    ParsedSourceTerm() = delete;
+
     virtual ~ParsedSourceTerm() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
@@ -50,10 +52,6 @@ namespace GRINS
   protected:
 
     libMesh::ParsedFunction<libMesh::Real> _value;
-
-  private:
-
-    ParsedSourceTerm();
 
   };
 

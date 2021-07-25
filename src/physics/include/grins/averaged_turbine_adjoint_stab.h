@@ -49,6 +49,8 @@ namespace GRINS
 
     AveragedTurbineAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
+    AveragedTurbineAdjointStabilization() = delete;
+
     virtual ~AveragedTurbineAdjointStabilization();
 
     // residual and jacobian calculations
@@ -66,9 +68,6 @@ namespace GRINS
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
 
-  private:
-
-    AveragedTurbineAdjointStabilization();
   };
 
 } // end namespace block

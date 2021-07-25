@@ -45,6 +45,8 @@ namespace GRINS
 
     ParsedVelocitySourceAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
+    ParsedVelocitySourceAdjointStabilization() = delete;
+
     virtual ~ParsedVelocitySourceAdjointStabilization();
 
     virtual void init_context( AssemblyContext& context ) override;
@@ -58,10 +60,6 @@ namespace GRINS
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
-
-  private:
-
-    ParsedVelocitySourceAdjointStabilization();
 
   };
 

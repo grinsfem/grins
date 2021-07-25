@@ -62,6 +62,8 @@ namespace GRINS
     */
     IntegratedFunction(unsigned int p_level, const std::shared_ptr<Function> & f, const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name);
 
+    IntegratedFunction() = delete;
+
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
     virtual QoIBase* clone() const override;
 
@@ -116,9 +118,6 @@ namespace GRINS
     //! Compute derivatiuves at QP
     void qoi_derivative(Function & f, AssemblyContext & context, const libMesh::Point & qp_xyz,
                         const libMesh::Real JxW, const unsigned int qoi_index);
-
-    //! User cannot call empty constructor
-    IntegratedFunction();
 
   protected:
     //! Cache a non-const pointer to the MultiphysicsSystem object

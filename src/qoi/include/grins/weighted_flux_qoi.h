@@ -47,6 +47,8 @@ namespace GRINS
 
     WeightedFluxQoI( const std::string& qoi_name );
 
+    WeightedFluxQoI() = delete;
+
     virtual ~WeightedFluxQoI();
 
     virtual QoIBase* clone() const override;
@@ -58,10 +60,6 @@ namespace GRINS
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
                        unsigned int qoi_num ) override;
-
-  private:
-
-    WeightedFluxQoI();
 
   };
 

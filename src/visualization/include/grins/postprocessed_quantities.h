@@ -42,6 +42,9 @@ namespace GRINS
   public:
 
     PostProcessedQuantities( const GetPot& input );
+
+    PostProcessedQuantities() = delete;
+
     virtual ~PostProcessedQuantities();
 
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
@@ -90,10 +93,6 @@ namespace GRINS
 
     MultiphysicsSystem* _multiphysics_sys;
     std::shared_ptr<AssemblyContext> _multiphysics_context;
-
-  private:
-
-    PostProcessedQuantities();
 
   };
 

@@ -49,6 +49,8 @@ namespace GRINS
 
     VelocityDragAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
+    VelocityDragAdjointStabilization() = delete;
+
     virtual ~VelocityDragAdjointStabilization();
 
     // residual and jacobian calculations
@@ -66,9 +68,6 @@ namespace GRINS
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
 
-  private:
-
-    VelocityDragAdjointStabilization();
   };
 
 } // end namespace block

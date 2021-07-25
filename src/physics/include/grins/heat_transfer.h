@@ -43,6 +43,8 @@ namespace GRINS
 
     HeatTransfer( const std::string& physics_name, const GetPot& input );
 
+    HeatTransfer() = delete;
+
     virtual ~HeatTransfer() = default;
 
     //! Register postprocessing variables for HeatTransfer
@@ -67,8 +69,6 @@ namespace GRINS
                                                  libMesh::Real& value ) override;
 
   private:
-
-    HeatTransfer();
 
     //! Index from registering this postprocessed quantity
     unsigned int _k_index;

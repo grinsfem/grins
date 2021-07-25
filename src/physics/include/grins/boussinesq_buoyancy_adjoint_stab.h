@@ -45,6 +45,8 @@ namespace GRINS
 
     BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
+    BoussinesqBuoyancyAdjointStabilization() = delete;
+
     virtual ~BoussinesqBuoyancyAdjointStabilization();
 
     virtual void init_context( AssemblyContext & context ) override;
@@ -68,10 +70,6 @@ namespace GRINS
     Viscosity _mu;
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
-
-  private:
-
-    BoussinesqBuoyancyAdjointStabilization();
 
   };
 

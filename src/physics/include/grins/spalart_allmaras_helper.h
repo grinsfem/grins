@@ -44,6 +44,8 @@ namespace GRINS
 
     SpalartAllmarasHelper(const GetPot& input);
 
+    SpalartAllmarasHelper() = delete;
+
     virtual ~SpalartAllmarasHelper() = default;
 
     void init_variables( libMesh::FEMSystem* system );
@@ -57,9 +59,6 @@ namespace GRINS
     const VelocityVariable& _flow_vars;
     const PressureFEVariable& _press_var;
 
-  private:
-
-    SpalartAllmarasHelper();
 
   };
 

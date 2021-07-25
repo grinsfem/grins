@@ -42,6 +42,8 @@ namespace GRINS
 
     SteadyMeshAdaptiveSolver( const GetPot& input );
 
+    SteadyMeshAdaptiveSolver() = delete;
+
     virtual ~SteadyMeshAdaptiveSolver();
 
     virtual void solve(  SolverContext& context ) override;

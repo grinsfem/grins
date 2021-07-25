@@ -50,6 +50,8 @@ namespace GRINS
     ( const std::string& physics_name,
       const GetPot& input );
 
+    BoussinesqBuoyancySPGSMStabilization() = delete;
+
     virtual ~BoussinesqBuoyancySPGSMStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
@@ -77,10 +79,6 @@ namespace GRINS
 
     //! Viscosity object
     Viscosity _mu;
-
-  private:
-
-    BoussinesqBuoyancySPGSMStabilization();
 
   };
 

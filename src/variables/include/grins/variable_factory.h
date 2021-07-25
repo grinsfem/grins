@@ -47,6 +47,8 @@ namespace GRINS
       : FactoryWithGetPot<FEVariablesBase>(name)
     {}
 
+    VariableFactoryAbstract() = delete;
+
     virtual ~VariableFactoryAbstract() = default;
 
     virtual std::unique_ptr<FEVariablesBase> create() override;
@@ -131,10 +133,6 @@ namespace GRINS
     //! Subdomain ids for the variable
     static const std::set<libMesh::subdomain_id_type>* _subdomain_ids;
 
-  private:
-
-    VariableFactoryAbstract();
-
   };
 
   //! Common implementations
@@ -145,6 +143,8 @@ namespace GRINS
     VariableFactoryBase( const std::string& name )
       : VariableFactoryAbstract(name)
     {}
+
+    VariableFactoryBase() = delete;
 
     virtual ~VariableFactoryBase() = default;
 
@@ -171,6 +171,8 @@ namespace GRINS
     VariableFactoryBasic( const std::string& name )
       : VariableFactoryBase(name)
     {}
+
+    VariableFactoryBasic() = delete;
 
     virtual ~VariableFactoryBasic() = default;
 
@@ -202,6 +204,8 @@ namespace GRINS
       : VariableFactoryBasic<VariableType>(name)
     {}
 
+    ScalarVariableFactory() = delete;
+
     virtual ~ScalarVariableFactory() = default;
 
   protected:
@@ -227,6 +231,8 @@ namespace GRINS
     SpeciesVariableFactory( const std::string& name )
       : VariableFactoryBase(name)
     {}
+
+    SpeciesVariableFactory() = delete;
 
     virtual ~SpeciesVariableFactory() = default;
 

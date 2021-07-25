@@ -37,15 +37,14 @@ namespace GRINS
       : SolverFactoryAbstract(bc_type_name)
     {}
 
+    SolverFactoryBasic() = delete;
+
     virtual ~SolverFactoryBasic() = default;
 
   protected:
 
     virtual std::unique_ptr<Solver> build_solver( const GetPot & input ) override;
 
-  private:
-
-    SolverFactoryBasic();
   };
 
   template<typename DerivedSolver>

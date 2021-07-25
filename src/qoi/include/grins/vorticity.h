@@ -50,6 +50,8 @@ namespace GRINS
       with this QoI */
     Vorticity( const std::string& qoi_name );
 
+    Vorticity() = delete;
+
     virtual ~Vorticity();
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
@@ -87,10 +89,6 @@ namespace GRINS
 
     //! List of sumdomain ids for which we want to compute this QoI
     std::set<libMesh::subdomain_id_type> _subdomain_ids;
-
-  private:
-    //! User never call default constructor.
-    Vorticity();
 
   };
 

@@ -47,6 +47,8 @@ namespace GRINS
                       const std::string& core_physics_name,
                       const GetPot& input );
 
+    HeatTransferBase() = delete;
+
     virtual ~HeatTransferBase() = default;
 
     //! Sets velocity variables to be time-evolving
@@ -81,8 +83,6 @@ namespace GRINS
     //! Conductivity
     Conductivity _k;
 
-  private:
-    HeatTransferBase();
   };
 
 } //End namespace block

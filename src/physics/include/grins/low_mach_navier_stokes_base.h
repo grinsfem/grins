@@ -53,6 +53,8 @@ namespace GRINS
 
     LowMachNavierStokesBase(const PhysicsName& physics_name, const std::string& core_physics_name, const GetPot& input);
 
+    LowMachNavierStokesBase() = delete;
+
     virtual ~LowMachNavierStokesBase() = default;
 
     //! Sets velocity variables to be time-evolving
@@ -113,8 +115,6 @@ namespace GRINS
     bool _enable_thermo_press_calc;
 
   private:
-
-    LowMachNavierStokesBase();
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

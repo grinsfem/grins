@@ -39,6 +39,9 @@ namespace GRINS
   public:
 
     HeatTransferAdjointStabilization( const PhysicsName& physics_name, const GetPot& input );
+
+    HeatTransferAdjointStabilization() = delete;
+
     virtual ~HeatTransferAdjointStabilization();
 
     virtual void element_time_derivative( bool compute_jacobian,
@@ -46,9 +49,6 @@ namespace GRINS
 
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext & context ) override;
-
-  private:
-    HeatTransferAdjointStabilization();
 
   }; // End HeatTransferAdjointStabilization class declarations
 

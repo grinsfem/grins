@@ -60,6 +60,8 @@ namespace GRINS
 
     AxisymmetricBoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
+    AxisymmetricBoussinesqBuoyancy() = delete;
+
     virtual ~AxisymmetricBoussinesqBuoyancy() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
@@ -91,8 +93,6 @@ namespace GRINS
     libMesh::Point _g;
 
   private:
-
-    AxisymmetricBoussinesqBuoyancy();
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

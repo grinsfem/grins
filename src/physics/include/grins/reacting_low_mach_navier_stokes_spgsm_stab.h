@@ -37,6 +37,9 @@ namespace GRINS
 
     ReactingLowMachNavierStokesSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input,
                                                    std::unique_ptr<Mixture> & gas_mix);
+
+    ReactingLowMachNavierStokesSPGSMStabilization() = delete;
+
     virtual ~ReactingLowMachNavierStokesSPGSMStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
@@ -44,10 +47,6 @@ namespace GRINS
 
     virtual void mass_residual( bool compute_jacobian,
                                 AssemblyContext & context ) override;
-
-  private:
-
-    ReactingLowMachNavierStokesSPGSMStabilization();
 
   };
 } // end namespace GRINS

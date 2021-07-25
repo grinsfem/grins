@@ -49,6 +49,8 @@ namespace GRINS
 
     AveragedTurbineBase( const std::string& physics_name, const GetPot& input );
 
+    AveragedTurbineBase() = delete;
+
     virtual ~AveragedTurbineBase() = default;
 
     //! Sets turbine_speed and velocity variables to be time-evolving
@@ -133,7 +135,6 @@ namespace GRINS
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
 
-    AveragedTurbineBase();
   };
 
 } // end namespace block

@@ -44,6 +44,8 @@ namespace GRINS
 
     LowMachNavierStokes(const PhysicsName& physics_name, const GetPot& input);
 
+    LowMachNavierStokes() = delete;
+
     virtual ~LowMachNavierStokes() = default;
 
     virtual void auxiliary_init( MultiphysicsSystem& system ) override;
@@ -118,10 +120,6 @@ namespace GRINS
 
     void assemble_thermo_press_mass_residual( bool compute_jacobian,
                                               AssemblyContext & context );
-
-  private:
-
-    LowMachNavierStokes();
 
   };
 

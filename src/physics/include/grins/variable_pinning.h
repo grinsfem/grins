@@ -37,6 +37,9 @@ namespace GRINS
   public:
 
     VariablePinning( const PhysicsName& physics_name, const GetPot& input );
+
+    VariablePinning() = delete;
+
     virtual ~VariablePinning() = default;
 
     //! Initialize context for added physics variables
@@ -63,10 +66,6 @@ namespace GRINS
     libMesh::Real _penalty;
 
     bool _pin_variable;
-
-  private:
-
-    VariablePinning();
 
   };
 

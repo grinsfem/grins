@@ -45,6 +45,8 @@ namespace GRINS
 
     ReactingLowMachNavierStokesAbstract(const PhysicsName& physics_name, const GetPot& input);
 
+    ReactingLowMachNavierStokesAbstract() = delete;
+
     virtual ~ReactingLowMachNavierStokesAbstract() = default;
 
     //! Sets velocity variables to be time-evolving
@@ -98,8 +100,6 @@ namespace GRINS
     libMesh::Real _fixed_rho_value;
 
   private:
-
-    ReactingLowMachNavierStokesAbstract();
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

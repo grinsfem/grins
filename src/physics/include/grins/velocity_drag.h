@@ -55,6 +55,8 @@ namespace GRINS
 
     VelocityDrag( const std::string& physics_name, const GetPot& input );
 
+    VelocityDrag() = delete;
+
     virtual ~VelocityDrag() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
@@ -66,9 +68,6 @@ namespace GRINS
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context )  override;
 
-  private:
-
-    VelocityDrag();
   };
 
 } // end namespace block

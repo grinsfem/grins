@@ -51,6 +51,8 @@ namespace GRINS
 
     BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
+    BoussinesqBuoyancy() = delete;
+
     virtual ~BoussinesqBuoyancy();
 
     //! Source term contribution for BoussinesqBuoyancy
@@ -59,10 +61,6 @@ namespace GRINS
     */
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context ) override;
-
-  private:
-
-    BoussinesqBuoyancy();
 
   };
 

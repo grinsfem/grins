@@ -53,6 +53,8 @@ namespace GRINS
 
     ParsedVelocitySource( const std::string& physics_name, const GetPot& input );
 
+    ParsedVelocitySource() = delete;
+
     virtual ~ParsedVelocitySource();
 
     virtual void init_context( AssemblyContext& context ) override;
@@ -84,7 +86,6 @@ namespace GRINS
     //! Index from registering this quantity
     unsigned int _parsed_velocity_source_z_index;
 
-    ParsedVelocitySource();
   };
 
 } // end namespace block

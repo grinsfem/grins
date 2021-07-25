@@ -37,6 +37,8 @@ namespace GRINS
     //! Laser intensity profile that is constant across the beam width
     ConstantLaserIntensityProfile(libMesh::Real I0);
 
+    ConstantLaserIntensityProfile() = delete;
+
     virtual void init(const std::vector<libMesh::Point> & quadrature_xyz,
                       const libMesh::Point & laser_centerline) override;
 

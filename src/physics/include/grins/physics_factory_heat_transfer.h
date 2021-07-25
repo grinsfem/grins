@@ -42,6 +42,8 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
+    PhysicsFactoryHeatTransfer() = delete;
+
     virtual ~PhysicsFactoryHeatTransfer() = default;
 
   protected:

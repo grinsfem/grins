@@ -53,8 +53,9 @@ namespace GRINS
 
     AveragedFan( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedFan();
+    AveragedFan() = delete;
 
+    ~AveragedFan();
 
     //! Register postprocessing variables for visualization output
     virtual void register_postprocessing_vars( const GetPot& input,
@@ -86,9 +87,6 @@ namespace GRINS
 
     //! Index from registering this postprocessed quantity
     unsigned int _base_velocity_z_index;
-
-    AveragedFan();
-
 
   };
 
