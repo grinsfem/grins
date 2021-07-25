@@ -48,13 +48,6 @@ namespace GRINS
   {}
 
   template<class Mu>
-  AveragedFan<Mu>::~AveragedFan()
-  {
-    return;
-  }
-
-
-  template<class Mu>
   void AveragedFan<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.u())->get_xyz();

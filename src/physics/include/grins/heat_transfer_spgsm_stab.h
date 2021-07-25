@@ -42,7 +42,7 @@ namespace GRINS
 
     HeatTransferSPGSMStabilization() = delete;
 
-    virtual ~HeatTransferSPGSMStabilization();
+    virtual ~HeatTransferSPGSMStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context ) override;

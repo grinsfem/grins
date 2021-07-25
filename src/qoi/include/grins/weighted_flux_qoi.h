@@ -49,7 +49,7 @@ namespace GRINS
 
     WeightedFluxQoI() = delete;
 
-    virtual ~WeightedFluxQoI();
+    virtual ~WeightedFluxQoI() = default;
 
     virtual QoIBase* clone() const override;
 

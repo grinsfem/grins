@@ -46,11 +46,6 @@ namespace GRINS
     return;
   }
 
-  SteadySolver::~SteadySolver()
-  {
-    return;
-  }
-
   void SteadySolver::init_time_solver(MultiphysicsSystem* system)
   {
     libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );

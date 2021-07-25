@@ -37,7 +37,8 @@ namespace GRINS
   public:
 
     GasMixture( const GetPot& input );
-    ~GasMixture();
+
+    ~GasMixture() = default;
 
     const Chemistry& get_chemistry() const;
 

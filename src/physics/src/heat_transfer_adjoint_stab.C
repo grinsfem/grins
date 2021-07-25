@@ -43,12 +43,6 @@ namespace GRINS
   }
 
   template<class K>
-  HeatTransferAdjointStabilization<K>::~HeatTransferAdjointStabilization()
-  {
-    return;
-  }
-
-  template<class K>
   void HeatTransferAdjointStabilization<K>::element_time_derivative
   ( bool compute_jacobian,
     AssemblyContext & context )

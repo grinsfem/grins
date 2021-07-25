@@ -104,10 +104,4 @@ namespace GRINS
         libmesh_error_msg("ERROR: Could not find consistent Mooney-Rivlin input!");
       }
   }
-
-  MooneyRivlin::~MooneyRivlin()
-  {
-    return;
-  }
-
 } // end namespace GRINS

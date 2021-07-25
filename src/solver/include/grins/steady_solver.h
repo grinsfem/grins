@@ -39,7 +39,7 @@ namespace GRINS
 
     SteadySolver() = delete;
 
-    virtual ~SteadySolver();
+    virtual ~SteadySolver() = default;
 
     virtual void solve( SolverContext& context ) override;
 

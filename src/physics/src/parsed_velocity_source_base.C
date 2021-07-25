@@ -45,12 +45,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  ParsedVelocitySourceBase<Mu>::~ParsedVelocitySourceBase()
-  {
-    return;
-  }
-
-  template<class Mu>
   void ParsedVelocitySourceBase<Mu>::set_time_evolving_vars ( libMesh::FEMSystem* system)
   {
     std::string base_physics_name = "ParsedVelocitySource";

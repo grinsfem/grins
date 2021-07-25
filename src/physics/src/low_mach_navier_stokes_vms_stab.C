@@ -47,12 +47,6 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesVMSStabilization<Mu,SH,TC>::~LowMachNavierStokesVMSStabilization()
-  {
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
   void LowMachNavierStokesVMSStabilization<Mu,SH,TC>::element_time_derivative
   ( bool compute_jacobian,
     AssemblyContext & context )

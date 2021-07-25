@@ -46,7 +46,8 @@ namespace GRINS
   {
   public:
     Hyperelasticity( const GetPot& input );
-    virtual ~Hyperelasticity();
+
+    virtual ~Hyperelasticity() = default;
 
     // So we can make implementation private
     friend class StressStrainLaw<Hyperelasticity<StrainEnergy> >;

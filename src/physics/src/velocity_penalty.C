@@ -49,12 +49,6 @@ namespace GRINS
   {}
 
   template<class Mu>
-  VelocityPenalty<Mu>::~VelocityPenalty()
-  {
-    return;
-  }
-
-  template<class Mu>
   void VelocityPenalty<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.u())->get_xyz();

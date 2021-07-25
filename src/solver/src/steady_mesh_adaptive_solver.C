@@ -47,11 +47,6 @@ namespace GRINS
       MeshAdaptiveSolverBase( input )
   {}
 
-  SteadyMeshAdaptiveSolver::~SteadyMeshAdaptiveSolver()
-  {
-    return;
-  }
-
   void SteadyMeshAdaptiveSolver::init_time_solver( MultiphysicsSystem* system )
   {
     libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );

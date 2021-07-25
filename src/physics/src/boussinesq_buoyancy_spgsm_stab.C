@@ -58,12 +58,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  BoussinesqBuoyancySPGSMStabilization<Mu>::~BoussinesqBuoyancySPGSMStabilization()
-  {
-    return;
-  }
-
-  template<class Mu>
   void BoussinesqBuoyancySPGSMStabilization<Mu>::element_time_derivative
   ( bool compute_jacobian, AssemblyContext & context )
   {

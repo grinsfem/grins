@@ -55,7 +55,7 @@ namespace GRINS
 
     VelocityPenalty() = delete;
 
-    virtual ~VelocityPenalty();
+    virtual ~VelocityPenalty() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
 

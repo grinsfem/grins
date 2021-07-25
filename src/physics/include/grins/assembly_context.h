@@ -42,7 +42,7 @@ namespace GRINS
   public:
 
     AssemblyContext( const libMesh::System& system );
-    ~AssemblyContext();
+    virtual ~AssemblyContext() = default;
 
     CachedValues & get_cached_values()
     { return _cached_values; }

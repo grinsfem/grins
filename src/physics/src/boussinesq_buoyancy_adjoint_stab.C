@@ -48,12 +48,6 @@ namespace GRINS
   {}
 
   template<class Mu>
-  BoussinesqBuoyancyAdjointStabilization<Mu>::~BoussinesqBuoyancyAdjointStabilization()
-  {
-    return;
-  }
-
-  template<class Mu>
   void BoussinesqBuoyancyAdjointStabilization<Mu>::init_context( AssemblyContext & context )
   {
     context.get_element_fe(this->_press_var.p())->get_dphi();

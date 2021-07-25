@@ -55,7 +55,7 @@ namespace GRINS
 
     SourceTermBase() = delete;
 
-    virtual ~SourceTermBase();
+    virtual ~SourceTermBase() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system ) override;
 

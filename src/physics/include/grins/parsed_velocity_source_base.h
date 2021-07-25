@@ -50,7 +50,7 @@ namespace GRINS
 
     ParsedVelocitySourceBase() = delete;
 
-    virtual ~ParsedVelocitySourceBase();
+    virtual ~ParsedVelocitySourceBase() = default;
 
     virtual void set_time_evolving_vars (libMesh::FEMSystem* system) override;
 

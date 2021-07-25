@@ -51,7 +51,7 @@ namespace GRINS
 
     VelocityDragAdjointStabilization() = delete;
 
-    virtual ~VelocityDragAdjointStabilization();
+    virtual ~VelocityDragAdjointStabilization() = default;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual

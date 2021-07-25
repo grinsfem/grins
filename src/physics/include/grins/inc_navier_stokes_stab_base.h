@@ -42,7 +42,7 @@ namespace GRINS
 
     IncompressibleNavierStokesStabilizationBase() = delete;
 
-    virtual ~IncompressibleNavierStokesStabilizationBase();
+    virtual ~IncompressibleNavierStokesStabilizationBase() = default;
 
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context ) override;

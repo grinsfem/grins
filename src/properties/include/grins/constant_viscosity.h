@@ -52,7 +52,8 @@ namespace GRINS
 
     //! Deprecated constructor
     ConstantViscosity( const GetPot& input );
-    virtual ~ConstantViscosity();
+
+    virtual ~ConstantViscosity() = default;
 
     libMesh::Real operator()() const;
 

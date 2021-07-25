@@ -44,7 +44,7 @@ namespace GRINS
 
     SteadyMeshAdaptiveSolver() = delete;
 
-    virtual ~SteadyMeshAdaptiveSolver();
+    virtual ~SteadyMeshAdaptiveSolver() = default;
 
     virtual void solve(  SolverContext& context ) override;
 

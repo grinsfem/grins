@@ -67,7 +67,8 @@ namespace GRINS
   public:
 
     CanteraMixture( const GetPot& input, const std::string& material );
-    ~CanteraMixture();
+
+    ~CanteraMixture() = default;
 
     Cantera::IdealGasMix& get_chemistry();
     const Cantera::IdealGasMix& get_chemistry() const;

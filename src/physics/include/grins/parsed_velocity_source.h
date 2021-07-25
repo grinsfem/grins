@@ -55,7 +55,7 @@ namespace GRINS
 
     ParsedVelocitySource() = delete;
 
-    virtual ~ParsedVelocitySource();
+    virtual ~ParsedVelocitySource() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
 

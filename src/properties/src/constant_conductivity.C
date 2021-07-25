@@ -86,10 +86,4 @@ namespace GRINS
       }
 
   }
-
-  ConstantConductivity::~ConstantConductivity()
-  {
-    return;
-  }
-
 } // end namespace GRINS

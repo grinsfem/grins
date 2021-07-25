@@ -63,10 +63,6 @@ namespace GRINS
     else
       this->set_parameter
         (_tau_factor, input, "Stabilization/tau_factor", _tau_factor );
-
-  IncompressibleNavierStokesStabilizationHelper::~IncompressibleNavierStokesStabilizationHelper()
-  {
-    return;
   }
 
   libMesh::RealGradient IncompressibleNavierStokesStabilizationHelper::UdotGradU( libMesh::Gradient& U,

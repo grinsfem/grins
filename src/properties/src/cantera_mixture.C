@@ -65,11 +65,6 @@ namespace GRINS
       }
   }
 
-  CanteraMixture::~CanteraMixture()
-  {
-    return;
-  }
-
   std::string CanteraMixture::parse_chem_file( const GetPot& input, const std::string& material )
   {
     std::string filename;

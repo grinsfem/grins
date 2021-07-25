@@ -42,9 +42,9 @@ namespace GRINS
   {
   public:
 
-    QoIFactory();
+    QoIFactory() = default;
 
-    virtual ~QoIFactory();
+    virtual ~QoIFactory() = default;
 
     virtual std::shared_ptr<CompositeQoI> build(const GetPot& input);
 

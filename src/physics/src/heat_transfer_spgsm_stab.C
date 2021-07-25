@@ -43,12 +43,6 @@ namespace GRINS
   }
 
   template<class K>
-  HeatTransferSPGSMStabilization<K>::~HeatTransferSPGSMStabilization()
-  {
-    return;
-  }
-
-  template<class K>
   void HeatTransferSPGSMStabilization<K>::element_time_derivative
   ( bool compute_jacobian, AssemblyContext & context )
   {

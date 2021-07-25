@@ -41,7 +41,8 @@ namespace GRINS
   public:
 
     ConstantSourceFunction( const GetPot& input );
-    ~ConstantSourceFunction();
+
+    ~ConstantSourceFunction() = default;
 
     inline
     libMesh::Real operator()( const libMesh::Point& ) const

@@ -51,7 +51,7 @@ namespace GRINS
 
     AveragedTurbineAdjointStabilization() = delete;
 
-    virtual ~AveragedTurbineAdjointStabilization();
+    virtual ~AveragedTurbineAdjointStabilization() = default;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual

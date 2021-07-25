@@ -50,7 +50,7 @@ namespace GRINS
     //! Deprecated constructor
     ParsedViscosity( const GetPot& input );
 
-    virtual ~ParsedViscosity();
+    virtual ~ParsedViscosity() = default;
 
 
   private:

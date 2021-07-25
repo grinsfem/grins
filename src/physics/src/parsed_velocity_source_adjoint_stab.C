@@ -46,12 +46,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  ParsedVelocitySourceAdjointStabilization<Mu>::~ParsedVelocitySourceAdjointStabilization()
-  {
-    return;
-  }
-
-  template<class Mu>
   void ParsedVelocitySourceAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_press_var.p())->get_dphi();

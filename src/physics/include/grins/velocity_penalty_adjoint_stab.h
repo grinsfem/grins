@@ -47,7 +47,7 @@ namespace GRINS
 
     VelocityPenaltyAdjointStabilization() = delete;
 
-    virtual ~VelocityPenaltyAdjointStabilization();
+    virtual ~VelocityPenaltyAdjointStabilization() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
 

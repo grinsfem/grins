@@ -48,7 +48,8 @@ namespace GRINS
 
     //! Deprecated constructor
     ConstantConductivity( const GetPot& input );
-    ~ConstantConductivity();
+
+    ~ConstantConductivity() = default;
 
     libMesh::Real operator()() const;
 

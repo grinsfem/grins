@@ -87,10 +87,4 @@ namespace GRINS
         libmesh_error_msg("ERROR: Could not find valid input for ConstantSpecificHeat! Please set Materials/"+material+"/SpecificHeat/value");
       }
   }
-
-  ConstantSpecificHeat::~ConstantSpecificHeat()
-  {
-    return;
-  }
-
 } // namespace GRINS

@@ -50,7 +50,7 @@ namespace GRINS
 
     AveragedFanAdjointStabilization() = delete;
 
-    virtual ~AveragedFanAdjointStabilization();
+    virtual ~AveragedFanAdjointStabilization() = default;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual

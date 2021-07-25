@@ -47,7 +47,8 @@ namespace GRINS
 
     //! Deprecated constructor
     ConstantSpecificHeat( const GetPot& input );
-    virtual ~ConstantSpecificHeat();
+
+    virtual ~ConstantSpecificHeat() = default;
 
     libMesh::Real operator()() const;
 

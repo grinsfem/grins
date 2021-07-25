@@ -75,7 +75,7 @@ namespace GRINS
 
     DiffSolverFactoryBasic() = delete;
 
-    virtual ~DiffSolverFactoryBasic(){}
+    virtual ~DiffSolverFactoryBasic() = default;
 
   protected:
 

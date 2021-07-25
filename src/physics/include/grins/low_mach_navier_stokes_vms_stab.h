@@ -42,7 +42,7 @@ namespace GRINS
 
     LowMachNavierStokesVMSStabilization() = delete;
 
-    virtual ~LowMachNavierStokesVMSStabilization();
+    virtual ~LowMachNavierStokesVMSStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context ) override;

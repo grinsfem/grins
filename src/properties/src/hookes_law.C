@@ -135,11 +135,6 @@ namespace GRINS
       }
   }
 
-  HookesLaw::~HookesLaw()
-  {
-    return;
-  }
-
   void HookesLaw::read_input_options(const GetPot& input)
   {
     // We'd better have either Lam\'{e} constants or E and nu

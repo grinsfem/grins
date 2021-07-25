@@ -57,16 +57,6 @@
 
 namespace GRINS
 {
-  QoIFactory::QoIFactory()
-  {
-    return;
-  }
-
-  QoIFactory::~QoIFactory()
-  {
-    return;
-  }
-
   std::shared_ptr<CompositeQoI> QoIFactory::build(const GetPot& input)
   {
     std::string qoi_list = input("QoI/enabled_qois", "none" );

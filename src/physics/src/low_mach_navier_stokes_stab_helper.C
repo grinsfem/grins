@@ -36,10 +36,4 @@ namespace GRINS
   {
     return;
   }
-
-  LowMachNavierStokesStabilizationHelper::~LowMachNavierStokesStabilizationHelper()
-  {
-    return;
-  }
-
 } // namespace GRINS

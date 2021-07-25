@@ -53,7 +53,7 @@ namespace GRINS
 
     BoussinesqBuoyancy() = delete;
 
-    virtual ~BoussinesqBuoyancy();
+    virtual ~BoussinesqBuoyancy() = default;
 
     //! Source term contribution for BoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to

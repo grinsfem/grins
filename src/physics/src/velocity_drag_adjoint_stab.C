@@ -44,12 +44,6 @@ namespace GRINS
   {}
 
   template<class Mu>
-  VelocityDragAdjointStabilization<Mu>::~VelocityDragAdjointStabilization()
-  {
-    return;
-  }
-
-  template<class Mu>
   void VelocityDragAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_press_var.p())->get_dphi();

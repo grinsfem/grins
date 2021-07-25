@@ -46,12 +46,6 @@ namespace GRINS
   {}
 
   template<class Mu>
-  ParsedVelocitySource<Mu>::~ParsedVelocitySource()
-  {
-    return;
-  }
-
-  template<class Mu>
   void ParsedVelocitySource<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.u())->get_xyz();

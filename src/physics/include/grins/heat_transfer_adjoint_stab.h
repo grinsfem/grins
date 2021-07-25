@@ -42,7 +42,7 @@ namespace GRINS
 
     HeatTransferAdjointStabilization() = delete;
 
-    virtual ~HeatTransferAdjointStabilization();
+    virtual ~HeatTransferAdjointStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext& context ) override;

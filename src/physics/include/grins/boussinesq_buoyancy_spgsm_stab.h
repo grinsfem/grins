@@ -52,7 +52,7 @@ namespace GRINS
 
     BoussinesqBuoyancySPGSMStabilization() = delete;
 
-    virtual ~BoussinesqBuoyancySPGSMStabilization();
+    virtual ~BoussinesqBuoyancySPGSMStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
                                           AssemblyContext & context ) override;

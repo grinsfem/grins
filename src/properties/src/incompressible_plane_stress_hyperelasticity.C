@@ -45,12 +45,6 @@ namespace GRINS
   {}
 
   template <typename StrainEnergy>
-  IncompressiblePlaneStressHyperelasticity<StrainEnergy>::~IncompressiblePlaneStressHyperelasticity()
-  {
-    return;
-  }
-
-  template <typename StrainEnergy>
   void IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_stress_imp( unsigned int /*dim*/,
                                                                                    const libMesh::TensorValue<libMesh::Real>& a_contra,
                                                                                    const libMesh::TensorValue<libMesh::Real>& a_cov,

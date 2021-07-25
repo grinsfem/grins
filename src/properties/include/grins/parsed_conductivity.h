@@ -46,7 +46,8 @@ namespace GRINS
 
     //! Deprecated constructor
     ParsedConductivity( const GetPot& input );
-    ~ParsedConductivity();
+
+    ~ParsedConductivity() = default;
 
   private:
 

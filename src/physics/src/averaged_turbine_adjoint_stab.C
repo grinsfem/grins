@@ -44,12 +44,6 @@ namespace GRINS
   {}
 
   template<class Mu>
-  AveragedTurbineAdjointStabilization<Mu>::~AveragedTurbineAdjointStabilization()
-  {
-    return;
-  }
-
-  template<class Mu>
   void AveragedTurbineAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_press_var.p())->get_dphi();

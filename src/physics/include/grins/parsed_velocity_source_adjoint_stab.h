@@ -47,7 +47,7 @@ namespace GRINS
 
     ParsedVelocitySourceAdjointStabilization() = delete;
 
-    virtual ~ParsedVelocitySourceAdjointStabilization();
+    virtual ~ParsedVelocitySourceAdjointStabilization() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
 

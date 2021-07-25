@@ -42,7 +42,7 @@ namespace GRINS
   {
   public:
     StabilizationHelper( const std::string & helper_name );
-    ~StabilizationHelper();
+    virtual ~StabilizationHelper() = default;
 
     /*! \todo Should we inline this? */
     libMesh::RealGradient compute_g( libMesh::FEBase* fe,

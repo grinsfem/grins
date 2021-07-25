@@ -44,11 +44,6 @@ namespace GRINS
     return;
   }
 
-  BoussinesqBuoyancy::~BoussinesqBuoyancy()
-  {
-    return;
-  }
-
   void BoussinesqBuoyancy::element_time_derivative
   ( bool compute_jacobian,
     AssemblyContext & context )

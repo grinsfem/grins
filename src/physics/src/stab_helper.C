@@ -39,11 +39,6 @@ namespace GRINS
     return;
   }
 
-  StabilizationHelper::~StabilizationHelper()
-  {
-    return;
-  }
-
   libMesh::RealGradient StabilizationHelper::compute_g( libMesh::FEBase* fe,
                                                         AssemblyContext& c,
                                                         unsigned int qp ) const

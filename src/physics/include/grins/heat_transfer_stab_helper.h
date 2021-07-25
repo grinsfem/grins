@@ -46,7 +46,7 @@ namespace GRINS
     HeatTransferStabilizationHelper( const std::string & helper_name,
                                      const GetPot& input );
 
-    ~HeatTransferStabilizationHelper();
+    virtual ~HeatTransferStabilizationHelper() = default;
 
     libMesh::Real compute_res_energy_steady( AssemblyContext& context,
                                              unsigned int qp,

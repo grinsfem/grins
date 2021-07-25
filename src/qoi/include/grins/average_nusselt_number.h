@@ -42,7 +42,7 @@ namespace GRINS
 
     AverageNusseltNumber() = delete;
 
-    virtual ~AverageNusseltNumber();
+    virtual ~AverageNusseltNumber() = default;
 
     virtual QoIBase* clone() const override;
 

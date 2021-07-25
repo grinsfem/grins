@@ -47,7 +47,7 @@ namespace GRINS
 
     BoussinesqBuoyancyAdjointStabilization() = delete;
 
-    virtual ~BoussinesqBuoyancyAdjointStabilization();
+    virtual ~BoussinesqBuoyancyAdjointStabilization() = default;
 
     virtual void init_context( AssemblyContext & context ) override;
 

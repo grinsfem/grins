@@ -43,12 +43,6 @@ namespace GRINS
   {}
 
   template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::~IncompressibleNavierStokesStabilizationBase()
-  {
-    return;
-  }
-
-  template<class Mu>
   void IncompressibleNavierStokesStabilizationBase<Mu>::init_context( AssemblyContext& context )
   {
     // First call base class

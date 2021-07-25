@@ -55,7 +55,7 @@ namespace GRINS
 
     AveragedFan() = delete;
 
-    ~AveragedFan();
+    virtual ~AveragedFan() = default;
 
     //! Register postprocessing variables for visualization output
     virtual void register_postprocessing_vars( const GetPot& input,

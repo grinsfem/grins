@@ -47,12 +47,6 @@ namespace GRINS
   }
 
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesBraackStabilization<Mu,SH,TC>::~LowMachNavierStokesBraackStabilization()
-  {
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
   void LowMachNavierStokesBraackStabilization<Mu,SH,TC>::element_time_derivative
   ( bool compute_jacobian,
     AssemblyContext & context )

@@ -47,11 +47,6 @@ namespace GRINS
     return;
   }
 
-  AverageNusseltNumber::~AverageNusseltNumber()
-  {
-    return;
-  }
-
   QoIBase* AverageNusseltNumber::clone() const
   {
     AverageNusseltNumber *returnval = new AverageNusseltNumber( *this );

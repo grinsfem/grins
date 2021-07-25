@@ -27,16 +27,6 @@
 
 namespace GRINS
 {
-  CachedValues::CachedValues()
-  {
-    return;
-  }
-
-  CachedValues::~CachedValues()
-  {
-    return;
-  }
-
   void CachedValues::add_quantity( unsigned int quantity )
   {
     _cache_list.insert(quantity);

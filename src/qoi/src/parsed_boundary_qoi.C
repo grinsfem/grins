@@ -58,8 +58,6 @@ namespace GRINS
     this->_bc_ids = original._bc_ids;
   }
 
-  ParsedBoundaryQoI::~ParsedBoundaryQoI() {}
-
   QoIBase* ParsedBoundaryQoI::clone() const
   {
     return new ParsedBoundaryQoI( *this );

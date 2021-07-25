@@ -36,10 +36,6 @@ namespace GRINS
     : Physics(physics_name,input)
   {
     this->parse_var_info(input);
-
-  SourceTermBase::~SourceTermBase()
-  {
-    return;
   }
 
   void SourceTermBase::parse_var_info( const GetPot& input )

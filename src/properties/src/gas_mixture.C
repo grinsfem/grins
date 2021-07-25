@@ -37,10 +37,4 @@ namespace GRINS
       _transport( input, _chemistry, _thermo ),
       _kinetics( input, _chemistry, _thermo )
   {}
-
-  GasMixture::~GasMixture()
-  {
-    return;
-  }
-
 } // end namespace GRINS
