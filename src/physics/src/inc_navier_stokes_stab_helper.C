@@ -64,9 +64,6 @@ namespace GRINS
       this->set_parameter
         (_tau_factor, input, "Stabilization/tau_factor", _tau_factor );
 
-    return;
-  }
-
   IncompressibleNavierStokesStabilizationHelper::~IncompressibleNavierStokesStabilizationHelper()
   {
     return;

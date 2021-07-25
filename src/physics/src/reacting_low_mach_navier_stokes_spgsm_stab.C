@@ -324,7 +324,5 @@ namespace GRINS
         if(compute_jacobian)
           libmesh_not_implemented();
       }
-
-    return;
   }
 } // end namespace GRINS

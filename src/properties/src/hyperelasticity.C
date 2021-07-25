@@ -34,9 +34,7 @@ namespace GRINS
   template <typename StrainEnergy>
   Hyperelasticity<StrainEnergy>::Hyperelasticity( const GetPot& input )
     : _W(input)
-  {
-    return;
-  }
+  {}
 
   template <typename StrainEnergy>
   Hyperelasticity<StrainEnergy>::~Hyperelasticity()
@@ -90,8 +88,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template <typename StrainEnergy>
@@ -104,7 +100,6 @@ namespace GRINS
                                                                          ElasticityTensor& C )
   {
     libmesh_not_implemented();
-    return;
   }
 
   template <typename StrainEnergy>

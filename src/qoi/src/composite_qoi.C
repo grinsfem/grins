@@ -40,8 +40,6 @@ namespace GRINS
     // We initialize these to false and then reset as needed by each QoI
     assemble_qoi_sides = false;
     assemble_qoi_elements = false;
-
-    return;
   }
 
   CompositeQoI::~CompositeQoI()
@@ -51,8 +49,6 @@ namespace GRINS
       {
         delete (*qoi);
       }
-
-    return;
   }
 
   std::unique_ptr<libMesh::DifferentiableQoI> CompositeQoI::clone()
@@ -80,15 +76,11 @@ namespace GRINS
       {
         this->assemble_qoi_sides = true;
       }
-
-    return;
   }
 
   void CompositeQoI::init_qoi( std::vector<libMesh::Number>& sys_qoi )
   {
     sys_qoi.resize(_qois.size(), 0.0);
-
-    return;
   }
 
   void CompositeQoI::init( const GetPot& input, const MultiphysicsSystem& system )
@@ -106,8 +98,6 @@ namespace GRINS
       {
         (*qoi)->init_context(c);
       }
-
-    return;
   }
 
   void CompositeQoI::register_parameter
@@ -135,8 +125,6 @@ namespace GRINS
       {
         (*_qois[q]).element_qoi(c,q);
       }
-
-    return;
   }
 
   void CompositeQoI::element_qoi_derivative( libMesh::DiffContext& context,
@@ -148,8 +136,6 @@ namespace GRINS
       {
         (*_qois[q]).element_qoi_derivative(c,q);
       }
-
-    return;
   }
 
   void CompositeQoI::side_qoi( libMesh::DiffContext& context,
@@ -161,8 +147,6 @@ namespace GRINS
       {
         (*_qois[q]).side_qoi(c,q);
       }
-
-    return;
   }
 
   void CompositeQoI::side_qoi_derivative( libMesh::DiffContext& context,
@@ -174,8 +158,6 @@ namespace GRINS
       {
         (*_qois[q]).side_qoi_derivative(c,q);
       }
-
-    return;
   }
 
   void CompositeQoI::parallel_op( const libMesh::Parallel::Communicator& communicator,
@@ -187,8 +169,6 @@ namespace GRINS
       {
         (*_qois[q]).parallel_op( communicator, sys_qoi[q], local_qoi[q] );
       }
-
-    return;
   }
 
   void CompositeQoI::thread_join( std::vector<libMesh::Number>& qoi,
@@ -199,8 +179,6 @@ namespace GRINS
       {
         (*_qois[q]).thread_join( qoi[q], other_qoi[q] );
       }
-
-    return;
   }
 
   void CompositeQoI::finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index)
@@ -216,8 +194,6 @@ namespace GRINS
       {
         (*qoi)->output_qoi(out);
       }
-
-    return;
   }
 
   libMesh::Number CompositeQoI::get_qoi_value( unsigned int qoi_index ) const

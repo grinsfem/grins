@@ -51,9 +51,7 @@ namespace GRINS
 {
   ICHandlingBase::ICHandlingBase(const std::string& physics_name)
     : _physics_name( physics_name )
-  {
-    return;
-  }
+  {}
 
   void ICHandlingBase::attach_initial_func
   ( const libMesh::FunctionBase<libMesh::Number>& initial_val)
@@ -116,8 +114,6 @@ namespace GRINS
 
         this->init_ic_types( ic_id, ic_id_string, ic_type, ic_vars_in, ic_value_in, input );
       }
-
-    return;
   }
 
   void ICHandlingBase::init_ic_data( const libMesh::FEMSystem& system,
@@ -197,7 +193,6 @@ namespace GRINS
           libmesh_error();
         }
       }
-    return;
   }
 
 } // namespace GRINS

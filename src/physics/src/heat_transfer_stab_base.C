@@ -49,8 +49,6 @@ namespace GRINS
 
     // We also need second derivatives, so initialize those.
     context.get_element_fe(this->_temp_vars.T())->get_d2phi();
-
-    return;
   }
 
 } // namespace GRINS

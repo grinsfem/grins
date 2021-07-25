@@ -124,8 +124,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -229,7 +227,6 @@ namespace GRINS
           }
 
       }
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -291,8 +288,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -348,8 +343,6 @@ namespace GRINS
                        )*JxW[qp];
           }
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -452,7 +445,6 @@ namespace GRINS
           }
 
       }
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -514,8 +506,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
 

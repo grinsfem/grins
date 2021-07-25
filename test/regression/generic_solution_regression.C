@@ -223,6 +223,4 @@ void test_error_norm( libMesh::ExactSolution& exact_sol,
       std::cout << "PASSED!" << std::endl
                 << "==========================================================" << std::endl;
     }
-
-  return;
 }

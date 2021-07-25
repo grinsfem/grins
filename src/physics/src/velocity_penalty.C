@@ -46,9 +46,7 @@ namespace GRINS
     _velocity_penalty_base_x_index(0),
     _velocity_penalty_base_y_index(0),
     _velocity_penalty_base_z_index(0)
-  {
-    return;
-  }
+  {}
 
   template<class Mu>
   VelocityPenalty<Mu>::~VelocityPenalty()
@@ -61,8 +59,6 @@ namespace GRINS
   {
     context.get_element_fe(this->_flow_vars.u())->get_xyz();
     context.get_element_fe(this->_flow_vars.u())->get_phi();
-
-    return;
   }
 
   template<class Mu>
@@ -118,8 +114,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template<class Mu>
@@ -271,8 +265,6 @@ namespace GRINS
 
         value = output_vec(2);
       }
-
-    return;
   }
 
 } // namespace GRINS

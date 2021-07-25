@@ -61,7 +61,6 @@ namespace GRINS
 
     this->set_parameter
       (_C2, input, "Physics/MooneyRivlin/C2", _C2);
-    return;
   }
 
   MooneyRivlin::MooneyRivlin( const GetPot& input, const std::string& material )

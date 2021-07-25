@@ -142,8 +142,6 @@ namespace GRINS
         Kss(0,0) += time_deriv_jacobian *
           context.get_elem_solution_derivative();
       }
-
-    return;
   }
 
 
@@ -187,8 +185,6 @@ namespace GRINS
         Kss(0,0) -= mass_residual_jacobian *
           context.get_elem_solution_rate_derivative();
       }
-
-    return;
   }
 
 
@@ -232,8 +228,6 @@ namespace GRINS
         Kss(0,0) += constraint_jacobian *
           context.get_elem_solution_derivative();
       }
-
-    return;
   }
 
 } // namespace GRINS

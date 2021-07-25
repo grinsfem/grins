@@ -101,7 +101,6 @@ namespace GRINS
               }
           }
       }
-    return;
   }
 
   template<typename StressStrainLaw>

@@ -79,7 +79,6 @@ namespace GRINS
                                              libMesh::TensorValue<libMesh::Real>& stress )
   {
     static_cast<Law*>(this)->compute_stress_imp(dim,g_contra,g_cov,G_contra,G_cov,stress);
-    return;
   }
 
   template <typename Law>
@@ -93,7 +92,6 @@ namespace GRINS
                                                             ElasticityTensor& C )
   {
     static_cast<Law*>(this)->compute_stress_and_elasticity_imp(dim,g_contra,g_cov,G_contra,G_cov,stress,C);
-    return;
   }
 
   template <typename Law>

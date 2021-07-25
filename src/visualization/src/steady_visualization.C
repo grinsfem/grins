@@ -66,8 +66,6 @@ namespace GRINS
     // Now swap back and reupdate
     system->solution->swap( *(system->rhs) );
     equation_system->update();
-
-    return;
   }
 
   void SteadyVisualization::output_residual_sensitivities

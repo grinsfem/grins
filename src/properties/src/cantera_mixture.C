@@ -63,8 +63,6 @@ namespace GRINS
         Cantera::showErrors(std::cerr);
         libmesh_error();
       }
-
-    return;
   }
 
   CanteraMixture::~CanteraMixture()
@@ -148,8 +146,6 @@ namespace GRINS
       {
         mole_fractions[s] = this->X(s, M_mix, mass_fractions[s]);
       }
-
-    return;
   }
 
 }// end namespace GRINS

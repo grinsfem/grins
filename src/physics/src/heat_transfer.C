@@ -76,8 +76,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template<class K>

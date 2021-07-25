@@ -50,8 +50,6 @@ namespace GRINS
     }
 
     this->read_input_options(input);
-
-    return;
   }
 
   HookesLaw::HookesLaw(const GetPot& input, const std::string& material)
@@ -173,8 +171,6 @@ namespace GRINS
         _lambda = nu*E/( (1+nu)*(1-2*nu) );
         _mu = E/(2*(1+nu));
       }
-
-    return;
   }
 
   void HookesLaw::compute_stress_imp( unsigned int dim,
@@ -204,8 +200,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   void HookesLaw::compute_stress_and_elasticity_imp( unsigned int dim,
@@ -219,8 +213,6 @@ namespace GRINS
     this->compute_stress_imp(dim,g_contra,g_cov,G_contra,G_cov,stress);
 
     C = _C;
-
-    return;
   }
 
   libMesh::Real HookesLaw::compute_33_stress_imp( const libMesh::TensorValue<libMesh::Real>& g_contra,

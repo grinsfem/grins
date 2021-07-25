@@ -174,7 +174,6 @@ namespace GRINS {
   {
     // Call the compute function
     this->compute();
-    return;
   }
 
 

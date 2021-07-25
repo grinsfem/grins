@@ -41,9 +41,7 @@ namespace GRINS
       _thermo( CanteraThermodynamics(mixture) ),
       _transport( CanteraTransport(mixture) ),
       _kinetics( CanteraKinetics(mixture) )
-  {
-    return;
-  }
+  {}
 
 } // end namespace GRINS
 

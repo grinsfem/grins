@@ -151,7 +151,6 @@ namespace GRINS
                             std::vector<libMesh::Real>& mole_fractions ) const
   {
     _chem.X(M,mass_fractions,mole_fractions);
-    return;
   }
 
   inline
@@ -181,7 +180,6 @@ namespace GRINS
 				 std::vector<libMesh::Real>& Cp_s)
   {
     _thermo.cp_s(T,P,Y,Cp_s);
-    return;
   }
 
   inline

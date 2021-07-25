@@ -34,9 +34,7 @@ namespace GRINS
                                             const libMesh::Real Ta )
     : _gamma0(gamma0),
       _Ta(Ta)
-  {
-    return;
-  }
+  {}
 
   libMesh::Real ArrheniusCatalycity::operator()( const libMesh::Real T ) const
   {
@@ -64,8 +62,6 @@ namespace GRINS
     _gamma0 = params[0];
 
     _Ta = params[1];
-
-    return;
   }
 
   CatalycityBase* ArrheniusCatalycity::clone() const

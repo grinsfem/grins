@@ -91,24 +91,12 @@ namespace GRINS
   void Physics::set_is_steady( bool is_steady )
   {
     _is_steady = is_steady;
-    return;
   }
 
   bool Physics::is_steady() const
   {
     return _is_steady;
   }
-
-  void Physics::set_time_evolving_vars( libMesh::FEMSystem* /*system*/ )
-  {
-    return;
-  }
-
-  void Physics::auxiliary_init( MultiphysicsSystem& /*system*/ )
-  {
-    return;
-  }
-
 
   void Physics::init_ics( libMesh::FEMSystem* system,
                           libMesh::CompositeFunction<libMesh::Number>& all_ics )
@@ -117,27 +105,6 @@ namespace GRINS
       {
         _ic_handler->init_ic_data( *system, all_ics );
       }
-
-    return;
-  }
-
-  void Physics::init_context( AssemblyContext& /*context*/ )
-  {
-    return;
-  }
-
-  void Physics::register_postprocessing_vars( const GetPot& /*input*/,
-                                              PostProcessedQuantities<libMesh::Real>& /*postprocessing*/ )
-  {
-    return;
-  }
-
-  void Physics::compute_postprocessed_quantity( unsigned int /*quantity_index*/,
-                                                const AssemblyContext& /*context*/,
-                                                const libMesh::Point& /*point*/,
-                                                libMesh::Real& /*value*/ )
-  {
-    return;
   }
 
   std::unique_ptr<libMesh::FEGenericBase<libMesh::Real> > Physics::build_new_fe( const libMesh::Elem* elem,

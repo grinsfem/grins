@@ -146,8 +146,6 @@ namespace GRINS
     // cache the partition function values at the referece temperature
     for(unsigned int i=0; i<_qT.size(); i++)
       _qT0.push_back(this->get_partition_function_value(_T0,i));
-
-    return;
   }
 
   unsigned int HITRAN::get_data_size()

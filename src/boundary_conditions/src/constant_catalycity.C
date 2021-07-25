@@ -29,9 +29,7 @@ namespace GRINS
 {
   ConstantCatalycity::ConstantCatalycity( const libMesh::Real gamma )
     : _gamma(gamma)
-  {
-    return;
-  }
+  {}
 
   libMesh::Real ConstantCatalycity::operator()( const libMesh::Real /*T*/ ) const
   {
@@ -55,8 +53,6 @@ namespace GRINS
     libmesh_assert_equal_to( params.size(), 1 );
 
     _gamma = params[0];
-
-    return;
   }
 
   CatalycityBase* ConstantCatalycity::clone() const

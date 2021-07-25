@@ -89,8 +89,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template<class Mu>
@@ -342,8 +340,6 @@ namespace GRINS
       {
         value = this->_mu(point, context.get_time());
       }
-
-    return;
   }
 
 } // namespace GRINS

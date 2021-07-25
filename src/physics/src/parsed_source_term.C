@@ -102,8 +102,6 @@ namespace GRINS
           }
 
       } // Variable loop
-
-    return;
   }
 
 } // end namespace GRINS

@@ -56,7 +56,6 @@ namespace GRINS
     libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );
 
     system->time_solver = std::unique_ptr<libMesh::TimeSolver>(time_solver);
-    return;
   }
 
   void SteadySolver::solve( SolverContext& context )
@@ -99,8 +98,6 @@ namespace GRINS
       }
 
     if( context.output_residual ) context.vis->output_residual( context.equation_system, context.system );
-
-    return;
   }
 
   void SteadySolver::adjoint_qoi_parameter_sensitivity

@@ -76,8 +76,6 @@ namespace GRINS
       {
         _displacements[i] = (i+1)*increment;
       }
-
-    return;
   }
 
   void DisplacementContinuationSolver::initialize( const GetPot& input,
@@ -108,8 +106,6 @@ namespace GRINS
                   << "       Was searching for bc_id = " << _bc_id << std::endl;
         libmesh_error();
       }
-
-    return;
   }
 
   void DisplacementContinuationSolver::solve( SolverContext& context )
@@ -133,8 +129,6 @@ namespace GRINS
             context.vis->output( context.equation_system, s, disp );
           }
       }
-
-    return;
   }
 
   void DisplacementContinuationSolver::increment_displacement( GRINS::MultiphysicsSystem& system,
@@ -159,8 +153,6 @@ namespace GRINS
 
     // Need to reinit system
     equation_system.reinit();
-
-    return;
   }
 
 

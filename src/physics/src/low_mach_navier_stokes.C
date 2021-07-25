@@ -279,8 +279,6 @@ namespace GRINS
               } // end if compute_jacobian
           } // end p_dofs loop
       } // end qp loop
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -573,8 +571,6 @@ namespace GRINS
 
           } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -685,8 +681,6 @@ namespace GRINS
               } // end if compute_jacobian
           } // end outer T_dofs loop (i)
       } //end qp loop
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -727,8 +721,6 @@ namespace GRINS
           } // End DoF loop i
 
       } // End quadrature loop qp
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -806,8 +798,6 @@ namespace GRINS
 
           } // End DoF loop i
       } // End quadrature loop qp
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -852,8 +842,6 @@ namespace GRINS
           } // End DoF loop i
 
       } // End quadrature loop qp
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -900,8 +888,6 @@ namespace GRINS
             //F_p0(i) -= p0*gamma_ratio*divU*JxW[qp];
           } // End DoF loop i
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -950,8 +936,6 @@ namespace GRINS
             //F_p0(i) += (k*grad_T*normals[qp] - p0*gamma_ratio*U*normals[qp]  )*JxW_side[qp];
           }
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -1013,7 +997,6 @@ namespace GRINS
           }
 
       }
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -1092,8 +1075,6 @@ namespace GRINS
 
         value = this->rho( T, p0 );
       }
-
-    return;
   }
 
 } // namespace GRINS

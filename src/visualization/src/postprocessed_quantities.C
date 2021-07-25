@@ -45,7 +45,6 @@ namespace GRINS
                   << "================================================================================" << std::endl;
         libmesh_error();
       }
-    return;
   }
 
   template<class NumericType>
@@ -88,8 +87,6 @@ namespace GRINS
             _quantity_index_var_map.insert( std::make_pair(var,it->second) );
           }
       }
-
-    return;
   }
 
   template<class NumericType>
@@ -101,8 +98,6 @@ namespace GRINS
         libMesh::System& output_system = equation_systems.get_system<libMesh::System>("interior_output");
         output_system.project_solution(this);
       }
-
-    return;
   }
 
 
@@ -176,7 +171,6 @@ namespace GRINS
     // Create the context we'll be using to compute MultiphysicsSystem quantities
     _multiphysics_context.reset( new AssemblyContext( *_multiphysics_sys ) );
     _multiphysics_sys->init_context(*_multiphysics_context);
-    return;
   }
 
   template<class NumericType>
@@ -188,7 +182,6 @@ namespace GRINS
       {
         output(i) = this->component(context,i,p,time);
       }
-    return;
   }
 
   template<class NumericType>

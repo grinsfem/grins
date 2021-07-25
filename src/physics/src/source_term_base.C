@@ -37,9 +37,6 @@ namespace GRINS
   {
     this->parse_var_info(input);
 
-    return;
-  }
-
   SourceTermBase::~SourceTermBase()
   {
     return;
@@ -88,8 +85,6 @@ namespace GRINS
         _var_FE.push_back( libMesh::Utility::string_to_enum<GRINSEnums::FEFamily>(input("Physics/"+this->_physics_name+"/Variables/FE_types", "DIE!", v)) );
         _var_order.push_back( libMesh::Utility::string_to_enum<GRINSEnums::Order>(input("Physics/"+this->_physics_name+"/Variables/FE_orders", "DIE!", v)) );
       }
-
-    return;
   }
 
   void SourceTermBase::init_variables( libMesh::FEMSystem* system )
@@ -103,7 +98,5 @@ namespace GRINS
       {
         _vars[var] = system->add_variable( _var_names[var], _var_order[var], _var_FE[var] );
       }
-
-    return;
   }
 } // end namespace GRINS

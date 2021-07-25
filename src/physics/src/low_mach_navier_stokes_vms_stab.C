@@ -120,8 +120,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -211,7 +209,6 @@ namespace GRINS
           }
 
       }
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -277,8 +274,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -327,8 +322,6 @@ namespace GRINS
             Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
           }
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -422,7 +415,6 @@ namespace GRINS
           }
 
       }
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -492,8 +484,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
 } // namespace GRINS

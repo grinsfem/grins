@@ -158,7 +158,6 @@ namespace GRINS
                             std::vector<libMesh::Real>& mole_fractions ) const
   {
     _antioch_gas->X(M,mass_fractions,mole_fractions);
-    return;
   }
 
   inline
@@ -193,7 +192,6 @@ namespace GRINS
                                           std::vector<libMesh::Real>& molar_densities ) const
   {
     _antioch_gas->molar_densities( rho, mass_fractions, molar_densities );
-    return;
   }
 
   inline

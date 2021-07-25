@@ -49,8 +49,6 @@ namespace GRINS
   {
     // Init base class variables for stab_helper and distance function initialization
     SpalartAllmarasStabilizationBase<Mu>::init_variables(system);
-
-    return;
   }
 
   template<class Mu>

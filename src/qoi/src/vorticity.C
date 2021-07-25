@@ -93,8 +93,6 @@ namespace GRINS
     u_fe->get_JxW();
 
     v_fe->get_dphi();
-
-    return;
   }
 
   void Vorticity::element_qoi( AssemblyContext& context,
@@ -121,8 +119,6 @@ namespace GRINS
             qoi += (grad_v(0) - grad_u(1)) * JxW[qp];
           }
       }
-
-    return;
   }
 
   void Vorticity::element_qoi_derivative( AssemblyContext& context,
@@ -164,8 +160,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
 } //namespace GRINS

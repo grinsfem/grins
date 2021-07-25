@@ -40,13 +40,11 @@ namespace GRINS
   void CachedValues::add_quantity( unsigned int quantity )
   {
     _cache_list.insert(quantity);
-    return;
   }
 
   void CachedValues::add_quantities( const std::set<unsigned int>& cache_list )
   {
     _cache_list.insert(cache_list.begin(), cache_list.end());
-    return;
   }
 
   void CachedValues::clear()
@@ -55,8 +53,6 @@ namespace GRINS
     _cached_gradient_values.clear();
     _cached_vector_values.clear();
     _cached_vector_gradient_values.clear();
-
-    return;
   }
 
   bool CachedValues::is_active(unsigned int quantity)
@@ -72,7 +68,6 @@ namespace GRINS
   void CachedValues::set_values( unsigned int quantity, std::vector<libMesh::Number>& values )
   {
     _cached_values.insert( std::make_pair( quantity, values ) );
-    return;
   }
 
   void CachedValues::set_gradient_values( unsigned int quantity,
@@ -80,20 +75,17 @@ namespace GRINS
   {
     // Using insert() breaks here. Not entirely sure why...
     _cached_gradient_values[quantity] = values;
-    return;
   }
 
   void CachedValues::set_vector_gradient_values( unsigned int quantity,
                                                  std::vector<std::vector<libMesh::Gradient> >& values )
   {
     _cached_vector_gradient_values[quantity] = values;
-    return;
   }
 
   void CachedValues::set_vector_values( unsigned int quantity, std::vector<std::vector<libMesh::Number> >& values )
   {
     _cached_vector_values[quantity] =  values;
-    return;
   }
 
   const std::vector<libMesh::Number>& CachedValues::get_cached_values( unsigned int quantity ) const

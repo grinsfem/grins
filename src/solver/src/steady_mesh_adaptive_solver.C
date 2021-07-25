@@ -45,9 +45,7 @@ namespace GRINS
   SteadyMeshAdaptiveSolver::SteadyMeshAdaptiveSolver( const GetPot& input )
     : Solver(input),
       MeshAdaptiveSolverBase( input )
-  {
-    return;
-  }
+  {}
 
   SteadyMeshAdaptiveSolver::~SteadyMeshAdaptiveSolver()
   {
@@ -59,8 +57,6 @@ namespace GRINS
     libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );
 
     system->time_solver = std::unique_ptr<libMesh::TimeSolver>( time_solver );
-
-    return;
   }
 
   void SteadyMeshAdaptiveSolver::check_qoi_error_option_consistency(SolverContext& context)
@@ -157,8 +153,6 @@ namespace GRINS
           }
 
       } // r_step for-loop
-
-    return;
   }
 
   void SteadyMeshAdaptiveSolver::adjoint_qoi_parameter_sensitivity

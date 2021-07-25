@@ -255,8 +255,6 @@ namespace GRINS
 
         Kss(0,0) += output_torque_deriv * context.get_elem_solution_derivative();
       }
-
-    return;
   }
 
 
@@ -282,8 +280,6 @@ namespace GRINS
       {
         Kss(0,0) -= this->moment_of_inertia * context.get_elem_solution_rate_derivative();
       }
-
-    return;
   }
 
 
