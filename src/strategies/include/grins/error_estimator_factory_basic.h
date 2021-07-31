@@ -37,7 +37,6 @@ namespace GRINS
       : ErrorEstimatorFactoryBase(estimator_name)
     {}
 
-    ErrorEstimatorFactoryBasic() = delete;
 
     ~ErrorEstimatorFactoryBasic() = default;
 

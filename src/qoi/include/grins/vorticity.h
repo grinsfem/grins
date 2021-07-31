@@ -47,8 +47,6 @@ namespace GRINS
 
     using QoIBase::QoIBase;
 
-    Vorticity() = delete;
-
     virtual ~Vorticity() = default;
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.

@@ -40,8 +40,6 @@ namespace GRINS
     ElasticCable( const PhysicsName& physics_name, const GetPot& input,
                   bool is_compressible );
 
-    ElasticCable() = delete;
-
     virtual ~ElasticCable() = default;
 
     //! Register postprocessing variables for ElasticCable

@@ -49,8 +49,6 @@ namespace GRINS
 
     AveragedTurbineAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    AveragedTurbineAdjointStabilization() = delete;
-
     virtual ~AveragedTurbineAdjointStabilization() = default;
 
     // residual and jacobian calculations

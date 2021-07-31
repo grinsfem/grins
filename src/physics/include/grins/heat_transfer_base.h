@@ -47,8 +47,6 @@ namespace GRINS
                       const std::string& core_physics_name,
                       const GetPot& input );
 
-    HeatTransferBase() = delete;
-
     virtual ~HeatTransferBase() = default;
 
     //! Sets velocity variables to be time-evolving

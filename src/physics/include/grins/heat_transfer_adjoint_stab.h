@@ -40,8 +40,6 @@ namespace GRINS
 
     using HeatTransferStabilizationBase<Conductivity>::HeatTransferStabilizationBase;
 
-    HeatTransferAdjointStabilization() = delete;
-
     virtual ~HeatTransferAdjointStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,

@@ -37,8 +37,6 @@ namespace GRINS
       : SolverFactoryAbstract(bc_type_name)
     {}
 
-    SolverFactoryBasic() = delete;
-
     virtual ~SolverFactoryBasic() = default;
 
   protected:

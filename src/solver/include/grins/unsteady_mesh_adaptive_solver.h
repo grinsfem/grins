@@ -42,8 +42,6 @@ namespace GRINS
 
     UnsteadyMeshAdaptiveSolver( const GetPot& input );
 
-    UnsteadyMeshAdaptiveSolver() = delete;
-
     virtual ~UnsteadyMeshAdaptiveSolver() = default;
 
     virtual void solve(  SolverContext& context ) override;

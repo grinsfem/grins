@@ -110,8 +110,6 @@ namespace GRINS
 
     Physics( const PhysicsName& physics_name, const GetPot& input );
 
-    Physics() = delete;
-
     virtual ~Physics();
 
     //! Initialize variables for this physics.

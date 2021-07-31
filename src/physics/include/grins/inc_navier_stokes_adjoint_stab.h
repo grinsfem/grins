@@ -39,8 +39,6 @@ namespace GRINS
 
     IncompressibleNavierStokesAdjointStabilization( const PhysicsName& physics_name, const GetPot& input );
 
-    IncompressibleNavierStokesAdjointStabilization() = delete;
-
     virtual ~IncompressibleNavierStokesAdjointStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,

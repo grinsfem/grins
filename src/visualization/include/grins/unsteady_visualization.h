@@ -38,8 +38,6 @@ namespace GRINS
     // Use inherited constructor
     using Visualization::Visualization;
 
-    UnsteadyVisualization() = delete;
-
     virtual ~UnsteadyVisualization() = default;
 
     virtual void output_residual( std::shared_ptr<libMesh::EquationSystems> equation_system,

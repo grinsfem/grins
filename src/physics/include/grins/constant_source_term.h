@@ -38,8 +38,6 @@ namespace GRINS
 
     ConstantSourceTerm( const std::string& physics_name, const GetPot& input );
 
-    ConstantSourceTerm() = delete;
-
     virtual ~ConstantSourceTerm() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,

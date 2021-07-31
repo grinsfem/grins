@@ -51,8 +51,6 @@ namespace GRINS
 
     using BoussinesqBuoyancyBase::BoussinesqBuoyancyBase;
 
-    BoussinesqBuoyancy() = delete;
-
     virtual ~BoussinesqBuoyancy() = default;
 
     //! Source term contribution for BoussinesqBuoyancy

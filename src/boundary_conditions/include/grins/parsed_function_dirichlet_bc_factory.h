@@ -45,8 +45,6 @@ namespace GRINS
       _zero_other_components(zero_other_components)
     {}
 
-    ParsedFunctionDirichletBCFactory() = delete;
-
     virtual ~ParsedFunctionDirichletBCFactory() = default;
 
   protected:

@@ -53,8 +53,6 @@ namespace GRINS
 
     LowMachNavierStokesBase(const PhysicsName& physics_name, const std::string& core_physics_name, const GetPot& input);
 
-    LowMachNavierStokesBase() = delete;
-
     virtual ~LowMachNavierStokesBase() = default;
 
     //! Sets velocity variables to be time-evolving

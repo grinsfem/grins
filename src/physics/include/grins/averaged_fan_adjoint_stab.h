@@ -48,8 +48,6 @@ namespace GRINS
 
     AveragedFanAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    AveragedFanAdjointStabilization() = delete;
-
     virtual ~AveragedFanAdjointStabilization() = default;
 
     // residual and jacobian calculations

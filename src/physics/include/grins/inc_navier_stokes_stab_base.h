@@ -40,8 +40,6 @@ namespace GRINS
 
     IncompressibleNavierStokesStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
-    IncompressibleNavierStokesStabilizationBase() = delete;
-
     virtual ~IncompressibleNavierStokesStabilizationBase() = default;
 
     //! Initialize context for added physics variables

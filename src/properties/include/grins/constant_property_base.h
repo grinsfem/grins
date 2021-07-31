@@ -49,8 +49,6 @@ namespace GRINS
                           const std::string & parsing_key,
                           const std::string & param_name );
 
-    ConstantPropertyBase() = delete;
-
     virtual ~ConstantPropertyBase() = default;
 
     void reset_value( libMesh::Real new_value )

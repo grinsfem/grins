@@ -47,8 +47,6 @@ namespace GRINS
       : FactoryWithGetPot<FEVariablesBase>(name)
     {}
 
-    VariableFactoryAbstract() = delete;
-
     virtual ~VariableFactoryAbstract() = default;
 
     virtual std::unique_ptr<FEVariablesBase> create() override;
@@ -144,8 +142,6 @@ namespace GRINS
       : VariableFactoryAbstract(name)
     {}
 
-    VariableFactoryBase() = delete;
-
     virtual ~VariableFactoryBase() = default;
 
   protected:
@@ -171,8 +167,6 @@ namespace GRINS
     VariableFactoryBasic( const std::string& name )
       : VariableFactoryBase(name)
     {}
-
-    VariableFactoryBasic() = delete;
 
     virtual ~VariableFactoryBasic() = default;
 
@@ -204,8 +198,6 @@ namespace GRINS
       : VariableFactoryBasic<VariableType>(name)
     {}
 
-    ScalarVariableFactory() = delete;
-
     virtual ~ScalarVariableFactory() = default;
 
   protected:
@@ -231,8 +223,6 @@ namespace GRINS
     SpeciesVariableFactory( const std::string& name )
       : VariableFactoryBase(name)
     {}
-
-    SpeciesVariableFactory() = delete;
 
     virtual ~SpeciesVariableFactory() = default;
 

@@ -40,8 +40,6 @@ namespace GRINS
 
     using QoIBase::QoIBase;
 
-    AverageNusseltNumber() = delete;
-
     virtual ~AverageNusseltNumber() = default;
 
     virtual QoIBase* clone() const override;

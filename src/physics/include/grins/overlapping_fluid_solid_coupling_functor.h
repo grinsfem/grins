@@ -50,8 +50,6 @@ namespace GRINS
         _coupling_matrix(coupling_matrix)
     {}
 
-    OverlappingFluidSolidCouplingFunctor() = delete;
-
     virtual ~OverlappingFluidSolidCouplingFunctor() = default;
 
     virtual void operator()

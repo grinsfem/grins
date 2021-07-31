@@ -43,8 +43,6 @@ namespace GRINS
 
     PostProcessedQuantities( const GetPot& input );
 
-    PostProcessedQuantities() = delete;
-
     virtual ~PostProcessedQuantities() = default;
 
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */

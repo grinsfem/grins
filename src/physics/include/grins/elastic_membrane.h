@@ -39,8 +39,6 @@ namespace GRINS
     ElasticMembrane( const PhysicsName& physics_name, const GetPot& input,
                      bool is_compressible );
 
-    ElasticMembrane() = delete;
-
     virtual ~ElasticMembrane() = default;
 
     //! Register postprocessing variables for ElasticMembrane

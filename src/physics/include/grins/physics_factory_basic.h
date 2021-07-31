@@ -37,8 +37,6 @@ namespace GRINS
       : PhysicsFactoryBase(physics_name)
     {}
 
-    PhysicsFactoryBasic() = delete;
-
     virtual ~PhysicsFactoryBasic() = default;
 
   protected:

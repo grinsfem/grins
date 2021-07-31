@@ -39,8 +39,6 @@ namespace GRINS
                       const GetPot& input,
                       bool is_compressible);
 
-    ElasticCableBase() = delete;
-
     virtual ~ElasticCableBase() = default;
 
   protected:

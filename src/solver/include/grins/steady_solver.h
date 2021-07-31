@@ -37,8 +37,6 @@ namespace GRINS
 
     using Solver::Solver;
 
-    SteadySolver() = delete;
-
     virtual ~SteadySolver() = default;
 
     virtual void solve( SolverContext& context ) override;

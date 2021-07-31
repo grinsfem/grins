@@ -57,8 +57,6 @@ namespace GRINS
       _nu = new_nu;
     }
 
-    AbsorptionCoeffBase() = delete;
-
   protected:
     //! Desired wavenumber [cm^-1]
     libMesh::Real _nu;

@@ -53,8 +53,6 @@ namespace GRINS
 
     AveragedFan( const std::string& physics_name, const GetPot& input );
 
-    AveragedFan() = delete;
-
     virtual ~AveragedFan() = default;
 
     //! Register postprocessing variables for visualization output

@@ -43,8 +43,6 @@ namespace GRINS
 
     HeatTransfer( const std::string& physics_name, const GetPot& input );
 
-    HeatTransfer() = delete;
-
     virtual ~HeatTransfer() = default;
 
     //! Register postprocessing variables for HeatTransfer

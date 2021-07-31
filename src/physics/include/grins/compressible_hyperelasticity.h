@@ -39,8 +39,6 @@ namespace GRINS
       : HyperelasticityBase<Dim,StrainEnergy>(physics_name,physics_name,input)
     {}
 
-    CompressibleHyperelasticity() = delete;
-
     virtual ~CompressibleHyperelasticity() = default;
 
     virtual void element_time_derivative( bool compute_jacobian, AssemblyContext & context ) override;

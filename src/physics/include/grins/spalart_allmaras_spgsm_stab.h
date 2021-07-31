@@ -39,8 +39,6 @@ namespace GRINS
 
     SpalartAllmarasSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
 
-    SpalartAllmarasSPGSMStabilization() = delete;
-
     virtual ~SpalartAllmarasSPGSMStabilization() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system ) override;

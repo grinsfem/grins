@@ -39,8 +39,6 @@ namespace GRINS
 
     using LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>::LowMachNavierStokesStabilizationBase;
 
-    LowMachNavierStokesSPGSMStabilization() = delete;
-
     virtual ~LowMachNavierStokesSPGSMStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,

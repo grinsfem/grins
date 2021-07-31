@@ -40,8 +40,6 @@ namespace GRINS
 
     HeatConduction( const PhysicsName& physics_name, const GetPot& input );
 
-    HeatConduction() = delete;
-
     virtual ~HeatConduction() = default;
 
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;

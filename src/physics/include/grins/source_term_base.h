@@ -53,8 +53,6 @@ namespace GRINS
 
     SourceTermBase( const std::string& physics_name, const GetPot& input );
 
-    SourceTermBase() = delete;
-
     virtual ~SourceTermBase() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system ) override;

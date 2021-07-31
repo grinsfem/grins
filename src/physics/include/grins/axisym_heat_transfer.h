@@ -51,8 +51,6 @@ namespace GRINS
 
     AxisymmetricHeatTransfer( const std::string& physics_name, const GetPot& input );
 
-    AxisymmetricHeatTransfer() = delete;
-
     virtual ~AxisymmetricHeatTransfer() = default;
 
     //! Sets velocity variables to be time-evolving

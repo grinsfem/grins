@@ -49,8 +49,6 @@ namespace GRINS
 
     SpalartAllmarasStabilizationHelper( const std::string& helper_name, const GetPot& input );
 
-    SpalartAllmarasStabilizationHelper() = delete;
-
     virtual ~SpalartAllmarasStabilizationHelper() = default;
 
     libMesh::Real compute_tau_spalart( AssemblyContext& c,

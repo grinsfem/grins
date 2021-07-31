@@ -55,8 +55,6 @@ namespace GRINS
                          const std::string & qoi_name,
                          bool output_as_csv);
 
-    SpectroscopicQoIBase() = delete;
-
     // Allow for outputting in CSV format
     virtual void output_qoi(std::ostream & out) const override;
 

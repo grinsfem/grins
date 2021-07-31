@@ -49,8 +49,6 @@ namespace GRINS
 
     VelocityDragAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    VelocityDragAdjointStabilization() = delete;
-
     virtual ~VelocityDragAdjointStabilization() = default;
 
     // residual and jacobian calculations

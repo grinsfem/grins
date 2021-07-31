@@ -38,8 +38,6 @@ namespace GRINS
 
     VariablePinning( const PhysicsName& physics_name, const GetPot& input );
 
-    VariablePinning() = delete;
-
     virtual ~VariablePinning() = default;
 
     //! Initialize context for added physics variables

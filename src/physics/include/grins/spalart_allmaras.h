@@ -60,8 +60,6 @@ namespace GRINS
 
     SpalartAllmaras(const std::string& physics_name, const GetPot& input);
 
-    SpalartAllmaras() = delete;
-
     virtual ~SpalartAllmaras() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system ) override;

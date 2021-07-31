@@ -43,8 +43,6 @@ namespace GRINS
       : ElasticMembranePressure<ConstantPressure>(physics_name,input)
     {}
 
-    ElasticMembraneConstantPressure() = delete;
-
     virtual ~ElasticMembraneConstantPressure() = default;
 
     void reset_pressure( libMesh::Real pressure_in )

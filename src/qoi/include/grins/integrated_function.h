@@ -62,8 +62,6 @@ namespace GRINS
     */
     IntegratedFunction(unsigned int p_level, const std::shared_ptr<Function> & f, const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name);
 
-    IntegratedFunction() = delete;
-
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
     virtual QoIBase* clone() const override;
 

@@ -58,8 +58,6 @@ namespace GRINS
     SpectroscopicAbsorption(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
                             const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv);
 
-    SpectroscopicAbsorption() = delete;
-
     virtual QoIBase * clone() const override;
 
     //! Override the QoIBase implementation to perform exp(-kv*L)

@@ -39,8 +39,6 @@ namespace GRINS
     IncompressibleHyperelasticity( const PhysicsName & physics_name,
                                    const GetPot & input );
 
-    IncompressibleHyperelasticity() = delete;
-
     virtual ~IncompressibleHyperelasticity() = default;
 
     //! Initialize context for added physics variables

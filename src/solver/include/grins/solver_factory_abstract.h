@@ -42,8 +42,6 @@ namespace GRINS
       : FactoryWithGetPot<Solver>(bc_type_name)
     {}
 
-    SolverFactoryAbstract() = delete;
-
     virtual ~SolverFactoryAbstract() =0;
 
   protected:

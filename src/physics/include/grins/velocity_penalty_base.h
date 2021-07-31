@@ -48,8 +48,6 @@ namespace GRINS
 
     VelocityPenaltyBase( const std::string& physics_name, const GetPot& input );
 
-    VelocityPenaltyBase() = delete;
-
     virtual ~VelocityPenaltyBase() = default;
 
     // Hack to read ParsedFEMFunction options after System init

@@ -41,8 +41,6 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
-    PhysicsFactoryOneDStressSolids() = delete;
-
     virtual ~PhysicsFactoryOneDStressSolids() = default;
 
   protected:

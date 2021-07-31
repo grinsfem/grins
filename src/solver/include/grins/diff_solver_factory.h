@@ -41,8 +41,6 @@ namespace GRINS
       : FactoryAbstract<libMesh::DiffSolver>(diff_solver_name)
     {}
 
-    DiffSolverFactoryAbstract() = delete;
-
     virtual ~DiffSolverFactoryAbstract() =0;
 
     static void set_system( MultiphysicsSystem * system )
@@ -72,8 +70,6 @@ namespace GRINS
     DiffSolverFactoryBasic( const std::string & diff_solver_name )
       : DiffSolverFactoryAbstract(diff_solver_name)
     {}
-
-    DiffSolverFactoryBasic() = delete;
 
     virtual ~DiffSolverFactoryBasic() = default;
 

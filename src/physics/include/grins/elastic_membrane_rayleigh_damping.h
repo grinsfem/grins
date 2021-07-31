@@ -38,8 +38,6 @@ namespace GRINS
                                     const GetPot& input,
                                     bool is_compressible );
 
-    ElasticMembraneRayleighDamping() = delete;
-
     virtual ~ElasticMembraneRayleighDamping() = default;
 
     //! Error out if using libMesh::FirstOrderUnsteadySolver

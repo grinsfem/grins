@@ -60,8 +60,6 @@ namespace GRINS
 
     AxisymmetricBoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
-    AxisymmetricBoussinesqBuoyancy() = delete;
-
     virtual ~AxisymmetricBoussinesqBuoyancy() = default;
 
     virtual void init_context( AssemblyContext& context ) override;

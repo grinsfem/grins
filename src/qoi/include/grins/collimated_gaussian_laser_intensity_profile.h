@@ -43,8 +43,6 @@ namespace GRINS
     */
     CollimatedGaussianLaserIntensityProfile(libMesh::Real w);
 
-    CollimatedGaussianLaserIntensityProfile() = delete;
-
     virtual void init(const std::vector<libMesh::Point> & quadrature_xyz,
                       const libMesh::Point & laser_centerline) override;
 

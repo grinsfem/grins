@@ -39,8 +39,6 @@ namespace GRINS
 
     SpalartAllmarasStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
-    SpalartAllmarasStabilizationBase() = delete;
-
     virtual ~SpalartAllmarasStabilizationBase() = default;
 
     //! Initialize context for added physics variables

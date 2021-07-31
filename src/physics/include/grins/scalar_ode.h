@@ -54,8 +54,6 @@ namespace GRINS
 
     ScalarODE( const std::string& physics_name, const GetPot& input );
 
-    ScalarODE() = delete;
-
     virtual ~ScalarODE() = default;
 
     //! Sets scalar variable(s) to be time-evolving

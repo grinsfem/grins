@@ -44,8 +44,6 @@ namespace GRINS
         _gas_mixture(gas_mix.release()) /*! \todo Use std::move when we mandate C++11 */
     {}
 
-    ReactingLowMachNavierStokesBase() = delete;
-
     virtual ~ReactingLowMachNavierStokesBase() = default;
 
     // Registers all parameters in this physics and in its property

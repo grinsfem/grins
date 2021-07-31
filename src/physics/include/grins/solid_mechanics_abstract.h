@@ -43,8 +43,6 @@ namespace GRINS
                             const PhysicsName & core_physics_name,
                             const GetPot & input );
 
-    SolidMechanicsAbstract() = delete;
-
     virtual ~SolidMechanicsAbstract() =default;
 
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;

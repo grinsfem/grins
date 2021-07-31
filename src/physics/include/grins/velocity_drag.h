@@ -55,8 +55,6 @@ namespace GRINS
 
     VelocityDrag( const std::string& physics_name, const GetPot& input );
 
-    VelocityDrag() = delete;
-
     virtual ~VelocityDrag() = default;
 
     virtual void init_context( AssemblyContext& context ) override;

@@ -50,8 +50,6 @@ namespace GRINS
                                    const std::string& core_physics_name,
                                    const GetPot& input);
 
-    IncompressibleNavierStokesBase() = delete;
-
     ~IncompressibleNavierStokesBase() = default;
 
     //! Sets velocity variables to be time-evolving

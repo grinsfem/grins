@@ -57,8 +57,6 @@ namespace GRINS
   {
   public:
 
-    AntiochEvaluator() = delete;
-
     AntiochEvaluator( const AntiochMixture<KineticsThermoCurveFit>& mixture );
 
     virtual ~AntiochEvaluator() = default;

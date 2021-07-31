@@ -45,8 +45,6 @@ namespace GRINS
 
     ReactingLowMachNavierStokesAbstract(const PhysicsName& physics_name, const GetPot& input);
 
-    ReactingLowMachNavierStokesAbstract() = delete;
-
     virtual ~ReactingLowMachNavierStokesAbstract() = default;
 
     //! Sets velocity variables to be time-evolving

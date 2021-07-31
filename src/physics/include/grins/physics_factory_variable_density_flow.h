@@ -43,8 +43,6 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
-    PhysicsFactoryVariableDensityFlow() = delete;
-
     virtual ~PhysicsFactoryVariableDensityFlow() = default;
 
   protected:

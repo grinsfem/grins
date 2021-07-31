@@ -46,8 +46,6 @@ namespace GRINS
     //! This will parse the input for <section>/pressure
     ParsedPressure( const GetPot & input, const std::string & section );
 
-    ParsedPressure() = delete;
-
     virtual ~ParsedPressure() = default;
   };
 

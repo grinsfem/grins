@@ -50,8 +50,6 @@ namespace GRINS
       with this QoI */
     ParsedInteriorQoI( const std::string& qoi_name );
 
-    ParsedInteriorQoI() = delete;
-
     virtual ~ParsedInteriorQoI();
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.

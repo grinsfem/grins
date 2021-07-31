@@ -47,8 +47,6 @@ namespace GRINS
 
     using QoIBase::QoIBase;
 
-    WeightedFluxQoI() = delete;
-
     virtual ~WeightedFluxQoI() = default;
 
     virtual QoIBase* clone() const override;

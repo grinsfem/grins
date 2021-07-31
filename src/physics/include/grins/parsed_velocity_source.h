@@ -53,8 +53,6 @@ namespace GRINS
 
     ParsedVelocitySource( const std::string& physics_name, const GetPot& input );
 
-    ParsedVelocitySource() = delete;
-
     virtual ~ParsedVelocitySource() = default;
 
     virtual void init_context( AssemblyContext& context ) override;
