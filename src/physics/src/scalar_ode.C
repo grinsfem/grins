@@ -108,6 +108,8 @@ namespace GRINS
     mass_residual_function->init_context(context);
     time_deriv_function->init_context(context);
     constraint_function->init_context(context);
+
+    context.get_side_fe(this->scalar_ode_var())->get_nothing();
   }
 
 
