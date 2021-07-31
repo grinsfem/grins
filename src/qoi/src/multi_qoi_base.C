@@ -51,7 +51,6 @@ namespace GRINS
         this->add_qoi( *(original._qois[q].get()) );
         _qoi_vals[q] = original._qoi_vals[q];
       }
-
   }
 
   void MultiQoIBase::add_qoi(const QoIBase & qoi)
@@ -64,7 +63,6 @@ namespace GRINS
 
     if(qoi.assemble_on_interior())
         _assemble_interior = true;
-
   }
 
   QoIBase * MultiQoIBase::clone() const
@@ -78,12 +76,11 @@ namespace GRINS
   }
 
   void MultiQoIBase::init( const GetPot & input,
-                     const MultiphysicsSystem & system,
-                     unsigned int /*qoi_num*/)
+                           const MultiphysicsSystem & system,
+                           unsigned int /*qoi_num*/)
   {
     for(unsigned int q = 0; q < this->n_qois(); ++q)
       _qois[q]->init(input,system,q);
-
   }
 
   void MultiQoIBase::init_context(AssemblyContext & context)
@@ -101,4 +98,3 @@ namespace GRINS
   }
 
 }
-
