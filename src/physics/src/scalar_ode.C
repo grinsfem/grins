@@ -56,35 +56,44 @@ namespace GRINS
     // we've clearly got a System to grab hold of with all it's
     // variables initialized.
 
-    libMesh::ParsedFEMFunction<libMesh::Number> *tdf
-      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
-    this->time_deriv_function.reset(tdf);
+    {
+      std::unique_ptr<libMesh::ParsedFEMFunction<libMesh::Number>> tdf =
+        libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
 
-    if (tdf->expression() == "0")
-      std::cout << "Warning! Zero time_deriv function specified!" << std::endl;
+      this->set_parameter(*tdf, _input,
+                          "Physics/"+PhysicsNaming::scalar_ode()+"/time_deriv",
+                          std::string("0"));
 
-    this->set_parameter(*tdf, _input,
-                        "Physics/"+PhysicsNaming::scalar_ode()+"/time_deriv",
-                        std::string("0"));
+      if (tdf->expression() == "0")
+        std::cout << "Warning! Zero time_deriv function specified!" << std::endl;
 
-    libMesh::ParsedFEMFunction<libMesh::Number> *mrf
-      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
-    this->mass_residual_function.reset(mrf);
+      this->time_deriv_function = std::move(tdf);
+    }
 
-    if (mrf->expression() == "0")
-      std::cout << "Warning! Zero mass_residual function specified!" << std::endl;
+    {
+      std::unique_ptr<libMesh::ParsedFEMFunction<libMesh::Number>> mrf =
+        libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
 
-    this->set_parameter(*mrf, _input,
-                        "Physics/"+PhysicsNaming::scalar_ode()+"/mass_residual",
-                        std::string("0"));
+      if (mrf->expression() == "0")
+        std::cout << "Warning! Zero mass_residual function specified!" << std::endl;
 
-    libMesh::ParsedFEMFunction<libMesh::Number> *cf
-      (new libMesh::ParsedFEMFunction<libMesh::Number> (*system, ""));
-    this->constraint_function.reset(cf);
+      this->set_parameter(*mrf, _input,
+                          "Physics/"+PhysicsNaming::scalar_ode()+"/mass_residual",
+                          std::string("0"));
 
-    this->set_parameter(*cf, _input,
-                        "Physics/"+PhysicsNaming::scalar_ode()+"/constraint",
-                        std::string("0"));
+      this->mass_residual_function = std::move(mrf);
+    }
+
+    {
+      std::unique_ptr<libMesh::ParsedFEMFunction<libMesh::Number>> cf =
+        libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
+
+      this->set_parameter(*cf, _input,
+                          "Physics/"+PhysicsNaming::scalar_ode()+"/constraint",
+                          std::string("0"));
+
+      this->constraint_function = std::move(cf);
+    }
   }
 
 
