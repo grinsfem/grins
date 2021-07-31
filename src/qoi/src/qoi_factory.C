@@ -403,12 +403,6 @@ namespace GRINS
     std::string species;
     this->get_var_value<std::string>(input,species,"QoI/"+qoi_string+"/species_of_interest","");
 
-    libMesh::Real thermo_pressure = -1.0;
-    bool calc_thermo_pressure = input("QoI/"+qoi_string+"/calc_thermo_pressure", false );
-    if (!calc_thermo_pressure)
-      thermo_pressure = input("Materials/"+material+"/ThermodynamicPressure/value", 0.0 );
-
-
     // These options are for the linecenter wavenumbers included in the calculation of kv
     libMesh::Real nu_data_min,nu_data_max;
     this->get_var_value<libMesh::Real>(input,nu_data_min,"QoI/"+qoi_string+"/min_wavenumber",0.0);
@@ -431,6 +425,14 @@ namespace GRINS
 
     libMesh::Real nu_desired;
     this->get_var_value<libMesh::Real>(input,nu_desired,"QoI/"+qoi_string+"/desired_wavenumber",0.0);
+
+    // This variable is only used with thermo chemistry libraries so guard it
+#if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
+    libMesh::Real thermo_pressure = -1.0;
+    bool calc_thermo_pressure = input("QoI/"+qoi_string+"/calc_thermo_pressure", false );
+    if (!calc_thermo_pressure)
+      thermo_pressure = input("Materials/"+material+"/ThermodynamicPressure/value", 0.0 );
+#endif
 
 #if GRINS_HAVE_ANTIOCH
     absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
