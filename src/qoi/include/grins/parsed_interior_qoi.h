@@ -55,9 +55,11 @@ namespace GRINS
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
     virtual QoIBase* clone() const override;
 
-    virtual bool assemble_on_interior() const override;
+    virtual bool assemble_on_interior() const override
+    { return true; }
 
-    virtual bool assemble_on_sides() const override;
+    virtual bool assemble_on_sides() const override
+    {  return false; }
 
     //! Initialize local variables
     virtual void init( const GetPot& input,
@@ -79,21 +81,9 @@ namespace GRINS
     std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
     qoi_functional;
 
-    //! Manual copy constructor due to the UniquePtr
+    //! Manual copy constructor due to the unique_ptr
     ParsedInteriorQoI(const ParsedInteriorQoI& original);
 
   };
-
-  inline
-  bool ParsedInteriorQoI::assemble_on_interior() const
-  {
-    return true;
-  }
-
-  inline
-  bool ParsedInteriorQoI::assemble_on_sides() const
-  {
-    return false;
-  }
 }
 #endif //GRINS_PARSED_INTERIOR_QOI_H

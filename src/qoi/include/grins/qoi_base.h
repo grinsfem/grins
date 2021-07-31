@@ -124,10 +124,12 @@ namespace GRINS
     virtual void output_qoi( std::ostream& out ) const;
 
     //! Returns the current QoI value.
-    libMesh::Number value() const;
+    libMesh::Number value() const
+    { return _qoi_value; }
 
     //! Returns the name of this QoI
-    const std::string& name() const;
+    const std::string& name() const
+    { return _qoi_name; }
 
   protected:
 
@@ -135,18 +137,6 @@ namespace GRINS
 
     libMesh::Number _qoi_value;
   };
-
-  inline
-  libMesh::Number QoIBase::value() const
-  {
-    return _qoi_value;
-  }
-
-  inline
-  const std::string& QoIBase::name() const
-  {
-    return _qoi_name;
-  }
 
 }
 #endif // GRINS_QOI_BASE_H

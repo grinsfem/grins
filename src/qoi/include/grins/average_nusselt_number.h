@@ -44,9 +44,11 @@ namespace GRINS
 
     virtual QoIBase* clone() const override;
 
-    virtual bool assemble_on_interior() const override;
+    virtual bool assemble_on_interior() const override
+    { return false; }
 
-    virtual bool assemble_on_sides() const override;
+    virtual bool assemble_on_sides() const override
+    { return true; }
 
     virtual void side_qoi( AssemblyContext& context,
                            const unsigned int qoi_index ) override;
@@ -76,17 +78,5 @@ namespace GRINS
     libMesh::Real _scaling;
 
   };
-
-  inline
-  bool AverageNusseltNumber::assemble_on_interior() const
-  {
-    return false;
-  }
-
-  inline
-  bool AverageNusseltNumber::assemble_on_sides() const
-  {
-    return true;
-  }
 }
 #endif //GRINS_AVERAGE_NUSSELT_NUMBER_H

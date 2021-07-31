@@ -52,7 +52,8 @@ namespace GRINS
     //! clone() and add QoI to internal vector
     void add_qoi(const QoIBase & qoi);
 
-    unsigned int n_qois() const;
+    unsigned int n_qois() const
+    { return _qois.size(); }
 
     const QoIBase & get_qoi(unsigned int qoi_index) const;
 
@@ -61,9 +62,11 @@ namespace GRINS
     //! Uses clone() to deep copy all internal QoI objects
     virtual QoIBase * clone() const override;
 
-    virtual bool assemble_on_sides() const override;
+    virtual bool assemble_on_sides() const override
+    { return _assemble_sides; }
 
-    virtual bool assemble_on_interior() const override;
+    virtual bool assemble_on_interior() const override
+    { return _assemble_interior; }
 
     //! init all internal QoI objects
     virtual void init( const GetPot & input,
@@ -89,24 +92,6 @@ namespace GRINS
     bool _assemble_interior;
 
   };
-
-  inline
-  bool MultiQoIBase::assemble_on_sides() const
-  {
-    return _assemble_sides;
-  }
-
-  inline
-  bool MultiQoIBase::assemble_on_interior() const
-  {
-    return _assemble_interior;
-  }
-
-  inline
-  unsigned int MultiQoIBase::n_qois() const
-  {
-    return _qois.size();
-  }
 
   inline
   const QoIBase & MultiQoIBase::get_qoi(unsigned int qoi_index) const
