@@ -33,10 +33,10 @@
 namespace GRINS
 {
   SimulationBuilder::SimulationBuilder()
-    : _mesh_builder( new MeshBuilder ),
-      _vis_factory( new VisualizationFactory ),
-      _qoi_factory( new QoIFactory ),
-      _postprocessing_factory( new PostprocessingFactory )
+    : _mesh_builder( std::make_shared<MeshBuilder>() ),
+      _vis_factory( std::make_shared<VisualizationFactory>() ),
+      _qoi_factory( std::make_shared<QoIFactory>() ),
+      _postprocessing_factory( std::make_shared<PostprocessingFactory>() )
   {}
 
   void SimulationBuilder::attach_mesh_builder( std::shared_ptr<MeshBuilder> mesh_builder )
