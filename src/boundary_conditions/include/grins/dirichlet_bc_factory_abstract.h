@@ -36,9 +36,8 @@ namespace GRINS
   class DirichletBCFactoryAbstract : public BCFactoryAbstract<libMesh::DirichletBoundary>
   {
   public:
-    DirichletBCFactoryAbstract( const std::string& bc_type_name )
-      : BCFactoryAbstract<libMesh::DirichletBoundary>(bc_type_name)
-    {}
+
+    using BCFactoryAbstract<libMesh::DirichletBoundary>::BCFactoryAbstract;
 
     virtual ~DirichletBCFactoryAbstract() = default;
 

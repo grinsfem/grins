@@ -36,9 +36,7 @@ namespace GRINS
   {
   public:
 
-    DirichletBCFactoryFunctionBase( const std::string& bc_type_name )
-      : DirichletBCFactoryAbstract(bc_type_name)
-    {}
+    using DirichletBCFactoryAbstract::DirichletBCFactoryAbstract;
 
     virtual ~DirichletBCFactoryFunctionBase() = default;
 

@@ -39,10 +39,8 @@ namespace GRINS
   class AdjointErrorEstimatorFactoryBase : public ErrorEstimatorFactoryBase
   {
   public:
-    AdjointErrorEstimatorFactoryBase( const std::string& estimator_name )
-      : ErrorEstimatorFactoryBase(estimator_name)
-    {}
 
+    using ErrorEstimatorFactoryBase::ErrorEstimatorFactoryBase;
 
     virtual ~AdjointErrorEstimatorFactoryBase() = default;
 
@@ -78,9 +76,7 @@ namespace GRINS
   {
   public:
 
-    AdjointResidualErrorEstimatorFactory( const std::string& estimator_name )
-      : AdjointErrorEstimatorFactoryBase<libMesh::AdjointResidualErrorEstimator>(estimator_name)
-    {}
+    using AdjointErrorEstimatorFactoryBase<libMesh::AdjointResidualErrorEstimator>::AdjointErrorEstimatorFactoryBase;
 
     virtual ~AdjointResidualErrorEstimatorFactory() = default;
 
@@ -95,9 +91,7 @@ namespace GRINS
   {
   public:
 
-    AdjointRefinementErrorEstimatorFactory( const std::string& estimator_name )
-      : AdjointErrorEstimatorFactoryBase<libMesh::AdjointRefinementEstimator>(estimator_name)
-    {}
+    using AdjointErrorEstimatorFactoryBase<libMesh::AdjointRefinementEstimator>::AdjointErrorEstimatorFactoryBase;
 
     virtual ~AdjointRefinementErrorEstimatorFactory() = default;
 

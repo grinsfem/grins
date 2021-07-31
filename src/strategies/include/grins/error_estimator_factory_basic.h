@@ -33,10 +33,8 @@ namespace GRINS
   class ErrorEstimatorFactoryBasic : public ErrorEstimatorFactoryBase
   {
   public:
-    ErrorEstimatorFactoryBasic( const std::string& estimator_name )
-      : ErrorEstimatorFactoryBase(estimator_name)
-    {}
 
+    using ErrorEstimatorFactoryBase::ErrorEstimatorFactoryBase;
 
     ~ErrorEstimatorFactoryBasic() = default;
 
