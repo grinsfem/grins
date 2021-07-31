@@ -59,14 +59,14 @@ namespace GRINS
   public:
     CompositeQoI();
 
-    virtual ~CompositeQoI();
+    virtual ~CompositeQoI() = default;
 
     //! Required to provide clone for adding QoI object to libMesh objects.
     /*! Note that we do a deep copy here since the previous object might
       get destroyed and wipe out the objects being pointed to in _qois. */
     virtual std::unique_ptr<libMesh::DifferentiableQoI> clone() override;
 
-    virtual void add_qoi( const QoIBase& qoi );
+    void add_qoi( std::unique_ptr<QoIBase> qoi );
 
     unsigned int n_qois() const
     { return _qois.size(); }
@@ -144,7 +144,7 @@ namespace GRINS
 
   protected:
 
-    std::vector<QoIBase*> _qois;
+    std::vector<std::unique_ptr<QoIBase>> _qois;
 
   };
 

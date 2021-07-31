@@ -91,33 +91,33 @@ namespace GRINS
 
   void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, std::shared_ptr<CompositeQoI>& qois )
   {
-    QoIBase* qoi = NULL;
+    std::unique_ptr<QoIBase> qoi;
 
     bool do_final_add = true;
 
     if( qoi_name == avg_nusselt )
       {
-        qoi = new AverageNusseltNumber( avg_nusselt );
+        qoi = libmesh_make_unique<AverageNusseltNumber>( avg_nusselt );
       }
 
     else if( qoi_name == parsed_boundary )
       {
-        qoi =  new ParsedBoundaryQoI( parsed_boundary );
+        qoi =  libmesh_make_unique<ParsedBoundaryQoI>( parsed_boundary );
       }
 
     else if( qoi_name == parsed_interior )
       {
-        qoi =  new ParsedInteriorQoI( parsed_interior );
+        qoi = libmesh_make_unique<ParsedInteriorQoI>( parsed_interior );
       }
 
     else if( qoi_name == vorticity )
       {
-        qoi =  new Vorticity( vorticity );
+        qoi =  libmesh_make_unique<Vorticity>( vorticity );
       }
 
     else if( qoi_name == weighted_flux )
       {
-        qoi =  new WeightedFluxQoI( weighted_flux );
+        qoi =  libmesh_make_unique<WeightedFluxQoI>( weighted_flux );
       }
 
     else if( qoi_name == integrated_function )
@@ -135,17 +135,17 @@ namespace GRINS
 
         std::shared_ptr<RayfireMesh> rayfire( new RayfireMesh(input,"IntegratedFunction") );
 
-        qoi =  new IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >(p_level,f,rayfire,qoi_name);
+        qoi =  libmesh_make_unique<IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >>(p_level,f,rayfire,qoi_name);
       }
 
     else if ( qoi_name == spectroscopic_transmission )
       {
-        do_final_add = this->create_spectroscopic_qoi(input,qoi_name,"SpectroscopicTransmission",&qoi,qois);
+        do_final_add = this->create_spectroscopic_qoi(input,qoi_name,"SpectroscopicTransmission",qois);
       }
 
     else if ( qoi_name == spectroscopic_absorption )
       {
-        do_final_add = this->create_spectroscopic_qoi(input,qoi_name,"SpectroscopicAbsorption",&qoi,qois);
+        do_final_add = this->create_spectroscopic_qoi(input,qoi_name,"SpectroscopicAbsorption",qois);
       }
 
     else if ( qoi_name == laser_absorption )
@@ -205,9 +205,9 @@ namespace GRINS
           }
 
         if (dim == 3)
-          qoi = new LaserAbsorption(absorb,top_origin,centerline_origin,bottom_origin,theta,phi,n_qp,intensity_profile,qoi_name);
+          qoi = libmesh_make_unique<LaserAbsorption>(absorb,top_origin,centerline_origin,bottom_origin,theta,phi,n_qp,intensity_profile,qoi_name);
         else
-          qoi = new LaserAbsorption(absorb,top_origin,centerline_origin,bottom_origin,theta,n_qp,intensity_profile,qoi_name);
+          qoi = libmesh_make_unique<LaserAbsorption>(absorb,top_origin,centerline_origin,bottom_origin,theta,n_qp,intensity_profile,qoi_name);
       }
 
     else
@@ -219,7 +219,7 @@ namespace GRINS
     libmesh_assert(qoi);
 
     if (do_final_add)
-      qois->add_qoi( *qoi );
+      qois->add_qoi( std::move(qoi) );
   }
 
   void QoIFactory::check_qoi_physics_consistency( const GetPot& input,
@@ -308,9 +308,11 @@ namespace GRINS
       libmesh_error_msg("ERROR: Could not find required input parameter: "+input_var);
   }
 
-  bool QoIFactory::create_spectroscopic_qoi(const GetPot & input, const std::string & qoi_name, const std::string & qoi_string, QoIBase ** qoi, std::shared_ptr<CompositeQoI> & qois)
+  bool QoIFactory::create_spectroscopic_qoi(const GetPot & input, const std::string & qoi_name, const std::string & qoi_string, std::shared_ptr<CompositeQoI> & qois)
   {
     bool do_final_add = true;
+
+    std::unique_ptr<QoIBase> qoi;
 
     std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> absorb = this->create_absorption_coeff(input,qoi_string);
 
@@ -325,11 +327,11 @@ namespace GRINS
 
         // Output the QoI value normally
         bool output_as_csv = false;
-        
+
         if (qoi_name == spectroscopic_absorption)
-          *qoi = new SpectroscopicAbsorption(absorb,rayfire,qoi_name,output_as_csv);
+          qoi = libmesh_make_unique<SpectroscopicAbsorption>(absorb,rayfire,qoi_name,output_as_csv);
         else // spectroscopic_transmission
-          *qoi = new SpectroscopicTransmission(absorb,rayfire,qoi_name,output_as_csv);
+          qoi = libmesh_make_unique<SpectroscopicTransmission>(absorb,rayfire,qoi_name,output_as_csv);
 
       }
     else if (num_wavenumbers == 3)
@@ -366,11 +368,11 @@ namespace GRINS
             absorb.reset( coeff );
 
             if (qoi_name == spectroscopic_absorption)
-              *qoi = new SpectroscopicAbsorption(absorb,rayfire,qoi_name,output_as_csv);
+              qoi = libmesh_make_unique<SpectroscopicAbsorption>(absorb,rayfire,qoi_name,output_as_csv);
             else // spectroscopic_transmission
-              *qoi = new SpectroscopicTransmission(absorb,rayfire,qoi_name,output_as_csv);
+              qoi = libmesh_make_unique<SpectroscopicTransmission>(absorb,rayfire,qoi_name,output_as_csv);
 
-            qois->add_qoi( **qoi );
+            qois->add_qoi( std::move(qoi) );
           }
       }
 
