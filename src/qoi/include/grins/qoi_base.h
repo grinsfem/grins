@@ -51,7 +51,7 @@ namespace GRINS
 
     QoIBase( const std::string& qoi_name );
 
-    virtual ~QoIBase(){}
+    virtual ~QoIBase() = default;
 
     //! Clone this QoI
     /*!
