@@ -77,16 +77,14 @@ namespace GRINS
 
   void MultiQoIBase::init_context(AssemblyContext & context)
   {
-    for(std::vector<std::unique_ptr<QoIBase>>::iterator qoi = _qois.begin(); qoi != _qois.end(); ++qoi)
-        (*qoi)->init_context(context);
-
+    for( auto & qoi : _qois )
+      qoi->init_context(context);
   }
 
   void MultiQoIBase::reinit(MultiphysicsSystem & system)
   {
-    for (unsigned int q = 0; q < this->n_qois(); ++q)
-      (this->get_qoi(q)).reinit(system);
-
+    for( auto & qoi : _qois )
+      qoi->reinit(system);
   }
 
 }
