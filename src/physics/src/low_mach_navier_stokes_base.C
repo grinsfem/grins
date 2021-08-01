@@ -149,6 +149,12 @@ namespace GRINS
     context.get_element_fe(_press_var.p())->get_xyz();
 
     context.get_side_fe(_press_var.p())->get_nothing();
+
+    if( this->_enable_thermo_press_calc )
+      {
+        context.get_element_fe(_p0_var->p0())->get_phi();
+        context.get_side_fe(_p0_var->p0())->get_nothing();
+      }
   }
 
   template<class Mu, class SH, class TC>
