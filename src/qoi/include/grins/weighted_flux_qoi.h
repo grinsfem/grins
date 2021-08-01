@@ -59,6 +59,10 @@ namespace GRINS
                        const MultiphysicsSystem& system,
                        unsigned int qoi_num ) override;
 
+    //! We don't do anything here because this QoI doesn't do anything during assembly
+    virtual void init_context( AssemblyContext & /*context*/ ) override
+    {}
+
   };
 
   inline

@@ -69,6 +69,21 @@ namespace GRINS
 
     virtual bool assemble_on_sides() const override;
 
+    //! We currently do not need to request anything from the context
+    /*!
+     * For the libMesh::FunctionBase specialization, it's just integrating
+     * functions that do not depend on solution variables (probably mostly of
+     * academic/testing interest), so we don't need to request anything.
+     *
+     * For the FEMFunctionAndDerivativeBase specialization, we manually build
+     * the finite element on the "main" mesh using the quadrature points of
+     * the rayfire mesh and then use point_value to evaulate the solution.
+     * FIXME
+     * \todo: Perhaps we should build up those finite elements at the init_context
+     *        time and cache it so the actual evaluation code looks a alot cleaner?
+     */
+    virtual void init_context( AssemblyContext& /*context*/ ) override {}
+
     //! Compute the qoi value.
     virtual void element_qoi( AssemblyContext & context,
                               const unsigned int qoi_index ) override;
