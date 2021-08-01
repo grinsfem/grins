@@ -28,11 +28,10 @@
 namespace GRINS
 {
   MultiQoIBase::MultiQoIBase(const std::string & qoi_name)
-  : QoIBase(qoi_name)
-  {
-    _assemble_sides = false;
-    _assemble_interior = false;
-  }
+    : QoIBase(qoi_name),
+      _assemble_sides(false),
+      _assemble_interior(false)
+  {}
 
   MultiQoIBase::~MultiQoIBase()
   {
