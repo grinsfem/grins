@@ -31,16 +31,16 @@
 
 namespace GRINS
 {
+  /*!
+   * This class is an amalgamation of CompositeQoI and QoIBase.
+   *
+   * The intended purpose is to provide functionality for using multiple QoI objects
+   * to compute a single QoI value.
+   */
   class MultiQoIBase : public QoIBase
   {
   public:
 
-    /*!
-      This class is an amalgamation of CompositeQoI and QoIBase.
-
-      The intended purpose is to provide functionality for using multiple QoI objects
-      to compute a single QoI value.
-    */
     MultiQoIBase(const std::string & qoi_name);
 
     //! Release and delete all internally stored QoIBase objects
