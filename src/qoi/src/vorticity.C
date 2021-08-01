@@ -72,16 +72,9 @@ namespace GRINS
 
   void Vorticity::init_context( AssemblyContext& context )
   {
-    libMesh::FEBase* u_fe = NULL;
-    libMesh::FEBase* v_fe = NULL;
+    context.get_element_fe(_flow_vars->u())->get_phi();
+    context.get_element_fe(_flow_vars->u())->get_dphi();
 
-    context.get_element_fe<libMesh::Real>(_flow_vars->u(), u_fe);
-    context.get_element_fe<libMesh::Real>(_flow_vars->v(), v_fe);
-
-    u_fe->get_dphi();
-    u_fe->get_JxW();
-
-    v_fe->get_dphi();
   }
 
   void Vorticity::element_qoi( AssemblyContext& context,
