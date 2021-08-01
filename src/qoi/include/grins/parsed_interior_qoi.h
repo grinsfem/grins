@@ -45,12 +45,9 @@ namespace GRINS
   {
   public:
 
-    //! Constructor
-    /*! Constructor takes GetPot object to read any input options associated
-      with this QoI */
-    ParsedInteriorQoI( const std::string& qoi_name );
+    using QoIBase::QoIBase;
 
-    virtual ~ParsedInteriorQoI();
+    virtual ~ParsedInteriorQoI() = default;
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
     virtual QoIBase* clone() const override;

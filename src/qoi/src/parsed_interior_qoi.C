@@ -39,9 +39,6 @@
 
 namespace GRINS
 {
-  ParsedInteriorQoI::ParsedInteriorQoI( const std::string& qoi_name )
-    : QoIBase(qoi_name) {}
-
   ParsedInteriorQoI::ParsedInteriorQoI( const ParsedInteriorQoI& original )
     : QoIBase(original)
   {
@@ -55,8 +52,6 @@ namespace GRINS
            (this->qoi_functional.get()));
       }
   }
-
-  ParsedInteriorQoI::~ParsedInteriorQoI() {}
 
   QoIBase* ParsedInteriorQoI::clone() const
   {
