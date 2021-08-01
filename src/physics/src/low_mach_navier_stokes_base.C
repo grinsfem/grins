@@ -147,6 +147,8 @@ namespace GRINS
 
     context.get_element_fe(_press_var.p())->get_phi();
     context.get_element_fe(_press_var.p())->get_xyz();
+
+    context.get_side_fe(_press_var.p())->get_nothing();
   }
 
   template<class Mu, class SH, class TC>
