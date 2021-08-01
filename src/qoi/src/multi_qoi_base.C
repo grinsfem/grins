@@ -33,13 +33,6 @@ namespace GRINS
       _assemble_interior(false)
   {}
 
-  MultiQoIBase::~MultiQoIBase()
-  {
-    for(std::vector<std::unique_ptr<QoIBase>>::iterator qoi = _qois.begin(); qoi != _qois.end(); ++qoi)
-        delete ((*qoi).release());
-
-  }
-
   MultiQoIBase::MultiQoIBase(const MultiQoIBase & original)
     : QoIBase(original)
   {

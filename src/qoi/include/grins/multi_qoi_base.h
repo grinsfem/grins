@@ -43,8 +43,7 @@ namespace GRINS
 
     MultiQoIBase(const std::string & qoi_name);
 
-    //! Release and delete all internally stored QoIBase objects
-    virtual ~MultiQoIBase();
+    virtual ~MultiQoIBase() = default;
 
     //! Move all internal QoI object pointers by *deep copying* via clone() in add_qoi()
     MultiQoIBase(const MultiQoIBase & original);
