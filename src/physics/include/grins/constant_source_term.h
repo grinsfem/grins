@@ -38,18 +38,14 @@ namespace GRINS
 
     ConstantSourceTerm( const std::string& physics_name, const GetPot& input );
 
-    virtual ~ConstantSourceTerm(){}
+    virtual ~ConstantSourceTerm() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
   protected:
 
     libMesh::Real _value;
-
-  private:
-
-    ConstantSourceTerm();
 
   };
 

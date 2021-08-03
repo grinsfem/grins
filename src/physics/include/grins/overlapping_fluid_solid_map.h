@@ -55,8 +55,6 @@ namespace GRINS
 
     virtual ~OverlappingFluidSolidMap() = default;
 
-    OverlappingFluidSolidMap() = delete;
-
     bool has_overlapping_fluid_elem(const libMesh::dof_id_type elem_id) const
     { return _overlapping_fluid_ids.find(elem_id) != _overlapping_fluid_ids.end(); }
 

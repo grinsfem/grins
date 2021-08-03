@@ -323,8 +323,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   void Simulation::print_sim_info()
@@ -340,8 +338,6 @@ namespace GRINS
     // Print DofMap constraint info if requested
     if( this->_print_constraint_info )
       this->_multiphysics_system->get_dof_map().print_dof_constraints();
-
-    return;
   }
 
   std::shared_ptr<libMesh::EquationSystems> Simulation::get_equation_system()
@@ -393,8 +389,6 @@ namespace GRINS
         // Update the old data
         system.update();
       }
-
-    return;
   }
 
   void Simulation::init_adjoint_solve( const GetPot& input, bool output_adjoint )

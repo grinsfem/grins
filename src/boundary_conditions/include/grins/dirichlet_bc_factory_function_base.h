@@ -36,11 +36,9 @@ namespace GRINS
   {
   public:
 
-    DirichletBCFactoryFunctionBase( const std::string& bc_type_name )
-      : DirichletBCFactoryAbstract(bc_type_name)
-    {}
+    using DirichletBCFactoryAbstract::DirichletBCFactoryAbstract;
 
-    ~DirichletBCFactoryFunctionBase(){};
+    virtual ~DirichletBCFactoryFunctionBase() = default;
 
   protected:
 
@@ -80,7 +78,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<libMesh::DirichletBoundary> create();
+    virtual std::unique_ptr<libMesh::DirichletBoundary> create() override;
 
   };
 

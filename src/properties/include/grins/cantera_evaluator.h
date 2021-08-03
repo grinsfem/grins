@@ -50,7 +50,8 @@ namespace GRINS
   public:
 
     CanteraEvaluator( CanteraMixture& mixture );
-    ~CanteraEvaluator(){};
+
+    ~CanteraEvaluator() = default;
 
     // Chemistry
     libMesh::Real M( unsigned int species ) const;
@@ -72,7 +73,7 @@ namespace GRINS
 
     // Thermo
     libMesh::Real cp( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
-    
+
     void cp_s( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y, std::vector<libMesh::Real>& Cp_s);
 
     libMesh::Real cv( const libMesh::Real& T, const libMesh::Real P, const std::vector<libMesh::Real>& Y );
@@ -151,7 +152,6 @@ namespace GRINS
                             std::vector<libMesh::Real>& mole_fractions ) const
   {
     _chem.X(M,mass_fractions,mole_fractions);
-    return;
   }
 
   inline
@@ -181,7 +181,6 @@ namespace GRINS
 				 std::vector<libMesh::Real>& Cp_s)
   {
     _thermo.cp_s(T,P,Y,Cp_s);
-    return;
   }
 
   inline

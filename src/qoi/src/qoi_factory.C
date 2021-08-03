@@ -57,16 +57,6 @@
 
 namespace GRINS
 {
-  QoIFactory::QoIFactory()
-  {
-    return;
-  }
-
-  QoIFactory::~QoIFactory()
-  {
-    return;
-  }
-
   std::shared_ptr<CompositeQoI> QoIFactory::build(const GetPot& input)
   {
     std::string qoi_list = input("QoI/enabled_qois", "none" );
@@ -229,8 +219,6 @@ namespace GRINS
 
     if (do_final_add)
       qois->add_qoi( *qoi );
-
-    return;
   }
 
   void QoIFactory::check_qoi_physics_consistency( const GetPot& input,
@@ -258,8 +246,6 @@ namespace GRINS
         required_physics.insert(PhysicsNaming::low_mach_navier_stokes());
         this->consistency_helper( requested_physics, required_physics, qoi_name );
       }
-
-    return;
   }
 
   void QoIFactory::echo_qoi_list( std::shared_ptr<CompositeQoI>& qois )
@@ -274,8 +260,6 @@ namespace GRINS
       }
 
     std::cout <<  "==========================================================" << std::endl;
-
-    return;
   }
 
   void QoIFactory::consistency_helper( const std::set<std::string>& requested_physics,
@@ -293,8 +277,6 @@ namespace GRINS
 
     if( !physics_found )
       this->consistency_error_msg( qoi_name, required_physics );
-
-    return;
   }
 
   void QoIFactory::consistency_error_msg( const std::string& qoi_name,

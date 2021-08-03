@@ -46,6 +46,7 @@ namespace GRINS
     /*! Based on runtime input, either a generic 1, 2, or 3-dimensional
       mesh is built; or is read from input from a specified file. */
     MeshBuilder() = default;
+    
     ~MeshBuilder() = default;
 
     //! Builds the libMesh::Mesh according to input options.

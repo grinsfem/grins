@@ -50,20 +50,19 @@ namespace GRINS
                                    const std::string& core_physics_name,
                                    const GetPot& input);
 
-    ~IncompressibleNavierStokesBase(){};
+    ~IncompressibleNavierStokesBase() = default;
 
     //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
     ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const override;
 
     // A getter function for the Viscosity object
     libMesh::Real get_viscosity_value(AssemblyContext& context, unsigned int qp) const;
@@ -83,9 +82,6 @@ namespace GRINS
     void mass_residual_impl( bool compute_jacobian, AssemblyContext & context );
 
     void element_constraint_impl( bool compute_jacobian, AssemblyContext & context );
-
-  private:
-    IncompressibleNavierStokesBase();
 
   };
 

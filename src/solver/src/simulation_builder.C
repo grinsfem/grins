@@ -42,13 +42,11 @@ namespace GRINS
   void SimulationBuilder::attach_mesh_builder( std::shared_ptr<MeshBuilder> mesh_builder )
   {
     this->_mesh_builder = mesh_builder;
-    return;
   }
 
   void SimulationBuilder::attach_vis_factory( std::shared_ptr<VisualizationFactory> vis_factory )
   {
     this->_vis_factory = vis_factory;
-    return;
   }
 
   void SimulationBuilder::attach_qoi_factory( std::shared_ptr<QoIFactory> qoi_factory )

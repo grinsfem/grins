@@ -181,9 +181,6 @@ namespace GRINS
       ", runtime = " << (final_wall_time - first_wall_time) <<
       std::endl
               << "==========================================================" << std::endl;
-
-
-    return;
   }
 
   void UnsteadySolver::update_dirichlet_bcs( SolverContext& context )

@@ -33,18 +33,17 @@ namespace GRINS
   class ErrorEstimatorFactoryBasic : public ErrorEstimatorFactoryBase
   {
   public:
-    ErrorEstimatorFactoryBasic( const std::string& estimator_name )
-      : ErrorEstimatorFactoryBase(estimator_name)
-    {}
 
-    ~ErrorEstimatorFactoryBasic(){};
+    using ErrorEstimatorFactoryBase::ErrorEstimatorFactoryBase;
+
+    ~ErrorEstimatorFactoryBasic() = default;
 
   protected:
 
     virtual std::unique_ptr<libMesh::ErrorEstimator>
     build_error_estimator( const GetPot & /*input*/,
                            MultiphysicsSystem & /*system*/,
-                           const ErrorEstimatorOptions & /*estimator_options*/ )
+                           const ErrorEstimatorOptions & /*estimator_options*/ ) override
     {
       return std::unique_ptr<libMesh::ErrorEstimator>( new EstimatorType );
     }

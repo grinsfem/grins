@@ -47,7 +47,7 @@ namespace GRINS
     GenericICHandler(const std::string& physics_name,
                      const GetPot& input);
 
-    virtual ~GenericICHandler();
+    virtual ~GenericICHandler() = default;
   };
 
 }

@@ -79,8 +79,6 @@ namespace GRINS
     this->_reactant_gas_var_idx = system.variable_number( r_var_name );
 
     this->_product_var_idx = system.variable_number( p_var_name );
-
-    return;
   }
 
   template<typename Chemistry>
@@ -219,8 +217,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
 } // end namespace GRINS

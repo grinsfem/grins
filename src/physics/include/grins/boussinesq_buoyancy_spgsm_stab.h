@@ -50,23 +50,23 @@ namespace GRINS
     ( const std::string& physics_name,
       const GetPot& input );
 
-    ~BoussinesqBuoyancySPGSMStabilization();
+    virtual ~BoussinesqBuoyancySPGSMStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext & context );
+                                     AssemblyContext & context ) override;
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override;
 
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      const override;
 
   protected:
 
@@ -77,10 +77,6 @@ namespace GRINS
 
     //! Viscosity object
     Viscosity _mu;
-
-  private:
-
-    BoussinesqBuoyancySPGSMStabilization();
 
   };
 

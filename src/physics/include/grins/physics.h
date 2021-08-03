@@ -109,6 +109,7 @@ namespace GRINS
   public:
 
     Physics( const PhysicsName& physics_name, const GetPot& input );
+
     virtual ~Physics();
 
     //! Initialize variables for this physics.
@@ -139,12 +140,12 @@ namespace GRINS
       its base class before time_evolving variables can be set. Default implementation is no
       time evolving variables.
     */
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* /*system*/ ) {}
 
     //! Any auxillary initialization a Physics class may need
     /*! This is called after all variables are added, so this method can
       safely query the MultiphysicsSystem about variable information. */
-    virtual void auxiliary_init( MultiphysicsSystem& system );
+    virtual void auxiliary_init( MultiphysicsSystem& /*system*/ ) {}
 
     //! Register name of postprocessed quantity with PostProcessedQuantities
     /*!
@@ -152,11 +153,11 @@ namespace GRINS
       postprocessed quantity. This will be used in computing the values and putting
       them in the CachedVariables object.
     */
-    virtual void register_postprocessing_vars( const GetPot& input,
-                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+    virtual void register_postprocessing_vars( const GetPot& /*input*/,
+                                               PostProcessedQuantities<libMesh::Real>& /*postprocessing*/ ) {};
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& /*context*/ ) {};
 
     //! Perform  any necessary setup before solve begins.
     /*!
@@ -244,10 +245,10 @@ namespace GRINS
 
     virtual void compute_nonlocal_mass_residual_cache( AssemblyContext & /*context*/ ){}
 
-    virtual void compute_postprocessed_quantity( unsigned int quantity_index,
-                                                 const AssemblyContext& context,
-                                                 const libMesh::Point& point,
-                                                 libMesh::Real& value );
+    virtual void compute_postprocessed_quantity( unsigned int /*quantity_index*/,
+                                                 const AssemblyContext& /*context*/,
+                                                 const libMesh::Point& /*point*/,
+                                                 libMesh::Real& /*value*/ ) {}
 
     ICHandlingBase* get_ic_handler();
 
@@ -284,9 +285,6 @@ namespace GRINS
 
     //! Caches whether we are solving an axisymmetric problem or not
     static bool _is_axisymmetric;
-
-  private:
-    Physics();
 
   }; // End Physics class declarations
 

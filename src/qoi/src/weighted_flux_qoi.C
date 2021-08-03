@@ -41,17 +41,6 @@
 
 namespace GRINS
 {
-  WeightedFluxQoI::WeightedFluxQoI( const std::string& qoi_name )
-    : QoIBase(qoi_name)
-  {
-    return;
-  }
-
-  WeightedFluxQoI::~WeightedFluxQoI()
-  {
-    return;
-  }
-
   QoIBase* WeightedFluxQoI::clone() const
   {
     return new WeightedFluxQoI( *this );

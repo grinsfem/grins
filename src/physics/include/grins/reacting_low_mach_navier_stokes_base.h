@@ -44,14 +44,14 @@ namespace GRINS
         _gas_mixture(gas_mix.release()) /*! \todo Use std::move when we mandate C++11 */
     {}
 
-    virtual ~ReactingLowMachNavierStokesBase(){};
+    virtual ~ReactingLowMachNavierStokesBase() = default;
 
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const
+      const override
     {
       ParameterUser::register_parameter(param_name, param_pointer);
       _gas_mixture->register_parameter(param_name, param_pointer);
@@ -62,10 +62,6 @@ namespace GRINS
   protected:
 
     std::unique_ptr<Mixture> _gas_mixture;
-
-  private:
-
-    ReactingLowMachNavierStokesBase();
 
   }; // class ReactingLowMachNavierStokesBase
 

@@ -113,8 +113,6 @@ namespace GRINS
 
         libmesh_error();
       }
-
-    return;
   }
 
   bool MeshAdaptiveSolverBase::check_for_convergence( SolverContext& context,
@@ -198,8 +196,6 @@ namespace GRINS
         }
 
       } // switch(_refinement_type)
-
-    return;
   }
 
   void MeshAdaptiveSolverBase::estimate_error_for_amr( SolverContext& context, libMesh::ErrorVector& error )

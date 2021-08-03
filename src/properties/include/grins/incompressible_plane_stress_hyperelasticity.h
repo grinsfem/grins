@@ -50,7 +50,7 @@ namespace GRINS
     IncompressiblePlaneStressHyperelasticity( const GetPot& input,
                                               const std::string& material );
 
-    virtual ~IncompressiblePlaneStressHyperelasticity();
+    virtual ~IncompressiblePlaneStressHyperelasticity() = default;
 
     // So we can make implementation private
     friend class StressStrainLaw<IncompressiblePlaneStressHyperelasticity<StrainEnergy> >;

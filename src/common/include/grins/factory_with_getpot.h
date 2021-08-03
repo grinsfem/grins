@@ -42,7 +42,7 @@ namespace GRINS
       : FactoryAbstract<Base>(name)
     {}
 
-    ~FactoryWithGetPot(){};
+    virtual ~FactoryWithGetPot() = default;
 
     static void set_getpot( const GetPot& input )
     { _input = &input; }

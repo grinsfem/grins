@@ -38,19 +38,6 @@
 namespace GRINS
 {
   template<class Mu, class SH, class TC>
-  LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::LowMachNavierStokesSPGSMStabilization( const std::string& physics_name,
-                                                                                          const GetPot& input )
-    : LowMachNavierStokesStabilizationBase<Mu,SH,TC>(physics_name,input)
-  {
-  }
-
-  template<class Mu, class SH, class TC>
-  LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::~LowMachNavierStokesSPGSMStabilization()
-  {
-    return;
-  }
-
-  template<class Mu, class SH, class TC>
   void LowMachNavierStokesSPGSMStabilization<Mu,SH,TC>::element_time_derivative
   ( bool compute_jacobian,
     AssemblyContext & context )
@@ -118,8 +105,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -199,7 +184,6 @@ namespace GRINS
           }
 
       }
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -256,8 +240,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -306,8 +288,6 @@ namespace GRINS
             Fp(i) += tau_M*RM_t*p_dphi[i][qp]*JxW[qp];
           }
       }
-
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -388,7 +368,6 @@ namespace GRINS
           }
 
       }
-    return;
   }
 
   template<class Mu, class SH, class TC>
@@ -445,8 +424,6 @@ namespace GRINS
           }
 
       }
-
-    return;
   }
 
 } // namespace GRINS

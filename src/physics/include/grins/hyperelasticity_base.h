@@ -40,8 +40,6 @@ namespace GRINS
                          const PhysicsName & core_physics_name,
                          const GetPot & input );
 
-    HyperelasticityBase() = delete;
-
     virtual ~HyperelasticityBase() = default;
 
   protected:

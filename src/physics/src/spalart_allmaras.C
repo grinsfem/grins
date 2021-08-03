@@ -107,8 +107,6 @@ namespace GRINS
     context.get_side_fe(_turbulence_vars.nu())->get_phi();
     context.get_side_fe(_turbulence_vars.nu())->get_dphi();
     context.get_side_fe(_turbulence_vars.nu())->get_xyz();
-
-    return;
   }
 
   template<class Mu>

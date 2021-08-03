@@ -35,17 +35,6 @@
 
 namespace GRINS
 {
-
-  VisualizationFactory::VisualizationFactory(  )
-  {
-    return;
-  }
-
-  VisualizationFactory::~VisualizationFactory()
-  {
-    return;
-  }
-
   std::shared_ptr<Visualization> VisualizationFactory::build
   ( const GetPot& input,
     const libMesh::Parallel::Communicator &comm )

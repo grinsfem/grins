@@ -41,11 +41,11 @@ namespace GRINS
       : CatalyticWallNeumannBCOldStyleFactoryBase<GasRecombinationCatalyticWallNeumannBCFactoryImpl>(bc_type_name)
     {}
 
-    ~GasRecombinationCatalyticWallNeumannBCOldStyleFactory(){};
+    ~GasRecombinationCatalyticWallNeumannBCOldStyleFactory() = default;
 
   protected:
 
-    virtual std::string reactant_for_catalycity(const std::string& reaction) const
+    virtual std::string reactant_for_catalycity(const std::string& reaction) const override
     {
       std::string reactant;
       std::string product; // dummy in this function
@@ -53,7 +53,7 @@ namespace GRINS
       return reactant;
     }
 
-    virtual std::string catalytic_wall_prefix_str() const
+    virtual std::string catalytic_wall_prefix_str() const override
     {
       return "wall_catalytic_reactions";
     }
@@ -68,9 +68,9 @@ namespace GRINS
       : CatalyticWallNeumannBCOldStyleFactoryBase<GasSolidCatalyticWallNeumannBCFactoryImpl>(bc_type_name)
     {}
 
-    ~GasSolidCatalyticWallNeumannBCOldStyleFactory(){};
+    ~GasSolidCatalyticWallNeumannBCOldStyleFactory() = default;
 
-    virtual std::string reactant_for_catalycity(const std::string& reaction) const
+    virtual std::string reactant_for_catalycity(const std::string& reaction) const override
     {
       std::string gas_reactant;
       std::string solid_reactant; // dummy in this function
@@ -79,7 +79,7 @@ namespace GRINS
       return gas_reactant;
     }
 
-    virtual std::string catalytic_wall_prefix_str() const
+    virtual std::string catalytic_wall_prefix_str() const override
     {
       return "wall_gas_solid_reactions";
     }

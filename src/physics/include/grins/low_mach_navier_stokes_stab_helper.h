@@ -34,11 +34,9 @@ namespace GRINS
   {
   public:
 
-    LowMachNavierStokesStabilizationHelper
-    ( const std::string& helper_name,
-      const GetPot& input);
+    using IncompressibleNavierStokesStabilizationHelper::IncompressibleNavierStokesStabilizationHelper;
 
-    ~LowMachNavierStokesStabilizationHelper();
+    virtual ~LowMachNavierStokesStabilizationHelper() = default;
 
     libMesh::Real compute_tau_energy( AssemblyContext& c,
                                       unsigned int qp,

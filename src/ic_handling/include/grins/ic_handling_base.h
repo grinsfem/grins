@@ -54,7 +54,7 @@ namespace GRINS
 
     ICHandlingBase(const std::string& physics_name);
 
-    virtual ~ICHandlingBase();
+    virtual ~ICHandlingBase() = default;
 
     void attach_initial_func( const libMesh::FunctionBase<libMesh::Number>& initial_val );
 

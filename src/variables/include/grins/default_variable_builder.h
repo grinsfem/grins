@@ -38,11 +38,12 @@ namespace GRINS
                                  public BuilderHelper
   {
   public:
-    DefaultVariableBuilder(){}
-    ~DefaultVariableBuilder(){}
+    DefaultVariableBuilder() = default;
+
+    virtual ~DefaultVariableBuilder() = default;
 
     virtual void build_variables_impl( const GetPot& input,
-                                       MultiphysicsSystem& system );
+                                       MultiphysicsSystem& system ) override;
 
   protected:
 

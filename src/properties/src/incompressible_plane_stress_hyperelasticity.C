@@ -36,23 +36,13 @@ namespace GRINS
   template <typename StrainEnergy>
   IncompressiblePlaneStressHyperelasticity<StrainEnergy>::IncompressiblePlaneStressHyperelasticity( const GetPot& input )
     : _W(input)
-  {
-    return;
-  }
+  {}
 
   template <typename StrainEnergy>
   IncompressiblePlaneStressHyperelasticity<StrainEnergy>::IncompressiblePlaneStressHyperelasticity( const GetPot& input,
                                                                                                     const std::string& material )
     : _W(input,material)
-  {
-    return;
-  }
-
-  template <typename StrainEnergy>
-  IncompressiblePlaneStressHyperelasticity<StrainEnergy>::~IncompressiblePlaneStressHyperelasticity()
-  {
-    return;
-  }
+  {}
 
   template <typename StrainEnergy>
   void IncompressiblePlaneStressHyperelasticity<StrainEnergy>::compute_stress_imp( unsigned int /*dim*/,
@@ -82,8 +72,6 @@ namespace GRINS
             stress(alpha,beta) = a_contra(alpha,beta)*a_term + A_contra(alpha,beta)*A_term;
           }
       }
-
-    return;
   }
 
   template <typename StrainEnergy>
@@ -131,8 +119,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template <typename StrainEnergy>
@@ -156,8 +142,6 @@ namespace GRINS
 
     I1 += lambda_sq;
     I2 += A_over_a;
-
-    return;
   }
 
   template <typename StrainEnergy>
@@ -174,8 +158,6 @@ namespace GRINS
 
     a_term = 2.0*(dWdI1 + dWdI2*lambda_sq);
     A_term = 2.0*dWdI2*A_over_a + p;
-
-    return;
   }
 
   template <typename StrainEnergy>
@@ -217,8 +199,6 @@ namespace GRINS
             dAterm_dstrain(alpha,beta) = 2.0*dWdI2*A_over_a*(2.0*A_contra(alpha,beta)) + dp_dstrain;
           }
       }
-
-    return;
   }
 
   template <typename StrainEnergy>
@@ -239,8 +219,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template <typename StrainEnergy>

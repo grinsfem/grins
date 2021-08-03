@@ -43,23 +43,13 @@ namespace GRINS
     _parsed_velocity_source_x_index(0),
     _parsed_velocity_source_y_index(0),
     _parsed_velocity_source_z_index(0)
-  {
-    return;
-  }
-
-  template<class Mu>
-  ParsedVelocitySource<Mu>::~ParsedVelocitySource()
-  {
-    return;
-  }
+  {}
 
   template<class Mu>
   void ParsedVelocitySource<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.u())->get_xyz();
     context.get_element_fe(this->_flow_vars.u())->get_phi();
-
-    return;
   }
 
   template<class Mu>
@@ -98,8 +88,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template<class Mu>
@@ -224,8 +212,6 @@ namespace GRINS
 
         value = output_vec(2);
       }
-
-    return;
   }
 
 } // namespace GRINS

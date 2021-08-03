@@ -39,9 +39,6 @@
 
 namespace GRINS
 {
-  ParsedBoundaryQoI::ParsedBoundaryQoI( const std::string& qoi_name )
-    : QoIBase(qoi_name) {}
-
   ParsedBoundaryQoI::ParsedBoundaryQoI( const ParsedBoundaryQoI& original )
     : QoIBase(original)
   {
@@ -57,8 +54,6 @@ namespace GRINS
 
     this->_bc_ids = original._bc_ids;
   }
-
-  ParsedBoundaryQoI::~ParsedBoundaryQoI() {}
 
   QoIBase* ParsedBoundaryQoI::clone() const
   {

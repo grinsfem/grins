@@ -30,17 +30,6 @@
 
 namespace GRINS
 {
-  AssemblyContext::AssemblyContext( const libMesh::System& system )
-    : libMesh::FEMContext(system)
-  {
-    return;
-  }
-
-  AssemblyContext::~AssemblyContext()
-  {
-    return;
-  }
-
   MultiphysicsSystem & AssemblyContext::get_multiphysics_system()
   {
     libMesh::System & base_system = const_cast<libMesh::System &>(this->get_system());

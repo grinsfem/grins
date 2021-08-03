@@ -41,7 +41,7 @@ namespace GRINS
       : DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<libMesh::Number> >(bc_type_name)
     {}
 
-    ~PrescribedVectorValueDirichletOldStyleBCFactory(){};
+    virtual ~PrescribedVectorValueDirichletOldStyleBCFactory() = default;
 
   protected:
 
@@ -51,7 +51,7 @@ namespace GRINS
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
-                const std::string& section );
+                const std::string& section ) override;
 
     virtual void add_funcs( const GetPot& input,
                             MultiphysicsSystem& system,
@@ -71,7 +71,7 @@ namespace GRINS
 
   protected:
 
-    virtual std::string var_input_string()
+    virtual std::string var_input_string() override
     { return "bound_vel"; }
 
   };
@@ -86,7 +86,7 @@ namespace GRINS
 
   protected:
 
-    virtual std::string var_input_string()
+    virtual std::string var_input_string() override
     { return "displacement"; }
 
   };
@@ -101,7 +101,7 @@ namespace GRINS
 
   protected:
 
-    virtual std::string var_input_string()
+    virtual std::string var_input_string() override
     { return "bound_species"; }
 
   };
@@ -120,7 +120,7 @@ namespace GRINS
                             MultiphysicsSystem& system,
                             const std::string& input_string,
                             const std::vector<std::string>& var_names,
-                            libMesh::CompositeFunction<libMesh::Number>& composite_func ) const;
+                            libMesh::CompositeFunction<libMesh::Number>& composite_func ) const override;
 
     template<typename ChemistryType>
     void convert_mole_fracs_and_add_to_func(const GetPot& input,

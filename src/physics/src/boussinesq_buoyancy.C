@@ -37,18 +37,6 @@
 
 namespace GRINS
 {
-
-  BoussinesqBuoyancy::BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input )
-    : BoussinesqBuoyancyBase(physics_name,input)
-  {
-    return;
-  }
-
-  BoussinesqBuoyancy::~BoussinesqBuoyancy()
-  {
-    return;
-  }
-
   void BoussinesqBuoyancy::element_time_derivative
   ( bool compute_jacobian,
     AssemblyContext & context )

@@ -50,7 +50,7 @@ namespace GRINS
       : FactoryWithGetPot<libMesh::ErrorEstimator>(estimator_name)
     {}
 
-    ~ErrorEstimatorFactoryBase(){};
+    virtual ~ErrorEstimatorFactoryBase() = default;
 
     static void set_system( MultiphysicsSystem& system )
     { _system = &system; }
@@ -76,7 +76,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<libMesh::ErrorEstimator> create();
+    virtual std::unique_ptr<libMesh::ErrorEstimator> create() override;
 
   };
 

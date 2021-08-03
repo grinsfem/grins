@@ -80,8 +80,6 @@ namespace GRINS
         // convert [kmol/m^3-s] to [kg/m^3-s]
         omega_dot[s] *= this->_cantera_gas.molecularWeight(s);
       }
-
-    return;
   }
 
 } // namespace GRINS

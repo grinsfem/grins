@@ -39,8 +39,6 @@ namespace GRINS
                          const GetPot& input,
                          bool is_compressible);
 
-    ElasticMembraneBase() = delete;
-
     virtual ~ElasticMembraneBase() = default;
 
     virtual void init_variables( libMesh::FEMSystem* system ) override;

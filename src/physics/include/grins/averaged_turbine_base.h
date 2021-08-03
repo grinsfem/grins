@@ -49,10 +49,10 @@ namespace GRINS
 
     AveragedTurbineBase( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedTurbineBase(){};
+    virtual ~AveragedTurbineBase() = default;
 
     //! Sets turbine_speed and velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 
     bool compute_force ( const libMesh::Point& point,
                          const libMesh::Real time,
@@ -126,14 +126,13 @@ namespace GRINS
     // this will be a constant.
     libMesh::ParsedFunction<libMesh::Number> aoa_function;
 
-    ScalarVariable& _var;
+    ScalarVariable & _var;
 
   private:
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );
 
-    AveragedTurbineBase();
   };
 
 } // end namespace block

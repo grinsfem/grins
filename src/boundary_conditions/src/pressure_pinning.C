@@ -62,13 +62,6 @@ namespace GRINS
 
     if( pin_loc_dim == 3 )
       _pin_location(2) = input("Physics/"+physics_name+"/pin_location", 0.0, 2 );
-
-    return;
-  }
-
-  PressurePinning::~PressurePinning( )
-  {
-    return;
   }
 
   void PressurePinning::check_pin_location( const libMesh::MeshBase& mesh )
@@ -159,8 +152,6 @@ namespace GRINS
               } // End if request_jacobian
           } // End i loop
       } // End if pin_location
-
-    return;
   }
 
 } // namespace GRINS

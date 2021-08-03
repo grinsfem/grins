@@ -46,7 +46,7 @@ namespace GRINS
   {
   public:
 
-    virtual ~FactoryAbstract(){}
+    virtual ~FactoryAbstract() = default;
 
     //! Use this method to build objects of type Base.
     static std::unique_ptr<Base> build(const std::string & name);

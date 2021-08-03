@@ -35,10 +35,4 @@ namespace GRINS
     this->set_parameter
       (_value, input, "Physics/SourceFunction/value", _value);
   }
-
-  ConstantSourceFunction::~ConstantSourceFunction()
-  {
-    return;
-  }
-
 } // namespace GRINS

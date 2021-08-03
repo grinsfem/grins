@@ -48,26 +48,23 @@ namespace GRINS
 
     AveragedFanAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedFanAdjointStabilization();
+    virtual ~AveragedFanAdjointStabilization() = default;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext & context );
+                                     AssemblyContext & context ) override;
 
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
 
-  private:
-
-    AveragedFanAdjointStabilization();
   };
 
 } // end namespace block

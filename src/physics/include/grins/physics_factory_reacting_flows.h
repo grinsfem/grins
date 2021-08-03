@@ -46,12 +46,12 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
-    ~PhysicsFactoryReactingFlows(){};
+    virtual ~PhysicsFactoryReactingFlows() = default;
 
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                    const std::string& physics_name );
+                                                    const std::string& physics_name ) override;
 
     void grins_antioch_model_error_msg( const std::string& viscosity_model,
                                         const std::string& conductivity_model,
@@ -178,7 +178,7 @@ namespace GRINS
   {
   public:
     ReactingFlowsPhysicsFactoryInitializer();
-    ~ReactingFlowsPhysicsFactoryInitializer(){}
+    ~ReactingFlowsPhysicsFactoryInitializer() = default;
   };
 
 } // end namespace GRINS

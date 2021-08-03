@@ -53,25 +53,25 @@ namespace GRINS
 
     ParsedVelocitySource( const std::string& physics_name, const GetPot& input );
 
-    ~ParsedVelocitySource();
+    virtual ~ParsedVelocitySource() = default;
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     //! Register postprocessing variables for ParsedVelocitySource
     virtual void register_postprocessing_vars( const GetPot& input,
-                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing ) override;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Constraint part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
-                                                 libMesh::Real& value );
+                                                 libMesh::Real& value ) override;
 
   private:
 
@@ -84,7 +84,6 @@ namespace GRINS
     //! Index from registering this quantity
     unsigned int _parsed_velocity_source_z_index;
 
-    ParsedVelocitySource();
   };
 
 } // end namespace block

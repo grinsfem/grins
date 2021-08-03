@@ -41,8 +41,10 @@ namespace GRINS
   class StabilizationHelper : public ParameterUser
   {
   public:
-    StabilizationHelper( const std::string & helper_name );
-    ~StabilizationHelper();
+
+    using ParameterUser::ParameterUser;
+
+    virtual ~StabilizationHelper() = default;
 
     /*! \todo Should we inline this? */
     libMesh::RealGradient compute_g( libMesh::FEBase* fe,

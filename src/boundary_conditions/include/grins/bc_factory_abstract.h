@@ -48,7 +48,7 @@ namespace GRINS
       : FactoryWithGetPot<Base>(bc_type_name)
     {}
 
-    ~BCFactoryAbstract(){};
+    virtual ~BCFactoryAbstract() = default;
 
     static void set_system( MultiphysicsSystem& system )
     { _system = &system; }

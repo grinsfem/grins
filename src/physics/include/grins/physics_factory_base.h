@@ -49,7 +49,7 @@ namespace GRINS
       : FactoryWithGetPotPhysicsName<Physics>(physics_name)
     {}
 
-    ~PhysicsFactoryBase(){};
+    virtual ~PhysicsFactoryBase() = default;
 
   protected:
 
@@ -58,7 +58,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<Physics> create();
+    virtual std::unique_ptr<Physics> create() override;
 
   };
 

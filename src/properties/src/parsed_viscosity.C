@@ -101,9 +101,4 @@ namespace GRINS
       }
   }
 
-  ParsedViscosity::~ParsedViscosity()
-  {
-    return;
-  }
-
 } // namespace GRINS

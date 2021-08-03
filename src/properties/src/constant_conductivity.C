@@ -59,7 +59,6 @@ namespace GRINS
     else
       this->set_parameter
         (_k, input, "Materials/Conductivity/k", _k);
-    return;
   }
 
   ConstantConductivity::ConstantConductivity( const GetPot& input, const std::string& material )
@@ -87,10 +86,4 @@ namespace GRINS
       }
 
   }
-
-  ConstantConductivity::~ConstantConductivity()
-  {
-    return;
-  }
-
 } // end namespace GRINS

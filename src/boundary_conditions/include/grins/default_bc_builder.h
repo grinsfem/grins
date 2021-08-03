@@ -49,17 +49,14 @@ namespace GRINS
   {
   public:
 
-    DefaultBCBuilder()
-      : BCBuilder(),
-        BuilderHelper()
-    {};
+    DefaultBCBuilder() = default;
 
-    ~DefaultBCBuilder(){};
+    ~DefaultBCBuilder() = default;
 
   protected:
 
     virtual void build_bcs( const GetPot& input, MultiphysicsSystem& system,
-                            std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs );
+                            std::vector<std::shared_ptr<NeumannBCContainer> >& neumann_bcs ) override;
 
     //! Helper function to build boundary conditions specified by a single type
     /*! Examples include axisymmetric and periodic. */

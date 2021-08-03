@@ -92,10 +92,4 @@ namespace GRINS
         libmesh_error_msg("ERROR: Detected '0' function for ParsedConductivity!");
       }
   }
-
-  ParsedConductivity::~ParsedConductivity()
-  {
-    return;
-  }
-
 } // namespace GRINS

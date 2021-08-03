@@ -41,17 +41,6 @@
 
 namespace GRINS
 {
-  AverageNusseltNumber::AverageNusseltNumber( const std::string& qoi_name )
-    : QoIBase(qoi_name)
-  {
-    return;
-  }
-
-  AverageNusseltNumber::~AverageNusseltNumber()
-  {
-    return;
-  }
-
   QoIBase* AverageNusseltNumber::clone() const
   {
     AverageNusseltNumber *returnval = new AverageNusseltNumber( *this );
@@ -104,8 +93,6 @@ namespace GRINS
 
     T_fe->get_dphi();
     T_fe->get_JxW();
-
-    return;
   }
 
   void AverageNusseltNumber::side_qoi( AssemblyContext& context,
@@ -194,8 +181,6 @@ namespace GRINS
           } // end check on boundary id
 
       }
-
-    return;
   }
 
   void AverageNusseltNumber::parse_thermal_conductivity( const GetPot& input )

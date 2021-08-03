@@ -41,8 +41,6 @@ namespace GRINS
 
     CompressibleMooneyRivlin( const GetPot & input, const std::string & material );
 
-    CompressibleMooneyRivlin() = delete;
-
     virtual ~CompressibleMooneyRivlin() = default;
 
     // So we can make implementation private

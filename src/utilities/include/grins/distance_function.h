@@ -63,12 +63,12 @@ namespace GRINS {
     /**
      * Destructor
      */
-    ~DistanceFunction () {};
+    ~DistanceFunction () = default;
 
     /**
      * Initializes the distance
      */
-    virtual void initialize ();
+    virtual void initialize () override;
 
     /**
      * Compute distance from input node to boundary_mesh
@@ -121,10 +121,10 @@ namespace GRINS {
   public:
 
     // ctor
-    ComputeDistanceJacobian(){}
+    ComputeDistanceJacobian() = default;
 
     // dtor
-    ~ComputeDistanceJacobian(){}
+    ~ComputeDistanceJacobian() = default;
 
     /**
      * Finite-differenced Jacobian approximation.
@@ -203,7 +203,7 @@ namespace GRINS {
     }
 
     // dtor
-    ~ComputeDistanceResidual(){}
+    ~ComputeDistanceResidual() = default;
 
     // Calculate the residual
     void operator()(const libMesh::DenseVector<libMesh::Real> &U,
@@ -254,15 +254,15 @@ namespace GRINS {
   private:
 
     // Reference to boundary element
-    const libMesh::Elem& _belem;
+    const libMesh::Elem & _belem;
     const unsigned int _dim;
-    const libMesh::Point& _p;
+    const libMesh::Point & _p;
 
     std::unique_ptr<libMesh::FEBase> _fe;
-    libMesh::FEBase *fe;
+    libMesh::FEBase * fe;
 
     // work vectors
-    libMesh::DenseVector<libMesh::Real>    Up, Fp, Um, Fm;
+    libMesh::DenseVector<libMesh::Real> Up, Fp, Um, Fm;
   };
 
 } // end namespace GRINS

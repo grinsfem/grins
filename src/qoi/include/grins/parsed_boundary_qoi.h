@@ -45,34 +45,31 @@ namespace GRINS
   {
   public:
 
-    //! Constructor
-    /*! Constructor takes GetPot object to read any input options associated
-      with this QoI */
-    ParsedBoundaryQoI( const std::string& qoi_name );
+    using QoIBase::QoIBase;
 
-    virtual ~ParsedBoundaryQoI();
+    virtual ~ParsedBoundaryQoI() = default;
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
-    virtual QoIBase* clone() const;
+    virtual QoIBase* clone() const override;
 
-    virtual bool assemble_on_interior() const;
+    virtual bool assemble_on_interior() const override;
 
-    virtual bool assemble_on_sides() const;
+    virtual bool assemble_on_sides() const override;
 
     //! Initialize local variables
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
-                       unsigned int qoi_num );
+                       unsigned int qoi_num ) override;
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     //! Compute the qoi value.
     virtual void side_qoi( AssemblyContext& context,
-                           const unsigned int qoi_index );
+                           const unsigned int qoi_index ) override;
 
     //! Compute the qoi derivative with respect to the solution.
     virtual void side_qoi_derivative( AssemblyContext& context,
-                                      const unsigned int qoi_index );
+                                      const unsigned int qoi_index ) override;
 
   protected:
 
@@ -85,10 +82,6 @@ namespace GRINS
 
     //! Manual copy constructor due to the UniquePtr
     ParsedBoundaryQoI(const ParsedBoundaryQoI& original);
-
-  private:
-    //! User never call default constructor.
-    ParsedBoundaryQoI();
 
   };
 

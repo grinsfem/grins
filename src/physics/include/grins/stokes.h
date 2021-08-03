@@ -46,8 +46,6 @@ namespace GRINS
 
     Stokes(const std::string& physics_name, const GetPot& input);
 
-    Stokes() = delete;
-
     ~Stokes() = default;
 
     virtual void auxiliary_init( MultiphysicsSystem& system ) override;

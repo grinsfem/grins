@@ -35,8 +35,8 @@ namespace GRINS
   {
   public:
 
-    VisualizationFactory();
-    virtual ~VisualizationFactory();
+    VisualizationFactory() = default;
+    virtual ~VisualizationFactory() = default;
 
     virtual std::shared_ptr<Visualization> build
     ( const GetPot& input,

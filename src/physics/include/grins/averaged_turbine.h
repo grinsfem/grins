@@ -55,28 +55,25 @@ namespace GRINS
 
     AveragedTurbine( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedTurbine(){};
+    virtual ~AveragedTurbine() = default;
 
-    virtual void init_context( AssemblyContext & context );
+    virtual void init_context( AssemblyContext & context ) override;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Constraint part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
     // Mass residual of the turbine itself
     virtual void nonlocal_mass_residual ( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
     // External torque powering the fan or loading the turbine
     virtual void nonlocal_time_derivative ( bool compute_jacobian,
-                                            AssemblyContext & context );
+                                            AssemblyContext & context ) override;
 
-  private:
-
-    AveragedTurbine();
   };
 
 } // end namespace block

@@ -50,8 +50,6 @@ namespace GRINS
     }
 
     this->read_input_options(input);
-
-    return;
   }
 
   HookesLaw1D::HookesLaw1D(const GetPot& input, const std::string& material)
@@ -135,11 +133,6 @@ namespace GRINS
       }
   }
 
-  HookesLaw1D::~HookesLaw1D()
-  {
-    return;
-  }
-
   void HookesLaw1D::read_input_options(const GetPot& input)
   {
     // We'd better have either Lam\'{e} constants or E and nu
@@ -187,8 +180,6 @@ namespace GRINS
     libMesh::Real strain = 0.5*(G_cov(0,0) - g_cov(0,0));
 
     stress(0,0) = (this->_E)*g_contra(0,0)*g_contra(0,0)*strain;
-
-    return;
   }
 
   void HookesLaw1D::compute_stress_and_elasticity_imp( unsigned int dim,
@@ -202,8 +193,6 @@ namespace GRINS
     this->compute_stress_imp(dim,g_contra,g_cov,G_contra,G_cov,stress);
 
     C(0,0,0,0) = this->_E*g_contra(0,0)*g_contra(0,0);
-
-    return;
   }
 
   libMesh::Real HookesLaw1D::compute_33_stress_imp( const libMesh::TensorValue<libMesh::Real>& /*g_contra*/,

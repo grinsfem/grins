@@ -60,23 +60,23 @@ namespace GRINS
 
     SpalartAllmaras(const std::string& physics_name, const GetPot& input);
 
-    ~SpalartAllmaras(){};
+    virtual ~SpalartAllmaras() = default;
 
-    virtual void init_variables( libMesh::FEMSystem* system );
+    virtual void init_variables( libMesh::FEMSystem* system ) override;
 
     //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     // Element time derivative
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override;
 
     // A distance function to get distances from boundaries to qps
     std::unique_ptr<DistanceFunction> distance_function;
@@ -89,15 +89,16 @@ namespace GRINS
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      const override;
 
   protected:
 
     // The flow variables
-    VelocityVariable& _flow_vars;
-    PressureFEVariable& _press_var;
+    VelocityVariable & _flow_vars;
+    PressureFEVariable & _press_var;
+
     // These are defined for each physics
-    TurbulenceFEVariables& _turbulence_vars;
+    TurbulenceFEVariables & _turbulence_vars;
 
     // Spalart Allmaras Helper object
     SpalartAllmarasHelper _spalart_allmaras_helper;
@@ -114,8 +115,6 @@ namespace GRINS
     // Infinite distance case
     bool _infinite_distance;
 
-  private:
-    SpalartAllmaras();
   };
 
 } //End namespace block

@@ -45,13 +45,13 @@ namespace GRINS
 
     ReactingLowMachNavierStokesAbstract(const PhysicsName& physics_name, const GetPot& input);
 
-    virtual ~ReactingLowMachNavierStokesAbstract(){};
+    virtual ~ReactingLowMachNavierStokesAbstract() = default;
 
     //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     unsigned int n_species() const;
 
@@ -74,11 +74,11 @@ namespace GRINS
 
     libMesh::Number _p0;
 
-    VelocityVariable& _flow_vars;
-    PressureFEVariable& _press_var;
-    PrimitiveTempFEVariables& _temp_vars;
+    VelocityVariable & _flow_vars;
+    PressureFEVariable & _press_var;
+    PrimitiveTempFEVariables & _temp_vars;
 
-    SpeciesMassFractionsVariable& _species_vars;
+    SpeciesMassFractionsVariable & _species_vars;
 
     /*! \todo When we mandate C++11, switch this to a std::shared_ptr. Then, in the VariableWarhouse,
       we can use dynamic_pointer_cast to get a std::shared_ptr. */
@@ -98,8 +98,6 @@ namespace GRINS
     libMesh::Real _fixed_rho_value;
 
   private:
-
-    ReactingLowMachNavierStokesAbstract();
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

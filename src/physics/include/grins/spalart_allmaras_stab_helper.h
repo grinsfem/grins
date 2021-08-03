@@ -49,7 +49,7 @@ namespace GRINS
 
     SpalartAllmarasStabilizationHelper( const std::string& helper_name, const GetPot& input );
 
-    ~SpalartAllmarasStabilizationHelper(){};
+    virtual ~SpalartAllmarasStabilizationHelper() = default;
 
     libMesh::Real compute_tau_spalart( AssemblyContext& c,
                                        unsigned int qp,
@@ -128,16 +128,16 @@ namespace GRINS
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      const override;
 
   protected:
 
     libMesh::Real _C, _tau_factor;
 
-    const VelocityVariable& _flow_vars;
-    const PressureFEVariable& _press_var;
+    const VelocityVariable & _flow_vars;
+    const PressureFEVariable & _press_var;
 
-    const TurbulenceFEVariables& _turbulence_vars;
+    const TurbulenceFEVariables & _turbulence_vars;
 
     SpalartAllmarasHelper _spalart_allmaras_helper;
 

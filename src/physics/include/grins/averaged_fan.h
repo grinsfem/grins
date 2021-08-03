@@ -53,28 +53,27 @@ namespace GRINS
 
     AveragedFan( const std::string& physics_name, const GetPot& input );
 
-    ~AveragedFan();
-
+    virtual ~AveragedFan() = default;
 
     //! Register postprocessing variables for visualization output
     virtual void register_postprocessing_vars( const GetPot& input,
-                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing ) override;
 
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Constraint part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     //! Compute value of postprocessed quantities at libMesh::Point.
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
-                                                 libMesh::Real& value );
+                                                 libMesh::Real& value ) override;
 
   private:
 
@@ -86,9 +85,6 @@ namespace GRINS
 
     //! Index from registering this postprocessed quantity
     unsigned int _base_velocity_z_index;
-
-    AveragedFan();
-
 
   };
 

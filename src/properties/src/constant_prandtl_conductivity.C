@@ -81,10 +81,4 @@ namespace GRINS
           (_Pr, input, "Materials/Conductivity/Pr", _Pr);
       }
   }
-
-  ConstantPrandtlConductivity::~ConstantPrandtlConductivity()
-  {
-    return;
-  }
-
 } // end namespace GRINS

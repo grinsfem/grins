@@ -115,10 +115,4 @@ namespace GRINS
     // We'd better have postive viscosity when we're all done.
     libmesh_assert_greater( _mu, 0.0 );
   }
-
-  ConstantViscosity::~ConstantViscosity()
-  {
-    return;
-  }
-
 } // namespace GRINS

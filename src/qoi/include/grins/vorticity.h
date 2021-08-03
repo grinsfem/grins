@@ -45,41 +45,38 @@ namespace GRINS
   {
   public:
 
-    //! Constructor
-    /*! Constructor takes GetPot object to read any input options associated
-      with this QoI */
-    Vorticity( const std::string& qoi_name );
+    using QoIBase::QoIBase;
 
-    virtual ~Vorticity();
+    virtual ~Vorticity() = default;
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
-    virtual QoIBase* clone() const;
+    virtual QoIBase* clone() const override;
 
-    virtual bool assemble_on_interior() const;
+    virtual bool assemble_on_interior() const override;
 
-    virtual bool assemble_on_sides() const;
+    virtual bool assemble_on_sides() const override;
 
     //! Initialize local variables
     /*! Any local variables that need information from libMesh get initialized
       here. For example, variable indices. */
     virtual void init( const GetPot& input,
                        const MultiphysicsSystem& system,
-                       unsigned int qoi_num );
+                       unsigned int qoi_num ) override;
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     //! Compute the qoi value.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
       computed over area of input subdomain id. Vorticity computed as
       \f$ \int_{\Omega} \nabla \times \mathbf{u} \; d\mathbf{x}\f$*/
     virtual void element_qoi( AssemblyContext& context,
-                              const unsigned int qoi_index );
+                              const unsigned int qoi_index ) override;
 
     //! Compute the qoi derivative with respect to the solution.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
       computed over area of input subdomain id. */
     virtual void element_qoi_derivative( AssemblyContext& context,
-                                         const unsigned int qoi_index );
+                                         const unsigned int qoi_index ) override;
 
   protected:
 
@@ -87,10 +84,6 @@ namespace GRINS
 
     //! List of sumdomain ids for which we want to compute this QoI
     std::set<libMesh::subdomain_id_type> _subdomain_ids;
-
-  private:
-    //! User never call default constructor.
-    Vorticity();
 
   };
 

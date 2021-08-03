@@ -47,7 +47,8 @@ namespace GRINS
 
     //! Deprecated constructor
     ConstantPrandtlConductivity( const GetPot& input );
-    ~ConstantPrandtlConductivity();
+
+    ~ConstantPrandtlConductivity() = default;
 
     libMesh::Real operator()( const libMesh::Real mu, const libMesh::Real cp ) const;
 

@@ -137,8 +137,6 @@ namespace GRINS
               }
           }
       }
-
-    return;
   }
 
   template<typename Mixture, typename Evaluator>
@@ -395,8 +393,6 @@ namespace GRINS
           }
 
       } // quadrature loop
-
-    return;
   }
 
   template<typename Mixture, typename Evaluator>
@@ -409,8 +405,6 @@ namespace GRINS
       {
         _p_pinning.pin_value( context, compute_jacobian, this->_press_var.p() );
       }
-
-    return;
   }
 
   template<typename Mixture, typename Evaluator>
@@ -827,8 +821,6 @@ namespace GRINS
           }
 
       } // if/else quantity_index
-
-    return;
   }
 
 } // namespace GRINS

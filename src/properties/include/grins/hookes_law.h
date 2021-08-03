@@ -52,7 +52,7 @@ namespace GRINS
 
     HookesLaw( const GetPot& input, const std::string& material );
 
-    virtual ~HookesLaw();
+    virtual ~HookesLaw() = default;
 
     // So we can make implementations private
     friend class StressStrainLaw<HookesLaw>;

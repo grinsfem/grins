@@ -35,30 +35,25 @@ namespace GRINS
   template<class Viscosity>
   class SpalartAllmarasStabilizationBase : public SpalartAllmaras<Viscosity>
   {
-
   public:
 
     SpalartAllmarasStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~SpalartAllmarasStabilizationBase(){};
+    virtual ~SpalartAllmarasStabilizationBase() = default;
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      const override;
 
   protected:
 
     SpalartAllmarasStabilizationHelper _stab_helper;
-
-  private:
-
-    SpalartAllmarasStabilizationBase();
 
   }; // End SpalartAllmarasStabilizationBase class declarations
 

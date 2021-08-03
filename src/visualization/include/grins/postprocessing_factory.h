@@ -42,8 +42,8 @@ namespace GRINS
   {
   public:
 
-    PostprocessingFactory();
-    virtual ~PostprocessingFactory();
+    PostprocessingFactory() = default;
+    virtual ~PostprocessingFactory() = default;
 
     virtual std::shared_ptr<PostProcessedQuantities<libMesh::Real> >
     build(const GetPot& input);

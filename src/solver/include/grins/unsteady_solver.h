@@ -41,13 +41,14 @@ namespace GRINS
   public:
 
     UnsteadySolver( const GetPot& input );
-    virtual ~UnsteadySolver(){};
 
-    virtual void solve( SolverContext& context );
+    virtual ~UnsteadySolver() = default;
+
+    virtual void solve( SolverContext& context ) override;
 
   protected:
 
-    virtual void init_time_solver(MultiphysicsSystem* system);
+    virtual void init_time_solver(MultiphysicsSystem* system) override;
 
     template <typename T>
     void set_theta( libMesh::UnsteadySolver* time_solver );

@@ -44,12 +44,12 @@ namespace GRINS
     CollimatedGaussianLaserIntensityProfile(libMesh::Real w);
 
     virtual void init(const std::vector<libMesh::Point> & quadrature_xyz,
-                      const libMesh::Point & laser_centerline);
+                      const libMesh::Point & laser_centerline) override;
 
   private:
+
     libMesh::Real _w;
   };
 
 }
 #endif // GRINS_COLLIMATED_GAUSSIAN_LASER_INTENSITY_PROFILE_H
-

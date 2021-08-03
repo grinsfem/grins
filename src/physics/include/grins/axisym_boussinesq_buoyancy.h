@@ -60,22 +60,22 @@ namespace GRINS
 
     AxisymmetricBoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
 
-    ~AxisymmetricBoussinesqBuoyancy(){};
+    virtual ~AxisymmetricBoussinesqBuoyancy() = default;
 
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     //! Source term contribution for AxisymmetricBoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
       the AxisymmetricIncompNavierStokes class.
     */
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
   protected:
 
-    const VelocityVariable& _flow_vars;
-    const PressureFEVariable& _press_var;
-    const PrimitiveTempFEVariables& _temp_vars;
+    const VelocityVariable & _flow_vars;
+    const PressureFEVariable & _press_var;
+    const PrimitiveTempFEVariables & _temp_vars;
 
     //! \f$ \rho = \f$ density
     libMesh::Number _rho;
@@ -91,8 +91,6 @@ namespace GRINS
     libMesh::Point _g;
 
   private:
-
-    AxisymmetricBoussinesqBuoyancy();
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

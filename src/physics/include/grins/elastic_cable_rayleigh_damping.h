@@ -38,16 +38,14 @@ namespace GRINS
                                  const GetPot& input,
                                  bool is_compressible );
 
-    ElasticCableRayleighDamping() = delete;
-
     virtual ~ElasticCableRayleighDamping() = default;
 
     //! Error out if using libMesh::FirstOrderUnsteadySolver
-    virtual void auxiliary_init( MultiphysicsSystem & system );
+    virtual void auxiliary_init( MultiphysicsSystem & system ) override;
 
     //! Time dependent part(s) of physics for element interiors
     virtual void damping_residual( bool compute_jacobian,
-                                   AssemblyContext & context );
+                                   AssemblyContext & context ) override;
 
   protected:
 

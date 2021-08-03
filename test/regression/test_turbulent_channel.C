@@ -73,14 +73,14 @@ namespace GRINSTesting
       : _turbulent_bc_values(turbulent_bc_values)
     { this->_initialized = true; }
 
-    virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
+    virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0) override
     { libmesh_not_implemented(); }
 
     virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values ) =0;
 
     virtual void operator() (const libMesh::Point& p,
                              const libMesh::Real t,
-                             libMesh::DenseVector<libMesh::Number>& output)
+                             libMesh::DenseVector<libMesh::Number>& output) override
     {
       output.resize(1);
       output.zero();
@@ -118,10 +118,10 @@ namespace GRINSTesting
       : TurbBoundFuncBase(turbulent_bc_values)
     {}
 
-    virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
+    virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values ) override
     { return  u_nu_values(0)/21.995539; }
 
-    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > clone() const
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > clone() const override
     { return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionU(_turbulent_bc_values)); }
   };
 
@@ -133,10 +133,10 @@ namespace GRINSTesting
       : TurbBoundFuncBase(turbulent_bc_values)
     {}
 
-    virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values )
+    virtual libMesh::Number compute_final_value( const libMesh::DenseVector<libMesh::Number>& u_nu_values ) override
     { return  u_nu_values(1)/(2.0*21.995539); }
 
-    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > clone() const
+    virtual std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > clone() const override
     { return std::unique_ptr<libMesh::FunctionBase<libMesh::Number> > (new TurbulentBdyFunctionNu(_turbulent_bc_values)); }
 
   };
@@ -172,7 +172,7 @@ namespace GRINSTesting
     build_func( const GetPot& /*input*/,
                 GRINS::MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
-                const std::string& /*section*/ )
+                const std::string& /*section*/ ) override
     {
       libmesh_assert_equal_to(var_names.size(), 2);
       libmesh_assert_equal_to(var_names[0], std::string("u"));
@@ -209,7 +209,7 @@ namespace GRINSTesting
     build_func( const GetPot& /*input*/,
                 GRINS::MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
-                const std::string& /*section*/ )
+                const std::string& /*section*/ ) override
     {
       libmesh_assert_equal_to(var_names.size(), 1);
       libmesh_assert_equal_to(var_names[0], std::string("nu"));
@@ -426,6 +426,4 @@ void test_error_norm( libMesh::ExactSolution& exact_sol,
       std::cout << "PASSED!" << std::endl
                 << "==========================================================" << std::endl;
     }
-
-  return;
 }

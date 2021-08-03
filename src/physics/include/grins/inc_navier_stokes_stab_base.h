@@ -40,18 +40,14 @@ namespace GRINS
 
     IncompressibleNavierStokesStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~IncompressibleNavierStokesStabilizationBase();
+    virtual ~IncompressibleNavierStokesStabilizationBase() = default;
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
-
-  private:
-
-    IncompressibleNavierStokesStabilizationBase();
 
   }; // End IncompressibleNavierStokesStabilizationBase class declarations
 

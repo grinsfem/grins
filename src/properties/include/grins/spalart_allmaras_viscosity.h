@@ -57,7 +57,7 @@ namespace GRINS
 
     //! Deprecated constructor
     SpalartAllmarasViscosity( const GetPot& input );
-    ~SpalartAllmarasViscosity(){};
+    ~SpalartAllmarasViscosity() = default;
 
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
 
@@ -68,8 +68,7 @@ namespace GRINS
     // classes
     virtual void register_parameter
     ( const std::string & param_name,
-      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer ) const override;
 
   protected:
 
@@ -77,13 +76,9 @@ namespace GRINS
     Viscosity _mu;
 
     // These are defined for each physics
-    TurbulenceFEVariables& _turbulence_vars;
+    TurbulenceFEVariables & _turbulence_vars;
 
     SpalartAllmarasParameters _sa_params;
-
-  private:
-
-    SpalartAllmarasViscosity();
 
   };
 

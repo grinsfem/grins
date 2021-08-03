@@ -42,7 +42,7 @@ namespace GRINS
       : FactoryWithGetPot<CatalycityBase>(physics_name)
     {}
 
-    ~CatalycityFactoryAbstract(){};
+    virtual ~CatalycityFactoryAbstract() = default;
 
     static void set_section( const std::string& section )
     { _section = section; }
@@ -62,7 +62,7 @@ namespace GRINS
 
   private:
 
-    virtual std::unique_ptr<CatalycityBase> create();
+    virtual std::unique_ptr<CatalycityBase> create() override;
   };
 
   inline

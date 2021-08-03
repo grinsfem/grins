@@ -37,8 +37,6 @@ namespace GRINS
       : ConstantPropertyBase<ConstantPressure>(input,section+"/pressure","ConstantPressure")
     {}
 
-    ConstantPressure() = delete;
-
     virtual ~ConstantPressure() = default;
   };
 

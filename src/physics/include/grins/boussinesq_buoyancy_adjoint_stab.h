@@ -45,22 +45,22 @@ namespace GRINS
 
     BoussinesqBuoyancyAdjointStabilization( const std::string& physics_name, const GetPot& input );
 
-    ~BoussinesqBuoyancyAdjointStabilization();
+    virtual ~BoussinesqBuoyancyAdjointStabilization() = default;
 
-    virtual void init_context( AssemblyContext & context );
+    virtual void init_context( AssemblyContext & context ) override;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext & context );
+                                          AssemblyContext & context ) override;
 
     virtual void element_constraint( bool compute_jacobian,
-                                     AssemblyContext & context );
+                                     AssemblyContext & context ) override;
 
     // Registers all parameters in this physics and in its property
     // classes
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      const override;
 
   protected:
 
@@ -68,10 +68,6 @@ namespace GRINS
     Viscosity _mu;
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
-
-  private:
-
-    BoussinesqBuoyancyAdjointStabilization();
 
   };
 

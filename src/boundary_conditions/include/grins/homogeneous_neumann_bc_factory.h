@@ -42,7 +42,7 @@ namespace GRINS
       : NeumannBCFactoryAbstract(bc_type_name)
     { _is_homogeneous = true; }
 
-    virtual ~HomogeneousNeumannBCFactory(){};
+    virtual ~HomogeneousNeumannBCFactory() = default;
 
   protected:
 
@@ -53,7 +53,7 @@ namespace GRINS
     build_neumann_func( const GetPot& /*input*/,
                         MultiphysicsSystem& /*system*/,
                         const FEVariablesBase& /*fe_var*/,
-                        const std::string& /*section*/ )
+                        const std::string& /*section*/ ) override
     { libmesh_error(); // This should never get called
       return std::shared_ptr<NeumannBCAbstract>(); }
 

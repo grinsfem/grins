@@ -64,7 +64,7 @@ namespace GRINS
     //! Required to provide clone for adding QoI object to libMesh objects.
     /*! Note that we do a deep copy here since the previous object might
       get destroyed and wipe out the objects being pointed to in _qois. */
-    virtual std::unique_ptr<libMesh::DifferentiableQoI> clone();
+    virtual std::unique_ptr<libMesh::DifferentiableQoI> clone() override;
 
     virtual void add_qoi( const QoIBase& qoi );
 
@@ -86,26 +86,28 @@ namespace GRINS
     /*!
      * Method to allow QoI to resize libMesh::System storage of QoI computations.
      */
-    virtual void init_qoi( std::vector<libMesh::Number>& sys_qoi );
+    virtual void init_qoi( std::vector<libMesh::Number>& sys_qoi ) override;
 
-    virtual void init_context( libMesh::DiffContext& context );
+    virtual void init_context( libMesh::DiffContext& context ) override;
 
     //! Reinitialize qoi
     virtual void reinit(MultiphysicsSystem & system);
 
     //! Compute the qoi value for element interiors.
     virtual void element_qoi( libMesh::DiffContext& context,
-                              const libMesh::QoISet& qoi_indices );
+                              const libMesh::QoISet& qoi_indices ) override;
 
     //! Compute the qoi derivative with respect to the solution on element interiors.
     virtual void element_qoi_derivative( libMesh::DiffContext &context,
-                                         const libMesh::QoISet &qoi_indices );
+                                         const libMesh::QoISet &qoi_indices ) override;
 
     //! Compute the qoi value on the domain boundary
-    virtual void side_qoi( libMesh::DiffContext& context, const libMesh::QoISet& qoi_indices );
+    virtual void side_qoi( libMesh::DiffContext& context,
+                           const libMesh::QoISet& qoi_indices ) override;
 
     //! Compute the qoi derivative with respect to the solution on the domain boundary
-    virtual void side_qoi_derivative( libMesh::DiffContext &context, const libMesh::QoISet &qois );
+    virtual void side_qoi_derivative( libMesh::DiffContext &context,
+                                      const libMesh::QoISet &qois ) override;
 
     //! Operation to accumulate the QoI from multiple MPI processes.
     /*!
@@ -114,7 +116,7 @@ namespace GRINS
     virtual void parallel_op( const libMesh::Parallel::Communicator& communicator,
                               std::vector<libMesh::Number>& sys_qoi,
                               std::vector<libMesh::Number>& local_qoi,
-                              const libMesh::QoISet& qoi_indices );
+                              const libMesh::QoISet& qoi_indices ) override;
 
     //! Operation to accumulate the QoI from multiple MPI processes.
     /*!
@@ -122,10 +124,11 @@ namespace GRINS
      */
     virtual void thread_join( std::vector<libMesh::Number>& qoi,
                               const std::vector<libMesh::Number>& other_qoi,
-                              const libMesh::QoISet& qoi_indices );
+                              const libMesh::QoISet& qoi_indices ) override;
 
     // Calls each QoI's finalize_derivative function
-    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives, std::size_t qoi_index);
+    virtual void finalize_derivative(libMesh::NumericVector<libMesh::Number> & derivatives,
+                                     std::size_t qoi_index) override;
 
     //! Basic output for computed QoI's.
     void output_qoi( std::ostream& out ) const;

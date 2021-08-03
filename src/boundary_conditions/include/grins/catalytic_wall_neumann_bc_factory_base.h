@@ -43,7 +43,7 @@ namespace GRINS
         CatalyticWallNeumannBCFactoryCommon<ImplType>()
     {}
 
-    ~CatalyticWallNeumannBCFactoryBase(){};
+    ~CatalyticWallNeumannBCFactoryBase() = default;
 
   protected:
 
@@ -51,7 +51,7 @@ namespace GRINS
     build_neumann_func( const GetPot& input,
                         MultiphysicsSystem& system,
                         const FEVariablesBase& fe_var,
-                        const std::string& section );
+                        const std::string& section ) override;
 
     //! Parse the reaction.
     std::string parse_reaction( const GetPot& input, const std::string& section ) const;

@@ -66,13 +66,6 @@ namespace GRINS
       {
         _pressure_values[i] = (i+1)*increment + initial_pressure_value;
       }
-
-    return;
-  }
-
-  PressureContinuationSolver::~PressureContinuationSolver()
-  {
-    return;
   }
 
   void PressureContinuationSolver::solve( SolverContext& context )
@@ -96,8 +89,6 @@ namespace GRINS
             context.vis->output( context.equation_system, s, pressure );
           }
       }
-
-    return;
   }
 
   void PressureContinuationSolver::increment_pressure( GRINS::MultiphysicsSystem& system,
@@ -108,8 +99,6 @@ namespace GRINS
     ElasticMembraneConstantPressure& physics = libMesh::cast_ref<ElasticMembraneConstantPressure&>( *(raw_physics.get()) );
 
     physics.reset_pressure(pressure);
-
-    return;
   }
 
 } // end namespace GRINS

@@ -53,13 +53,13 @@ namespace GRINS
 
     LowMachNavierStokesBase(const PhysicsName& physics_name, const std::string& core_physics_name, const GetPot& input);
 
-    ~LowMachNavierStokesBase(){};
+    virtual ~LowMachNavierStokesBase() = default;
 
     //! Sets velocity variables to be time-evolving
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     libMesh::Real T( const libMesh::Point& p, const AssemblyContext& c ) const;
 
@@ -80,7 +80,7 @@ namespace GRINS
     virtual void register_parameter
     ( const std::string & param_name,
       libMesh::ParameterMultiAccessor<libMesh::Number> & param_pointer )
-      const;
+      const override;
 
   protected:
 
@@ -113,8 +113,6 @@ namespace GRINS
     bool _enable_thermo_press_calc;
 
   private:
-
-    LowMachNavierStokesBase();
 
     //! Read options from GetPot input file.
     void read_input_options( const GetPot& input );

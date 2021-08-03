@@ -44,8 +44,6 @@ namespace GRINS
 
     std::cout << "C++ Config   = " << GRINS_CXX << " " << GRINS_CXXFLAGS << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
-
-    return;
   }
 
   int get_grins_version()

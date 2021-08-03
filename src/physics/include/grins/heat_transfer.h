@@ -43,32 +43,30 @@ namespace GRINS
 
     HeatTransfer( const std::string& physics_name, const GetPot& input );
 
-    ~HeatTransfer(){};
+    virtual ~HeatTransfer() = default;
 
     //! Register postprocessing variables for HeatTransfer
     virtual void register_postprocessing_vars( const GetPot& input,
-                                               PostProcessedQuantities<libMesh::Real>& postprocessing );
+                                               PostProcessedQuantities<libMesh::Real>& postprocessing ) override;
 
     // residual and jacobian calculations
     // element_*, side_* as *time_derivative, *constraint, *mass_residual
 
     // Time dependent part(s)
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     // Mass matrix part(s)
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override;
 
     //! Compute value of postprocessed quantities at libMesh::Point.
     virtual void compute_postprocessed_quantity( unsigned int quantity_index,
                                                  const AssemblyContext& context,
                                                  const libMesh::Point& point,
-                                                 libMesh::Real& value );
+                                                 libMesh::Real& value ) override;
 
   private:
-
-    HeatTransfer();
 
     //! Index from registering this postprocessed quantity
     unsigned int _k_index;

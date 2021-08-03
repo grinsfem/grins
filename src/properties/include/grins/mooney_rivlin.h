@@ -42,7 +42,7 @@ namespace GRINS
 
     MooneyRivlin( const GetPot& input, const std::string& material );
 
-    virtual ~MooneyRivlin();
+    virtual ~MooneyRivlin() = default;
 
     // So we can make implementation private
     friend class  HyperelasticStrainEnergy<MooneyRivlin>;

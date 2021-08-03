@@ -37,12 +37,12 @@ namespace GRINS
       : PhysicsFactoryBase(physics_name)
     {}
 
-    ~PhysicsFactoryBasic(){};
+    virtual ~PhysicsFactoryBasic() = default;
 
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                    const std::string& physics_name )
+                                                    const std::string& physics_name ) override
     {
       return std::unique_ptr<Physics>( new DerivedPhysics(physics_name,input) );
     }

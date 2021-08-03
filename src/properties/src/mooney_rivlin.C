@@ -61,7 +61,6 @@ namespace GRINS
 
     this->set_parameter
       (_C2, input, "Physics/MooneyRivlin/C2", _C2);
-    return;
   }
 
   MooneyRivlin::MooneyRivlin( const GetPot& input, const std::string& material )
@@ -105,10 +104,4 @@ namespace GRINS
         libmesh_error_msg("ERROR: Could not find consistent Mooney-Rivlin input!");
       }
   }
-
-  MooneyRivlin::~MooneyRivlin()
-  {
-    return;
-  }
-
 } // end namespace GRINS

@@ -39,17 +39,16 @@ namespace GRINS
   class AdjointErrorEstimatorFactoryBase : public ErrorEstimatorFactoryBase
   {
   public:
-    AdjointErrorEstimatorFactoryBase( const std::string& estimator_name )
-      : ErrorEstimatorFactoryBase(estimator_name)
-    {}
 
-    ~AdjointErrorEstimatorFactoryBase(){};
+    using ErrorEstimatorFactoryBase::ErrorEstimatorFactoryBase;
+
+    virtual ~AdjointErrorEstimatorFactoryBase() = default;
 
   protected:
 
     virtual std::unique_ptr<libMesh::ErrorEstimator>
     build_error_estimator( const GetPot& input, MultiphysicsSystem& system,
-                           const ErrorEstimatorOptions& estimator_options )
+                           const ErrorEstimatorOptions& estimator_options ) override
     {
       std::unique_ptr<libMesh::ErrorEstimator>
         raw_error_estimator( new EstimatorType );
@@ -77,34 +76,30 @@ namespace GRINS
   {
   public:
 
-    AdjointResidualErrorEstimatorFactory( const std::string& estimator_name )
-      : AdjointErrorEstimatorFactoryBase<libMesh::AdjointResidualErrorEstimator>(estimator_name)
-    {}
+    using AdjointErrorEstimatorFactoryBase<libMesh::AdjointResidualErrorEstimator>::AdjointErrorEstimatorFactoryBase;
 
-    ~AdjointResidualErrorEstimatorFactory(){};
+    virtual ~AdjointResidualErrorEstimatorFactory() = default;
 
   protected:
 
     virtual void set_adjoint_estimator_options( const GetPot& input,
                                                 const ErrorEstimatorOptions& estimator_options,
-                                                libMesh::AdjointResidualErrorEstimator& estimator );
+                                                libMesh::AdjointResidualErrorEstimator& estimator ) override;
   };
 
   class AdjointRefinementErrorEstimatorFactory : public AdjointErrorEstimatorFactoryBase<libMesh::AdjointRefinementEstimator>
   {
   public:
 
-    AdjointRefinementErrorEstimatorFactory( const std::string& estimator_name )
-      : AdjointErrorEstimatorFactoryBase<libMesh::AdjointRefinementEstimator>(estimator_name)
-    {}
+    using AdjointErrorEstimatorFactoryBase<libMesh::AdjointRefinementEstimator>::AdjointErrorEstimatorFactoryBase;
 
-    ~AdjointRefinementErrorEstimatorFactory(){};
+    virtual ~AdjointRefinementErrorEstimatorFactory() = default;
 
   protected:
 
     virtual void set_adjoint_estimator_options( const GetPot& input,
                                                 const ErrorEstimatorOptions& estimator_options,
-                                                libMesh::AdjointRefinementEstimator& estimator );
+                                                libMesh::AdjointRefinementEstimator& estimator ) override;
   };
 } // end namespace GRINS
 

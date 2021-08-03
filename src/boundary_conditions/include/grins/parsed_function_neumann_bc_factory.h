@@ -43,7 +43,7 @@ namespace GRINS
         ParsedFunctionNeumannBCFactoryHelper<FunctionType>()
     {}
 
-    ~ParsedFunctionNeumannBCFactory(){};
+    ~ParsedFunctionNeumannBCFactory() = default;
 
   protected:
 
@@ -51,7 +51,7 @@ namespace GRINS
     build_neumann_func( const GetPot& input,
                         MultiphysicsSystem& system,
                         const FEVariablesBase& fe_var,
-                        const std::string& section )
+                        const std::string& section ) override
     {
       std::string flux_input = this->flux_input(section);
 
@@ -74,11 +74,11 @@ namespace GRINS
       : ParsedFunctionNeumannBCFactory<FunctionType>(bc_type_name)
     {}
 
-    ~ParsedTractionBCFactory(){};
+    ~ParsedTractionBCFactory() = default;
 
   protected:
 
-    virtual std::string flux_input(const std::string& section ) const
+    virtual std::string flux_input(const std::string& section ) const override
     { return section+"/"+BoundaryConditionNames::traction_var(); }
 
   };

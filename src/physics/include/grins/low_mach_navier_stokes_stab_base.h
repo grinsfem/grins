@@ -41,10 +41,10 @@ namespace GRINS
 
     LowMachNavierStokesStabilizationBase( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~LowMachNavierStokesStabilizationBase(){};
+    virtual ~LowMachNavierStokesStabilizationBase() = default;
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     libMesh::Real compute_res_continuity_steady( AssemblyContext& context,
                                                  unsigned int qp ) const;
@@ -67,10 +67,6 @@ namespace GRINS
   protected:
 
     LowMachNavierStokesStabilizationHelper _stab_helper;
-
-  private:
-
-    LowMachNavierStokesStabilizationBase();
 
   };
 

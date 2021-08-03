@@ -47,7 +47,7 @@ namespace GRINS
       _is_homogeneous(false)
     {}
 
-    ~NeumannBCFactoryAbstract(){};
+    virtual ~NeumannBCFactoryAbstract() = default;
 
     //! Creates NeumannBCContainer for this Factory object
     /*! This method will handle the creation and population of all
@@ -63,7 +63,7 @@ namespace GRINS
       the user to specify boundary conditions for every
       Variable, for every boundary in the hopes of reducing input
       file errors at runtime. */
-    virtual std::unique_ptr<NeumannBCContainer> create();
+    virtual std::unique_ptr<NeumannBCContainer> create() override;
 
   protected:
 

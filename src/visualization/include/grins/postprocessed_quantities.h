@@ -42,13 +42,14 @@ namespace GRINS
   public:
 
     PostProcessedQuantities( const GetPot& input );
-    virtual ~PostProcessedQuantities();
+
+    virtual ~PostProcessedQuantities() = default;
 
     /* Methods to override from FEMFunctionBase needed for libMesh-based evaluations */
-    virtual void init_context( const libMesh::FEMContext & context);
+    virtual void init_context( const libMesh::FEMContext & context) override;
 
     virtual std::unique_ptr<libMesh::FEMFunctionBase<NumericType> >
-    clone() const
+    clone() const override
     {
       return std::unique_ptr<libMesh::FEMFunctionBase<NumericType> >
         ( new PostProcessedQuantities(*this) );
@@ -56,17 +57,17 @@ namespace GRINS
 
     virtual NumericType operator()( const libMesh::FEMContext& context,
                                     const libMesh::Point& p,
-                                    const libMesh::Real time = 0. );
+                                    const libMesh::Real time = 0. ) override;
 
     virtual void operator()( const libMesh::FEMContext& context,
                              const libMesh::Point& p,
                              const libMesh::Real time,
-                             libMesh::DenseVector<NumericType>& output );
+                             libMesh::DenseVector<NumericType>& output ) override;
 
     virtual NumericType component( const libMesh::FEMContext& context,
                                    unsigned int i,
                                    const libMesh::Point& p,
-                                   libMesh::Real time=0. );
+                                   libMesh::Real time=0. ) override;
 
     /* Methods for GRINS usage below */
 
@@ -90,10 +91,6 @@ namespace GRINS
 
     MultiphysicsSystem* _multiphysics_sys;
     std::shared_ptr<AssemblyContext> _multiphysics_context;
-
-  private:
-
-    PostProcessedQuantities();
 
   };
 

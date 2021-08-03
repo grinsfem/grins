@@ -49,20 +49,16 @@ namespace GRINS
   {
   public:
 
-    BoussinesqBuoyancy( const std::string& physics_name, const GetPot& input );
+    using BoussinesqBuoyancyBase::BoussinesqBuoyancyBase;
 
-    ~BoussinesqBuoyancy();
+    virtual ~BoussinesqBuoyancy() = default;
 
     //! Source term contribution for BoussinesqBuoyancy
     /*! This is the main part of the class. This will add the source term to
       the IncompressibleNavierStokes class.
     */
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
-
-  private:
-
-    BoussinesqBuoyancy();
+                                          AssemblyContext& context ) override;
 
   };
 

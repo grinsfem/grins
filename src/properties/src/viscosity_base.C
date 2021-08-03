@@ -47,8 +47,6 @@ namespace GRINS
       {
         libmesh_error_msg("Error: Found section Materials/"+material+"/Viscosity, but not variable value.");
       }
-
-    return;
   }
 
   void ViscosityBase::old_mu_warning() const
@@ -57,8 +55,6 @@ namespace GRINS
     warning += "         Please update to use  Materials/MATERIAL_NAME/Viscosity/value,\n";
     warning += "         where MATERIAL_NAME is given by Physics/PHYSICS_CLASS/material.\n";
     grins_warning(warning);
-
-    return;
   }
 
 } // end namespace GRINS

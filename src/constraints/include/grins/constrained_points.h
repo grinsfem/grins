@@ -41,9 +41,9 @@ namespace GRINS
     ConstrainedPoints ( const GetPot& input,
                         libMesh::System& system );
 
-    virtual ~ConstrainedPoints(){}
+    virtual ~ConstrainedPoints() = default;
 
-    virtual void constrain ();
+    virtual void constrain () override;
 
   private:
 

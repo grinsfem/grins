@@ -44,8 +44,8 @@ namespace GRINS
   {
   public:
 
-    CachedValues();
-    ~CachedValues();
+    CachedValues() = default;
+    ~CachedValues() = default;
 
     void add_quantity( unsigned int quantity );
 

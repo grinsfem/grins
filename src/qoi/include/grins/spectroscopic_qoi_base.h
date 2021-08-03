@@ -51,12 +51,12 @@ namespace GRINS
         or in the normal QoIBase way
     */
     SpectroscopicQoIBase(const std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real> > & absorb,
-                            const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name, bool output_as_csv);
+                         const std::shared_ptr<RayfireMesh> & rayfire,
+                         const std::string & qoi_name,
+                         bool output_as_csv);
 
     // Allow for outputting in CSV format
-    virtual void output_qoi(std::ostream & out) const;
-
-    SpectroscopicQoIBase() = delete;
+    virtual void output_qoi(std::ostream & out) const override;
 
   private:
 

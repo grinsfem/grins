@@ -41,12 +41,12 @@ namespace GRINS
       : PhysicsFactoryWithCore(physics_name,core_physics_name)
     {}
 
-    ~PhysicsFactoryOneDStressSolids(){};
+    virtual ~PhysicsFactoryOneDStressSolids() = default;
 
   protected:
 
     virtual std::unique_ptr<Physics> build_physics( const GetPot& input,
-                                                    const std::string& physics_name );
+                                                    const std::string& physics_name ) override;
 
   };
 

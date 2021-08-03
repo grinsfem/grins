@@ -37,14 +37,15 @@ namespace GRINS
 
   public:
 
-    LowMachNavierStokesSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
-    virtual ~LowMachNavierStokesSPGSMStabilization();
+    using LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>::LowMachNavierStokesStabilizationBase;
+
+    virtual ~LowMachNavierStokesSPGSMStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override;
 
   protected:
 
@@ -65,10 +66,6 @@ namespace GRINS
 
     void assemble_energy_mass_residual( bool compute_jacobian,
                                         AssemblyContext& context );
-
-  private:
-
-    LowMachNavierStokesSPGSMStabilization();
 
   };
 

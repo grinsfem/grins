@@ -38,17 +38,15 @@ namespace GRINS
 
   public:
 
-    HeatTransferSPGSMStabilization( const PhysicsName& physics_name, const GetPot& input );
-    virtual ~HeatTransferSPGSMStabilization();
+    using HeatTransferStabilizationBase<Conductivity>::HeatTransferStabilizationBase;
+
+    virtual ~HeatTransferSPGSMStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
-
-  private:
-    HeatTransferSPGSMStabilization();
+                                AssemblyContext & context ) override;
 
   }; // End HeatTransferSPGSMStabilization class declarations
 

@@ -271,8 +271,6 @@ namespace GRINS
     // Energy residual
     // - this->_k.deriv(T)*(grad_T*grad_T)
     RE_s = rho*U*cp*grad_T  - k*(hess_T_term) + chem_term;
-
-    return;
   }
 
   template<typename Mixture, typename Evaluator>
@@ -327,8 +325,6 @@ namespace GRINS
       {
         Rs_t[s] = rho*ws_dot[s];
       }
-
-    return;
   }
 
 } // namespace GRINS

@@ -47,8 +47,6 @@ namespace GRINS
 
     IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input);
 
-    IncompressibleNavierStokes() = delete;
-
     ~IncompressibleNavierStokes() = default;
 
     virtual void auxiliary_init( MultiphysicsSystem& system ) override;

@@ -97,8 +97,6 @@ namespace GRINS
 	  libmesh_error();
 	}
     }
-    
-    return;
   }
 
   libMesh::Real CanteraThermodynamics::cv( const libMesh::Real& T,

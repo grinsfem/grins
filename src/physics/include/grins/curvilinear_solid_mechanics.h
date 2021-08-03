@@ -43,8 +43,6 @@ namespace GRINS
                                const GRINS::PhysicsName & core_physics_name,
                                const GetPot & input );
 
-    CurvilinearSolidMechanics() = delete;
-
     virtual ~CurvilinearSolidMechanics() = default;
 
     //! Initialize context for added physics variables

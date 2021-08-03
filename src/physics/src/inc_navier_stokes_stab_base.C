@@ -40,15 +40,7 @@ namespace GRINS
                                          PhysicsNaming::incompressible_navier_stokes(), /* "core" Physics name */
                                          input),
     _stab_helper( physics_name+"StabHelper", input )
-  {
-    return;
-  }
-
-  template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::~IncompressibleNavierStokesStabilizationBase()
-  {
-    return;
-  }
+  {}
 
   template<class Mu>
   void IncompressibleNavierStokesStabilizationBase<Mu>::init_context( AssemblyContext& context )
@@ -61,8 +53,6 @@ namespace GRINS
 
     // We also need second derivatives, so initialize those.
     context.get_element_fe(this->_flow_vars.u())->get_d2phi();
-
-    return;
   }
 
 } // namespace GRINS

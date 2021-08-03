@@ -59,13 +59,5 @@ namespace GRINS
     std::string val_str = "Physics/"+_physics_name+"/ic_values";
 
     this->read_ic_data( input, id_str, bc_str, var_str, val_str );
-
-    return;
   }
-
-  GenericICHandler::~GenericICHandler()
-  {
-    return;
-  }
-
 } // namespace GRINS

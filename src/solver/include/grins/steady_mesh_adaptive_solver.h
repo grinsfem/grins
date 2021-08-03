@@ -42,25 +42,25 @@ namespace GRINS
 
     SteadyMeshAdaptiveSolver( const GetPot& input );
 
-    virtual ~SteadyMeshAdaptiveSolver();
+    virtual ~SteadyMeshAdaptiveSolver() = default;
 
-    virtual void solve(  SolverContext& context );
+    virtual void solve(  SolverContext& context ) override;
 
     virtual void adjoint_qoi_parameter_sensitivity
     (SolverContext&                  context,
      const libMesh::QoISet&          qoi_indices,
      const libMesh::ParameterVector& parameters_in,
-     libMesh::SensitivityData&       sensitivities) const;
+     libMesh::SensitivityData&       sensitivities) const override;
 
     virtual void forward_qoi_parameter_sensitivity
     (SolverContext&                  context,
      const libMesh::QoISet&          qoi_indices,
      const libMesh::ParameterVector& parameters_in,
-     libMesh::SensitivityData&       sensitivities) const;
+     libMesh::SensitivityData&       sensitivities) const override;
 
   protected:
 
-    virtual void init_time_solver( MultiphysicsSystem* system );
+    virtual void init_time_solver( MultiphysicsSystem* system ) override;
 
     void check_qoi_error_option_consistency( SolverContext& context );
 

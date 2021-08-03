@@ -49,15 +49,15 @@ namespace GRINS
   protected:
 
     virtual std::unique_ptr<CatalycityBase> build_catalycity( const GetPot& input,
-                                                              const std::string& section );
+                                                              const std::string& section ) override;
 
     virtual std::unique_ptr<CatalycityBase> build_catalycity_old_style( const GetPot& input,
                                                                         const std::string& section,
                                                                         const std::string& reactant_str,
                                                                         const std::string& bc_id_string ) =0;
-    virtual void check_state() const;
+    virtual void check_state() const override;
 
-    virtual void reset_state();
+    virtual void reset_state() override;
 
     static std::string _reactant_str;
 

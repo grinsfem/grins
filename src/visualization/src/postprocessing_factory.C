@@ -27,16 +27,6 @@
 
 namespace GRINS
 {
-  PostprocessingFactory::PostprocessingFactory()
-  {
-    return;
-  }
-
-  PostprocessingFactory::~PostprocessingFactory()
-  {
-    return;
-  }
-
   std::shared_ptr<PostProcessedQuantities<libMesh::Real> >
   PostprocessingFactory::build(const GetPot& input)
   {

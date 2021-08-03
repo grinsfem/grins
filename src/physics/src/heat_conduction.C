@@ -151,8 +151,6 @@ namespace GRINS
 
           } // end of the outer dof (i) loop
       } // end of the quadrature point (qp) loop
-
-    return;
   }
 
   template<class K>
@@ -210,8 +208,6 @@ namespace GRINS
           } // End of element dof loop
 
       } // End of the quadrature point loop
-
-    return;
   }
 
   template<class K>

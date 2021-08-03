@@ -52,7 +52,6 @@ namespace GRINS
 
         libmesh_error();
       }
-    return;
   }
 
   template<class Mu>

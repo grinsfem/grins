@@ -40,8 +40,6 @@ namespace GRINS
                              const PhysicsName & core_physics_name,
                              const GetPot & input );
 
-    CartesianSolidMechanics() = delete;
-
     virtual ~CartesianSolidMechanics() = default;
 
     //! Initialize context for added physics variables

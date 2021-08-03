@@ -63,38 +63,38 @@ namespace GRINS
     IntegratedFunction(unsigned int p_level, const std::shared_ptr<Function> & f, const std::shared_ptr<RayfireMesh> & rayfire, const std::string & qoi_name);
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
-    virtual QoIBase* clone() const;
+    virtual QoIBase* clone() const override;
 
-    virtual bool assemble_on_interior() const;
+    virtual bool assemble_on_interior() const override;
 
-    virtual bool assemble_on_sides() const;
+    virtual bool assemble_on_sides() const override;
 
     //! Compute the qoi value.
     virtual void element_qoi( AssemblyContext & context,
-                              const unsigned int qoi_index );
+                              const unsigned int qoi_index ) override;
 
     //! Compute the qoi derivative with respect to the solution.
     virtual void element_qoi_derivative( AssemblyContext & context,
-                                         const unsigned int qoi_index );
+                                         const unsigned int qoi_index ) override;
 
     //! Initializes the rayfire with the mesh from system
     virtual void init( const GetPot & input,
                        const MultiphysicsSystem & system,
-                       unsigned int qoi_num );
+                       unsigned int qoi_num ) override;
 
     //! Reinitialize the rayfire
-    virtual void reinit(MultiphysicsSystem & system);
+    virtual void reinit(MultiphysicsSystem & system) override;
 
     const RayfireMesh & get_rayfire()
     {
       return *(_rayfire.get());
     }
-    
+
     Function & get_function()
     {
       return *(_f.get());
     }
-    
+
     const Function & get_function() const
     {
       return *(_f.get());
@@ -116,9 +116,6 @@ namespace GRINS
     //! Compute derivatiuves at QP
     void qoi_derivative(Function & f, AssemblyContext & context, const libMesh::Point & qp_xyz,
                         const libMesh::Real JxW, const unsigned int qoi_index);
-
-    //! User cannot call empty constructor
-    IntegratedFunction();
 
   protected:
     //! Cache a non-const pointer to the MultiphysicsSystem object

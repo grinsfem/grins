@@ -43,18 +43,18 @@ namespace GRINS
 
     ConvectionDiffusion( const PhysicsName& physics_name, const GetPot& input );
 
-    virtual ~ConvectionDiffusion(){};
+    virtual ~ConvectionDiffusion() = default;
 
-    virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
+    virtual void set_time_evolving_vars( libMesh::FEMSystem* system ) override;
 
     //! Initialize context for added physics variables
-    virtual void init_context( AssemblyContext& context );
+    virtual void init_context( AssemblyContext& context ) override;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override;
 
   protected:
 
@@ -65,10 +65,6 @@ namespace GRINS
     libMesh::ParsedFunction<libMesh::Number> _kappa;
 
     SingleVariable& _var;
-
-  private:
-
-    ConvectionDiffusion();
 
   };
 

@@ -42,7 +42,7 @@ namespace GRINS
       : DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<libMesh::Number> >(bc_type_name)
     {}
 
-    ~IsothermalDirichletOldStyleBCFactory(){};
+    virtual ~IsothermalDirichletOldStyleBCFactory() = default;
 
   protected:
 
@@ -50,7 +50,7 @@ namespace GRINS
     build_func( const GetPot& input,
                 MultiphysicsSystem& system,
                 std::vector<std::string>& var_names,
-                const std::string& section );
+                const std::string& section ) override;
 
   };
 

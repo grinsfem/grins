@@ -35,13 +35,14 @@ namespace GRINS
   public:
 
     DisplacementContinuationSolver( const GetPot& input );
-    virtual ~DisplacementContinuationSolver();
+
+    virtual ~DisplacementContinuationSolver() = default;
 
     virtual void initialize( const GetPot& input,
                              std::shared_ptr<libMesh::EquationSystems> equation_system,
-                             GRINS::MultiphysicsSystem* system );
+                             GRINS::MultiphysicsSystem* system ) override;
 
-    virtual void solve( SolverContext& context );
+    virtual void solve( SolverContext& context ) override;
 
   protected:
 

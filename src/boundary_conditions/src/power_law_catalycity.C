@@ -36,14 +36,7 @@ namespace GRINS
     : _gamma0(gamma0),
       _Tref(Tref),
       _alpha(alpha)
-  {
-    return;
-  }
-
-  PowerLawCatalycity::~PowerLawCatalycity()
-  {
-    return;
-  }
+  {}
 
   libMesh::Real PowerLawCatalycity::operator()( const libMesh::Real T ) const
   {
@@ -75,8 +68,6 @@ namespace GRINS
     _Tref = params[1];
 
     _alpha = params[2];
-
-    return;
   }
 
   CatalycityBase* PowerLawCatalycity::clone() const

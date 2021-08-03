@@ -39,8 +39,6 @@ namespace GRINS
     ElasticMembranePressure( const std::string & physics_name,
                              const GetPot & input );
 
-    ElasticMembranePressure() = delete;
-
     virtual ~ElasticMembranePressure() = default;
 
     //! Time dependent part(s) of physics for element interiors

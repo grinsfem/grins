@@ -46,7 +46,6 @@ namespace GRINS
 
     CartesianHyperlasticity( const libMesh::Tensor & F, const HyperelasticStrainEnergy<StrainEnergy> & W );
 
-    CartesianHyperlasticity() = delete;
     virtual ~CartesianHyperlasticity() = default;
 
     // So we can make implementation private

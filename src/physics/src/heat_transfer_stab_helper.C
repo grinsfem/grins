@@ -66,11 +66,6 @@ namespace GRINS
         (_tau_factor, input, "Stabilization/tau_factor", _tau_factor );
   }
 
-  HeatTransferStabilizationHelper::~HeatTransferStabilizationHelper()
-  {
-    return;
-  }
-
   libMesh::Real HeatTransferStabilizationHelper::compute_res_energy_steady( AssemblyContext& context,
                                                                             unsigned int qp,
                                                                             const libMesh::Real rho,

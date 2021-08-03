@@ -38,14 +38,15 @@ namespace GRINS
 
   public:
 
-    LowMachNavierStokesBraackStabilization( const PhysicsName& physics_name, const GetPot& input );
-    virtual ~LowMachNavierStokesBraackStabilization();
+    using LowMachNavierStokesStabilizationBase<Viscosity,SpecificHeat,ThermalConductivity>::LowMachNavierStokesStabilizationBase;
+
+    virtual ~LowMachNavierStokesBraackStabilization() = default;
 
     virtual void element_time_derivative( bool compute_jacobian,
-                                          AssemblyContext& context );
+                                          AssemblyContext& context ) override;
 
     virtual void mass_residual( bool compute_jacobian,
-                                AssemblyContext & context );
+                                AssemblyContext & context ) override;
 
   protected:
 
@@ -66,10 +67,6 @@ namespace GRINS
 
     void assemble_energy_mass_residual( bool compute_jacobian,
                                         AssemblyContext& context );
-
-  private:
-    LowMachNavierStokesBraackStabilization();
-
   };
 
 } // end namespace GRINS

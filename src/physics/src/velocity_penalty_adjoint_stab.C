@@ -46,12 +46,6 @@ namespace GRINS
   }
 
   template<class Mu>
-  VelocityPenaltyAdjointStabilization<Mu>::~VelocityPenaltyAdjointStabilization()
-  {
-    return;
-  }
-
-  template<class Mu>
   void VelocityPenaltyAdjointStabilization<Mu>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_press_var.p())->get_dphi();
@@ -60,8 +54,6 @@ namespace GRINS
     context.get_element_fe(this->_flow_vars.u())->get_phi();
     context.get_element_fe(this->_flow_vars.u())->get_dphi();
     context.get_element_fe(this->_flow_vars.u())->get_d2phi();
-
-    return;
   }
 
   template<class Mu>

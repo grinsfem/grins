@@ -35,9 +35,10 @@ namespace GRINS
   public:
 
     PressureContinuationSolver( const GetPot& input );
-    virtual ~PressureContinuationSolver();
 
-    virtual void solve( SolverContext& context );
+    virtual ~PressureContinuationSolver() = default;
+
+    virtual void solve( SolverContext& context ) override;
 
   protected:
 

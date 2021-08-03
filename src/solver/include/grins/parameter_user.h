@@ -71,7 +71,10 @@ namespace GRINS
   public:
 
     ParameterUser(const std::string & user_name) : _my_name(user_name) {}
-    virtual ~ParameterUser() {}
+
+    ParameterUser() = default;
+
+    virtual ~ParameterUser() = default;
 
     //! Each subclass can simultaneously read a parameter value from
     // file and prepare it for registration with this call.

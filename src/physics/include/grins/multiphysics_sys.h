@@ -84,7 +84,7 @@ namespace GRINS
                         const unsigned int number );
 
     //! Destructor. Clean up all physics allocations.
-    ~MultiphysicsSystem(){};
+    ~MultiphysicsSystem() = default;
 
     //! PhysicsList gets built by PhysicsFactory and attached here.
     void attach_physics_list( PhysicsList physics_list );
@@ -101,7 +101,7 @@ namespace GRINS
     virtual void read_input_options( const GetPot& input );
 
     //! System initialization. Calls each physics implementation of init_variables()
-    virtual void init_data();
+    virtual void init_data() override;
 
     //! Each Physics will register their postprocessed quantities with this call
     void register_postprocessing_vars( const GetPot& input,
@@ -114,22 +114,22 @@ namespace GRINS
       libMesh::ParameterMultiAccessor<libMesh::Number>& param_pointer );
 
     //! Override FEMSystem::build_context in order to use our own AssemblyContext
-    virtual std::unique_ptr<libMesh::DiffContext> build_context();
+    virtual std::unique_ptr<libMesh::DiffContext> build_context() override;
 
     //! Context initialization. Calls each physics implementation of init_context()
-    virtual void init_context( libMesh::DiffContext &context );
+    virtual void init_context( libMesh::DiffContext &context ) override;
 
     //! Override FEMSystem::assembly
     /*! This allows us to insert things like preassembly(). */
     virtual void assembly( bool get_residual,
                            bool get_jacobian,
                            bool apply_heterogeneous_constraints = false,
-                           bool apply_no_constraints = false );
+                           bool apply_no_constraints = false ) override;
 
     //! Override FEMSystem::reinit
     /*! This will allow each Physics to reinit things internally that need it,
       such as point locators. */
-    virtual void reinit();
+    virtual void reinit() override;
 
     virtual void solve() override;
 
@@ -138,40 +138,40 @@ namespace GRINS
 
     //! Element interior contributions to \f$F(u)\f$ which have time varying components.
     virtual bool element_time_derivative( bool request_jacobian,
-                                          libMesh::DiffContext& context );
+                                          libMesh::DiffContext& context ) override;
 
     //! Boundary contributions to \f$F(u)\f$ which have time varying components.
     virtual bool side_time_derivative( bool request_jacobian,
-                                       libMesh::DiffContext& context );
+                                       libMesh::DiffContext& context ) override;
 
     //! Contributions to \f$F(u)\f$ on SCALAR variables which have time varying components.
     virtual bool nonlocal_time_derivative( bool request_jacobian,
-                                           libMesh::DiffContext& context );
+                                           libMesh::DiffContext& context ) override;
 
     //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     //! Element interior contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool element_constraint( bool request_jacobian,
-                                     libMesh::DiffContext& context );
+                                     libMesh::DiffContext& context ) override;
 
     //! Boundary contributions to \f$F(u)\f$ which do not have time varying components.
     virtual bool side_constraint( bool request_jacobian,
-                                  libMesh::DiffContext& context );
+                                  libMesh::DiffContext& context ) override;
 
     //! Contributions to \f$F(u)\f$ on SCALAR variables which do not have time varying components.
     virtual bool nonlocal_constraint( bool request_jacobian,
-                                      libMesh::DiffContext& context );
+                                      libMesh::DiffContext& context ) override;
 
     //! Contributions to \f$C(u)\dot{u}\f$
     virtual bool damping_residual( bool request_jacobian,
-                                   libMesh::DiffContext& context );
+                                   libMesh::DiffContext& context ) override;
 
     //! Contributions to \f$M(u)\dot{u}\f$
     virtual bool mass_residual( bool request_jacobian,
-                                libMesh::DiffContext& context );
+                                libMesh::DiffContext& context ) override;
 
     //! Contributions to \f$M(u)\dot{u}\f$ on SCALAR variables
     virtual bool nonlocal_mass_residual( bool request_jacobian,
-                                         libMesh::DiffContext& context );
+                                         libMesh::DiffContext& context ) override;
 
     //! Query to check if a particular physics has been enabled
     bool has_physics( const std::string physics_name ) const;
