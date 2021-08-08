@@ -46,6 +46,9 @@ namespace GRINS
                               const unsigned int qoi_index,
                               const libMesh::Real time = 0.) = 0;
 
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & side_vars ) =0;
+
   };
 
 }

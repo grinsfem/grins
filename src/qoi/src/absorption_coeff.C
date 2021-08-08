@@ -136,6 +136,15 @@ namespace GRINS
   }
 
   template<typename Chemistry>
+  void AbsorptionCoeff<Chemistry>::register_active_vars( std::set<unsigned int> & element_vars,
+                                                         std::set<unsigned int> & /*side_vars*/ )
+  {
+    element_vars.insert(_T_var.T());
+    element_vars.insert(_P_var.p());
+    element_vars.insert(_Y_var.species(0));
+  }
+
+  template<typename Chemistry>
   libMesh::Real AbsorptionCoeff<Chemistry>::operator()(const libMesh::FEMContext& context,
                                                        const libMesh::Point& qp_xyz,
                                                        const libMesh::Real /*t*/)

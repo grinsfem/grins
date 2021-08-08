@@ -115,6 +115,9 @@ namespace GRINS
      */
     virtual void init_context( libMesh::FEMContext & context ) override;
 
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & side_vars ) override;
+
   protected:
     //! Antioch/Cantera object
     std::shared_ptr<Chemistry> _chemistry;

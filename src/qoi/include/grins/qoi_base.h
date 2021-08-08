@@ -83,6 +83,16 @@ namespace GRINS
      */
     virtual void init_context( AssemblyContext& /*context*/ ) =0;
 
+    //! Populate element_vars, side_vars with relevant active variable indices
+    /*!
+     *  This will allow the infrastructure to know which variables a QoI is using
+     *  and, therefore, know what MultiphysicsSystem variables are *not* being
+     *  used by any QoIs and then inform the AssemblyContext those finite elements
+     *  can get_nothing().
+     */
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & side_vars ) =0;
+
     //! Reinitialize QoI
     virtual void reinit(MultiphysicsSystem & /*system*/) {}
 

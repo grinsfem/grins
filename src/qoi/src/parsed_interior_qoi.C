@@ -62,6 +62,13 @@ namespace GRINS
     qoi_functional->init_context(context);
   }
 
+  void ParsedInteriorQoI::register_active_vars( std::set<unsigned int> & element_vars,
+                                                std::set<unsigned int> & /*side_vars*/ )
+  {
+    for( auto var : _var_indices )
+      element_vars.insert(var);
+  }
+
   void ParsedInteriorQoI::element_qoi( AssemblyContext& context,
                                        const unsigned int qoi_index )
   {

@@ -29,11 +29,10 @@
 // GRINS
 #include "grins/qoi_base.h"
 #include "grins/variable_name_defaults.h"
+#include "grins/multi_component_vector_variable.h"
 
 namespace GRINS
 {
-  class VelocityVariable;
-
   //! Vorticity QoI
   /*!
     This class implement a vorticity QoI that can be used to both compute
@@ -64,6 +63,10 @@ namespace GRINS
                        unsigned int qoi_num ) override;
 
     virtual void init_context( AssemblyContext& context ) override;
+
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & /*side_vars*/ ) override
+    { element_vars.insert(_flow_vars->u()); }
 
     //! Compute the qoi value.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be

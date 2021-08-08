@@ -169,6 +169,20 @@ namespace GRINS
     // derivatives are always zero for FunctionBase
   }
 
+  template<>
+  void IntegratedFunction<libMesh::FunctionBase<libMesh::Real>>::register_active_vars
+  ( std::set<unsigned int> & /*element_vars*/,
+    std::set<unsigned int> & /*side_vars*/ )
+  {}
+
+  template<>
+  void IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real>>::register_active_vars
+  ( std::set<unsigned int> & element_vars,
+    std::set<unsigned int> & side_vars )
+  {
+    _f->register_active_vars(element_vars,side_vars);
+  }
+
   template class IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >;
   template class IntegratedFunction<FEMFunctionAndDerivativeBase<libMesh::Real> >;
 

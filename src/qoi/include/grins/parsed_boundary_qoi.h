@@ -62,6 +62,9 @@ namespace GRINS
 
     virtual void init_context( AssemblyContext& context ) override;
 
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & side_vars ) override;
+
     //! Compute the qoi value.
     virtual void side_qoi( AssemblyContext& context,
                            const unsigned int qoi_index ) override;

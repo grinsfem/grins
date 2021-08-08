@@ -83,6 +83,13 @@ namespace GRINS
     qoi_functional->init_context(context);
   }
 
+  void ParsedBoundaryQoI::register_active_vars( std::set<unsigned int> & /*element_vars*/,
+                                                std::set<unsigned int> & side_vars )
+  {
+    for( auto var : _var_indices )
+      side_vars.insert(var);
+  }
+
   void ParsedBoundaryQoI::side_qoi( AssemblyContext& context,
                                     const unsigned int qoi_index )
   {

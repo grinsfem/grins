@@ -81,6 +81,13 @@ namespace GRINS
       qoi->init_context(context);
   }
 
+  void MultiQoIBase::register_active_vars( std::set<unsigned int> & element_vars,
+                                           std::set<unsigned int> & side_vars )
+  {
+    for( auto & qoi : _qois )
+      qoi->register_active_vars(element_vars,side_vars);
+  }
+
   void MultiQoIBase::reinit(MultiphysicsSystem & system)
   {
     for( auto & qoi : _qois )
