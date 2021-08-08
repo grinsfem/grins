@@ -76,6 +76,8 @@ namespace GRINS
     context.get_element_fe(_var.var())->get_phi();
     context.get_element_fe(_var.var())->get_dphi();
     context.get_element_fe(_var.var())->get_xyz();
+
+    context.get_side_fe(_var.var())->get_nothing();
   }
 
   void ConvectionDiffusion::element_time_derivative
