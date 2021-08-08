@@ -63,7 +63,24 @@ namespace GRINS
     this->set_parameter(*qf, input,
                         input_string, "DIE!");
 
+    this->get_var_indices( qf->expression(), system, _var_indices );
+
     this->qoi_functional = std::move(qf);
+  }
+
+  void ParsedQoIBase::get_var_indices( const std::string & expression,
+                                       const MultiphysicsSystem & system,
+                                       std::set<unsigned int> & var_indices )
+  {
+    std::vector<unsigned int> all_var_indices;
+    system.get_all_variable_numbers(all_var_indices);
+
+    for( auto var : all_var_indices )
+      {
+        const std::string & var_name = system.variable_name(var);
+        if( expression.find(var_name) != std::string::npos )
+          var_indices.insert(var);
+      }
   }
 
 } //namespace GRINS

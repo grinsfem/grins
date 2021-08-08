@@ -54,6 +54,12 @@ namespace GRINS
     std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
     qoi_functional;
 
+    std::set<unsigned int> _var_indices;
+
+    void get_var_indices( const std::string & expression,
+                          const MultiphysicsSystem & system,
+                          std::set<unsigned int> & var_indices );
+
     void init_qoi_functional( const GetPot & input,
                               const MultiphysicsSystem & system,
                               const std::string & input_string );
