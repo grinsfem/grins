@@ -411,7 +411,7 @@ namespace GRINSTesting
       _input.reset(new GetPot(filename));
 
       const char* const argv = "unit_driver";
-      GetPot empty_command_line( (const int)1,&argv );
+      GetPot empty_command_line( 1,&argv );
       GRINS::SimulationBuilder sim_builder;
 
       _sim.reset( new GRINS::Simulation(*_input,

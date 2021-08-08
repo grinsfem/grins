@@ -123,7 +123,9 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  libMesh::Real AbsorptionCoeff<Chemistry>::operator()(const libMesh::FEMContext& context, const libMesh::Point& qp_xyz, const libMesh::Real /*t*/)
+  libMesh::Real AbsorptionCoeff<Chemistry>::operator()(const libMesh::FEMContext& context,
+                                                       const libMesh::Point& qp_xyz,
+                                                       const libMesh::Real /*t*/)
   {
     START_LOG("operator()","AbsorptionCoeff");
     libMesh::Real T,p,thermo_p; // temperature, hydrostatic pressure, thermodynamic pressure

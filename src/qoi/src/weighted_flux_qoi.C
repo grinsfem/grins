@@ -127,8 +127,7 @@ namespace GRINS
           (bc_id_set, var_indices, remapped_func);
 
         // FIXME: this is an ugly hack
-        MultiphysicsSystem & hacked_system =
-          const_cast<MultiphysicsSystem&>(system);
+        MultiphysicsSystem & hacked_system = const_cast<MultiphysicsSystem&>(system);
         hacked_system.get_dof_map().add_adjoint_dirichlet_boundary
           (adjoint_bc, qoi_num);
       }

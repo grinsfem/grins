@@ -152,7 +152,8 @@ namespace GRINS
       {
         std::string qoi_string = "LaserAbsorption";
 
-        std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> absorb = this->create_absorption_coeff(input,qoi_string);
+        std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> absorb
+          = this->create_absorption_coeff(input,qoi_string);
 
         unsigned int dim = 2;
         if (input.have_variable("QoI/"+qoi_string+"/Rayfire/phi"))
@@ -182,7 +183,7 @@ namespace GRINS
           this->get_var_value<libMesh::Real>(input,phi,"QoI/"+qoi_string+"/Rayfire/phi",-1.0);
 
         unsigned int n_qp = input("QoI/"+qoi_string+"/n_quadrature_points", 1); // default to single rayfire
-        
+
         std::shared_ptr<LaserIntensityProfileBase> intensity_profile;
         std::string profile_name;
         this->get_var_value<std::string>(input,profile_name,"QoI/"+qoi_string+"/intensity_profile","");
@@ -340,11 +341,11 @@ namespace GRINS
 
         // We don't want to duplicate the last qoi
         do_final_add = false;
-        
+
         libMesh::Real min_nu = input(desired_wavenumber_var,0.0,0);
         libMesh::Real max_nu = input(desired_wavenumber_var,0.0,1);
         libMesh::Real step_nu = input(desired_wavenumber_var,0.0,2);
-        
+
         // sanity check the given range
         if ( (min_nu>max_nu) || (step_nu>(max_nu-min_nu)) )
           {
@@ -355,9 +356,9 @@ namespace GRINS
                <<"nu_step: " <<step_nu <<std::endl;
             libmesh_error_msg(ss.str());
           }
-        
+
         for (libMesh::Real nu = min_nu; nu <= max_nu; nu += step_nu)
-          {            
+          {
             libMesh::Real nu_desired = nu;
 
             AbsorptionCoeffBase * coeff = libMesh::cast_ptr<AbsorptionCoeffBase *>(absorb->clone().release());
@@ -403,12 +404,6 @@ namespace GRINS
     std::string species;
     this->get_var_value<std::string>(input,species,"QoI/"+qoi_string+"/species_of_interest","");
 
-    libMesh::Real thermo_pressure = -1.0;
-    bool calc_thermo_pressure = input("QoI/"+qoi_string+"/calc_thermo_pressure", false );
-    if (!calc_thermo_pressure)
-      thermo_pressure = input("Materials/"+material+"/ThermodynamicPressure/value", 0.0 );
-
-
     // These options are for the linecenter wavenumbers included in the calculation of kv
     libMesh::Real nu_data_min,nu_data_max;
     this->get_var_value<libMesh::Real>(input,nu_data_min,"QoI/"+qoi_string+"/min_wavenumber",0.0);
@@ -432,6 +427,14 @@ namespace GRINS
     libMesh::Real nu_desired;
     this->get_var_value<libMesh::Real>(input,nu_desired,"QoI/"+qoi_string+"/desired_wavenumber",0.0);
 
+    // This variable is only used with thermo chemistry libraries so guard it
+#if defined(GRINS_HAVE_ANTIOCH) || defined(GRINS_HAVE_CANTERA)
+    libMesh::Real thermo_pressure = -1.0;
+    bool calc_thermo_pressure = input("QoI/"+qoi_string+"/calc_thermo_pressure", false );
+    if (!calc_thermo_pressure)
+      thermo_pressure = input("Materials/"+material+"/ThermodynamicPressure/value", 0.0 );
+#endif
+
 #if GRINS_HAVE_ANTIOCH
     absorb.reset( new AbsorptionCoeff<AntiochChemistry>(chem,hitran,nu_data_min,nu_data_max,nu_desired,species,thermo_pressure) );
 #elif GRINS_HAVE_CANTERA
@@ -439,7 +442,7 @@ namespace GRINS
 #else
     libmesh_error_msg("ERROR: GRINS must be built with either Antioch or Cantera to use the LaserAbsorption QoI");
 #endif
-    
+
     return absorb;
   }
 

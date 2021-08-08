@@ -40,7 +40,6 @@ namespace GRINS
   public:
 
     SimulationBuilder();
-    virtual ~SimulationBuilder(){};
 
     std::shared_ptr<libMesh::UnstructuredMesh> build_mesh
     ( const GetPot& input,

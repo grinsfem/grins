@@ -87,12 +87,7 @@ namespace GRINS
 
   void AverageNusseltNumber::init_context( AssemblyContext& context )
   {
-    libMesh::FEBase* T_fe;
-
-    context.get_side_fe<libMesh::Real>(this->_temp_vars->T(), T_fe);
-
-    T_fe->get_dphi();
-    T_fe->get_JxW();
+    context.get_side_fe(this->_temp_vars->T())->get_dphi();
   }
 
   void AverageNusseltNumber::side_qoi( AssemblyContext& context,

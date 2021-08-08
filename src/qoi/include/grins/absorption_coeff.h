@@ -80,7 +80,9 @@ namespace GRINS
                     libMesh::Real thermo_pressure);
 
     //! Calculate the absorption coefficient at a quadratue point
-    virtual libMesh::Real operator()(const libMesh::FEMContext & context, const libMesh::Point & qp_xyz, const libMesh::Real t);
+    virtual libMesh::Real operator()(const libMesh::FEMContext & context,
+                                     const libMesh::Point & qp_xyz,
+                                     const libMesh::Real t);
 
     //! Not used
     virtual void operator()( const libMesh::FEMContext & context,

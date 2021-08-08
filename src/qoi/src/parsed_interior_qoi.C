@@ -39,9 +39,6 @@
 
 namespace GRINS
 {
-  ParsedInteriorQoI::ParsedInteriorQoI( const std::string& qoi_name )
-    : QoIBase(qoi_name) {}
-
   ParsedInteriorQoI::ParsedInteriorQoI( const ParsedInteriorQoI& original )
     : QoIBase(original)
   {
@@ -56,8 +53,6 @@ namespace GRINS
       }
   }
 
-  ParsedInteriorQoI::~ParsedInteriorQoI() {}
-
   QoIBase* ParsedInteriorQoI::clone() const
   {
     return new ParsedInteriorQoI( *this );
@@ -68,13 +63,15 @@ namespace GRINS
    const MultiphysicsSystem& system,
    unsigned int /*qoi_num*/ )
   {
-    libMesh::ParsedFEMFunction<libMesh::Number> *qf
-      (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (system, ""));
-    this->qoi_functional.reset(qf);
+    std::unique_ptr<libMesh::ParsedFEMFunction<libMesh::Number>> qf =
+      libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>
+       (system, "");
+
 
     this->set_parameter(*qf, input,
                         "QoI/ParsedInterior/qoi_functional", "DIE!");
+
+    this->qoi_functional = std::move(qf);
   }
 
   void ParsedInteriorQoI::init_context( AssemblyContext& context )

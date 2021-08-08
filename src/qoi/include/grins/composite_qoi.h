@@ -68,7 +68,8 @@ namespace GRINS
 
     virtual void add_qoi( const QoIBase& qoi );
 
-    unsigned int n_qois() const;
+    unsigned int n_qois() const
+    { return _qois.size(); }
 
     //! Each QoI will register its copy(s) of an independent variable
     //  named in this call.
@@ -146,12 +147,6 @@ namespace GRINS
     std::vector<QoIBase*> _qois;
 
   };
-
-  inline
-  unsigned int CompositeQoI::n_qois() const
-  {
-    return _qois.size();
-  }
 
   inline
   const QoIBase& CompositeQoI::get_qoi( unsigned int qoi_index ) const
