@@ -31,7 +31,6 @@
 #include "grins/assembly_context.h"
 #include "grins/variables_parsing.h"
 #include "grins/variable_warehouse.h"
-#include "grins/multi_component_vector_variable.h"
 
 // libMesh
 #include "libmesh/getpot.h"
@@ -72,9 +71,7 @@ namespace GRINS
 
   void Vorticity::init_context( AssemblyContext& context )
   {
-    context.get_element_fe(_flow_vars->u())->get_phi();
     context.get_element_fe(_flow_vars->u())->get_dphi();
-
   }
 
   void Vorticity::element_qoi( AssemblyContext& context,
