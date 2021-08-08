@@ -28,6 +28,7 @@
 
 // GRINS
 #include "grins/assembly_context.h"
+#include "grins/multiphysics_sys.h"
 
 // libMesh
 #include "libmesh/diff_context.h"
@@ -86,6 +87,26 @@ namespace GRINS
   {
     for( unsigned int q = 0; q < _qois.size(); q++ )
       _qois[q]->init(input,system,q);
+
+    // Figure out which variables are active in our QoIs
+    std::set<unsigned int> active_element_vars;
+    std::set<unsigned int> active_side_vars;
+    for( auto & qoi : _qois )
+      qoi->register_active_vars(active_element_vars, active_side_vars);
+
+    // Cache the inactive ones for reference during init_context
+    std::vector<unsigned int> all_vars;
+    system.get_all_variable_numbers(all_vars);
+
+    if( this->assemble_qoi_elements )
+      for( auto var : all_vars )
+        if( active_element_vars.find(var) == active_element_vars.end() )
+          _inactive_element_vars.insert(var);
+
+    if( this->assemble_qoi_sides )
+      for( auto var : all_vars )
+        if( active_side_vars.find(var) == active_side_vars.end() )
+          _inactive_side_vars.insert(var);
   }
 
   void CompositeQoI::init_context( libMesh::DiffContext& context )
@@ -94,6 +115,14 @@ namespace GRINS
 
     for( auto & qoi : _qois )
       qoi->init_context(c);
+
+    if( this->assemble_qoi_elements )
+      for( auto var : _inactive_element_vars )
+        c.get_element_fe(var)->get_nothing();
+
+    if( this->assemble_qoi_sides )
+      for( auto var : _inactive_side_vars )
+        c.get_side_fe(var)->get_nothing();
   }
 
   void CompositeQoI::register_parameter
