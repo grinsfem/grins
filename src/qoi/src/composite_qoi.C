@@ -42,18 +42,24 @@ namespace GRINS
     assemble_qoi_elements = false;
   }
 
-  std::unique_ptr<libMesh::DifferentiableQoI> CompositeQoI::clone()
+  CompositeQoI::CompositeQoI( const CompositeQoI & original )
+    : libMesh::DifferentiableQoI(original)
   {
-    std::unique_ptr<CompositeQoI> qois_clone =
-      libmesh_make_unique<CompositeQoI>();
+    _inactive_element_vars = original._inactive_element_vars;
+    _inactive_side_vars = original._inactive_side_vars;
 
-    for( auto & qoi : _qois )
+    for( auto & qoi : original._qois )
       {
         std::unique_ptr<QoIBase> clone(qoi->clone());
-        qois_clone->add_qoi(std::move(clone));
+        this->add_qoi(std::move(clone));
       }
+  }
 
-    return qois_clone;
+  std::unique_ptr<libMesh::DifferentiableQoI> CompositeQoI::clone()
+  {
+    // We can't use std::make_unique here since we've made the
+    // copy-constructor protected
+    return std::unique_ptr<CompositeQoI>( new CompositeQoI(*this) );
   }
 
   void CompositeQoI::add_qoi( std::unique_ptr<QoIBase> qoi )

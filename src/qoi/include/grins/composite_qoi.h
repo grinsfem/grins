@@ -146,6 +146,8 @@ namespace GRINS
 
     std::vector<std::unique_ptr<QoIBase>> _qois;
 
+    CompositeQoI( const CompositeQoI & original );
+
   };
 
   inline
