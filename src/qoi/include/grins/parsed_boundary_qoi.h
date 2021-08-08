@@ -51,9 +51,11 @@ namespace GRINS
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
     virtual QoIBase* clone() const override;
 
-    virtual bool assemble_on_interior() const override;
+    virtual bool assemble_on_interior() const override
+    { return false; }
 
-    virtual bool assemble_on_sides() const override;
+    virtual bool assemble_on_sides() const override
+    { return true; }
 
     //! Initialize local variables
     virtual void init( const GetPot& input,
@@ -83,16 +85,5 @@ namespace GRINS
 
   };
 
-  inline
-  bool ParsedBoundaryQoI::assemble_on_interior() const
-  {
-    return false;
-  }
-
-  inline
-  bool ParsedBoundaryQoI::assemble_on_sides() const
-  {
-    return true;
-  }
 }
 #endif //GRINS_PARSED_BOUNDARY_QOI_H
