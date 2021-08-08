@@ -40,18 +40,8 @@
 namespace GRINS
 {
   ParsedBoundaryQoI::ParsedBoundaryQoI( const ParsedBoundaryQoI& original )
-    : QoIBase(original)
+    : ParsedQoIBase(original)
   {
-    if (original.qoi_functional.get())
-      {
-        this->qoi_functional = original.qoi_functional->clone();
-        this->move_parameter
-          (*libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
-           (original.qoi_functional.get()),
-           *libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
-           (this->qoi_functional.get()));
-      }
-
     this->_bc_ids = original._bc_ids;
   }
 
@@ -80,13 +70,7 @@ namespace GRINS
         _bc_ids.insert( input("QoI/ParsedBoundary/bc_ids", -1, i ) );
       }
 
-    libMesh::ParsedFEMFunction<libMesh::Number> *qf
-      (new libMesh::ParsedFEMFunction<libMesh::Number>
-       (system, ""));
-    this->qoi_functional.reset(qf);
-
-    this->set_parameter(*qf, input,
-                        "QoI/ParsedBoundary/qoi_functional", "DIE!");
+    this->init_qoi_functional(input,system,"QoI/ParsedBoundary/qoi_functional");
   }
 
   void ParsedBoundaryQoI::init_context( AssemblyContext& context )

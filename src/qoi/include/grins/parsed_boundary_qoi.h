@@ -27,12 +27,11 @@
 #define GRINS_PARSED_BOUNDARY_QOI_H
 
 // GRINS
-#include "grins/qoi_base.h"
+#include "grins/parsed_qoi_base.h"
 #include "grins/variable_name_defaults.h"
 
 // libMesh
 #include "libmesh/fem_function_base.h"
-#include "libmesh/auto_ptr.h"
 
 namespace GRINS
 {
@@ -41,11 +40,11 @@ namespace GRINS
     This class implements a QoI that is an arbitrary integral of a
     parsed function on the boundary of the domain.
   */
-  class ParsedBoundaryQoI : public QoIBase
+  class ParsedBoundaryQoI : public ParsedQoIBase
   {
   public:
 
-    using QoIBase::QoIBase;
+    using ParsedQoIBase::ParsedQoIBase;
 
     virtual ~ParsedBoundaryQoI() = default;
 
@@ -72,10 +71,6 @@ namespace GRINS
                                       const unsigned int qoi_index ) override;
 
   protected:
-
-    std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
-    qoi_functional;
-
 
     //! List of boundary ids on which we want to compute this QoI
     std::set<libMesh::boundary_id_type> _bc_ids;
