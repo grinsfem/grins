@@ -63,6 +63,10 @@ namespace GRINS
     this->get_fe(context)->get_phi();
     this->get_fe(context)->get_dphi();
     this->get_fe(context)->get_xyz();
+
+    //FIXME: This really depends on the boundary conditions. For now, we're
+    //       always building it.
+    context.get_side_fe(this->_disp_vars.u(),Dim)->get_dphi();
   }
 
   template<unsigned int Dim>

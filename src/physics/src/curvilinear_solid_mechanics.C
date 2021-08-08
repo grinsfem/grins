@@ -67,6 +67,10 @@ namespace GRINS
         this->get_fe(context)->get_dxidz();
         this->get_fe(context)->get_detadz();
       }
+
+    //FIXME: This really depends on the boundary conditions. For now, we're
+    //       always building it.
+    context.get_side_fe(this->_disp_vars.u(),Dim)->get_dphi();
   }
 
   template class CurvilinearSolidMechanics<1>;
