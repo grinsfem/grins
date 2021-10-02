@@ -59,6 +59,14 @@ namespace GRINS
                        const MultiphysicsSystem& system,
                        unsigned int qoi_num ) override;
 
+    //! We don't do anything here because this QoI doesn't do anything during assembly
+    virtual void init_context( AssemblyContext & /*context*/ ) override
+    {}
+
+    //! We don't do anything here so no variables to register
+    virtual void register_active_vars( std::set<unsigned int> & /*element_vars*/,
+                                       std::set<unsigned int> & /*side_vars*/ ) override
+    {}
   };
 
   inline

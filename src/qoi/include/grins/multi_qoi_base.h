@@ -75,6 +75,9 @@ namespace GRINS
     //! call init_context on all internal QoI objects
     virtual void init_context(AssemblyContext & context) override;
 
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & side_vars ) override;
+
     //! reinit all internal QoI objects
     virtual void reinit(MultiphysicsSystem & system) override;
 

@@ -27,12 +27,11 @@
 #define GRINS_PARSED_INTERIOR_QOI_H
 
 // GRINS
-#include "grins/qoi_base.h"
+#include "grins/parsed_qoi_base.h"
 #include "grins/variable_name_defaults.h"
 
 // libMesh
 #include "libmesh/fem_function_base.h"
-#include "libmesh/auto_ptr.h"
 
 namespace GRINS
 {
@@ -41,11 +40,11 @@ namespace GRINS
     This class implements a QoI that is an arbitrary integral of a
     parsed function on the interior of the domain.
   */
-  class ParsedInteriorQoI : public QoIBase
+  class ParsedInteriorQoI : public ParsedQoIBase
   {
   public:
 
-    using QoIBase::QoIBase;
+    using ParsedQoIBase::ParsedQoIBase;
 
     virtual ~ParsedInteriorQoI() = default;
 
@@ -65,6 +64,9 @@ namespace GRINS
 
     virtual void init_context( AssemblyContext& context ) override;
 
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & side_vars ) override;
+
     //! Compute the qoi value.
     virtual void element_qoi( AssemblyContext& context,
                               const unsigned int qoi_index ) override;
@@ -75,11 +77,8 @@ namespace GRINS
 
   protected:
 
-    std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
-    qoi_functional;
-
-    //! Manual copy constructor due to the unique_ptr
-    ParsedInteriorQoI(const ParsedInteriorQoI& original);
+    //! We can use the default copy constructor, but still want it protected
+    ParsedInteriorQoI(const ParsedInteriorQoI& original) = default;
 
   };
 }

@@ -100,6 +100,24 @@ namespace GRINS
     //! Clones the current object
     virtual std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Real> > clone() const;
 
+    //! Request FE shape functions from context
+    /*!
+     *  Everything is a "get_nothing(). Currently. we manually build
+     *  the finite element on the "main" mesh using the quadrature points of
+     *  the rayfire mesh and then use point_value to evaulate the solution.
+     *  FIXME
+     *  \todo: Perhaps we should build up those finite elements at the init_context
+     *         time and cache it so the actual evaluation code looks a alot cleaner?
+     *         Would need to figure out how that plays with IntegratedFunction
+     *
+     *  Note we're leveraging the libMesh::FEMFunctionBase init_context interface,
+     *  hence we're getting a libMesh::FEMContext and not an AssemblyContext
+     */
+    virtual void init_context( libMesh::FEMContext & context ) override;
+
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & side_vars ) override;
+
   protected:
     //! Antioch/Cantera object
     std::shared_ptr<Chemistry> _chemistry;

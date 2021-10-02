@@ -123,6 +123,28 @@ namespace GRINS
   }
 
   template<typename Chemistry>
+  void AbsorptionCoeff<Chemistry>::init_context( libMesh::FEMContext & context )
+  {
+    context.get_element_fe(_T_var.T())->get_nothing();
+    context.get_side_fe(_T_var.T())->get_nothing();
+
+    context.get_element_fe(_P_var.p())->get_nothing();
+    context.get_side_fe(_P_var.p())->get_nothing();
+
+    context.get_element_fe(_Y_var.species(0))->get_nothing();
+    context.get_side_fe(_Y_var.species(0))->get_nothing();
+  }
+
+  template<typename Chemistry>
+  void AbsorptionCoeff<Chemistry>::register_active_vars( std::set<unsigned int> & element_vars,
+                                                         std::set<unsigned int> & /*side_vars*/ )
+  {
+    element_vars.insert(_T_var.T());
+    element_vars.insert(_P_var.p());
+    element_vars.insert(_Y_var.species(0));
+  }
+
+  template<typename Chemistry>
   libMesh::Real AbsorptionCoeff<Chemistry>::operator()(const libMesh::FEMContext& context,
                                                        const libMesh::Point& qp_xyz,
                                                        const libMesh::Real /*t*/)

@@ -68,6 +68,19 @@ namespace GRINS
     std::unique_ptr<libMesh::FEMContext>
       fem_context( libMesh::cast_ptr<libMesh::FEMContext *>(raw_context.release()) );
 
+    // We need to tell the context we just built to get_nothing for everything
+    // except the variables we care about right now
+    {
+      std::vector<unsigned int> all_vars;
+      system.get_all_variable_numbers(all_vars);
+
+      // FIXME: Hardcoded dimension assumption here
+      for( auto var : all_vars )
+        if( var != solid_disp_vars.u() || var != solid_disp_vars.v() )
+          fem_context->get_element_fe(var)->get_nothing();
+    }
+
+
     // Swap current_local_solution with old_local_nonlinear_solution
     if(_use_old_solution)
       this->swap_old_solution(system);

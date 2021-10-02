@@ -86,7 +86,7 @@ namespace GRINSTesting
       // This isn't used internally in the OverlappingFluidSolidMap, but the FEMContext
       // therein wants a time solver to be defined.
       libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( (*_system) );
-      _system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(time_solver);
+      _system->time_solver = std::unique_ptr<libMesh::TimeSolver>(time_solver);
 
       std::set<libMesh::subdomain_id_type> solid_ids;
       solid_ids.insert(1);
@@ -102,7 +102,7 @@ namespace GRINSTesting
 
       _es->init();
 
-      libMesh::UniquePtr<libMesh::PointLocatorBase> point_locator = _mesh->sub_point_locator();
+      std::unique_ptr<libMesh::PointLocatorBase> point_locator = _mesh->sub_point_locator();
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
@@ -282,7 +282,7 @@ namespace GRINSTesting
       _system->read_input_options( (*_input) );
 
       libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( (*_system) );
-      _system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(time_solver);
+      _system->time_solver = std::unique_ptr<libMesh::TimeSolver>(time_solver);
 
       std::set<libMesh::subdomain_id_type> solid_ids;
       solid_ids.insert(1);
@@ -298,7 +298,7 @@ namespace GRINSTesting
 
       _es->init();
 
-      libMesh::UniquePtr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
+      std::unique_ptr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
@@ -448,7 +448,7 @@ namespace GRINSTesting
       _system->read_input_options( (*_input) );
 
       libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( (*_system) );
-      _system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(time_solver);
+      _system->time_solver = std::unique_ptr<libMesh::TimeSolver>(time_solver);
 
       std::set<libMesh::subdomain_id_type> solid_ids;
       solid_ids.insert(1);
@@ -464,7 +464,7 @@ namespace GRINSTesting
 
       _es->init();
 
-      libMesh::UniquePtr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
+      std::unique_ptr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
@@ -613,7 +613,7 @@ namespace GRINSTesting
       _system->read_input_options( (*_input) );
 
       libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( (*_system) );
-      _system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(time_solver);
+      _system->time_solver = std::unique_ptr<libMesh::TimeSolver>(time_solver);
 
       std::set<libMesh::subdomain_id_type> solid_ids;
       solid_ids.insert(1);
@@ -629,7 +629,7 @@ namespace GRINSTesting
 
       _es->init();
 
-      libMesh::UniquePtr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
+      std::unique_ptr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 
@@ -756,7 +756,7 @@ namespace GRINSTesting
       _system->read_input_options( (*_input) );
 
       libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( (*_system) );
-      _system->time_solver = libMesh::UniquePtr<libMesh::TimeSolver>(time_solver);
+      _system->time_solver = std::unique_ptr<libMesh::TimeSolver>(time_solver);
 
       std::set<libMesh::subdomain_id_type> solid_ids;
       solid_ids.insert(1);
@@ -772,7 +772,7 @@ namespace GRINSTesting
 
       _es->init();
 
-      libMesh::UniquePtr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
+      std::unique_ptr<libMesh::PointLocatorBase> point_locator = mesh->sub_point_locator();
 
       GRINS::OverlappingFluidSolidMap mesh_overlap( (*_system), (*point_locator), solid_ids, fluid_ids, disp_vars );
 

@@ -23,33 +23,51 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_FEM_FUNCTION_AND_DERIVATIVE_BASE_H
-#define GRINS_FEM_FUNCTION_AND_DERIVATIVE_BASE_H
+#ifndef GRINS_PARSED_QOI_BASE_H
+#define GRINS_PARSED_QOI_BASE_H
+
+// GRINS
+#include "grins/qoi_base.h"
 
 // libMesh
 #include "libmesh/fem_function_base.h"
 
+// C++
+#include <set>
+#include <memory>
+
 namespace GRINS
 {
-  /*!
-    Extends libMesh::FEMFunctionBase by adding a function for computing derivatives
-  */
-  template<typename Output>
-  class FEMFunctionAndDerivativeBase : public libMesh::FEMFunctionBase<Output>
+  // Forward declarations
+  class MultiphysicsSystem;
+
+  class ParsedQoIBase : public QoIBase
   {
   public:
 
-    //! Function Derivative Evaluation
-    virtual void derivatives( libMesh::FEMContext & context,
-                              const libMesh::Point & qp_xyz,
-                              const libMesh::Real & JxW,
-                              const unsigned int qoi_index,
-                              const libMesh::Real time = 0.) = 0;
+    using QoIBase::QoIBase;
 
-    virtual void register_active_vars( std::set<unsigned int> & element_vars,
-                                       std::set<unsigned int> & side_vars ) =0;
+    virtual ~ParsedQoIBase() = default;
 
+  protected:
+
+    std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
+    qoi_functional;
+
+    std::set<unsigned int> _var_indices;
+
+    void get_var_indices( const std::string & expression,
+                          const MultiphysicsSystem & system,
+                          std::set<unsigned int> & var_indices );
+
+    void init_qoi_functional( const GetPot & input,
+                              const MultiphysicsSystem & system,
+                              const std::string & input_string );
+
+    //! Manual copy constructor due to the unique_ptr
+    ParsedQoIBase(const ParsedQoIBase & original);
   };
 
-}
-#endif //GRINS_FEM_FUNCTION_AND_DERIVATIVE_BASE_H
+} // end namespace GRINS
+
+#endif // GRINS_PARSED_QOI_BASE_H

@@ -29,11 +29,10 @@
 // GRINS
 #include "grins/qoi_base.h"
 #include "grins/variable_name_defaults.h"
+#include "grins/single_variable.h"
 
 namespace GRINS
 {
-  class PrimitiveTempFEVariables;
-
   class AverageNusseltNumber : public QoIBase
   {
   public:
@@ -61,6 +60,10 @@ namespace GRINS
                        unsigned int qoi_num ) override;
 
     virtual void init_context( AssemblyContext& context ) override;
+
+    virtual void register_active_vars( std::set<unsigned int> & /*element_vars*/,
+                                       std::set<unsigned int> & side_vars ) override
+    { side_vars.insert(_temp_vars->T()); }
 
   protected:
 

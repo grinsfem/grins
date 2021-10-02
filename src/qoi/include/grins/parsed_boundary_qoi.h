@@ -27,12 +27,11 @@
 #define GRINS_PARSED_BOUNDARY_QOI_H
 
 // GRINS
-#include "grins/qoi_base.h"
+#include "grins/parsed_qoi_base.h"
 #include "grins/variable_name_defaults.h"
 
 // libMesh
 #include "libmesh/fem_function_base.h"
-#include "libmesh/auto_ptr.h"
 
 namespace GRINS
 {
@@ -41,20 +40,22 @@ namespace GRINS
     This class implements a QoI that is an arbitrary integral of a
     parsed function on the boundary of the domain.
   */
-  class ParsedBoundaryQoI : public QoIBase
+  class ParsedBoundaryQoI : public ParsedQoIBase
   {
   public:
 
-    using QoIBase::QoIBase;
+    using ParsedQoIBase::ParsedQoIBase;
 
     virtual ~ParsedBoundaryQoI() = default;
 
     //! Required to provide clone (deep-copy) for adding QoI object to libMesh objects.
     virtual QoIBase* clone() const override;
 
-    virtual bool assemble_on_interior() const override;
+    virtual bool assemble_on_interior() const override
+    { return false; }
 
-    virtual bool assemble_on_sides() const override;
+    virtual bool assemble_on_sides() const override
+    { return true; }
 
     //! Initialize local variables
     virtual void init( const GetPot& input,
@@ -62,6 +63,9 @@ namespace GRINS
                        unsigned int qoi_num ) override;
 
     virtual void init_context( AssemblyContext& context ) override;
+
+    virtual void register_active_vars( std::set<unsigned int> & element_vars,
+                                       std::set<unsigned int> & side_vars ) override;
 
     //! Compute the qoi value.
     virtual void side_qoi( AssemblyContext& context,
@@ -73,10 +77,6 @@ namespace GRINS
 
   protected:
 
-    std::unique_ptr<libMesh::FEMFunctionBase<libMesh::Number> >
-    qoi_functional;
-
-
     //! List of boundary ids on which we want to compute this QoI
     std::set<libMesh::boundary_id_type> _bc_ids;
 
@@ -85,16 +85,5 @@ namespace GRINS
 
   };
 
-  inline
-  bool ParsedBoundaryQoI::assemble_on_interior() const
-  {
-    return false;
-  }
-
-  inline
-  bool ParsedBoundaryQoI::assemble_on_sides() const
-  {
-    return true;
-  }
 }
 #endif //GRINS_PARSED_BOUNDARY_QOI_H

@@ -53,6 +53,8 @@ namespace GRINS
     context.get_element_fe(_press_var.p(),Dim)->get_phi();
     context.get_element_fe(_press_var.p(),Dim)->get_JxW();
 
+    context.get_side_fe(_press_var.p(),Dim)->get_nothing();
+
     CartesianSolidMechanics<Dim>::init_context(context);
   }
 

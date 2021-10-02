@@ -150,7 +150,7 @@ namespace GRINSTesting
 
       GRINS::MultiphysicsSystem * system = _sim->get_multiphysics_system();
 
-      libMesh::UniquePtr<libMesh::NumericVector<libMesh::Number> > & solution = (*system).solution;
+      std::unique_ptr<libMesh::NumericVector<libMesh::Number> > & solution = (*system).solution;
 
       libMesh::QoISet qs;
       qs.add_index(0);

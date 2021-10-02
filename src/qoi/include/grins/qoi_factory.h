@@ -71,7 +71,7 @@ namespace GRINS
     void get_var_value( const GetPot & input, T & value, std::string input_var, T default_value);
 
     //! Helper function to reduce code duplication in SpectroscopicTransmission and SpectroscopicAbsorption creation
-    bool create_spectroscopic_qoi(const GetPot & input, const std::string & qoi_name, const std::string & qoi_string, QoIBase ** qoi, std::shared_ptr<CompositeQoI> & qois);
+    bool create_spectroscopic_qoi(const GetPot & input, const std::string & qoi_name, const std::string & qoi_string, std::shared_ptr<CompositeQoI> & qois);
 
     //! Helper function to encapsulate the creation of an AbsorptionCoeff object
     std::shared_ptr<FEMFunctionAndDerivativeBase<libMesh::Real>> create_absorption_coeff(const GetPot & input, const std::string & qoi_string);

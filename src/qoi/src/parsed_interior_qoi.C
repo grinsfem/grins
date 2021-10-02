@@ -39,20 +39,6 @@
 
 namespace GRINS
 {
-  ParsedInteriorQoI::ParsedInteriorQoI( const ParsedInteriorQoI& original )
-    : QoIBase(original)
-  {
-    if (original.qoi_functional.get())
-      {
-        this->qoi_functional = original.qoi_functional->clone();
-        this->move_parameter
-          (*libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
-           (original.qoi_functional.get()),
-           *libMesh::cast_ptr<libMesh::ParsedFEMFunction<libMesh::Number>*>
-           (this->qoi_functional.get()));
-      }
-  }
-
   QoIBase* ParsedInteriorQoI::clone() const
   {
     return new ParsedInteriorQoI( *this );
@@ -63,15 +49,7 @@ namespace GRINS
    const MultiphysicsSystem& system,
    unsigned int /*qoi_num*/ )
   {
-    std::unique_ptr<libMesh::ParsedFEMFunction<libMesh::Number>> qf =
-      libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>
-       (system, "");
-
-
-    this->set_parameter(*qf, input,
-                        "QoI/ParsedInterior/qoi_functional", "DIE!");
-
-    this->qoi_functional = std::move(qf);
+    this->init_qoi_functional(input,system,"QoI/ParsedInterior/qoi_functional");
   }
 
   void ParsedInteriorQoI::init_context( AssemblyContext& context )
@@ -82,6 +60,13 @@ namespace GRINS
     element_fe->get_xyz();
 
     qoi_functional->init_context(context);
+  }
+
+  void ParsedInteriorQoI::register_active_vars( std::set<unsigned int> & element_vars,
+                                                std::set<unsigned int> & /*side_vars*/ )
+  {
+    for( auto var : _var_indices )
+      element_vars.insert(var);
   }
 
   void ParsedInteriorQoI::element_qoi( AssemblyContext& context,

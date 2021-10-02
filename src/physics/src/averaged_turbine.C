@@ -48,8 +48,11 @@ namespace GRINS
   template<class Mu>
   void AveragedTurbine<Mu>::init_context( AssemblyContext& context )
   {
-    context.get_element_fe(this->_flow_vars.u())->get_xyz();
     context.get_element_fe(this->_flow_vars.u())->get_phi();
+
+    context.get_element_fe(this->fan_speed_var())->get_phi();
+
+    context.get_side_fe(this->fan_speed_var())->get_nothing();
   }
 
 
