@@ -1,98 +1,76 @@
 dnl
-dnl AM_PATH_CPPUNIT(MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl AM_PATH_CPPUNIT([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl
 AC_DEFUN([AM_PATH_CPPUNIT],
 [
+  dnl Check the user's environment for CPPUNIT_DIR and if it's set, use it,
+  dnl otherwise set some defaults that maybe will work and then later check
+  dnl if the user passed some options to configure
+  AS_IF([test "x$CPPUNIT_DIR" = "x"],
+        [dnl Defaults that might work if cppunit headers are in /usr/include
+         dnl and libraries are in /usr/lib, i.e. standard installation locations.
+         CPPUNIT_CPPFLAGS=
+         CPPUNIT_LIBS=-lcppunit],
+        [CPPUNIT_CPPFLAGS="-I$CPPUNIT_DIR/include"
+         CPPUNIT_LIBS="-L$CPPUNIT_DIR/lib -lcppunit"])
 
-AC_ARG_WITH(cppunit-prefix,[  --with-cppunit-prefix=PFX   Prefix where CppUnit is installed (optional)],
-            cppunit_config_prefix="$withval", cppunit_config_prefix="")
-AC_ARG_WITH(cppunit-exec-prefix,[  --with-cppunit-exec-prefix=PFX  Exec prefix where CppUnit is installed (optional)],
-            cppunit_config_exec_prefix="$withval", cppunit_config_exec_prefix="")
+  dnl User can override with explicit values for:
+  dnl --with-cppunit-prefix
+  dnl or
+  dnl --with-cppunit-include
+  dnl --with-cppunit-lib
+  AC_ARG_WITH([cppunit-prefix],
+              [AS_HELP_STRING([--with-cppunit-prefix=PATH],
+                              [Specify a path for cppunit installation])],
+              [CPPUNIT_PREFIX=$withval
+               CPPUNIT_CPPFLAGS="-I$CPPUNIT_PREFIX/include"
+               CPPUNIT_LIBS="-L$CPPUNIT_PREFIX/lib -lcppunit"])
 
-  if test x$cppunit_config_exec_prefix != x ; then
-     cppunit_config_args="$cppunit_config_args --exec-prefix=$cppunit_config_exec_prefix"
-     if test x${CPPUNIT_CONFIG+set} != xset ; then
-        CPPUNIT_CONFIG=$cppunit_config_exec_prefix/bin/cppunit-config
-     fi
-  fi
-  if test x$cppunit_config_prefix != x ; then
-     cppunit_config_args="$cppunit_config_args --prefix=$cppunit_config_prefix"
-     if test x${CPPUNIT_CONFIG+set} != xset ; then
-        CPPUNIT_CONFIG=$cppunit_config_prefix/bin/cppunit-config
-     fi
-  fi
+  AC_ARG_WITH(cppunit-include,
+              AS_HELP_STRING([--with-cppunit-include=PATH],
+                             [Specify a path for cppunit header files]),
+              CPPUNIT_CPPFLAGS="-I$withval")
 
-  AC_PATH_PROG(CPPUNIT_CONFIG, cppunit-config, no)
-  cppunit_version_min=$1
+  AC_ARG_WITH(cppunit-lib,
+              AS_HELP_STRING([--with-cppunit-lib=PATH],
+                             [Specify a path for cppunit libs]),
+              CPPUNIT_LIBS="-L$withval -lcppunit")
 
-  AC_MSG_CHECKING(for Cppunit - version >= $cppunit_version_min)
-  no_cppunit=""
-  if test "$CPPUNIT_CONFIG" = "no" ; then
+
+  AC_MSG_CHECKING(whether we can build a trivial CppUnit program)
+  AC_LANG_PUSH([C++])
+  saveCPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$saveCPPFLAGS $CPPUNIT_CPPFLAGS"
+  saveLIBS="$LIBS"
+  LIBS="$CPPUNIT_LIBS $saveLIBS"
+
+  AC_LINK_IFELSE([AC_LANG_SOURCE([[
+  @%:@include <cppunit/ui/text/TestRunner.h>
+  int main(int argc, char **argv)
+  {
+    CppUnit::TextUi::TestRunner runner;
+
+    if (runner.run())
+      return 0;
+
+    return 1;
+  }
+  ]])],[
+    AC_MSG_RESULT(yes)
+    ifelse([$1], , :, [$1])
+    AC_SUBST(HAVE_CPPUNIT,[1])
+    AC_DEFINE([HAVE_CPPUNIT], [1], [Enable CPPUnit Tests])
+  ],[
     AC_MSG_RESULT(no)
-    no_cppunit=yes
-  else
-    CPPUNIT_CPPFLAGS=`$CPPUNIT_CONFIG --cflags`
-    CPPUNIT_LIBS=`$CPPUNIT_CONFIG --libs`
-    CPPUNIT_VERSION=`$CPPUNIT_CONFIG --version`
-    CPPUNIT_PREFIX=`$CPPUNIT_CONFIG --prefix`
-    cppunit_version=`$CPPUNIT_CONFIG --version`
+    CPPUNIT_CPPFLAGS=
+    CPPUNIT_LIBS=
+    ifelse([$2], , :, [$2])
+  ])
 
-    cppunit_major_version=`echo $cppunit_version | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
-    cppunit_minor_version=`echo $cppunit_version | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
-    cppunit_micro_version=`echo $cppunit_version | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+  AC_LANG_POP
+  LIBS="$saveLIBS"
+  CPPFLAGS="$saveCPPFLAGS"
 
-    cppunit_major_min=`echo $cppunit_version_min | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
-    if test "x${cppunit_major_min}" = "x" ; then
-       cppunit_major_min=0
-    fi
-
-    cppunit_minor_min=`echo $cppunit_version_min | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
-    if test "x${cppunit_minor_min}" = "x" ; then
-       cppunit_minor_min=0
-    fi
-
-    cppunit_micro_min=`echo $cppunit_version_min | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
-    if test "x${cppunit_micro_min}" = "x" ; then
-       cppunit_micro_min=0
-    fi
-
-    cppunit_version_proper=`expr \
-        $cppunit_major_version \> $cppunit_major_min \| \
-        $cppunit_major_version \= $cppunit_major_min \& \
-        $cppunit_minor_version \> $cppunit_minor_min \| \
-        $cppunit_major_version \= $cppunit_major_min \& \
-        $cppunit_minor_version \= $cppunit_minor_min \& \
-        $cppunit_micro_version \>= $cppunit_micro_min `
-
-    if test "$cppunit_version_proper" = "1" ; then
-      AC_MSG_RESULT([$cppunit_major_version.$cppunit_minor_version.$cppunit_micro_version])
-    else
-      AC_MSG_RESULT(no)
-      no_cppunit=yes
-    fi
-  fi
-
-  if test "x$no_cppunit" = x ; then
-     ifelse([$2], , :, [$2])
-     AC_SUBST(HAVE_CPPUNIT,[1])
-     AC_DEFINE([HAVE_CPPUNIT], [1], [Enable CPPUnit Tests])
-  else
-     CPPUNIT_CPPFLAGS=""
-     CPPUNIT_LIBS=""
-     ifelse([$3], , :, [$3])
-  fi
-  
-  AC_SUBST(CPPUNIT_VERSION)
-  AC_SUBST(CPPUNIT_PREFIX)
   AC_SUBST(CPPUNIT_CPPFLAGS)
   AC_SUBST(CPPUNIT_LIBS)
 ])
-
-
-
