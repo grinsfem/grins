@@ -123,7 +123,7 @@ namespace GRINS
   }
 
   template<typename Chemistry>
-  void AbsorptionCoeff<Chemistry>::init_context( libMesh::FEMContext & context )
+  void AbsorptionCoeff<Chemistry>::init_context( const libMesh::FEMContext & context )
   {
     context.get_element_fe(_T_var.T())->get_nothing();
     context.get_side_fe(_T_var.T())->get_nothing();
