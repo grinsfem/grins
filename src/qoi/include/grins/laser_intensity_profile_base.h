@@ -48,6 +48,8 @@ namespace GRINS
 
     libMesh::Real intensity(unsigned int index) const;
 
+    virtual ~LaserIntensityProfileBase() = default;
+
   protected:
     std::vector<libMesh::Real> _intensity_vals;
 
@@ -55,4 +57,3 @@ namespace GRINS
 
 }
 #endif // GRINS_LASER_INTENSITY_PROFILE_BASE_H
-
