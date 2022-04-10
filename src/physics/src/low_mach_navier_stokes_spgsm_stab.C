@@ -146,15 +146,8 @@ namespace GRINS
         libMesh::RealGradient U( context.interior_value(this->_flow_vars.u(), qp),
                                  context.interior_value(this->_flow_vars.v(), qp) );
 
-        libMesh::RealGradient grad_u = context.interior_gradient(this->_flow_vars.u(), qp);
-        libMesh::RealGradient grad_v = context.interior_gradient(this->_flow_vars.v(), qp);
-        libMesh::RealGradient grad_w;
-
         if( this->_flow_vars.dim() == 3 )
-          {
-            U(2) = context.interior_value(this->_flow_vars.w(), qp);
-            grad_w = context.interior_gradient(this->_flow_vars.w(), qp);
-          }
+          U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
         libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
@@ -210,8 +203,6 @@ namespace GRINS
         libMesh::Number u, v;
         u = context.interior_value(this->_flow_vars.u(), qp);
         v = context.interior_value(this->_flow_vars.v(), qp);
-
-        libMesh::Gradient grad_T = context.interior_gradient(this->_temp_vars.T(), qp);
 
         libMesh::NumberVectorValue U(u,v);
         if (this->_flow_vars.dim() == 3)
@@ -330,15 +321,8 @@ namespace GRINS
         libMesh::RealGradient U( context.fixed_interior_value(this->_flow_vars.u(), qp),
                                  context.fixed_interior_value(this->_flow_vars.v(), qp) );
 
-        libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
-        libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
-        libMesh::RealGradient grad_w;
-
         if( this->_flow_vars.dim() == 3 )
-          {
-            U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
-            grad_w = context.fixed_interior_gradient(this->_flow_vars.w(), qp);
-          }
+          U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp);
 
         libMesh::FEBase* fe = context.get_element_fe(this->_flow_vars.u());
 
@@ -349,7 +333,6 @@ namespace GRINS
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
         libMesh::Real RC_t = this->compute_res_continuity_transient( context, qp );
-        libMesh::RealGradient RM_s = this->compute_res_momentum_steady( context, qp );
         libMesh::RealGradient RM_t = this->compute_res_momentum_transient( context, qp );
 
         for (unsigned int i=0; i != n_u_dofs; i++)
@@ -395,8 +378,6 @@ namespace GRINS
         u = context.fixed_interior_value(this->_flow_vars.u(), qp);
         v = context.fixed_interior_value(this->_flow_vars.v(), qp);
 
-        libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_temp_vars.T(), qp);
-
         libMesh::NumberVectorValue U(u,v);
         if (this->_flow_vars.dim() == 3)
           U(2) = context.fixed_interior_value(this->_flow_vars.w(), qp); // w
@@ -419,9 +400,7 @@ namespace GRINS
         libMesh::Real RE_t = this->compute_res_energy_transient( context, qp );
 
         for (unsigned int i=0; i != n_T_dofs; i++)
-          {
-            FT(i) -= rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]*JxW[qp];
-          }
+          FT(i) -= rho_cp*tau_E*RE_t*U*T_gradphi[i][qp]*JxW[qp];
 
       }
   }

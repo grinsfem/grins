@@ -75,9 +75,6 @@ namespace GRINS
     if ( this->_flow_vars.dim() == 3 )
       U(2) = context.interior_value(this->_flow_vars.w(), qp);
 
-    libMesh::RealGradient grad_u = context.fixed_interior_gradient(this->_flow_vars.u(), qp);
-    libMesh::RealGradient grad_v = context.fixed_interior_gradient(this->_flow_vars.v(), qp);
-
     libMesh::Number nu_value = context.interior_value(this->_turbulence_vars.nu(), qp);
 
     libMesh::RealGradient grad_nu = context.fixed_interior_gradient(this->_turbulence_vars.nu(), qp);
