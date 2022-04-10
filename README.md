@@ -1,15 +1,15 @@
 GRINS
 =======
 
-General Reacting Incompressible Navier-Stokes (GRINS) was initiated                                                                                                                                                      
+General Reacting Incompressible Navier-Stokes (GRINS) was initiated
 to house common modeling work centered around using the incompressible
 and variable-density (low-Mach) Navier-Stokes equations
 utilizing the [libMesh](https://github.com/libMesh/libmesh.git) finite
 element library, including both MPI and MPI+threads parallelism,
-as provided by [libMesh](https://github.com/libMesh/libmesh.git). 
+as provided by [libMesh](https://github.com/libMesh/libmesh.git).
 GRINS has now become a tool for rapidly developing
 formulations and algorithms for the solution of complex multiphysics
-applications. 
+applications.
 GRINS originally lived within
 the [PECOS](http://pecos.ices.utexas.edu) center at the Institute for Computational
 Engineering and Sciences ([ICES](https://www.ices.utexas.edu))
@@ -44,7 +44,7 @@ an external chemistry library. Both [Cantera](http://code.google.com/p/cantera/)
 The current required minimum hash for using Antioch is libantioch/antioch@e17822d (libantioch/antioch#265).
 
 
-Building GRINS 
+Building GRINS
 ================
 
 GRINS uses an Autotools build system, so typical GNU build commands are used. We support, and encourage, out-of-source builds (so-called VPATH builds). However, in-source builds are supported.
@@ -78,7 +78,7 @@ not `METHODS`. For example
 is valid.
 
 The user can define
-their own CXXFLAGS variable by passing 
+their own CXXFLAGS variable by passing
 <pre><code>
 --disable-libmesh-flags CXXFLAGS="your flags here"
 </code>
