@@ -262,7 +262,7 @@ AC_ARG_ENABLE(cppunit,
               AS_HELP_STRING([--disable-cppunit],
                              [Build without cppunit C++ unit testing support]))
 AS_IF([test "x$enable_cppunit" != "xno"], [
-   AM_PATH_CPPUNIT([1.10.0],[enablecppunit=yes],[enablecppunit=no])
+   AM_PATH_CPPUNIT([enablecppunit=yes],[enablecppunit=no])
 ])
 
 AM_CONDITIONAL(GRINS_ENABLE_CPPUNIT, test x$enablecppunit = xyes)
