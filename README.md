@@ -1,15 +1,15 @@
 GRINS
 =======
 
-General Reacting Incompressible Navier-Stokes (GRINS) was initiated                                                                                                                                                      
+General Reacting Incompressible Navier-Stokes (GRINS) was initiated
 to house common modeling work centered around using the incompressible
 and variable-density (low-Mach) Navier-Stokes equations
 utilizing the [libMesh](https://github.com/libMesh/libmesh.git) finite
 element library, including both MPI and MPI+threads parallelism,
-as provided by [libMesh](https://github.com/libMesh/libmesh.git). 
+as provided by [libMesh](https://github.com/libMesh/libmesh.git).
 GRINS has now become a tool for rapidly developing
 formulations and algorithms for the solution of complex multiphysics
-applications. 
+applications.
 GRINS originally lived within
 the [PECOS](http://pecos.ices.utexas.edu) center at the Institute for Computational
 Engineering and Sciences ([ICES](https://www.ices.utexas.edu))
@@ -25,11 +25,11 @@ Dependencies
 Requirements
 ------------
 
-In addition to a C++11 compiler, GRINS requires an up-to-date installation of the [libMesh](https://github.com/libMesh/libmesh.git) finite element library. 
+In addition to a C++17 compiler, GRINS requires an up-to-date installation of the [libMesh](https://github.com/libMesh/libmesh.git) finite element library.
 
 libMesh
 -------
-GRINS development both drives and is driven by libMesh development. Thus, the required minimum master hash of libMesh may change in GRINS master. The current required libMesh master hash is 943d5d0 [PR #2088](https://github.com/libMesh/libmesh/pull/2088), as of GRINS [PR #577](https://github.com/grinsfem/grins/pull/577).
+GRINS development both drives and is driven by libMesh development. Thus, the required minimum master hash of libMesh may change in GRINS master. The current required libMesh master hash is f0def3f [PR #3168](https://github.com/libMesh/libmesh/pull/3168), as of GRINS [PR #611](https://github.com/grinsfem/grins/pull/611).
 GRINS release 0.5.0 can use libMesh versions as old as 0.9.4. Subsequent to
 the 0.5.0 release requires at least libMesh 1.0.0.
 
@@ -44,7 +44,7 @@ an external chemistry library. Both [Cantera](http://code.google.com/p/cantera/)
 The current required minimum hash for using Antioch is libantioch/antioch@e17822d (libantioch/antioch#265).
 
 
-Building GRINS 
+Building GRINS
 ================
 
 GRINS uses an Autotools build system, so typical GNU build commands are used. We support, and encourage, out-of-source builds (so-called VPATH builds). However, in-source builds are supported.
@@ -78,7 +78,7 @@ not `METHODS`. For example
 is valid.
 
 The user can define
-their own CXXFLAGS variable by passing 
+their own CXXFLAGS variable by passing
 <pre><code>
 --disable-libmesh-flags CXXFLAGS="your flags here"
 </code>

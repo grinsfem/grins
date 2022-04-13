@@ -86,26 +86,11 @@ fi
 dnl -Wall warnings, -Wall the time.
 AX_CXXFLAGS_WARN_ALL
 
-dnl--------------------------
-dnl Even if no dependency needed it,
-dnl C++11 makes our asserts nicer,
-dnl so let's try and enable it.
-dnl--------------------------
-AC_ARG_ENABLE(cxx11,
-              AC_HELP_STRING([--enable-cxx11],
-                             [build with C++11 support]),
-              [case "${enableval}" in
-                yes)  enablecxx11=yes ;;
-                 no)  enablecxx11=no ;;
-                  *)  AC_MSG_ERROR(bad value ${enableval} for --enable-cxx11) ;;
-               esac],
-               [enablecxx11=optional])
+dnl-------------------------------------------
+dnl libMesh is using c++17 now, so we will too
+dnl-------------------------------------------
+AX_CXX_COMPILE_STDCXX_17(noext, mandatory)
 
-if (test x$enablecxx11 = xyes); then
-  AX_CXX_COMPILE_STDCXX_11(noext, mandatory)
-elif (test x$enablecxx11 = xoptional); then
-  AX_CXX_COMPILE_STDCXX_11(noext, optional)
-fi
 
 dnl---------------------------------------------------------
 dnl Add libMesh flags manually if it's not a libtool build
@@ -131,34 +116,6 @@ dnl Check for GSL
 dnl----------------
 dnl### AX_PATH_GSL(1.10,AM_CONDITIONAL([UQBT_GSL], [test 'TRUE']),AC_MSG_ERROR([Could not find required GSL version.]))
 dnl AC_CACHE_SAVE
-
-
-dnl------------------------------------------
-dnl Check if libMesh detected std::shared_ptr
-dnl------------------------------------------
-AC_MSG_CHECKING([for C++11 std::shared_ptr support from libMesh])
-grins_save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$LIBMESH_CPPFLAGS $CPPFLAGS"
-libmesh_have_cxx11_shared_ptr=no
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-                                      @%:@include <libmesh/libmesh_config.h>
-                                   ]],
-                                   [[
-                                      #if LIBMESH_HAVE_CXX11_SHARED_PTR
-                                      #else
-                                      #error "libMesh shared_ptr support not found!"
-                                      #endif
-                                   ]])
-                  ],
-                                   [
-                libmesh_have_cxx11_shared_ptr=yes
-                AC_MSG_RESULT(yes)
-            ],[
-                libmesh_have_cxx11_shared_ptr=no
-                AC_MSG_RESULT(no)
-])
-CPPFLAGS=$grins_save_CPPFLAGS
-
 
 dnl-----------------------
 dnl Check for Cantera 2.0+
