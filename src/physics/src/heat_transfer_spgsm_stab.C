@@ -56,7 +56,6 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u(), qp ),
@@ -111,7 +110,6 @@ namespace GRINS
 
     for (unsigned int qp=0; qp != n_qpoints; qp++)
       {
-        libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
 
         libMesh::RealGradient U( context.fixed_interior_value( this->_flow_vars.u(), qp ),

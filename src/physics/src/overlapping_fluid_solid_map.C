@@ -151,7 +151,7 @@ namespace GRINS
         const auto & fluid_map = solid_it.second;
 
         std::set<libMesh::dof_id_type> fluid_ids;
-        for( const auto fluid_it : fluid_map )
+        for( const auto & fluid_it : fluid_map )
           fluid_ids.insert(fluid_it.first);
 
         _overlapping_fluid_ids.insert(std::make_pair(solid_id,fluid_ids));

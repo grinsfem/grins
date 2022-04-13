@@ -113,7 +113,7 @@ namespace GRINS
      *  Note we're leveraging the libMesh::FEMFunctionBase init_context interface,
      *  hence we're getting a libMesh::FEMContext and not an AssemblyContext
      */
-    virtual void init_context( libMesh::FEMContext & context ) override;
+    virtual void init_context( const libMesh::FEMContext & context ) override;
 
     virtual void register_active_vars( std::set<unsigned int> & element_vars,
                                        std::set<unsigned int> & side_vars ) override;
