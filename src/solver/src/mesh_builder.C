@@ -344,7 +344,7 @@ namespace GRINS
           for (auto & elem : mesh.active_element_ptr_range())
             {
               const libMesh::Real refinement_val =
-                h_refinement_function(elem->centroid());
+                h_refinement_function(elem->vertex_average());
 
               const unsigned int n_refinements = refinement_val > 0 ?
                 refinement_val : 0;
