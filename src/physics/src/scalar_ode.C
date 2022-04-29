@@ -57,7 +57,7 @@ namespace GRINS
     // variables initialized.
 
     {
-      auto tdf = libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
+      auto tdf = std::make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
 
       this->set_parameter(*tdf, _input,
                           "Physics/"+PhysicsNaming::scalar_ode()+"/time_deriv",
@@ -70,7 +70,7 @@ namespace GRINS
     }
 
     {
-      auto mrf = libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
+      auto mrf = std::make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
 
       if (mrf->expression() == "0")
         std::cout << "Warning! Zero mass_residual function specified!" << std::endl;
@@ -83,7 +83,7 @@ namespace GRINS
     }
 
     {
-      auto cf = libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
+      auto cf = std::make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>(*system, "");
 
       this->set_parameter(*cf, _input,
                           "Physics/"+PhysicsNaming::scalar_ode()+"/constraint",

@@ -97,27 +97,27 @@ namespace GRINS
 
     if( qoi_name == avg_nusselt )
       {
-        qoi = libmesh_make_unique<AverageNusseltNumber>( avg_nusselt );
+        qoi = std::make_unique<AverageNusseltNumber>( avg_nusselt );
       }
 
     else if( qoi_name == parsed_boundary )
       {
-        qoi =  libmesh_make_unique<ParsedBoundaryQoI>( parsed_boundary );
+        qoi =  std::make_unique<ParsedBoundaryQoI>( parsed_boundary );
       }
 
     else if( qoi_name == parsed_interior )
       {
-        qoi = libmesh_make_unique<ParsedInteriorQoI>( parsed_interior );
+        qoi = std::make_unique<ParsedInteriorQoI>( parsed_interior );
       }
 
     else if( qoi_name == vorticity )
       {
-        qoi =  libmesh_make_unique<Vorticity>( vorticity );
+        qoi =  std::make_unique<Vorticity>( vorticity );
       }
 
     else if( qoi_name == weighted_flux )
       {
-        qoi =  libmesh_make_unique<WeightedFluxQoI>( weighted_flux );
+        qoi =  std::make_unique<WeightedFluxQoI>( weighted_flux );
       }
 
     else if( qoi_name == integrated_function )
@@ -135,7 +135,7 @@ namespace GRINS
 
         std::shared_ptr<RayfireMesh> rayfire( new RayfireMesh(input,"IntegratedFunction") );
 
-        qoi =  libmesh_make_unique<IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >>(p_level,f,rayfire,qoi_name);
+        qoi =  std::make_unique<IntegratedFunction<libMesh::FunctionBase<libMesh::Real> >>(p_level,f,rayfire,qoi_name);
       }
 
     else if ( qoi_name == spectroscopic_transmission )
@@ -205,9 +205,9 @@ namespace GRINS
           }
 
         if (dim == 3)
-          qoi = libmesh_make_unique<LaserAbsorption>(absorb,top_origin,centerline_origin,bottom_origin,theta,phi,n_qp,intensity_profile,qoi_name);
+          qoi = std::make_unique<LaserAbsorption>(absorb,top_origin,centerline_origin,bottom_origin,theta,phi,n_qp,intensity_profile,qoi_name);
         else
-          qoi = libmesh_make_unique<LaserAbsorption>(absorb,top_origin,centerline_origin,bottom_origin,theta,n_qp,intensity_profile,qoi_name);
+          qoi = std::make_unique<LaserAbsorption>(absorb,top_origin,centerline_origin,bottom_origin,theta,n_qp,intensity_profile,qoi_name);
       }
 
     else
@@ -329,9 +329,9 @@ namespace GRINS
         bool output_as_csv = false;
 
         if (qoi_name == spectroscopic_absorption)
-          qoi = libmesh_make_unique<SpectroscopicAbsorption>(absorb,rayfire,qoi_name,output_as_csv);
+          qoi = std::make_unique<SpectroscopicAbsorption>(absorb,rayfire,qoi_name,output_as_csv);
         else // spectroscopic_transmission
-          qoi = libmesh_make_unique<SpectroscopicTransmission>(absorb,rayfire,qoi_name,output_as_csv);
+          qoi = std::make_unique<SpectroscopicTransmission>(absorb,rayfire,qoi_name,output_as_csv);
 
       }
     else if (num_wavenumbers == 3)
@@ -368,9 +368,9 @@ namespace GRINS
             absorb.reset( coeff );
 
             if (qoi_name == spectroscopic_absorption)
-              qoi = libmesh_make_unique<SpectroscopicAbsorption>(absorb,rayfire,qoi_name,output_as_csv);
+              qoi = std::make_unique<SpectroscopicAbsorption>(absorb,rayfire,qoi_name,output_as_csv);
             else // spectroscopic_transmission
-              qoi = libmesh_make_unique<SpectroscopicTransmission>(absorb,rayfire,qoi_name,output_as_csv);
+              qoi = std::make_unique<SpectroscopicTransmission>(absorb,rayfire,qoi_name,output_as_csv);
 
             qois->add_qoi( std::move(qoi) );
           }
