@@ -25,7 +25,7 @@ relative_step_tolerance = 1.0e-10
 [vis-options]
 output_vis = false
 vis_output_file_prefix = thermally_driven_3d_flow
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII xda.gz'
 
 # Options for print info to the screen
 [screen-options]

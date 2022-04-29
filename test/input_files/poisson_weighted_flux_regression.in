@@ -102,7 +102,7 @@ weights = 'y*(1-y)' # This 'fixes' the spill
    output_vis = 'false'
    output_adjoint = 'false'
    vis_output_file_prefix = 'poisson'
-   output_format = 'ExodusII xdr'
+   output_format = 'ExodusII xda.gz'
 []
 
 [Output]

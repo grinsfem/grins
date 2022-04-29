@@ -3,7 +3,7 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/couette_flow_input_2d_x.in"
-TESTDATA="./ns_couette_flow_2d_x.xdr"
+TESTDATA="./ns_couette_flow_2d_x.xda.gz"
 
 # First run the case with grins
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT

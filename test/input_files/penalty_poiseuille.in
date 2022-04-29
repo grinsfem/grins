@@ -37,7 +37,7 @@ numerical_jacobian_h = 1.e-10
 [vis-options]
 output_vis = false
 vis_output_file_prefix = penalty_poiseuille
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII xda.gz'
 
 # Options for print info to the screen
 [screen-options]

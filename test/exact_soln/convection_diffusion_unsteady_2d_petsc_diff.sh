@@ -3,8 +3,8 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/convection_diffusion_unsteady_2d.in"
-TESTDATA_NOTUSED="./convection_diffusion_unsteady_2d_petsc_diff.xdr"
-TESTDATA="./convection_diffusion_unsteady_2d_petsc_diff.49.xdr"
+TESTDATA_NOTUSED="./convection_diffusion_unsteady_2d_petsc_diff.xda.gz"
+TESTDATA="./convection_diffusion_unsteady_2d_petsc_diff.49.xda.gz"
 
 # First run the case with grins
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT linear-nonlinear-solver/type='libmesh_petsc_diff' vis-options/vis_output_file_prefix='convection_diffusion_unsteady_2d_petsc_diff'

@@ -53,7 +53,7 @@ numerical_jacobian_h = 1.e-10
 [vis-options]
 output_vis = false
 vis_output_file_prefix = convection_cell
-output_format = 'xdr'
+output_format = 'xda.gz'
 
 # Options for print info to the screen
 [screen-options]

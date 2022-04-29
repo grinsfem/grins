@@ -3,7 +3,7 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/elastic_cable_oned_displacement.in"
-TESTDATA="./elastic_cable_oned_displacement.xdr"
+TESTDATA="./elastic_cable_oned_displacement.xda.gz"
 
 # First run the case with grins
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT

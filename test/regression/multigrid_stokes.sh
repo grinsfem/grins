@@ -35,7 +35,7 @@ GOLDDATA="${GRINS_TEST_DATA_DIR}/multigrid_stokes_gold.xdr"
 # Filename to be generated since were running directly through
 # regression_testing_app but want to maintain existing error checking
 # when running app under standard paradigm
-SOLNDATA="multigrid_stokes.xdr"
+SOLNDATA="multigrid_stokes.xda.gz"
 touch $SOLNDATA
 
 # Now run the test part to make sure we're getting the correct thing

@@ -72,7 +72,7 @@
    output_vis = 'true'
    vis_output_file_prefix = 'elastic_cable_oned_displacement'
    output_residual = 'false'
-   output_format = 'xdr'
+   output_format = 'xda.gz'
 []
 
 # Options for print info to the screen

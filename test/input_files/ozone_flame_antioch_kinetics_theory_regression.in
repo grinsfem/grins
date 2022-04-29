@@ -160,7 +160,7 @@
    output_vis = 'false'
    vis_output_file_prefix = 'output'
    output_residual = 'false'
-   output_format = 'ExodusII xdr'
+   output_format = 'ExodusII xda.gz'
 []
 
 # Options for print info to the screen

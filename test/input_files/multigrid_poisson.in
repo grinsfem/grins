@@ -90,7 +90,7 @@
   vis_output_file_prefix = 'multigrid_poisson'
   output_vis = true
   output_residual = 'false'
-  output_format = 'xdr'
+  output_format = 'xda.gz'
 []
 
 [screen-options]

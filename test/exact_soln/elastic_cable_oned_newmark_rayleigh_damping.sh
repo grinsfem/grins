@@ -3,8 +3,8 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/elastic_cable_oned_newmark_rayleigh_damping.in"
-TESTDATA_NOTUSED="./elastic_cable_oned_newmark_rayleigh_damping.xdr"
-TESTDATA="./elastic_cable_oned_newmark_rayleigh_damping.99.xdr"
+TESTDATA_NOTUSED="./elastic_cable_oned_newmark_rayleigh_damping.xda.gz"
+TESTDATA="./elastic_cable_oned_newmark_rayleigh_damping.99.xda.gz"
 
 # First run the case with grins
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT

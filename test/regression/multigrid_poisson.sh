@@ -21,7 +21,7 @@ GOLDDATA="${GRINS_TEST_DATA_DIR}/multigrid_poisson_gold.xdr"
 # Filename to be generated since were running directly through
 # regression_testing_app but want to maintain existing error checking
 # when running app under standard paradigm
-SOLNDATA="multigrid_poisson.xdr"
+SOLNDATA="multigrid_poisson.xda.gz"
 touch $SOLNDATA
 
 # Now run the test part to make sure we're getting the correct thing

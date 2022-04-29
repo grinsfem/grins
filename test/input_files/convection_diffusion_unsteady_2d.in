@@ -77,7 +77,7 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'convection_diffusion_unsteady_2d'
-   output_format = 'xdr'
+   output_format = 'xda.gz'
    timesteps_per_vis = '50'
 []
 

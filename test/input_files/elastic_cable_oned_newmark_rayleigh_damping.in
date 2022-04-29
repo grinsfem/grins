@@ -83,7 +83,7 @@
    output_vis = 'true'
    vis_output_file_prefix = 'elastic_cable_oned_newmark_rayleigh_damping'
    output_residual = 'false'
-   output_format = 'xdr'
+   output_format = 'xda.gz'
    timesteps_per_vis = '100' 
 []
 

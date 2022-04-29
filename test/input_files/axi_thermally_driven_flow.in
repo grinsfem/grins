@@ -27,7 +27,7 @@ relative_step_tolerance = 1.0e-11
 [vis-options]
 output_vis = 'false'
 vis_output_file_prefix = axi_thermally_driven
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII xda.gz'
 
 # Options for print info to the screen
 [screen-options]

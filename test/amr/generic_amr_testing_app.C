@@ -188,7 +188,7 @@ int main(int argc, char* argv[])
 
       // This needs to match the read counter-part in GRINS::Simulation
       //FIXME: Need to support different input formats for restarts
-      std::string test_data = test_data_prefix+"."+step_string.str()+".xdr";
+      std::string test_data = test_data_prefix+"."+step_string.str()+".xda.gz";
 
       {
         std::ifstream i(test_data.c_str());
@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
 
       libMesh::EquationSystems es(mesh);
       es.read(test_data,
-              GRINSEnums::DECODE,
+              GRINSEnums::READ,
               libMesh::EquationSystems::READ_HEADER |
               libMesh::EquationSystems::READ_DATA |
               libMesh::EquationSystems::READ_ADDITIONAL_DATA);
