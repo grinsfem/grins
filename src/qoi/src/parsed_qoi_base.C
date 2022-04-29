@@ -57,7 +57,7 @@ namespace GRINS
                                            const std::string & input_string )
   {
     std::unique_ptr<libMesh::ParsedFEMFunction<libMesh::Number>> qf =
-      libmesh_make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>
+      std::make_unique<libMesh::ParsedFEMFunction<libMesh::Number>>
        (system, "");
 
     this->set_parameter(*qf, input,

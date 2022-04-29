@@ -131,7 +131,7 @@ namespace GRINSTesting
                 f( new libMesh::ParsedFunction<libMesh::Real>(functions[i]) );
 
               std::unique_ptr<GRINS::QoIBase> integ_func =
-                libmesh_make_unique<GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real>>>((unsigned int)2, f, rayfire, "integrated_function");
+                std::make_unique<GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real>>>((unsigned int)2, f, rayfire, "integrated_function");
 
               comp_qoi.add_qoi(std::move(integ_func));
             }
@@ -216,7 +216,7 @@ namespace GRINSTesting
               std::shared_ptr<libMesh::ParsedFunction<libMesh::Real>>
                 f( new libMesh::ParsedFunction<libMesh::Real>(functions[i]) );
 
-              std::unique_ptr<GRINS::QoIBase> integ_func = libmesh_make_unique<GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real>>>((unsigned int)3,f,rayfire,"integrated_function");
+              std::unique_ptr<GRINS::QoIBase> integ_func = std::make_unique<GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real>>>((unsigned int)3,f,rayfire,"integrated_function");
 
               comp_qoi.add_qoi(std::move(integ_func));
             }
@@ -354,7 +354,7 @@ namespace GRINSTesting
       std::shared_ptr<libMesh::ParsedFunction<libMesh::Real>>
                 f( new libMesh::ParsedFunction<libMesh::Real>(function) );
 
-      std::unique_ptr<GRINS::QoIBase> integ_func = libmesh_make_unique<GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real>>>((unsigned int)3,f,rayfire,"integrated_function");
+      std::unique_ptr<GRINS::QoIBase> integ_func = std::make_unique<GRINS::IntegratedFunction<libMesh::FunctionBase<libMesh::Real>>>((unsigned int)3,f,rayfire,"integrated_function");
 
       comp_qoi.add_qoi(std::move(integ_func));
 
