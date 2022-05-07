@@ -72,7 +72,7 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'convection_diffusion_steady_1d'
-   output_format = 'xdr'
+   output_format = 'xda.gz'
 []
 
 # Options for print info to the screen

@@ -3,7 +3,7 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/convection_diffusion_steady_1d.in"
-TESTDATA="./convection_diffusion_steady_1d.xdr"
+TESTDATA="./convection_diffusion_steady_1d.xda.gz"
 
 # First run the case with grins
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT

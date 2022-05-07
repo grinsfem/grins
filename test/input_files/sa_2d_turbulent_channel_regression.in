@@ -33,7 +33,7 @@ use_numerical_jacobians_only = 'true'
 [vis-options]
 output_vis = 'false'
 vis_output_file_prefix = 'turbulent_channel'
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII xda.gz'
 
 [Materials]
   [./TestMaterial]

@@ -172,7 +172,7 @@ vis_output_file_prefix = 'nitridation'
 
 output_residual = 'false'
 
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII xda.gz'
 
 #output_vars = 'rho_mix mole_fractions'
 

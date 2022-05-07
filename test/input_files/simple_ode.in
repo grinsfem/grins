@@ -33,7 +33,7 @@ minimum_linear_tolerance = 1.0e-6
 output_vis = false
 timesteps_per_vis = 1
 vis_output_file_prefix = 'simple_ode'
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII xda.gz'
 
 # Options for print info to the screen
 [screen-options]

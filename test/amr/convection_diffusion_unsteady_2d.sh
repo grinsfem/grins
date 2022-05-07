@@ -34,4 +34,4 @@ ${GRINS_TEST_DIR}/generic_amr_testing_app \
 
 # Now remove the test turd
 rm -rf $LOCALTESTDIR
-rm ${TESTDATA}.*.xdr ${MESHDATA}.*.xda ${TESTDATA}.xdr ${MESHDATA}_mesh.xda
+rm ${TESTDATA}.*.xda.gz ${MESHDATA}.*.xda ${TESTDATA}.xda.gz ${MESHDATA}_mesh.xda

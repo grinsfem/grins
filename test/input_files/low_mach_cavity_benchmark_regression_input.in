@@ -162,7 +162,7 @@ vis_output_file_prefix = 'cavity'
 
 output_residual = 'false'
 
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII xda.gz'
 []
 
 [Output]

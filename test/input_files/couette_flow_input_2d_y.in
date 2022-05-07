@@ -21,7 +21,7 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'ns_couette_flow_2d_y'
-   output_format = 'xdr'
+   output_format = 'xda.gz'
 []
 
 # Options for print info to the screen

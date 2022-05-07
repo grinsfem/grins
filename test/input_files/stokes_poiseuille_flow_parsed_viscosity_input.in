@@ -20,7 +20,7 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'stokes_poiseuille_flow_parsed_viscosity'
-   output_format = 'xdr'
+   output_format = 'xda.gz'
 []
 
 [screen-options]

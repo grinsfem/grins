@@ -3,7 +3,7 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity_input.in"
-TESTDATA="./stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.xdr"
+TESTDATA="./stokes_poiseuille_flow_parsed_viscosity_parsed_conductivity.xda.gz"
 PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_factor_shift_type nonzero -sub_pc_factor_levels 4"
 
 # First run the case with grins

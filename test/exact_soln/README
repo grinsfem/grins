@@ -10,7 +10,7 @@ there are a couple of important points to implement.
    the integrity of the parallel builds, each restart file *must* be named uniquely.
    Thus, the rule here is to name the restart file the same as the test, e.g.
    if the test was named navier_stokes_2d.sh, then the restart should be named
-   navier_stokes_2d.xdr.
+   navier_stokes_2d.xda.gz.
 
 3. If you're exact solution is a time-dependent one, you must evaluate it at the time
    the restart is written. You can do this in the parsed function, e.g.:

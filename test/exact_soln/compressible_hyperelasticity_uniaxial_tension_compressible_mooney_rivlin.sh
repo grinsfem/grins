@@ -3,7 +3,7 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/compressible_hyperelasticity_uniaxial_tension_compressible_mooney_rivlin.in"
-TESTDATA="./compressible_hyperelasticity_uniaxial_tension_compressible_mooney_rivlin.xdr"
+TESTDATA="./compressible_hyperelasticity_uniaxial_tension_compressible_mooney_rivlin.xda.gz"
 
 # First run the case with grins
 ${LIBMESH_RUN:-} ${GRINS_BUILDSRC_DIR}/grins $INPUT

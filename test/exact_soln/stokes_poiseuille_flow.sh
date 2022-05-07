@@ -3,7 +3,7 @@
 set -e
 
 INPUT="${GRINS_TEST_INPUT_DIR}/stokes_poiseuille_flow_input.in"
-TESTDATA="./stokes_poiseuille_flow.xdr"
+TESTDATA="./stokes_poiseuille_flow.xda.gz"
 
 PETSC_OPTIONS="-pc_type asm -pc_asm_overlap 2 -sub_pc_type lu -sub_pc_factor_shift_type nonzero"
 

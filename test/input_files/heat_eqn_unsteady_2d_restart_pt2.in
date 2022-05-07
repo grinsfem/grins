@@ -69,7 +69,7 @@
 []
 
 [restart-options]
-   restart_file = './heat_eqn_unsteady_2d_restart_pt1.24.xdr'
+   restart_file = './heat_eqn_unsteady_2d_restart_pt1.24.xda.gz'
 []
 
 [linear-nonlinear-solver]
@@ -84,7 +84,7 @@
 [vis-options]
    output_vis = 'true'
    vis_output_file_prefix = 'heat_eqn_unsteady_2d_restart_pt2'
-   output_format = 'xdr'
+   output_format = 'xda.gz'
    timesteps_per_vis = '25'
 []
 
