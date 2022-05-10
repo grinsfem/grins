@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
       libMesh::Number gold_qoi = command_line("qois", libMesh::Number(0), n);
 
       libMesh::Number computed_qoi =
-        sim.get_multiphysics_system()->qoi[n];
+        sim.get_multiphysics_system()->get_qoi_value(n);
 
       double error = computed_qoi - gold_qoi;
 
