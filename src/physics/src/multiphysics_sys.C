@@ -234,7 +234,7 @@ namespace GRINS
       physics.second->reinit(*this);
 
     // And now reinit the QoI
-    if (this->qoi.size() > 0)
+    if (this->n_qois() > 0)
       {
         libMesh::DifferentiableQoI* diff_qoi = this->get_qoi();
         CompositeQoI* qoi = libMesh::cast_ptr<CompositeQoI*>(diff_qoi);
