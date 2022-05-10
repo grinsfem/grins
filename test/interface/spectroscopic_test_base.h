@@ -46,6 +46,7 @@
 
 // libMesh
 #include "libmesh/getpot.h"
+#include "libmesh/numeric_vector.h"
 
 #include <tuple>
 
