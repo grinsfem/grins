@@ -87,7 +87,7 @@ namespace GRINS
     /*!
      * Method to allow QoI to resize libMesh::System storage of QoI computations.
      */
-    virtual void init_qoi( std::vector<libMesh::Number>& sys_qoi ) override;
+    virtual void init_qoi_count( libMesh::System & sys ) override;
 
     virtual void init_context( libMesh::DiffContext& context ) override;
 

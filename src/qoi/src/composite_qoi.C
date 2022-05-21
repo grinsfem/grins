@@ -78,9 +78,9 @@ namespace GRINS
     _qois.push_back(std::move(qoi));
   }
 
-  void CompositeQoI::init_qoi( std::vector<libMesh::Number>& sys_qoi )
+  void CompositeQoI::init_qoi_count( libMesh::System & sys )
   {
-    sys_qoi.resize(_qois.size(), 0.0);
+    sys.init_qois(_qois.size());
   }
 
   void CompositeQoI::init( const GetPot& input, const MultiphysicsSystem& system )

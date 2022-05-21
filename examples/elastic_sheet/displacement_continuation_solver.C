@@ -139,7 +139,7 @@ namespace GRINS
     libMesh::DirichletBoundaries* d_vector = system.get_dof_map().get_dirichlet_boundaries();
 
     // Get the DirichletBoundary we want
-    libMesh::DirichletBoundary* dirichlet = (*d_vector)[_bc_index];
+    libMesh::DirichletBoundary & dirichlet = *(*d_vector)[_bc_index];
 
     // Kill the old FunctionBase object and put in our new one.
     libMesh::FunctionBase<libMesh::Real>* composite_func_ptr = new libMesh::CompositeFunction<libMesh::Real>;
@@ -149,7 +149,7 @@ namespace GRINS
     composite_func.attach_subfunction( libMesh::ConstFunction<libMesh::Real>(displacement), var_idx );
 
     // DirichletBoundary now takes ownership of the pointer
-    dirichlet->f.reset(composite_func_ptr);
+    dirichlet.f.reset(composite_func_ptr);
 
     // Need to reinit system
     equation_system.reinit();

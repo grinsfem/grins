@@ -195,15 +195,15 @@ namespace GRINS
       for (libMesh::DirichletBoundaries::const_iterator
              it = db.begin(); it != db.end(); ++it)
         {
-          const libMesh::DirichletBoundary* bdy = *it;
+          const libMesh::DirichletBoundary & bdy = **it;
 
           // If we have a FEMFunctionBase, we assume nonlinearity
-          if (bdy->f_fem.get())
+          if (bdy.f_fem.get())
             have_nonlinear_dirichlet_bc = true;
 
           // Check for time-dependence of FunctionBase
-          if( bdy->f.get() )
-            if( bdy->f->is_time_dependent() )
+          if( bdy.f.get() )
+            if( bdy.f->is_time_dependent() )
               have_time_dependence = true;
 
           if( have_nonlinear_dirichlet_bc || have_time_dependence )

@@ -29,7 +29,11 @@ In addition to a C++17 compiler, GRINS requires an up-to-date installation of th
 
 libMesh
 -------
-GRINS development both drives and is driven by libMesh development. Thus, the required minimum master hash of libMesh may change in GRINS master. The current required libMesh master hash is f0def3f [PR #3168](https://github.com/libMesh/libmesh/pull/3168), as of GRINS [PR #611](https://github.com/grinsfem/grins/pull/611).
+GRINS development both drives and is driven by libMesh development. Thus, the required minimum master hash of libMesh may change in GRINS master.
+The current required libMesh master hash is
+f27eba2
+[PR #3270](https://github.com/libMesh/libmesh/pull/3270), as of GRINS
+[PR #620](https://github.com/grinsfem/grins/pull/620).
 GRINS release 0.5.0 can use libMesh versions as old as 0.9.4. Subsequent to
 the 0.5.0 release requires at least libMesh 1.0.0.
 

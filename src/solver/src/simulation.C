@@ -287,7 +287,7 @@ namespace GRINS
         std::cout << "Adjoint sensitivities:" << std::endl;
 
         for (unsigned int q=0;
-             q != this->_multiphysics_system->qoi.size(); ++q)
+             q != this->_multiphysics_system->n_qois(); ++q)
           {
             for (unsigned int p=0; p != params.size(); ++p)
               {
@@ -314,7 +314,7 @@ namespace GRINS
         std::cout << "Forward sensitivities:" << std::endl;
 
         for (unsigned int q=0;
-             q != this->_multiphysics_system->qoi.size(); ++q)
+             q != this->_multiphysics_system->n_qois(); ++q)
           {
             for (unsigned int p=0; p != params.size(); ++p)
               {
