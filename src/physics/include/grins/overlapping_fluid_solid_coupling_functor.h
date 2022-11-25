@@ -56,7 +56,7 @@ namespace GRINS
     ( const libMesh::MeshBase::const_element_iterator & range_begin,
       const libMesh::MeshBase::const_element_iterator & range_end,
       libMesh::processor_id_type p,
-      std::unordered_map<const libMesh::Elem *,const libMesh::CouplingMatrix*> & coupled_elements ) override;
+      map_type & coupled_elements ) override;
 
   private:
 
