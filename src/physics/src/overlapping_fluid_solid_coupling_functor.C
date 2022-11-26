@@ -39,7 +39,7 @@ namespace GRINS
     ( const libMesh::MeshBase::const_element_iterator & range_begin,
       const libMesh::MeshBase::const_element_iterator & range_end,
       libMesh::processor_id_type p,
-      std::unordered_map<const libMesh::Elem *,const libMesh::CouplingMatrix*> & coupled_elements )
+      map_type & coupled_elements )
   {
     for( const auto & elem : libMesh::as_range(range_begin,range_end) )
       {
