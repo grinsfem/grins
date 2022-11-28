@@ -33,6 +33,13 @@
 
 namespace GRINS
 {
+  // Specializations must be declared before any automatic instantiation.
+  template<> MultiphysicsSystem * BCFactoryAbstract<libMesh::DirichletBoundary>::_system;
+  template<> const GetPot* FactoryWithGetPot<libMesh::DirichletBoundary>::_input;
+  template<> const std::set<BoundaryID> * BCFactoryAbstract<libMesh::DirichletBoundary>::_bc_ids;
+  template<> const FEVariablesBase * BCFactoryAbstract<libMesh::DirichletBoundary>::_fe_var;
+  template<> std::string BCFactoryAbstract<libMesh::DirichletBoundary>::_section;
+
   class DirichletBCFactoryAbstract : public BCFactoryAbstract<libMesh::DirichletBoundary>
   {
   public:

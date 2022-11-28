@@ -73,6 +73,24 @@ namespace GRINS
 
   };
 
+  // Specializations must be declared before any automatic instantiation.
+  template <>
+  std::string DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<double> >::_value_var_old_style;
+  template <>
+  unsigned int DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<double> >::_value_idx_old_style;
+  template <>
+  const std::vector<std::string> *
+  DirichletBCFactoryFunctionOldStyleBase<libMesh::FunctionBase<double> >::_var_names_old_style;
+
+  // Specializations must be declared before any automatic instantiation.
+  template <>
+  std::string DirichletBCFactoryFunctionOldStyleBase<libMesh::FEMFunctionBase<double> >::_value_var_old_style;
+  template <>
+  unsigned int DirichletBCFactoryFunctionOldStyleBase<libMesh::FEMFunctionBase<double> >::_value_idx_old_style;
+  template <>
+  const std::vector<std::string> *
+  DirichletBCFactoryFunctionOldStyleBase<libMesh::FEMFunctionBase<double> >::_var_names_old_style;
+
   template<typename FunctionType>
   inline
   void DirichletBCFactoryFunctionOldStyleBase<FunctionType>::check_state() const
