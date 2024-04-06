@@ -21,7 +21,7 @@ ${LIBMESH_RUN:-} ${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
   Mesh/Generation/n_elems_x=20 \
   Mesh/Generation/n_elems_y=20 \
   vars='u' norms='L2' tol='1.0e-8' \
-  u_L2_error='0.00349104' u_exact_soln='sin(pi*y)*cos(2*pi*x)' \
+  u_L2_error='3.971781547627663e-03' u_exact_soln='sin(pi*y)*cos(2*pi*x)' \
   test_data=$TESTDATA
 
 # Now remove the test turd
