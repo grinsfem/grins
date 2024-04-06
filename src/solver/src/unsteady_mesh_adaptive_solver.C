@@ -34,6 +34,7 @@
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/error_vector.h"
+#include "libmesh/libmesh_logging.h"
 
 namespace GRINS
 {

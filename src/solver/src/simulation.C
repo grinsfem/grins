@@ -45,6 +45,7 @@
 #include "libmesh/qoi_set.h"
 #include "libmesh/sensitivity_data.h"
 #include "libmesh/enum_xdr_mode.h"
+#include "libmesh/libmesh_logging.h"
 
 namespace GRINS
 {
