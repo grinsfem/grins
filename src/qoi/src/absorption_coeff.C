@@ -45,6 +45,7 @@
 #include "libmesh/fe.h"
 #include "libmesh/elem.h"
 #include "libmesh/fe_interface.h"
+#include "libmesh/libmesh_logging.h"
 
 namespace GRINS
 {

@@ -45,6 +45,7 @@
 #include "libmesh/newmark_solver.h"
 #include "libmesh/function_base.h"
 #include "libmesh/zero_function.h"
+#include "libmesh/libmesh_logging.h"
 
 // C++
 #include <ctime>

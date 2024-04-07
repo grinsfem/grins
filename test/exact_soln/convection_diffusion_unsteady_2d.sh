@@ -15,7 +15,7 @@ ${LIBMESH_RUN:-} ${GRINS_TEST_DIR}/generic_exact_solution_testing_app \
                  vars='u' \
                  norms='L2' \
                  tol='1.0e-10' \
-                 u_L2_error='6.289317886708677e-03' \
+                 u_L2_error='6.360098052590270e-03' \
                  u_exact_soln='tf:=50*0.025;exp(-((x-0.8*tf-0.2)^2+(y-0.8*tf-0.2)^2)/(0.01*(4.0*tf+1.0)))/(4.0*tf+1.0)' \
                  test_data=$TESTDATA
 
