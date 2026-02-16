@@ -586,7 +586,7 @@ namespace GRINS
             if (_dim == 3)
               {
                 const libMesh::Elem * elem_edge = NULL;
-                std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(side,false);
+                std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(side);
                 
                 for (unsigned int s=0; s<side_elem->n_sides(); ++s)
                   {
@@ -923,7 +923,7 @@ namespace GRINS
 
     for (unsigned int s=0; s<cur_elem->n_sides(); ++s)
       {
-        std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s,false);
+        std::unique_ptr<const libMesh::Elem> side_elem = cur_elem->build_side_ptr(s);
 
         if (side_elem->contains_point(initial_point,libMesh::TOLERANCE*0.1))
           continue;
