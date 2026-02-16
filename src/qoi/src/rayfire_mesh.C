@@ -134,8 +134,8 @@ namespace GRINS
           // add end point as node on the rayfire mesh
           end_node = _mesh->add_point(end_point);
           libMesh::Elem * elem = _mesh->add_elem(new libMesh::Edge2);
-          elem->set_node(0) = start_node;
-          elem->set_node(1) = end_node;
+          elem->set_node(0, start_node);
+          elem->set_node(1, end_node);
 
           // warn if rayfire elem is shorter than TOLERANCE
           if ( (start_point-end_point).norm() < libMesh::TOLERANCE)
@@ -1064,7 +1064,7 @@ namespace GRINS
     for (unsigned int n=0; n<first_order_elem->n_nodes(); ++n)
       {
         libMesh::Node * node = new libMesh::Node(elem->point(n));
-        first_order_elem->set_node(n) = node;
+        first_order_elem->set_node(n, node);
       }
 
     return first_order_elem;
@@ -1152,8 +1152,8 @@ namespace GRINS
         new_node = _mesh->add_point(end_point);
         libMesh::Elem * elem = _mesh->add_elem(new libMesh::Edge2);
 
-        elem->set_node(0) = prev_node;
-        elem->set_node(1) = new_node;
+        elem->set_node(0, prev_node);
+        elem->set_node(1, new_node);
 
         libmesh_assert_less( (*(elem->node_ptr(0))-_origin).norm(),  (*(elem->node_ptr(1))-_origin).norm());
 
@@ -1226,8 +1226,8 @@ namespace GRINS
 
         // add a new rayfire elem
         libMesh::Elem * elem = _mesh->add_elem(new libMesh::Edge2);
-        elem->set_node(0) = _mesh->node_ptr(start_node->id());
-        elem->set_node(1) = _mesh->node_ptr(end_node->id());
+        elem->set_node(0, _mesh->node_ptr(start_node->id()));
+        elem->set_node(1, _mesh->node_ptr(end_node->id()));
 
         libmesh_assert_less( (*(elem->node_ptr(0))-_origin).norm(),  (*(elem->node_ptr(1))-_origin).norm());
 

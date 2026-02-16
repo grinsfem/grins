@@ -283,7 +283,7 @@ namespace GRINSTesting
 
       libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex27 );
       for (unsigned int n=0; n<27; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
+        elem->set_node(n, mesh->node_ptr(n));
 
       mesh->prepare_for_use();
 
@@ -337,7 +337,7 @@ namespace GRINSTesting
 
       libMesh::Elem* elem = mesh->add_elem( new libMesh::Hex27 );
       for (unsigned int n=0; n<27; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
+        elem->set_node(n, mesh->node_ptr(n));
 
       mesh->prepare_for_use();
 

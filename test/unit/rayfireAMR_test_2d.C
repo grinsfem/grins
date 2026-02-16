@@ -407,16 +407,16 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(0.0,2.0),5 );
 
       libMesh::Elem * elem0 = mesh->add_elem( new libMesh::Quad4 );
-      elem0->set_node(0) = mesh->node_ptr(0);
-      elem0->set_node(1) = mesh->node_ptr(1);
-      elem0->set_node(2) = mesh->node_ptr(2);
-      elem0->set_node(3) = mesh->node_ptr(3);
+      elem0->set_node(0, mesh->node_ptr(0));
+      elem0->set_node(1, mesh->node_ptr(1));
+      elem0->set_node(2, mesh->node_ptr(2));
+      elem0->set_node(3, mesh->node_ptr(3));
 
       libMesh::Elem * elem1 = mesh->add_elem( new libMesh::Quad4 );
-      elem1->set_node(0) = mesh->node_ptr(3);
-      elem1->set_node(1) = mesh->node_ptr(2);
-      elem1->set_node(2) = mesh->node_ptr(4);
-      elem1->set_node(3) = mesh->node_ptr(5);
+      elem1->set_node(0, mesh->node_ptr(3));
+      elem1->set_node(1, mesh->node_ptr(2));
+      elem1->set_node(2, mesh->node_ptr(4));
+      elem1->set_node(3, mesh->node_ptr(5));
 
       mesh->prepare_for_use();
 
@@ -458,7 +458,7 @@ namespace GRINSTesting
 
       libMesh::Elem * e = mesh->add_elem( new libMesh::Quad4 );
       for (unsigned int n=0; n<4; n++)
-        e->set_node(n) = mesh->node_ptr(n);
+        e->set_node(n, mesh->node_ptr(n));
 
       mesh->prepare_for_use();
 
@@ -497,7 +497,7 @@ namespace GRINSTesting
 
       libMesh::Elem * e = mesh->add_elem( new libMesh::Quad4 );
       for (unsigned int n=0; n<4; n++)
-        e->set_node(n) = mesh->node_ptr(n);
+        e->set_node(n, mesh->node_ptr(n));
 
       mesh->prepare_for_use();
 
