@@ -134,7 +134,7 @@ namespace GRINS
         std::vector<libMesh::Real> phi(n_var_dofs);
 
         for (unsigned int i=0; i != n_var_dofs; i++)
-          phi[i] = libMesh::FEInterface::shape( c.get_dim(), fe_type, &c.get_elem(), i,
+          phi[i] = libMesh::FEInterface::shape( fe_type, &c.get_elem(), i,
                                                 point_loc_in_masterelem );
 
         for (unsigned int i=0; i != n_var_dofs; i++)
