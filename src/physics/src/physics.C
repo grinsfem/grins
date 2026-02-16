@@ -124,10 +124,10 @@ namespace GRINS
     std::unique_ptr<FEGenericBase<libMesh::Real> >
       fe_new(FEGenericBase<libMesh::Real>::build(elem_dim, fe_type));
 
-    // Map the physical co-ordinates to the master co-ordinates using the inverse_map from fe_interface.h
+    // Map the physical co-ordinates to the master co-ordinates using the inverse_map
     // Build a vector of point co-ordinates to send to reinit
     Point master_point = elem ?
-      FEInterface::inverse_map(elem_dim, fe_type, elem, p) :
+      FEMap::inverse_map(elem_dim, elem, p) :
       Point(0);
 
     std::vector<Point> coor(1, master_point);
