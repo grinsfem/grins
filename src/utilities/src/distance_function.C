@@ -154,10 +154,7 @@ namespace GRINS {
     libmesh_assert(libMesh::initialized());
 
     // Add distance function system
-    _equation_systems.add_system<libMesh::System>("distance_function");
-
-    // Get reference to distance function system we just added
-    libMesh::System& sys = _equation_systems.get_system<libMesh::System>("distance_function");
+    libMesh::System& sys = _equation_systems.add_system<libMesh::System>("distance_function");
 
     // Add distance function variable
     sys.add_variable("distance", libMesh::FIRST);
@@ -165,6 +162,9 @@ namespace GRINS {
     // Attach initialization function
     sys.attach_init_object(*this);
 
+    // Initialize if necessary
+    if (!sys.is_initialized())
+      sys.init();
   }
 
   //---------------------------------------------------
