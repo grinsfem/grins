@@ -25,14 +25,14 @@
 #ifndef GRINS_FACTORY_ABSTRACT_H
 #define GRINS_FACTORY_ABSTRACT_H
 
-// C++
-#include <string>
-#include <map>
-#include <sstream>
-
 // libMesh
 #include "libmesh/libmesh_common.h" // libmesh_error_msg()
-#include "libmesh/auto_ptr.h" // std::unique_ptr
+
+// C++
+#include <map>
+#include <memory>
+#include <sstream>
+#include <string>
 
 namespace GRINS
 {

@@ -17,10 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// system
-#include <limits>
-#include <cmath>
-
 // libmesh
 #include "libmesh/libmesh_base.h"
 #include "libmesh/libmesh_common.h"
@@ -34,7 +30,6 @@
 #include "libmesh/enum_order.h"
 #include "libmesh/enum_elem_type.h"
 #include "libmesh/numeric_vector.h"
-#include "libmesh/auto_ptr.h"
 #include "libmesh/dense_vector.h"
 #include "libmesh/fe_base.h"
 #include "libmesh/dof_map.h"
@@ -43,6 +38,10 @@
 // local
 #include "grins/distance_function.h"
 
+// C++
+#include <cmath>
+#include <limits>
+#include <memory>
 
 // anonymous namespace for implementation details -
 // gives file scope and prevents symbol clashing at link time

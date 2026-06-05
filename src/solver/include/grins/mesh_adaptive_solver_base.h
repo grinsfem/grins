@@ -25,9 +25,6 @@
 #ifndef GRINS_MESH_ADAPTIVE_SOLVER_BASE_H
 #define GRINS_MESH_ADAPTIVE_SOLVER_BASE_H
 
-// C++
-#include <string>
-
 // GRINS
 #include "grins/mesh_adaptivity_options.h"
 #include "grins/error_estimator_options.h"
@@ -35,7 +32,10 @@
 //libMesh
 #include "libmesh/libmesh.h"
 #include "libmesh/mesh_refinement.h"
-#include "libmesh/auto_ptr.h"
+
+// C++
+#include <memory>
+#include <string>
 
 // libMesh forward declarations
 class GetPot;

@@ -26,11 +26,10 @@
 #define GRINS_VARIABLE_BUILDER_H
 
 // GRINS
-#include <memory>
 #include "grins/fe_variables_base.h"
 
-// libMesh
-#include "libmesh/auto_ptr.h" // std::unique_ptr
+// C++
+#include <memory>
 
 // libMesh forward declarations
 class GetPot;

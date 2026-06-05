@@ -48,10 +48,10 @@
 #include "antioch/xml_parser.h"
 
 // libMesh
-#include "libmesh/auto_ptr.h" // std::unique_ptr
 #include "libmesh/getpot.h"
 
 // C++
+#include <memory>
 #include <string>
 
 // libMesh forward declarations

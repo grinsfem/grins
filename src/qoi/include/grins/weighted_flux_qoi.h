@@ -31,7 +31,6 @@
 #include "grins/variable_name_defaults.h"
 
 // libMesh
-#include "libmesh/auto_ptr.h"
 #include "libmesh/function_base.h"
 
 // C++

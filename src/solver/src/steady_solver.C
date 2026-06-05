@@ -31,11 +31,13 @@
 #include "grins/solver_context.h"
 
 // libMesh
-#include "libmesh/auto_ptr.h"
 #include "libmesh/dof_map.h"
 #include "libmesh/getpot.h"
 #include "libmesh/steady_solver.h"
 #include "libmesh/linear_solver.h"
+
+// C++
+#include <memory>
 
 namespace GRINS
 {

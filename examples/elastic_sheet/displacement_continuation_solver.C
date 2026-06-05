@@ -30,7 +30,6 @@
 #include "grins/solver_context.h"
 
 // libMesh
-#include "libmesh/auto_ptr.h"
 #include "libmesh/dof_map.h"
 #include "libmesh/getpot.h"
 #include "libmesh/dirichlet_boundaries.h"
