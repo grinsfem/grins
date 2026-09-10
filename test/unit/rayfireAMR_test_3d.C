@@ -200,7 +200,7 @@ namespace GRINSTesting
 
       libMesh::Elem * e = mesh->add_elem( new libMesh::Hex8 );
       for (unsigned int n=0; n<8; n++)
-        e->set_node(n) = mesh->node_ptr(n);
+        e->set_node(n, mesh->node_ptr(n));
 
       mesh->prepare_for_use();
 
@@ -365,24 +365,12 @@ namespace GRINSTesting
       mesh->add_point( libMesh::Point(0.0,1.0,2.0),11 );
 
       libMesh::Elem * elem0 = mesh->add_elem( new libMesh::Hex8 );
-      elem0->set_node(0) = mesh->node_ptr(0);
-      elem0->set_node(1) = mesh->node_ptr(1);
-      elem0->set_node(2) = mesh->node_ptr(2);
-      elem0->set_node(3) = mesh->node_ptr(3);
-      elem0->set_node(4) = mesh->node_ptr(4);
-      elem0->set_node(5) = mesh->node_ptr(5);
-      elem0->set_node(6) = mesh->node_ptr(6);
-      elem0->set_node(7) = mesh->node_ptr(7);
+      for (unsigned int n=0; n<8; n++)
+        elem0->set_node(n, mesh->node_ptr(n));
 
       libMesh::Elem * elem1 = mesh->add_elem( new libMesh::Hex8 );
-      elem1->set_node(0) = mesh->node_ptr(4);
-      elem1->set_node(1) = mesh->node_ptr(5);
-      elem1->set_node(2) = mesh->node_ptr(6);
-      elem1->set_node(3) = mesh->node_ptr(7);
-      elem1->set_node(4) = mesh->node_ptr(8);
-      elem1->set_node(5) = mesh->node_ptr(9);
-      elem1->set_node(6) = mesh->node_ptr(10);
-      elem1->set_node(7) = mesh->node_ptr(11);
+      for (unsigned int n=0; n<8; n++)
+        elem1->set_node(n, mesh->node_ptr(n+4));
 
       mesh->prepare_for_use();
 

@@ -25,14 +25,14 @@
 #ifndef GRINS_COMPOSITE_QOI_H
 #define GRINS_COMPOSITE_QOI_H
 
-// C++
-#include <vector>
-#include <ostream>
-
 // libMesh
 #include "libmesh/libmesh_common.h"
 #include "libmesh/diff_qoi.h"
-#include "libmesh/auto_ptr.h"
+
+// C++
+#include <memory>
+#include <ostream>
+#include <vector>
 
 // libMesh forward declarations
 class GetPot;

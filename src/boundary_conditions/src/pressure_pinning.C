@@ -129,12 +129,12 @@ namespace GRINS
         libMesh::FEType fe_type = c.get_element_fe(var)->get_fe_type();
 
         libMesh::Point point_loc_in_masterelem =
-          libMesh::FEInterface::inverse_map(c.get_dim(), fe_type, &c.get_elem(), _pin_location);
+          libMesh::FEMap::inverse_map(c.get_dim(), &c.get_elem(), _pin_location);
 
         std::vector<libMesh::Real> phi(n_var_dofs);
 
         for (unsigned int i=0; i != n_var_dofs; i++)
-          phi[i] = libMesh::FEInterface::shape( c.get_dim(), fe_type, &c.get_elem(), i,
+          phi[i] = libMesh::FEInterface::shape( fe_type, &c.get_elem(), i,
                                                 point_loc_in_masterelem );
 
         for (unsigned int i=0; i != n_var_dofs; i++)

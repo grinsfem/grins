@@ -202,7 +202,7 @@ namespace GRINS
 
     // need to map the physical coordinates of QP to reference coordinates
     libMesh::Elem & main_elem = context.get_elem();
-    libMesh::Point qp_ref = libMesh::FEInterface::inverse_map(main_elem.dim(),main_elem.type(),&main_elem,qp_xyz);
+    libMesh::Point qp_ref = libMesh::FEMap::inverse_map(main_elem.dim(),&main_elem,qp_xyz);
 
     std::vector<libMesh::Point> qp(1);
     qp[0] = qp_ref;

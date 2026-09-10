@@ -28,11 +28,10 @@
 // GRINS
 #include "grins/var_typedefs.h"
 #include "grins/neumann_bc_abstract.h"
-#include <memory>
 #include "grins/fe_variables_base.h"
 
-// libMesh
-#include "libmesh/auto_ptr.h" // UniquePtr
+// C++
+#include <memory>
 
 namespace GRINS
 {

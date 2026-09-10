@@ -31,10 +31,12 @@
 #include "grins/assembly_context.h"
 
 // libMesh
-#include "libmesh/auto_ptr.h" // UniquePtr
 #include "libmesh/point.h"
 #include "libmesh/function_base.h"
 #include "libmesh/fem_function_base.h"
+
+// C++
+#include <memory>
 
 namespace GRINS
 {

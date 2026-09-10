@@ -39,11 +39,11 @@
 #include "cantera/transport.h"
 #include "libmesh/restore_warnings.h"
 
-// libMesh
-#include "libmesh/auto_ptr.h" // std::unique_ptr
-
 // GRINS
 #include "grins/parameter_user.h"
+
+// C++
+#include <memory>
 
 // libMesh forward declarations
 class GetPot;

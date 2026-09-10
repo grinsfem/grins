@@ -49,8 +49,8 @@ namespace GRINS
   {
     // create an EDGE2 elem to represent the start of the laser beam
     std::shared_ptr<libMesh::Elem> elem( new libMesh::Edge2() );
-    elem->set_node(0) = new libMesh::Node(bottom_origin);
-    elem->set_node(1) = new libMesh::Node(top_origin);
+    elem->set_node(0, new libMesh::Node(bottom_origin));
+    elem->set_node(1, new libMesh::Node(top_origin));
 
     // now use QGauss to identify the quadratures weights and points on this "laser" elem
     libMesh::Order order = (libMesh::Order)(2*n_quadrature_points - 1);
@@ -115,7 +115,7 @@ namespace GRINS
 
     std::shared_ptr<libMesh::Elem> elem( new libMesh::Quad9() );
 
-    elem->set_node(0) = new libMesh::Node(p);
+    elem->set_node(0, new libMesh::Node(p));
     elem->node_ptr(0)->set_id(0);
 
     for (unsigned int s = 1; s < 8; ++s)
@@ -130,13 +130,13 @@ namespace GRINS
 
         libMesh::Point node = radius*(x1*p + x2*w);
 
-        elem->set_node(s) = new libMesh::Node(node);
+        elem->set_node(s, new libMesh::Node(node));
         elem->node_ptr(s)->set_id(s);
 
         p = node;
       }
 
-    elem->set_node(8) = new libMesh::Node(centerline_origin);
+    elem->set_node(8, new libMesh::Node(centerline_origin));
     elem->node_ptr(8)->set_id(8);
 
     // need a dummy ID to get through several asserts

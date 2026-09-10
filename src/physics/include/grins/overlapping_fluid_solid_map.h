@@ -26,15 +26,15 @@
 #ifndef GRINS_OVERLAPPING_FLUID_SOLID_MAP_H
 #define GRINS_OVERLAPPING_FLUID_SOLID_MAP_H
 
-// C++
-#include <map>
-#include <set>
-#include <vector>
-
 // libMesh
-#include "libmesh/auto_ptr.h" // UniquePtr
 #include "libmesh/point_locator_base.h"
 #include "libmesh/fem_context.h"
+
+// C++
+#include <map>
+#include <memory>
+#include <set>
+#include <vector>
 
 namespace GRINS
 {

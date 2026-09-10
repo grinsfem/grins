@@ -33,7 +33,9 @@
 
 // libMesh
 #include "libmesh/libmesh_common.h"
-#include "libmesh/auto_ptr.h" // std::unique_ptr
+
+// C++
+#include <memory>
 
 namespace libMesh
 {

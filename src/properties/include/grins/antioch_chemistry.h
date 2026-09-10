@@ -36,12 +36,14 @@
 
 // libMesh
 #include "libmesh/libmesh_common.h"
-#include "libmesh/auto_ptr.h" // std::unique_ptr
 
 // Antioch
 #include "antioch/vector_utils_decl.h"
 #include "antioch/vector_utils.h"
 #include "antioch/chemical_mixture.h"
+
+// C++
+#include <memory>
 
 // libMesh forward declarations
 class GetPot;

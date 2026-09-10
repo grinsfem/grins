@@ -224,7 +224,7 @@ namespace GRINSTesting
       elem->set_id(0);
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<9; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
+        elem->set_node(n, mesh->node_ptr(n));
 
       mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(0.0,1.0),10 );
@@ -239,15 +239,8 @@ namespace GRINSTesting
       elem = mesh->add_elem( new libMesh::Quad9 );
       elem->set_id(1);
       elem->subdomain_id() = 2;
-      elem->set_node(0) = mesh->node_ptr(9);
-      elem->set_node(1) = mesh->node_ptr(10);
-      elem->set_node(2) = mesh->node_ptr(11);
-      elem->set_node(3) = mesh->node_ptr(12);
-      elem->set_node(4) = mesh->node_ptr(13);
-      elem->set_node(5) = mesh->node_ptr(14);
-      elem->set_node(6) = mesh->node_ptr(15);
-      elem->set_node(7) = mesh->node_ptr(16);
-      elem->set_node(8) = mesh->node_ptr(17);
+      for (unsigned int n=0; n<9; n++)
+        elem->set_node(n, mesh->node_ptr(n+9));
 
       //mesh->add_point( libMesh::Point(0.0,1.0),10 );
       mesh->add_point( libMesh::Point(-1.0,1.0),18 );
@@ -262,15 +255,15 @@ namespace GRINSTesting
       elem = mesh->add_elem( new libMesh::Quad9 );
       elem->set_id(2);
       elem->subdomain_id() = 2;
-      elem->set_node(0) = mesh->node_ptr(10);
-      elem->set_node(1) = mesh->node_ptr(18);
-      elem->set_node(2) = mesh->node_ptr(19);
-      elem->set_node(3) = mesh->node_ptr(11);
-      elem->set_node(4) = mesh->node_ptr(20);
-      elem->set_node(5) = mesh->node_ptr(21);
-      elem->set_node(6) = mesh->node_ptr(22);
-      elem->set_node(7) = mesh->node_ptr(14);
-      elem->set_node(8) = mesh->node_ptr(23);
+      elem->set_node(0, mesh->node_ptr(10));
+      elem->set_node(1, mesh->node_ptr(18));
+      elem->set_node(2, mesh->node_ptr(19));
+      elem->set_node(3, mesh->node_ptr(11));
+      elem->set_node(4, mesh->node_ptr(20));
+      elem->set_node(5, mesh->node_ptr(21));
+      elem->set_node(6, mesh->node_ptr(22));
+      elem->set_node(7, mesh->node_ptr(14));
+      elem->set_node(8, mesh->node_ptr(23));
 
       mesh->prepare_for_use();
 
@@ -390,7 +383,7 @@ namespace GRINSTesting
       elem->set_id(0);
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<6; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
+        elem->set_node(n, mesh->node_ptr(n));
 
       mesh->add_point( libMesh::Point(1.0,1.0),6 );
       mesh->add_point( libMesh::Point(0.0,1.0),7 );
@@ -405,15 +398,8 @@ namespace GRINSTesting
       elem = mesh->add_elem( new libMesh::Quad9 );
       elem->set_id(1);
       elem->subdomain_id() = 2;
-      elem->set_node(0) = mesh->node_ptr(6);
-      elem->set_node(1) = mesh->node_ptr(7);
-      elem->set_node(2) = mesh->node_ptr(8);
-      elem->set_node(3) = mesh->node_ptr(9);
-      elem->set_node(4) = mesh->node_ptr(10);
-      elem->set_node(5) = mesh->node_ptr(11);
-      elem->set_node(6) = mesh->node_ptr(12);
-      elem->set_node(7) = mesh->node_ptr(13);
-      elem->set_node(8) = mesh->node_ptr(14);
+      for (unsigned int n=0; n<9; n++)
+        elem->set_node(n, mesh->node_ptr(n+6));
 
       //mesh->add_point( libMesh::Point(0.0,1.0),7 );
       mesh->add_point( libMesh::Point(-1.0,1.0),15 );
@@ -428,15 +414,15 @@ namespace GRINSTesting
       elem = mesh->add_elem( new libMesh::Quad9 );
       elem->set_id(2);
       elem->subdomain_id() = 2;
-      elem->set_node(0) = mesh->node_ptr(7);
-      elem->set_node(1) = mesh->node_ptr(15);
-      elem->set_node(2) = mesh->node_ptr(16);
-      elem->set_node(3) = mesh->node_ptr(8);
-      elem->set_node(4) = mesh->node_ptr(17);
-      elem->set_node(5) = mesh->node_ptr(18);
-      elem->set_node(6) = mesh->node_ptr(19);
-      elem->set_node(7) = mesh->node_ptr(11);
-      elem->set_node(8) = mesh->node_ptr(20);
+      elem->set_node(0, mesh->node_ptr(7));
+      elem->set_node(1, mesh->node_ptr(15));
+      elem->set_node(2, mesh->node_ptr(16));
+      elem->set_node(3, mesh->node_ptr(8));
+      elem->set_node(4, mesh->node_ptr(17));
+      elem->set_node(5, mesh->node_ptr(18));
+      elem->set_node(6, mesh->node_ptr(19));
+      elem->set_node(7, mesh->node_ptr(11));
+      elem->set_node(8, mesh->node_ptr(20));
 
       mesh->prepare_for_use();
 
@@ -567,7 +553,7 @@ namespace GRINSTesting
       elem->set_id(0);
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<9; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
+        elem->set_node(n, mesh->node_ptr(n));
 
       mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(-1.0,-1.0),10 );
@@ -579,12 +565,8 @@ namespace GRINSTesting
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(1);
       elem->subdomain_id() = 2;
-      elem->set_node(0) = mesh->node_ptr(9);
-      elem->set_node(1) = mesh->node_ptr(10);
-      elem->set_node(2) = mesh->node_ptr(11);
-      elem->set_node(3) = mesh->node_ptr(12);
-      elem->set_node(4) = mesh->node_ptr(13);
-      elem->set_node(5) = mesh->node_ptr(14);
+      for (unsigned int n=0; n<6; n++)
+        elem->set_node(n, mesh->node_ptr(n+9));
 
       //mesh->add_point( libMesh::Point(1.0,1.0),9 );
       mesh->add_point( libMesh::Point(-1.0,1.0),15 );
@@ -596,12 +578,12 @@ namespace GRINSTesting
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(2);
       elem->subdomain_id() = 2;
-      elem->set_node(0) = mesh->node_ptr(9);
-      elem->set_node(1) = mesh->node_ptr(15);
-      elem->set_node(2) = mesh->node_ptr(10);
-      elem->set_node(3) = mesh->node_ptr(16);
-      elem->set_node(4) = mesh->node_ptr(17);
-      elem->set_node(5) = mesh->node_ptr(12);
+      elem->set_node(0, mesh->node_ptr(9));
+      elem->set_node(1, mesh->node_ptr(15));
+      elem->set_node(2, mesh->node_ptr(10));
+      elem->set_node(3, mesh->node_ptr(16));
+      elem->set_node(4, mesh->node_ptr(17));
+      elem->set_node(5, mesh->node_ptr(12));
 
       mesh->prepare_for_use();
 
@@ -710,7 +692,7 @@ namespace GRINSTesting
       elem->set_id(0);
       elem->subdomain_id() = 1;
       for (unsigned int n=0; n<6; n++)
-        elem->set_node(n) = mesh->node_ptr(n);
+        elem->set_node(n, mesh->node_ptr(n));
 
       mesh->add_point( libMesh::Point(1.0,1.0),6 );
       mesh->add_point( libMesh::Point(-1.0,-1.0),7 );
@@ -722,12 +704,12 @@ namespace GRINSTesting
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(1);
       elem->subdomain_id() = 2;
-      elem->set_node(0) = mesh->node_ptr(6);
-      elem->set_node(1) = mesh->node_ptr(7);
-      elem->set_node(2) = mesh->node_ptr(8);
-      elem->set_node(3) = mesh->node_ptr(9);
-      elem->set_node(4) = mesh->node_ptr(10);
-      elem->set_node(5) = mesh->node_ptr(11);
+      elem->set_node(0, mesh->node_ptr(6));
+      elem->set_node(1, mesh->node_ptr(7));
+      elem->set_node(2, mesh->node_ptr(8));
+      elem->set_node(3, mesh->node_ptr(9));
+      elem->set_node(4, mesh->node_ptr(10));
+      elem->set_node(5, mesh->node_ptr(11));
 
       //mesh->add_point( libMesh::Point(1.0,1.0),6 );
       mesh->add_point( libMesh::Point(-1.0,1.0),12 );
@@ -739,12 +721,12 @@ namespace GRINSTesting
       elem = mesh->add_elem( new libMesh::Tri6 );
       elem->set_id(2);
       elem->subdomain_id() = 2;
-      elem->set_node(0) = mesh->node_ptr(6);
-      elem->set_node(1) = mesh->node_ptr(12);
-      elem->set_node(2) = mesh->node_ptr(7);
-      elem->set_node(3) = mesh->node_ptr(13);
-      elem->set_node(4) = mesh->node_ptr(14);
-      elem->set_node(5) = mesh->node_ptr(9);
+      elem->set_node(0, mesh->node_ptr(6));
+      elem->set_node(1, mesh->node_ptr(12));
+      elem->set_node(2, mesh->node_ptr(7));
+      elem->set_node(3, mesh->node_ptr(13));
+      elem->set_node(4, mesh->node_ptr(14));
+      elem->set_node(5, mesh->node_ptr(9));
 
       mesh->prepare_for_use();
 

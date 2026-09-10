@@ -25,18 +25,18 @@
 #ifndef GRINS_BC_BUILDER_H
 #define GRINS_BC_BUILDER_H
 
-// C++
-#include <set>
-#include <string>
-#include <vector>
-
 // GRINS
 #include "grins/var_typedefs.h"
 #include "grins/neumann_bc_container.h"
 
 // libMesh
-#include "libmesh/auto_ptr.h"
 #include "libmesh/hp_coarsentest.h" // RealVectorValue
+
+// C++
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
 
 // libMesh forward declarations
 class GetPot;

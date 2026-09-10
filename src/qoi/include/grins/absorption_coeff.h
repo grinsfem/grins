@@ -28,7 +28,6 @@
 
 // libMesh
 #include "libmesh/fem_function_base.h"
-#include "libmesh/auto_ptr.h"
 
 // GRINS
 #include "grins/absorption_coeff_base.h"
@@ -38,6 +37,9 @@
 #include "grins/multicomponent_variable.h"
 #include "grins/variable_warehouse.h"
 #include "grins/fem_function_and_derivative_base.h"
+
+// C++
+#include <memory>
 
 namespace GRINS
 {

@@ -25,19 +25,18 @@
 #ifndef GRINS_DISTANCE_FUNCTION_H
 #define GRINS_DISTANCE_FUNCTION_H
 
-// system
-//#include <limits>
-
-// libmesh
+// libMesh
 #include "libmesh/libmesh_base.h"
 #include "libmesh/libmesh_common.h"
-#include "libmesh/auto_ptr.h"
 #include "libmesh/dense_vector.h"
 #include "libmesh/dense_matrix.h"
 #include "libmesh/elem.h"
 #include "libmesh/fe_base.h"
 #include "libmesh/system.h"
 #include "libmesh/unstructured_mesh.h"
+
+// C++
+#include <memory>
 
 // Forward Declarations
 namespace libMesh {

@@ -25,10 +25,6 @@
 #ifndef GRINS_PHYSICS_H
 #define GRINS_PHYSICS_H
 
-// C++
-#include <string>
-#include <set>
-
 //GRINS
 #include "grins_config.h"
 #include "grins/variable_name_defaults.h"
@@ -44,7 +40,11 @@
 #include "libmesh/fe_base.h"
 #include "libmesh/system.h"
 #include "libmesh/mesh_base.h"
-#include "libmesh/auto_ptr.h"
+
+// C++
+#include <memory>
+#include <string>
+#include <set>
 
 // libMesh forward declarations
 class GetPot;

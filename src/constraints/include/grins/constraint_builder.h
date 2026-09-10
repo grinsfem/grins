@@ -26,8 +26,10 @@
 #define GRINS_CONSTRAINT_BUILDER_H
 
 // libMesh
-#include "libmesh/auto_ptr.h"
 #include "libmesh/system.h" // Can't forward declare System::Constraint
+
+// C++
+#include <memory>
 
 // libMesh forward declarations
 class GetPot;

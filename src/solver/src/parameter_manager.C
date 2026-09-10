@@ -32,10 +32,11 @@
 #include "grins/solver_context.h"
 
 // libMesh
-#include "libmesh/auto_ptr.h"
 #include "libmesh/getpot.h"
 #include "libmesh/parameter_multiaccessor.h"
 
+// C++
+#include <memory>
 
 namespace GRINS
 {
