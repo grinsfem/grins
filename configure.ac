@@ -76,11 +76,11 @@ AC_ARG_ENABLE([libmesh-flags],
 
 if test "$USE_LIBMESH_CXX_FLAGS" = "1"; then
    AC_DEFINE(USE_LIBMESH_CXX_FLAGS,1,[Define if libmesh cxxflags enabled])
-   CXXFLAGS=`$LIBMESH_CONFIG --cppflags --cxxflags`
+   CXXFLAGS="`$LIBMESH_CONFIG --cppflags --cxxflags` $CXXFLAGS"
 else
  dnl TODO: WE NEED TO DISTINGUISH BETWEEN COMPILERS IN A BETTER WAY
    AC_DEFINE(USE_LIBMESH_CXX_FLAGS,0,[Define if libmesh cxxflags enabled])
-   CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations"
+   CXXFLAGS="-O0 -g -fno-unsafe-math-optimizations $CXXFLAGS"
 fi
 
 dnl -Wall warnings, -Wall the time.
