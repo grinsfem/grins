@@ -29,25 +29,26 @@ namespace GRINS
 {
   namespace GRINSPrivate
   {
-    std::map<std::string,std::shared_ptr<FEVariablesBase> >& VariableWarehouse::var_map()
+    std::map<std::string, std::shared_ptr<FEVariablesBase>, std::less<>>& VariableWarehouse::var_map()
     {
-      static std::map<std::string,std::shared_ptr<FEVariablesBase> > _var_map;
+      static std::map<std::string, std::shared_ptr<FEVariablesBase>, std::less<>> _var_map;
       return _var_map;
     }
 
-    std::shared_ptr<FEVariablesBase> VariableWarehouse::get_variable_ptr( const std::string& var_name )
+    std::shared_ptr<FEVariablesBase> VariableWarehouse::get_variable_ptr( std::string_view var_name )
     {
       if( !VariableWarehouse::is_registered(var_name) )
         {
-          const std::map<std::string,std::shared_ptr<FEVariablesBase> >& map = var_map();
+          const auto & map = var_map();
 
           std::stringstream error_msg;
-          error_msg << "ERROR: Could not find Variable "+var_name+" in the VariableWarehouse!"
+          error_msg << "ERROR: Could not find Variable "
+                    << var_name << " in the VariableWarehouse!"
                     << std::endl
                     << "       Variables currently the VariableWarehouse are: "
                     << (map.begin())->first << std::endl;
 
-          std::map<std::string,std::shared_ptr<FEVariablesBase> >::const_iterator it = map.begin();
+          auto it = map.begin();
           it++;
           for( ; it != map.end(); ++it )
             error_msg << std::string(54,' ') << it->first << std::endl;
@@ -55,12 +56,13 @@ namespace GRINS
           libmesh_error_msg(error_msg.str());
         }
 
-      std::shared_ptr<FEVariablesBase> var_ptr = var_map()[var_name];
+      auto it = var_map().find(var_name);
 
-      if( !var_ptr )
-        libmesh_error_msg("ERROR: Variable "+var_name+" is an invalid pointer!");
+      if( it == var_map().end() )
+        libmesh_error_msg("ERROR: Variable " + std::string(var_name) +
+                          " is an invalid pointer!");
 
-      return var_ptr;
+      return it->second;
     }
 
   } // end namespace GRINSPrivate
