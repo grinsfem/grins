@@ -40,9 +40,8 @@
 namespace GRINS
 {
   ParsedBoundaryQoI::ParsedBoundaryQoI( const ParsedBoundaryQoI& original )
-    : ParsedQoIBase(original)
+    : ParsedQoIBase(original), BoundaryRestricted(original)
   {
-    this->_bc_ids = original._bc_ids;
   }
 
   QoIBase* ParsedBoundaryQoI::clone() const
@@ -54,21 +53,7 @@ namespace GRINS
                                 const MultiphysicsSystem& system,
                                 unsigned int /*qoi_num*/ )
   {
-    // Read boundary ids on which we want to compute qoi
-    int num_bcs =  input.vector_variable_size("QoI/ParsedBoundary/bc_ids");
-
-    if( num_bcs <= 0 )
-      {
-        std::cerr << "Error: Must specify at least one boundary id to compute"
-                  << " parsed boundary QoI." << std::endl
-                  << "Found: " << num_bcs << std::endl;
-        libmesh_error();
-      }
-
-    for( int i = 0; i < num_bcs; i++ )
-      {
-        _bc_ids.insert( input("QoI/ParsedBoundary/bc_ids", -1, i ) );
-      }
+    this->init_bcids(input, "ParsedBoundary");
 
     this->init_qoi_functional(input,system,"QoI/ParsedBoundary/qoi_functional");
   }
@@ -93,17 +78,7 @@ namespace GRINS
   void ParsedBoundaryQoI::side_qoi( AssemblyContext& context,
                                     const unsigned int qoi_index )
   {
-    bool on_correct_side = false;
-
-    for (std::set<libMesh::boundary_id_type>::const_iterator id =
-           _bc_ids.begin(); id != _bc_ids.end(); id++ )
-      if( context.has_side_boundary_id( (*id) ) )
-        {
-          on_correct_side = true;
-          break;
-        }
-
-    if (!on_correct_side)
+    if (!this->is_on_active_boundary(context))
       return;
 
     libMesh::FEBase* side_fe;
@@ -129,17 +104,7 @@ namespace GRINS
   void ParsedBoundaryQoI::side_qoi_derivative( AssemblyContext& context,
                                                const unsigned int qoi_index )
   {
-    bool on_correct_side = false;
-
-    for (std::set<libMesh::boundary_id_type>::const_iterator id =
-           _bc_ids.begin(); id != _bc_ids.end(); id++ )
-      if( context.has_side_boundary_id( (*id) ) )
-        {
-          on_correct_side = true;
-          break;
-        }
-
-    if (!on_correct_side)
+    if (!this->is_on_active_boundary(context))
       return;
 
     libMesh::FEBase* side_fe;
