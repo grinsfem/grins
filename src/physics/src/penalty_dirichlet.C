@@ -100,7 +100,7 @@ namespace GRINS
         // Compute the solution at the old Newton iterate
         Number u = context.side_value(_variable_to_pin, qp);
 
-        const Real JxWxP = JxW[qp] * _penalty;
+        const Real JxWxP = -JxW[qp] * _penalty;
 
         // The residual from the boundary terms, penalize non-target // values
         for (unsigned int i=0; i != n_dofs; i++)
