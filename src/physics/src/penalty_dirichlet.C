@@ -100,14 +100,16 @@ namespace GRINS
         // Compute the solution at the old Newton iterate
         Number u = context.side_value(_variable_to_pin, qp);
 
+        const Real JxWxP = JxW[qp] * _penalty;
+
         // The residual from the boundary terms, penalize non-target // values
         for (unsigned int i=0; i != n_dofs; i++)
-          F(i) += JxW[qp] * _penalty * (u - _target) * phi[i][qp];
+          F(i) += JxWxP * (u - _target) * phi[i][qp];
+
         if (compute_jacobian)
           for (unsigned int i=0; i != n_dofs; i++)
             for (unsigned int j=0; j != n_dofs; ++j)
-              // The analytic jacobian
-              K(i,j) += JxW[qp] * _penalty * phi[i][qp] * phi[j][qp];
+              K(i,j) += JxWxP * (phi[i][qp] * phi[j][qp]);
       } // end of the quadrature point qp-loop
   }
 
