@@ -53,7 +53,7 @@ namespace GRINS
                                 const MultiphysicsSystem& system,
                                 unsigned int /*qoi_num*/ )
   {
-    this->init_bcids(input, "ParsedBoundary");
+    this->init_bcids(input, "QoI/ParsedBoundary");
 
     this->init_qoi_functional(input,system,"QoI/ParsedBoundary/qoi_functional");
   }

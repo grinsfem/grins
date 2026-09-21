@@ -65,7 +65,7 @@ namespace GRINS
         libmesh_error();
       }
 
-    this->init_bcids(input, "NusseltNumber");
+    this->init_bcids(input, "QoI/NusseltNumber");
 
     _temp_vars = &GRINSPrivate::VariableWarehouse::get_variable_subclass<PrimitiveTempFEVariables>(VariablesParsing::temp_variable_name(input,std::string("NusseltNumber"),VariablesParsing::QOI));
   }

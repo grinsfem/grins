@@ -42,7 +42,7 @@ namespace GRINS
    std::string_view name)
   {
     // Read boundary ids for which we want to compute
-    const std::string bc_ids_var = "QoI/"+std::string(name)+"/bc_ids";
+    const std::string bc_ids_var = std::string(name)+"/bc_ids";
     int num_bcs =  input.vector_variable_size(bc_ids_var);
 
     if( num_bcs <= 0 )
