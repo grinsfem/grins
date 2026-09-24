@@ -195,7 +195,8 @@ namespace GRINS
             libMesh::VTKIO(mesh).write_equation_systems( filename,
                                                          *equation_system );
           }
-        else if ((*format) == "ExodusII")
+        else if ((*format) == "ExodusII" ||
+                 (*format) == "exo")
           {
             std::string filename = filename_prefix+".exo";
 
@@ -205,7 +206,8 @@ namespace GRINS
             libMesh::ExodusII_IO(mesh).write_timestep
               ( filename, *equation_system, 1, time );
           }
-        else if ((*format) == "Nemesis")
+        else if ((*format) == "Nemesis" ||
+                 (*format) == "nem")
           {
             std::string filename = filename_prefix+".nem";
 
