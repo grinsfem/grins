@@ -236,7 +236,16 @@ namespace GRINS
           {
             // TODO: Do we want to use this to error throughout the code?
             // TODO: (at least need to pass/print some message/string) - sahni
-            libmesh_error();
+            libmesh_error_msg("Unrecognized format: `" << (*format) <<
+                              "'\n\n"
+                              "Recognized formats are:\n"
+                              "`tecplot'/`dat': Tecplot\n"
+                              "`tecplot_binary'/`plt': Tecplot, binary\n"
+                              "`gmv': GMV\n"
+                              "`pvtu': VTK\n"
+                              "`ExodusII'/`exo': Exodus II\n"
+                              "`Nemesis'/`nem': Nemesis\n"
+                             );
           }
       } // End loop over formats
   }
