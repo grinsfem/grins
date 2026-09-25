@@ -38,6 +38,8 @@
 #include "grins/physics_factory_reacting_flows.h"
 
 #include "grins/physics_naming.h"
+
+#include "grins/linear_reaction.h"
 #include "grins/scalar_ode.h"
 #include "grins/boussinesq_buoyancy.h"
 #include "grins/axisym_boussinesq_buoyancy.h"
@@ -92,6 +94,8 @@ namespace GRINS
 {
   PhysicsFactoryInitializer::PhysicsFactoryInitializer()
   {
+    static PhysicsFactoryBasic<LinearReaction> grins_factory_linear_reaction(PhysicsNaming::linear_reaction());
+
     static PhysicsFactoryBasic<ScalarODE> grins_factory_scalar_ode(PhysicsNaming::scalar_ode());
 
     static PhysicsFactoryBasic<BoussinesqBuoyancy> grins_factory_boussinesq(PhysicsNaming::boussinesq_buoyancy());
