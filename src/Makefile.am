@@ -624,11 +624,13 @@ include_HEADERS += visualization/include/grins/visualization_factory.h
 include_HEADERS += visualization/include/grins/postprocessed_quantities.h
 include_HEADERS += visualization/include/grins/postprocessing_factory.h
 
-if LIBMESH_LIBTOOL
-   libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh_$(LIBMESH_METHOD).la
-else
+# if we could trust libtool we'd just do this, but Ubuntu libtool
+# seems to be foiling our old LIBMESH_LIBTOOL detection
+#if !LIBMESH_LIBTOOL
+#   libgrins_la_LIBADD = $(LIBMESH_LIBDIR)/libmesh_$(LIBMESH_METHOD).la
+#else
    libgrins_la_LIBADD = $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
-endif
+#endif
 
 if ANTIOCH_ENABLED
    libgrins_la_LIBADD += $(ANTIOCH_LDFLAGS) $(ANTIOCH_LIBS)
@@ -640,15 +642,15 @@ endif
 
 grins_SOURCES = apps/grins.C
 grins_LDADD = libgrins.la
-if !LIBMESH_LIBTOOL
+#if !LIBMESH_LIBTOOL
 grins_LDADD += $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
-endif
+#endif
 
 grins_version_SOURCES = utilities/src/version.C
 grins_version_LDADD = libgrins.la
-if !LIBMESH_LIBTOOL
+#if !LIBMESH_LIBTOOL
 grins_version_LDADD += $(LIBMESH_LDFLAGS) $(LIBMESH_LIBS)
-endif
+#endif
 
 if CANTERA_ENABLED
    cantera_kinetic_rates_SOURCES = apps/cantera_kinetic_rates.C
