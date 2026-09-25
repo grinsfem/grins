@@ -27,6 +27,7 @@
 #define GRINS_PARSED_BOUNDARY_QOI_H
 
 // GRINS
+#include "grins/boundary_restricted.h"
 #include "grins/parsed_qoi_base.h"
 #include "grins/variable_name_defaults.h"
 
@@ -38,9 +39,9 @@ namespace GRINS
   //! Parsed Boundary QoI
   /*!
     This class implements a QoI that is an arbitrary integral of a
-    parsed function on the boundary of the domain.
+    parsed function on a boundary of the domain.
   */
-  class ParsedBoundaryQoI : public ParsedQoIBase
+  class ParsedBoundaryQoI : public ParsedQoIBase, public BoundaryRestricted
   {
   public:
 
@@ -76,9 +77,6 @@ namespace GRINS
                                       const unsigned int qoi_index ) override;
 
   protected:
-
-    //! List of boundary ids on which we want to compute this QoI
-    std::set<libMesh::boundary_id_type> _bc_ids;
 
     //! Manual copy constructor due to the UniquePtr
     ParsedBoundaryQoI(const ParsedBoundaryQoI& original);

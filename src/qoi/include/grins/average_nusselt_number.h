@@ -27,13 +27,14 @@
 #define GRINS_AVERAGE_NUSSELT_NUMBER_H
 
 // GRINS
+#include "grins/boundary_restricted.h"
 #include "grins/qoi_base.h"
-#include "grins/variable_name_defaults.h"
 #include "grins/single_variable.h"
+#include "grins/variable_name_defaults.h"
 
 namespace GRINS
 {
-  class AverageNusseltNumber : public QoIBase
+  class AverageNusseltNumber : public QoIBase, public BoundaryRestricted
   {
   public:
 
@@ -73,9 +74,6 @@ namespace GRINS
     libMesh::Real _k;
 
     const PrimitiveTempFEVariables * _temp_vars;
-
-    //! List of boundary ids for which we want to compute this QoI
-    std::set<libMesh::boundary_id_type> _bc_ids;
 
     //! Scaling constant
     libMesh::Real _scaling;

@@ -203,6 +203,9 @@ namespace GRINS
     static PhysicsName parsed_source_term()
     { return "ParsedSourceTerm"+suffix(); }
 
+    static PhysicsName penalty_dirichlet()
+    { return "PenaltyDirichlet"+suffix(); }
+
     static PhysicsName convection_diffusion()
     { return "ConvectionDiffusion"+suffix(); }
 
