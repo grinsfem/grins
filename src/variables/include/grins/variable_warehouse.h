@@ -54,23 +54,23 @@ namespace GRINS
       ~VariableWarehouse(){};
 
       //! Check if variable is registered
-      static bool is_registered( const std::string& var_name );
+      static bool is_registered( std::string_view var_name );
 
       //! First check if var_name is registered and then register
       /*! Use this API if you may be attempting to register the same
         variable more than once. */
-      static void check_and_register_variable( const std::string& var_name,
+      static void check_and_register_variable( std::string_view var_name,
                                                std::shared_ptr<FEVariablesBase>& variable );
 
-      static void register_variable( const std::string& var_name,
+      static void register_variable( std::string_view var_name,
                                      std::shared_ptr<FEVariablesBase>& variable );
 
-      static std::shared_ptr<FEVariablesBase> get_variable_ptr( const std::string& var_name );
+      static std::shared_ptr<FEVariablesBase> get_variable_ptr( std::string_view var_name );
 
-      static FEVariablesBase& get_variable( const std::string& var_name );
+      static FEVariablesBase& get_variable( std::string_view var_name );
 
       template <typename DerivedType>
-      static DerivedType& get_variable_subclass( const std::string& var_name );
+      static DerivedType& get_variable_subclass( std::string_view var_name );
 
       //! Clears the var_map()
       static void clear()
@@ -78,19 +78,19 @@ namespace GRINS
 
     protected:
 
-      static std::map<std::string,std::shared_ptr<FEVariablesBase> >& var_map();
+      static std::map<std::string, std::shared_ptr<FEVariablesBase>, std::less<>>& var_map();
 
     };
 
     inline
-    bool VariableWarehouse::is_registered( const std::string& var_name )
+    bool VariableWarehouse::is_registered( std::string_view var_name )
     {
       bool var_found = (var_map().find(var_name) != var_map().end() );
       return var_found;
     }
 
     inline
-    void VariableWarehouse::check_and_register_variable( const std::string& var_name,
+    void VariableWarehouse::check_and_register_variable( std::string_view var_name,
                                                          std::shared_ptr<FEVariablesBase>& variable )
     {
       if( !VariableWarehouse::is_registered(var_name) )
@@ -98,31 +98,30 @@ namespace GRINS
     }
 
     inline
-    void VariableWarehouse::register_variable( const std::string& var_name,
+    void VariableWarehouse::register_variable( std::string_view var_name,
                                                std::shared_ptr<FEVariablesBase>& variable )
     {
       if( VariableWarehouse::is_registered(var_name) )
         libmesh_error_msg("ERROR: Duplicate FEVariable registration not allowed!");
 
-      var_map()[var_name] = variable;
-    }
-
-    inline
-    FEVariablesBase& VariableWarehouse::get_variable( const std::string& var_name )
-    {
-      std::shared_ptr<FEVariablesBase> var_ptr = VariableWarehouse::get_variable_ptr(var_name);
-      return *var_ptr;
+      var_map().emplace(var_name, variable);
     }
 
     template <typename DerivedType>
     inline
-    DerivedType& VariableWarehouse::get_variable_subclass( const std::string& var_name )
+    DerivedType& VariableWarehouse::get_variable_subclass( std::string_view var_name )
     {
       FEVariablesBase& var_base = VariableWarehouse::get_variable(var_name);
 
       DerivedType& derived_var = libMesh::cast_ref<DerivedType&>(var_base);
 
       return derived_var;
+    }
+
+    inline
+    FEVariablesBase& VariableWarehouse::get_variable( std::string_view var_name )
+    {
+      return *VariableWarehouse::get_variable_ptr(var_name);
     }
 
   } // end namespace GRINSPrivate
