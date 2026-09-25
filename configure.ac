@@ -1,11 +1,11 @@
  dnl                                               -*- Autoconf -*-
 dnl Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.61)
-AC_INIT(grins, 0.9.0, grins-users@googlegroups.com)
+AC_PREREQ([2.72])
+AC_INIT([grins],[0.9.0],[grins-users@googlegroups.com])
 AC_CONFIG_MACRO_DIR([m4])
 
-AC_CONFIG_HEADER(grins_config.h.tmp)
+AC_CONFIG_HEADERS([grins_config.h.tmp])
 dnl Prefixes everything in the temporary file with FINS_
 AX_PREFIX_CONFIG_H(grins_config.h,GRINS,grins_config.h.tmp)
 
@@ -66,7 +66,7 @@ AX_PATH_LIBMESH_NEW(1.0.0,yes)
 AX_LIBMESH_DIM()
 
 AC_ARG_ENABLE([libmesh-flags],
-               AC_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
+               AS_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
                [case "${enableval}" in
                    yes) USE_LIBMESH_CXX_FLAGS=1 ;;
                     no) USE_LIBMESH_CXX_FLAGS=0 ;;
@@ -131,7 +131,7 @@ HAVE_CANTERA=0
 if test "$enable_cantera" != no; then
   # User-specific include path
   AC_ARG_WITH(cantera,
-               AC_HELP_STRING([--with-cantera=PATH],[Specify the path for Cantera]),
+               AS_HELP_STRING([--with-cantera=PATH],[Specify the path for Cantera]),
                with_cantera=$withval,
                with_cantera=$CANTERA_DIR)
 
@@ -419,8 +419,8 @@ AC_SUBST(GRINS_TEST_INPUT_FILES)
 GRINS_TEST_DATA_FILES=$(find $TOP_SRC_DIR/test/test_data -name "*.xdr" -or -name "*.xda" -or -name "*.gz" | grep -v "elastic_mooney_rivlin_square_hookean_stiffeners_regression.xdr" | tr "\n" " ")
 AC_SUBST(GRINS_TEST_DATA_FILES)
 
-# Must still call AC_OUTPUT() after generating all the files
-AC_OUTPUT()
+# Must still call AC_OUTPUT after generating all the files
+AC_OUTPUT
 
 dnl Hackish fix for Ubuntu/Debian libtool
 perl -pi -e 's/link_all_deplibs=no/link_all_deplibs=yes/' libtool
