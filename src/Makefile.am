@@ -56,6 +56,7 @@ libgrins_la_SOURCES += boundary_conditions/src/boundary_condition_factory_initia
 
 # src/common
 libgrins_la_SOURCES += common/src/builder_helper.C
+libgrins_la_SOURCES += common/src/boundary_restricted.C
 
 # src/constraints
 libgrins_la_SOURCES += constraints/src/constraint_builder.C
@@ -355,6 +356,7 @@ include_HEADERS += boundary_conditions/include/grins/boundary_condition_factory_
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
+include_HEADERS += common/include/grins/boundary_restricted.h
 include_HEADERS += common/include/grins/builder_helper.h
 include_HEADERS += common/include/grins/factory_abstract.h
 include_HEADERS += common/include/grins/factory_with_getpot.h
