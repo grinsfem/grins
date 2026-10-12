@@ -382,6 +382,10 @@ namespace GRINS
         } while(found_refinements);
 
       } // if (h_refinement_function_string != "0")
+
+    // Redistribution may have left our caches unprepared; let's
+    // re-prepare as necessary.
+    mesh.complete_preparation();
   }
 
 } // namespace GRINS
