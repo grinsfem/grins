@@ -1,0 +1,66 @@
+//-----------------------------------------------------------------------bl-
+//--------------------------------------------------------------------------
+//
+// GRINS - General Reacting Incompressible Navier-Stokes
+//
+// Copyright (C) 2014-2019 Paul T. Bauman, Roy H. Stogner
+// Copyright (C) 2010-2013 The PECOS Development Team
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
+// Public License as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
+//
+//-----------------------------------------------------------------------el-
+
+#ifndef GRINS_LINEAR_REACTION_H
+#define GRINS_LINEAR_REACTION_H
+
+// GRINS
+#include "grins/physics.h"
+#include "grins/single_variable.h"
+
+namespace GRINS
+{
+
+  class LinearReaction : public Physics
+  {
+
+  public:
+
+    LinearReaction( const PhysicsName& physics_name, const GetPot& input );
+
+    virtual ~LinearReaction() = default;
+
+    virtual void init_context( AssemblyContext& context ) override;
+
+    virtual void auxiliary_init( MultiphysicsSystem & system ) override;
+
+    // residual and jacobian calculations
+    // element_*, side_* as *time_derivative, *constraint, *mass_residual
+
+    //! Time dependent part(s) of physics for element interiors
+    virtual void element_time_derivative( bool compute_jacobian,
+                                          AssemblyContext& context ) override;
+
+  protected:
+
+    unsigned int _u_var;
+
+    std::string _variablename;
+
+    const libMesh::Number _coeff;
+  };
+
+} // namespace GRINS
+
+#endif // GRINS_LINEAR_REACTION_H

@@ -1,0 +1,70 @@
+# Options related to all Physics
+[Physics]
+   enabled_physics = 'ParsedSourceTerm LinearReaction'
+
+   # Simple u=f mass-matrix solve
+   [./LinearReaction]
+      variable = 'u'
+      coeff = -1
+
+   [../ParsedSourceTerm]
+      [./Function]
+         value = '8+4*x-2*y+z'
+      [../Variables]
+         names = 'u'
+         FE_types = 'LAGRANGE'
+         FE_orders = 'FIRST'
+[]
+
+[BoundaryConditions]
+   bc_ids = '1:2:3:4'
+   bc_id_name_map = 'None'
+
+   [./None]
+      [./SingleVariable]
+         type = 'homogeneous_neumann'
+      [../]
+   [../]
+[]
+
+[Variables]
+   [./SingleVariable]
+      names = 'u'
+      fe_family = 'LAGRANGE'
+      order = 'FIRST'
+[]
+
+# Mesh related options
+[Mesh]
+   [./Read]
+      filename = './grids/geom_4.exo'
+      constraint_filename = './grids/geom_4_extraction_op.m.gz'
+[]
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+   max_nonlinear_iterations =  25
+   max_linear_iterations = 2500
+   initial_linear_tolerance = '1e-10'
+   absolute_residual_tolerance = '1.0e-12'
+   relative_residual_tolerance = '1.0e-12'
+   relative_step_tolerance = '1.0e-12'
+   minimum_linear_tolerance = '1.0e-10'
+[]
+
+# Visualization options
+[vis-options]
+   output_vis = 'true'
+   vis_output_file_prefix = 'L2_iga'
+   output_format = 'xda'
+[]
+
+# Options for print info to the screen
+[screen-options]
+   system_name = 'GRINS-TEST'
+   print_equation_system_info = 'true'
+   print_mesh_info = 'true'
+   print_log_info = 'true'
+   solver_verbose = 'true'
+   solver_quiet = 'false'
+[]

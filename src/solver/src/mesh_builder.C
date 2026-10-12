@@ -40,6 +40,7 @@
 #include "libmesh/partitioner.h"
 #include "libmesh/parsed_function.h"
 #include "libmesh/serial_mesh.h"
+#include "libmesh/sparse_matrix.h"
 #include "libmesh/elem.h"
 #include "libmesh/enum_order.h"
 
@@ -104,6 +105,19 @@ namespace GRINS
     // Read mesh from file
     if( mesh_build_type == "read" )
       {
+        // If we have a non-conforming or less-conforming mesh whose
+        // solution space uses an extraction/constraint operator,
+        // we'll need to load the operator, but we'll also need to
+        // disable renumbering long enough to make sure the operator
+        // indexing and mesh indexing match.
+        const char * constraint_str = "Mesh/Read/constraint_filename";
+
+        const bool have_constraint = input.have_variable(constraint_str);
+
+        const bool old_renumbering = mesh->allow_renumbering();
+        if (have_constraint)
+          mesh->allow_renumbering(false);
+
         // Make sure the user set the filename to read
         if( !input.have_variable("Mesh/Read/filename") )
           libmesh_error_msg("ERROR: Must specify Mesh/Read/filename for reading mesh.");
@@ -120,6 +134,27 @@ namespace GRINS
         bool all_second_order = input("Mesh/all_second_order", false);
         if (all_second_order)
           mesh->all_second_order();
+
+        if (have_constraint)
+          {
+            const std::string constraint_filename = input(constraint_str, "DIE!");
+
+            auto matrix = libMesh::SparseMatrix<libMesh::Number>::build(mesh->comm());
+            matrix->read(constraint_filename);
+
+            // The Flex IGA standard for projection operator matrices
+            // is the transpose of our standard for constraint
+            // equations.
+            matrix->get_transpose(*matrix);
+            mesh->copy_constraint_rows(*matrix);
+
+            // libMesh should probably update this in
+            // copy_constraint_rows(); once it does this will be a
+            // redundant sweep we can remove.
+            mesh->cache_elem_data();
+
+            mesh->allow_renumbering(old_renumbering);
+          }
       }
 
     // Generate the mesh using built-in libMesh functions
