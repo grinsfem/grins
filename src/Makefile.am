@@ -56,6 +56,7 @@ libgrins_la_SOURCES += boundary_conditions/src/boundary_condition_factory_initia
 
 # src/common
 libgrins_la_SOURCES += common/src/builder_helper.C
+libgrins_la_SOURCES += common/src/boundary_restricted.C
 
 # src/constraints
 libgrins_la_SOURCES += constraints/src/constraint_builder.C
@@ -149,6 +150,7 @@ libgrins_la_SOURCES += physics/src/variable_pinning.C
 libgrins_la_SOURCES += physics/src/physics_factory_initializer.C
 libgrins_la_SOURCES += physics/src/overlapping_fluid_solid_map.C
 libgrins_la_SOURCES += physics/src/overlapping_fluid_solid_coupling_functor.C
+libgrins_la_SOURCES += physics/src/penalty_dirichlet.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
@@ -355,6 +357,7 @@ include_HEADERS += boundary_conditions/include/grins/boundary_condition_factory_
 
 # src/common headers
 include_HEADERS += common/include/grins/common.h
+include_HEADERS += common/include/grins/boundary_restricted.h
 include_HEADERS += common/include/grins/builder_helper.h
 include_HEADERS += common/include/grins/factory_abstract.h
 include_HEADERS += common/include/grins/factory_with_getpot.h
@@ -476,6 +479,7 @@ include_HEADERS += physics/include/grins/variable_pinning.h
 include_HEADERS += physics/include/grins/physics_factory_initializer.h
 include_HEADERS += physics/include/grins/overlapping_fluid_solid_map.h
 include_HEADERS += physics/include/grins/overlapping_fluid_solid_coupling_functor.h
+include_HEADERS += physics/include/grins/penalty_dirichlet.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h

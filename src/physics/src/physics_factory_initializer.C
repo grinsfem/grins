@@ -45,6 +45,7 @@
 #include "grins/parsed_source_term.h"
 #include "grins/convection_diffusion.h"
 #include "grins/variable_pinning.h"
+#include "grins/penalty_dirichlet.h"
 
 #include "grins/heat_conduction.h"
 #include "grins/heat_transfer.h"
@@ -118,6 +119,9 @@ namespace GRINS
 
     static PhysicsFactoryBasic<VariablePinning>
       grins_factory_variable_pinning(PhysicsNaming::variable_pinning());
+
+    static PhysicsFactoryBasic<PenaltyDirichlet>
+      grins_factory_penalty_dirichlet(PhysicsNaming::penalty_dirichlet());
 
 
     static PhysicsFactoryHeatTransfer<HeatConduction> grins_factory_heat_conduction
